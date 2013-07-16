@@ -1,0 +1,53 @@
+﻿<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+</head>
+<body>
+	<div>
+		<article id="SPP">
+			<header>
+				<dl>
+					<dd action="set"></dd>
+					<dt></dt>
+					<dd action="add"></dd>
+				</dl>
+			</header>
+			<section id="schedule"></section>
+			<section id="project">
+				<script type="text/html">
+					<ul>
+						@for(project ->> pro){
+							<li>
+								<dl>
+									<dt>{pro.title}</dt>
+									<dd>
+										<span>{pro.time}</span>
+										<p>
+											@for(members ->> m){
+												<img src="{m.avatar}" />
+											}
+										</p>
+										<hr />
+										<q>{pro.descript}</q>
+									</dd>
+								</dl>
+							</li>
+						}
+					</ul>
+				</script>
+			</section>
+			<section id="partner"></section>
+			<footer>
+				<ul>
+					<li>日程</li>
+					<li>项目</li>
+					<li>拍档</li>
+				</ul>
+			</footer>
+		</article>
+	</div>
+	<script src="../../common/javascript/library/jQun.js" type="text/javascript"></script>
+</body>
+</html>
