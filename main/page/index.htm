@@ -16,26 +16,25 @@
 			</header>
 			<section id="schedule"></section>
 			<section id="project">
+				<ul></ul>
 				<script type="text/html">
-					<ul>
-						@for(project ->> pro){
-							<li>
-								<dl>
-									<dt>{pro.title}</dt>
-									<dd>
-										<span>{pro.time}</span>
-										<p>
-											@for(members ->> m){
-												<img src="{m.avatar}" />
-											}
-										</p>
-										<hr />
-										<q>{pro.descript}</q>
-									</dd>
-								</dl>
-							</li>
-						}
-					</ul>
+					@for(project ->> pro){
+						<li>
+							<dl>
+								<dt>{pro.title}</dt>
+								<dd>
+									<span>{pro.time}</span>
+									<p>
+										@for(members ->> m){
+											<img src="{m.avatar}" />
+										}
+									</p>
+									<hr />
+									<q>{pro.descript}</q>
+								</dd>
+							</dl>
+						</li>
+					}
 				</script>
 			</section>
 			<section id="partner"></section>
