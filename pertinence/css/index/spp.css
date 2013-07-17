@@ -45,4 +45,16 @@
 	bottom : 0;
 	height : 50px;
 	background-image : -webkit-linear-gradient(top, #373737, #171717);
+	padding : 2px 12px;
+	color : #fefefe;
+}
+#SPP > footer li {
+	width : 33.33%;
+	height : 46px;
+	line-height : 46px;
+	padding-left : 10px;
+	font-size : 16px;
+}
+#SPP > footer li:first-child {
+	padding-left : 0;
 }
