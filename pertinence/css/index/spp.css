@@ -1,0 +1,20 @@
+﻿#SPP {
+	background-color : #ddd;
+}
+#SPP > * {
+	height : 15%;
+	width : 100%;
+	position : fixed;
+}
+#SPP header {
+	top : 0;
+	background-image : -webkit-linear-gradient(top, #cdc, #9a9);
+}
+#SPP header + article {
+	height : auto;
+	top : 15%;
+}
+#SPP footer {
+	bottom : 0;
+	background-color : #666;
+}
