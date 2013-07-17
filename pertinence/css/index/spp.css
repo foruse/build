@@ -1,20 +1,43 @@
 ﻿#SPP {
-	background-color : #ddd;
+	background-color : #f2E5E5;
 }
 #SPP > * {
-	height : 15%;
+	height : 8%;
 	width : 100%;
 	position : fixed;
 }
-#SPP header {
+
+
+#SPP > header {
 	top : 0;
-	background-image : -webkit-linear-gradient(top, #cdc, #9a9);
+	background-image : -webkit-linear-gradient(top, #db3615, #b70d00);
 }
-#SPP header + article {
+#SPP > header dl {
+	height : 100%;
+	padding : 8px 6px;
+}
+#SPP > header dd {
+	height : 100%;
+	width : 10%;
+	border : 1px solid #8b1f10;
+	border-radius : 3px;
+}
+#SPP > header dt {
+	height : 100%;
+	width : 80%;
+	text-align : center;
+	color : #f2f2f2;
+	font-size : 18px;
+}
+
+
+#SPP > article {
 	height : auto;
 	top : 15%;
 }
-#SPP footer {
+
+
+#SPP > footer {
 	bottom : 0;
-	background-color : #666;
+	background-image : -webkit-linear-gradient(top, #373737, #171717);
 }
