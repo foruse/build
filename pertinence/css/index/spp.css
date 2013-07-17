@@ -2,7 +2,7 @@
 	background-color : #f2E5E5;
 }
 #SPP > * {
-	height : 8%;
+	height : 42px;
 	width : 100%;
 	position : fixed;
 }
@@ -11,23 +11,27 @@
 #SPP > header {
 	top : 0;
 	background-image : -webkit-linear-gradient(top, #db3615, #b70d00);
+	padding : 8px 6px 4px 6px;
+	text-align : center;
+	box-shadow : 0 0 5px #080103;
 }
-#SPP > header dl {
-	height : 100%;
-	padding : 8px 6px;
-}
-#SPP > header dd {
-	height : 100%;
-	width : 10%;
+#SPP > header > button {
+	float : left;
+	height : 30px;
+	width : 46px;
 	border : 1px solid #8b1f10;
 	border-radius : 3px;
+	background-color : #da3720;
+	box-shadow : inset 0 2px 0 rgba(255, 255, 255, 0.1);
+	background : url(../../../common/image/width24.png) no-repeat 11px 3px;
 }
-#SPP > header dt {
-	height : 100%;
-	width : 80%;
-	text-align : center;
+#SPP > header > button[action="add"] {
+	background-position : 11px -27px;
+	float : right;
+}
+#SPP > header > span {
 	color : #f2f2f2;
-	font-size : 18px;
+	font-size : 20px;
 }
 
 
@@ -39,5 +43,6 @@
 
 #SPP > footer {
 	bottom : 0;
+	height : 50px;
 	background-image : -webkit-linear-gradient(top, #373737, #171717);
 }
