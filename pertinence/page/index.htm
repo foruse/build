@@ -9,29 +9,91 @@
 <body>
 	<div id="main">
 		<div id="SPP">
-			<header>
+			<header class="title_SPP">
 				<button action="set"></button>
-				<span></span>
+				<span>项目</span>
 				<button action="add"></button>
 			</header>
-			<article>
+			<article class="content_SPP">
 				<section id="schedule"></section>
 				<section id="project">
-					<ul></ul>
+					<ul class="inlineBlock">
+						<li>
+							<figure isimportant="{pro.isImportant}">
+								<figcaption>
+									{pro.title}
+									<span></span>
+								</figcaption>
+								<dl>
+									<dd class="inlineBlock">
+										<img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" />
+									</dd>
+									<dd>
+										<hr />
+									</dd>
+									<dt>
+										<span>{pro.descript}</span>
+										<a>{pro.unread}</a>
+									</dt>
+								</dl>		
+							</figure>
+						</li><li>
+							<figure isimportant="{pro.isImportant}">
+								<figcaption>
+									{pro.title}
+									<span></span>
+								</figcaption>
+								<dl>
+									<dd class="inlineBlock">
+										<img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" />
+									</dd>
+									<dd>
+										<hr />
+									</dd>
+									<dt>
+										<span>{pro.descript}</span>
+										<a></a>
+									</dt>
+								</dl>		
+							</figure>
+						</li><li>
+							<figure isimportant="{pro.isImportant}">
+								<figcaption>
+									{pro.title}
+									<span></span>
+								</figcaption>
+								<dl>
+									<dd class="inlineBlock">
+										<img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" />
+									</dd>
+									<dd>
+										<hr />
+									</dd>
+									<dt>
+										<span>{pro.message}</span>
+										<a></a>
+									</dt>
+								</dl>		
+							</figure>
+						</li>
+					</ul>
 					<script type="text/html">
 						@for(project ->> pro){
 							<li>
-								<dl>
-									<dt>{pro.title}</dt>
+								<dl isimportant="{pro.isImportant}">
+									<dt>
+										{pro.title}
+										<span></span>
+									</dt>
 									<dd>
-										<span>{pro.time}</span>
+										
 										<p>
 											@for(members ->> m){
 												<img src="{m.avatar}" />
 											}
 										</p>
 										<hr />
-										<q>{pro.descript}</q>
+										<span>{pro.descript}</span>
 									</dd>
 								</dl>
 							</li>
@@ -40,14 +102,36 @@
 				</section>
 				<section id="partner"></section>
 			</article>
-			<footer>
+			<footer class="tab_SPP">
 				<ul class="inlineBlock">
-					<li>日程</li>
-					<li>项目</li>
-					<li>拍档</li>
+					<li>
+						<button tab="scd">
+							<span>日程</span>
+						</button>
+					</li>
+					<li>
+						<button tab="prj" class="focused">
+							<span>项目</span>
+						</button>
+					</li>
+					<li>
+						<button tab="ptn">
+							<span>拍档</span>
+						</button>
+					</li>
 				</ul>
 				<script type="text/html">
-				
+					@for([
+						{ tab : "scd", title : "日程" },
+						{ tab : "prj", title : "项目" },
+						{ tab : "ptn", title : "拍档" }
+					] ->> t){
+						<li>
+							<button tab="{t.tab}">
+								<span>{t.title}</span>
+							</button>
+						</li>
+					}
 				</script>
 			</footer>
 		</div>
