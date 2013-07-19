@@ -28,8 +28,8 @@
 									</figcaption>
 									<dl>
 										<dd class="inlineBlock">
-											@for(members ->> m){
-												<img src="{m.avatar}" />
+											@for(users ->> user){
+												<img src="{user.avatar}" />
 											}
 										</dd>
 										<dd>
@@ -81,8 +81,12 @@
 			</footer>
 		</div>
 	</div>
-	<script src="../../common/javascript/library/jQun.js" type="text/javascript"></script>
+	<script src="../../common/javascript/jQun.js" type="text/javascript"></script>
+	<script src="../../common/javascript/structure.js" type="text/javascript"></script>
 	<script src="../javascript/index/spp.js" type="text/javascript"></script>
 	<script src="../javascript/index/index.js" type="text/javascript"></script>
+
+	<script src="../../test/dummyData/generate.js" type="text/javascript"></script>
+	<script src="../../test/dummyData/index.js" type="text/javascript"></script>
 </body>
 </html>
