@@ -7,7 +7,7 @@ this.Bao = (function(Bao){
 		CallServer : jQun.Ajax,
 		Page : new Namespace().members({
 			Index : new Namespace().members({ // ../../pertinence/javascript/index
-				Manager : null, // ../../pertinence/javascript/index/index.js
+				History : null, // ../../pertinence/javascript/index/index.js
 				SPP : new Namespace().members({ // ../../pertinence/javascript/index/spp.js
 					Partner : null,
 					Project : null,
