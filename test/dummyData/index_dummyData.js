@@ -55,7 +55,9 @@ this.SPP = (function(){
 					id : Number.id(),
 					isImportant : i % 3 === 0,
 					title : String.random(),
-					users : Common.getUsers(Number.random(20))
+					users : Common.getUsers(Number.random(20)),
+					lastMessage : String.random(),
+					unread : Number.random(2) > 1 ? 0 : Number.random()
 				});
 			}
 

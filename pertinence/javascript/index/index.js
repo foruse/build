@@ -1,13 +1,18 @@
-﻿(function(Index, NonstaticClass, StaticClass){
+﻿(function(Index, NonstaticClass, StaticClass, CallServer){
 this.History = (function(List){
 	function Loader(){};
 	Loader = new StaticClass(null, "Loader");
 
 	Loader.properties({
 		project : function(){
-			return new Index.SPP.Project(jQun("#project"), function(){
-			
-			});
+			return new Index.SPP.Project(
+				jQun("#project"),
+				function(project){
+					CallServer.open("getProjects", null, function(data){
+						project.add(data);
+					});
+				}
+			);
 		}
 	});
 
@@ -104,7 +109,8 @@ Index.members(this);
 	{},
 	Bao.Page.Index,
 	jQun.NonstaticClass,
-	jQun.StaticClass
+	jQun.StaticClass,
+	Bao.CallServer
 ));
 
 (function(History){

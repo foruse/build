@@ -18,8 +18,8 @@
 				<section id="schedule"></section>
 				<section id="project">
 					<ul class="inlineBlock"></ul>
-					<script type="text/html">
-						@for(project ->> pro){
+					<script id="project_html" type="text/html">
+						@for(projects ->> pro){
 							<li>
 								<figure isimportant="{pro.isImportant}">
 									<figcaption>
@@ -28,7 +28,7 @@
 									</figcaption>
 									<dl>
 										<dd class="inlineBlock">
-											@for(users ->> user){
+											@for(pro.users ->> user){
 												<img src="{user.avatar}" />
 											}
 										</dd>
@@ -36,7 +36,7 @@
 											<hr />
 										</dd>
 										<dt>
-											<span>{pro.descript}</span>
+											<span>{pro.lastMessage}</span>
 											<a unread="{pro.unread}">{pro.unread}</a>
 										</dt>
 									</dl>		
@@ -86,7 +86,8 @@
 	<script src="../javascript/index/spp.js" type="text/javascript"></script>
 	<script src="../javascript/index/index.js" type="text/javascript"></script>
 
+	<script src="../../test/callServer/index_callServer.js" type="text/javascript"></script>
 	<script src="../../test/dummyData/generate.js" type="text/javascript"></script>
-	<script src="../../test/dummyData/index.js" type="text/javascript"></script>
+	<script src="../../test/dummyData/index_dummyData.js" type="text/javascript"></script>
 </body>
 </html>

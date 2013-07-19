@@ -1,8 +1,9 @@
 ﻿(function(CallServer, Text, allFormatters){
+CallServer.beginTesting();
 CallServer.setResponseType("json");
 
 CallServer.save([
-	["getProjects",			null,		""]
+	["getProjects",			"",		""]
 ], allFormatters);
 
 }(
@@ -10,7 +11,7 @@ CallServer.save([
 	jQun.Text,
 	// allFormatters
 	{
-		getTutorials : function(data){
+		getProjects : function(data){
 			return Bao.Test.DummyData.Index.SPP.getProjects(20);
 		}
 	}

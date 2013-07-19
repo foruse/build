@@ -121,6 +121,7 @@
 	padding-left : 20px;
 	height : 45px;
 	line-height : 45px;
+	overflow : hidden;
 }
 #project dt a {
 	float : right;
@@ -135,6 +136,9 @@
 	font-weight : bold;
 	color : #fff;
 	text-align : center;
+}
+#project dt a[unread="0"] {
+	display : none;
 }
 
 

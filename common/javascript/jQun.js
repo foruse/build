@@ -770,6 +770,10 @@ this.Ajax = (function(stateChanged, getSendString){
 	Ajax.properties({
 		RequestHeader : RequestHeader,
 		RequestStorage : RequestStorage,
+		beginTesting : function(){
+			this.isTesting = true;
+		},
+		isTesting : false,
 		open : function(name, params, _complete, _isNotAsyn){
 			///	<summary>
 			///	开打一个ajax连接。
@@ -794,6 +798,16 @@ this.Ajax = (function(stateChanged, getSendString){
 
 			if(typeof _complete === "function"){
 				var responseType = this.responseType, isResponseJSON = responseType === "json";
+
+				if(this.isTesting){
+					stateChanged({
+						readyState : 4,
+						status : 200,
+						responseText : ""
+					}, item.formatter, _complete, isResponseJSON);
+
+					return;
+				}
 
 				request.onreadystatechange =  function(){
 					stateChanged(this, item.formatter, _complete, isResponseJSON);
