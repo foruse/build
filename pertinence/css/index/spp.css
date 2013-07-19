@@ -53,7 +53,7 @@
 }
 #project li {
 	width : 50%;
-	height : 200px;
+	height : 195px;
 	padding-right : 5px;
 	margin-bottom : 10px;
 }
@@ -91,18 +91,19 @@
 #project dl {
 	height : 140px;
 	font-size : 18px;
-	padding : 10px 20px 0 20px;
 	background-image : -webkit-linear-gradient(top, #fdfdfd, #e9e9e9);
 }
 #project dd {
 	height : 1px;
-	margin : 15px 0 -1px 0;
+	margin-bottom : -1px;
 	white-space : normal;
 }
 #project dd:first-of-type {
-	height : 65px;
+	height : 75px;
 	margin : 0;
 	overflow : hidden;
+	margin-bottom : 15px;
+	padding : 10px 20px 0 20px;
 }
 #project img {
 	width : 26px;
@@ -117,11 +118,23 @@
 	border-top : 1px dashed #9a9a9a;
 }
 #project dt {
-	height : 50px;
-	line-height : 40px;
+	padding-left : 20px;
+	height : 45px;
+	line-height : 45px;
 }
 #project dt a {
 	float : right;
+	height : 0;
+	width : 0;
+	border-left : 45px solid transparent;
+	border-bottom : 45px solid #c70000;
+	text-indent : -25px;
+	line-height : 60px;
+	font-family : Arial;
+	font-size : 18px;
+	font-weight : bold;
+	color : #fff;
+	text-align : center;
 }
 
 

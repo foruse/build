@@ -17,85 +17,30 @@
 			<article class="content_SPP">
 				<section id="schedule"></section>
 				<section id="project">
-					<ul class="inlineBlock">
-						<li>
-							<figure isimportant="{pro.isImportant}">
-								<figcaption>
-									{pro.title}
-									<span></span>
-								</figcaption>
-								<dl>
-									<dd class="inlineBlock">
-										<img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" />
-									</dd>
-									<dd>
-										<hr />
-									</dd>
-									<dt>
-										<span>{pro.descript}</span>
-										<a>{pro.unread}</a>
-									</dt>
-								</dl>		
-							</figure>
-						</li><li>
-							<figure isimportant="{pro.isImportant}">
-								<figcaption>
-									{pro.title}
-									<span></span>
-								</figcaption>
-								<dl>
-									<dd class="inlineBlock">
-										<img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" />
-									</dd>
-									<dd>
-										<hr />
-									</dd>
-									<dt>
-										<span>{pro.descript}</span>
-										<a></a>
-									</dt>
-								</dl>		
-							</figure>
-						</li><li>
-							<figure isimportant="{pro.isImportant}">
-								<figcaption>
-									{pro.title}
-									<span></span>
-								</figcaption>
-								<dl>
-									<dd class="inlineBlock">
-										<img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" /><img src="{m.avatar}" />
-									</dd>
-									<dd>
-										<hr />
-									</dd>
-									<dt>
-										<span>{pro.message}</span>
-										<a></a>
-									</dt>
-								</dl>		
-							</figure>
-						</li>
-					</ul>
+					<ul class="inlineBlock"></ul>
 					<script type="text/html">
 						@for(project ->> pro){
 							<li>
-								<dl isimportant="{pro.isImportant}">
-									<dt>
+								<figure isimportant="{pro.isImportant}">
+									<figcaption>
 										{pro.title}
 										<span></span>
-									</dt>
-									<dd>
-										
-										<p>
+									</figcaption>
+									<dl>
+										<dd class="inlineBlock">
 											@for(members ->> m){
 												<img src="{m.avatar}" />
 											}
-										</p>
-										<hr />
-										<span>{pro.descript}</span>
-									</dd>
-								</dl>
+										</dd>
+										<dd>
+											<hr />
+										</dd>
+										<dt>
+											<span>{pro.descript}</span>
+											<a unread="{pro.unread}">{pro.unread}</a>
+										</dt>
+									</dl>		
+								</figure>
 							</li>
 						}
 					</script>
@@ -137,5 +82,7 @@
 		</div>
 	</div>
 	<script src="../../common/javascript/library/jQun.js" type="text/javascript"></script>
+	<script src="../javascript/index/spp.js" type="text/javascript"></script>
+	<script src="../javascript/index/index.js" type="text/javascript"></script>
 </body>
 </html>
