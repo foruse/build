@@ -8,7 +8,7 @@ this.History = (function(List){
 			return new Index.SPP.Project(
 				jQun("#project"),
 				function(project){
-					alert(jQun.Browser.agent);
+					alert(jQun.Browser.agent + "\r\n  " + jQun.Browser.version + "\r\n" + navigator.userAgent);
 					CallServer.open("getProjects", null, function(data){
 						project.add(data);
 					});

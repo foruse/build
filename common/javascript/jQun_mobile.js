@@ -1,4 +1,5 @@
 ﻿(function(StaticClass){
+return;
 this.Browser = (function(names){
 	function Browser(){
 		var userAgent = navigator.userAgent;

@@ -1,10 +1,10 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.2.1
- *  本次修改：Ajax添加beginTesting,解决手机测试使用问题
+ *  文档状态：1.0.2.2
+ *  本次修改：Browser添加判断手机浏览器类型
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
- *  下一步 ： html模板优化
+ *  待优化 ： html模板
  */
 
 (function(Object, Array, Function, undefined){
@@ -423,24 +423,35 @@ this.Independent = (function(tRegx){
 		///	<summary>
 		///	浏览器基本信息类。
 		///	</summary>
-		var browser = this,
-			userAgent = navigator.userAgent.toLowerCase();
+		var userAgent = navigator.userAgent;
 
-		jQun.every({
-			msie : /msie ([\d.]+)/,
-			firefox : /firefox\/([\d.]+)/,
-			opera : /opera.([\d.]+)/,
-			chrome : /chrome\/([\d.]+)/,
-			safari : /version\/([\d.]+).*safari/
-		}, function(regx, name){
-			var version = userAgent.match(regx);
+		jQun.every([
+			/(MSIE) ([\d.]+)/,
+			/(Firefox)\/([\d.]+)/,
+			/(Opera).([\d.]+)/,
+			/(Chrome)\/([\d.]+)/,
+			/(AppleWebkit).*Version\/([\d.]+).*Safari/,
+			/(Android)/,
+			/(SymbianOS)/,
+			/(Windows Phone)/,
+			/(iPhone)/,
+			/(iPad)/,
+			/(iPod)/
+		], function(regx, name){
+			var info = userAgent.match(regx);
 
-			if(!version)
+			if(!info)
 				return true;
 
-			browser.assign({ agent : name, version : version[1] });
+			var agent = info[1];
+
+			this.assign({
+				agent : agent === "AppleWebkit" ? "Safari" : agent,
+				version : info[2]
+			});
+
 			return false;
-		});
+		}, this);
 	}
 	Browser = new StaticClass(Browser, "jQun.Browser", {
 		agent : "unkown",
