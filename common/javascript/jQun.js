@@ -418,26 +418,30 @@ this.BaseClass = (function(methods, argumentRegx, argumentListRegx){
 NonstaticClass = this.BaseClass.NonstaticClass;
 StaticClass = this.BaseClass.StaticClass;
 
-this.Independent = (function(tRegx){
+this.Independent = (function(){
 	function Browser(){
 		///	<summary>
 		///	浏览器基本信息类。
 		///	</summary>
-		var userAgent = navigator.userAgent;
+		var RegExp = window.RegExp,
+		
+			userAgent = navigator.userAgent,
+
+			mobileVersionString = ".*Version\\/([\\d\\.]+).*(Mobile)";
 
 		jQun.every([
 			/(MSIE) ([\d.]+)/,
 			/(Firefox)\/([\d.]+)/,
 			/(Opera).([\d.]+)/,
 			/(Chrome)\/([\d.]+)/,
-			/(AppleWebkit).*Version\/([\d.]+).*Safari/,
-			/(Android)/,
-			/(SymbianOS)/,
-			/(Windows Phone)/,
-			/(iPhone)/,
-			/(iPad)/,
-			/(iPod)/
-		], function(regx, name){
+			/(AppleWebkit).*Version\/([\d\.]+).*Safari/,
+			new RegExp("(Android)" + mobileVersionString),
+			new RegExp("(SymbianOS)" + mobileVersionString),
+			new RegExp("(Windows Phone)" + mobileVersionString),
+			new RegExp("(iPhone)" + mobileVersionString),
+			new RegExp("(iPad)" + mobileVersionString),
+			new RegExp("(iPod)" + mobileVersionString)
+		], function(regx){
 			var info = userAgent.match(regx);
 
 			if(!info)
@@ -447,7 +451,8 @@ this.Independent = (function(tRegx){
 
 			this.assign({
 				agent : agent === "AppleWebkit" ? "Safari" : agent,
-				version : info[2]
+				isMobile : info[3] === "Mobile",
+				version : info[2] || "mobile"
 			});
 
 			return false;
@@ -455,6 +460,7 @@ this.Independent = (function(tRegx){
 	}
 	Browser = new StaticClass(Browser, "jQun.Browser", {
 		agent : "unkown",
+		isMobile : false,
 		version : "0"
 	}, { enumerable : true });
 
