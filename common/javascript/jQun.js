@@ -429,19 +429,18 @@ this.Independent = (function(){
 
 			mobileVersionString = ".*Version\\/([\\d\\.]+).*(Mobile)";
 
-		jQun.every([
+		[
 			/(MSIE) ([\d.]+)/,
 			/(Firefox)\/([\d.]+)/,
 			/(Opera).([\d.]+)/,
 			/(Chrome)\/([\d.]+)/,
 			/(AppleWebkit).*Version\/([\d\.]+).*Safari/,
 			new RegExp("(Android)" + mobileVersionString),
-			new RegExp("(SymbianOS)" + mobileVersionString),
 			new RegExp("(Windows Phone)" + mobileVersionString),
 			new RegExp("(iPhone)" + mobileVersionString),
 			new RegExp("(iPad)" + mobileVersionString),
 			new RegExp("(iPod)" + mobileVersionString)
-		], function(regx){
+		].every(function(regx){
 			var info = userAgent.match(regx);
 
 			if(!info)
@@ -1478,14 +1477,14 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 	ElementList = new NonstaticClass(ElementList, "jQun.ElementList", NodeList);
 
 	ElementList.properties({
-		attach : function(event, _capture){
+		attach : function(events, _capture){
 			///	<summary>
 			///	向集合中所有元素注册事件侦听器。
 			///	</summary>
-			///	<param name="event" type="object">事件侦听器键值对。</param>
+			///	<param name="events" type="object">事件侦听器键值对。</param>
 			///	<param name="_capture" type="boolean">侦听器是否运行于捕获阶段。</param>
 			this.forEach(function(element){
-				forEach(event, function(fn, type){
+				forEach(events, function(fn, type){
 					element.addEventListener(type, fn, _capture);
 				});
 			});
@@ -1537,13 +1536,13 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 			});
 			return this;
 		},
-		detach : function(event){
+		detach : function(events){
 			///	<summary>
 			///	移除集合中所有元素的事件侦听器。
 			///	</summary>
-			///	<param name="event" type="object">事件侦听器键值对。</param>
+			///	<param name="events" type="object">事件侦听器键值对。</param>
 			this.forEach(function(element){
-				forEach(event, function(fn, type){
+				forEach(events, function(fn, type){
 					element.removeEventListener(type, fn);
 				});
 			});
