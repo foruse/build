@@ -76,3 +76,84 @@ if(jQun.Browser.isMobile){
 		touchend : "mouseup"
 	}
 ));
+
+
+(function(StaticClass, jQun){
+
+this.Scroll = (function(setTimeout){
+	function Timer(){};
+	Timer = new StaticClass(null, "Timer");
+
+	Timer.properties({
+		"break" : function(){
+			this.isEnabled = false;
+		},
+		current : 0,
+		isEnabled : false,
+		max : 1,
+		setMax : function(max){
+			this.max = max;
+		},
+		start : function(onSuccess){
+			var timer = this, current = this.current;
+
+			if(this.max < current){
+				this.break();
+				onSuccess();
+				return;
+			}
+			else if(current === 0){
+				this.isEnabled = true;
+			}
+			else if(!this.isEnabled){
+				this.current = 0;
+				console.log("dis");
+				return;
+			}
+
+			this.current++;
+
+			setTimeout(function(){
+				timer.start(onSuccess);
+			}, 100);
+		}
+	});
+
+
+	function Scroll(){
+		var sourceEl = this.sourceEl;
+
+		Timer.setMax(3);
+
+		sourceEl.attach({
+			touchstart : function(){
+				Timer.start(function(){
+					console.log(1);
+				});
+			},
+			touchmove : function(){
+				console.log(2);
+				Timer.break();
+			},
+			touchend : function(){
+		
+			}
+		});
+	};
+	Scroll = new StaticClass(Scroll, "jQun.Scroll", {
+		sourceEl : jQun(window)
+	});
+
+	return Scroll;
+}(
+	// setTimeout
+	setTimeout
+));
+
+jQun.defineProperties(jQun, this);
+
+}.call(
+	{},
+	jQun.StaticClass,
+	jQun
+));

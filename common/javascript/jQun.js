@@ -385,14 +385,7 @@ this.BaseClass = (function(methods, argumentRegx, argumentListRegx){
 		});
 
 		if(_properties){
-			if(_descriptor){
-				this.properties.call(NewClass, _properties, _descriptor);
-			}
-			else{
-				forEach(_properties, function(descriptor, name){
-					define(NewClass, name, descriptor.value, descriptor);
-				});
-			}
+			this.properties.call(NewClass, _properties, _descriptor);
 		}
 
 		if(_constructor)

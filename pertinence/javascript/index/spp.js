@@ -6,23 +6,6 @@ this.Project = (function(html){
 		});
 
 		oncallServer(this);
-
-		panelEl["ontouchstart"] = function(){
-				alert(1);
-				panelEl.detach({
-					touchstart : arguments.callee
-				});
-			};
-
-		return;
-		panelEl.attach({
-			"touchstart" : function(){
-				alert(1);
-				panelEl.detach({
-					touchstart : arguments.callee
-				});
-			}
-		});
 	};
 	Project = new NonstaticClass(Project, "Bao.Page.Index.SPP.Project");
 
