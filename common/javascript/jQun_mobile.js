@@ -1,10 +1,10 @@
 ﻿(function(jQun, mEvents){
-
 // 如果是移动设备，则不需要虚拟这些方法及事件
 if(jQun.Browser.isMobile){
 	return;
 }
 
+// 重写ElementList的attach、detach
 (function(ElementList, forEach){
 	this.attach = function(events, _capture){
 		///	<summary>
@@ -49,6 +49,7 @@ if(jQun.Browser.isMobile){
 ));
 
 
+// 重写HTMLElementList三个事件的赋值与获取
 (function(HTMLElementList){
 	jQun.forEach(mEvents, function(type, mType){
 		this["on" + mType] = {
@@ -68,6 +69,46 @@ if(jQun.Browser.isMobile){
 ));
 
 
+// 给MouseEvent虚拟一些移动特有属性
+(function(MouseEvent, NonstaticClass, StaticClass){
+this.touches = (function(List, window){
+	function Touch(){}
+	Touch = new StaticClass(null, "Touch");
+
+	["clientX", "clientY", "pageX", "pageY", "screenX", "screenY"].forEach(function(name){
+		var properties = {};
+
+		properties[name] = {
+			get : function(){
+				return window.event[name];
+			},
+			set : function(value){
+				window.event[name] = value;
+			}
+		};
+
+		Touch.properties(properties, { gettable : true, settable : true });
+	});
+
+	function TouchList(){
+		this.push(Touch);
+	};
+	TouchList = new NonstaticClass(TouchList, "TouchList", List.prototype);
+
+	return new TouchList.constructor();
+}(
+	jQun.List,
+	window
+));
+
+jQun.defineProperties(MouseEvent.prototype, this);
+}.call(
+	{},
+	MouseEvent,
+	jQun.NonstaticClass,
+	jQun.StaticClass
+));
+
 }(
 	jQun,
 	{
@@ -78,82 +119,126 @@ if(jQun.Browser.isMobile){
 ));
 
 
-(function(StaticClass, jQun){
+(function(NonstaticClass, StaticClass, jQun){
+var Timer;
 
-this.Scroll = (function(setTimeout){
-	function Timer(){};
-	Timer = new StaticClass(null, "Timer");
+Timer = (function(setTimeout, clearTimeout){
+	function Timer(_speed){
+		this.assign({
+			speed : _speed || 200
+		});
+	};
+	Timer = new NonstaticClass(Timer, "Timer");
 
 	Timer.properties({
 		"break" : function(){
 			this.isEnabled = false;
+			clearTimeout(this.index);
 		},
-		current : 0,
+		index : -1,
 		isEnabled : false,
-		max : 1,
-		setMax : function(max){
-			this.max = max;
+		interval : function(intervalFn){
+			this.index = setTimeout(function(){
+				intervalFn();
+
+				if(!this.isEnabled)
+					return;
+
+				this.interval(intervalFn);
+			}.bind(this), this.speed);
 		},
-		start : function(onSuccess){
-			var timer = this, current = this.current;
-
-			if(this.max < current){
-				this.break();
-				onSuccess();
+		speed : 200,
+		start : function(){
+			if(this.isEnabled)
 				return;
-			}
-			else if(current === 0){
-				this.isEnabled = true;
-			}
-			else if(!this.isEnabled){
-				this.current = 0;
-				console.log("dis");
-				return;
-			}
 
-			this.current++;
-
-			setTimeout(function(){
-				timer.start(onSuccess);
-			}, 100);
+			this.isEnabled = true;
+			//this.interval(intervalFn);
 		}
 	});
 
+	return Timer.constructor;
+}(
+	// setTimeout
+	setTimeout,
+	// clearTimeout
+	clearTimeout
+));
 
+
+this.Scroll = (function(getTop, setTop){
 	function Scroll(){
-		var sourceEl = this.sourceEl;
-
-		Timer.setMax(3);
+		var Scroll = this,
+			
+			sourceEl = this.sourceEl,
+			
+			scrollTimer = this.scrollTimer,
+			touchTimer = this.touchTimer;
 
 		sourceEl.attach({
-			touchstart : function(){
-				Timer.start(function(){
-					console.log(1);
+			touchstart : function(e){
+				Scroll.pageY = e.touches[0].pageY;
+
+				var scrollEl = jQun(e.target).between(".scroll");
+
+				if(scrollEl.length === 0)
+					return;
+
+				Scroll.assign({
+					scrollEl : scrollEl,
+					top : getTop(scrollEl)
 				});
+
+				scrollEl.set("position", "relative", "css");
+				touchTimer.start();
 			},
-			touchmove : function(){
-				console.log(2);
-				Timer.break();
+			touchmove : function(e){
+				if(!touchTimer.isEnabled)
+					return;
+
+				setTop(Scroll.scrollEl, Scroll.top + e.touches[0].pageY - Scroll.pageY);
 			},
 			touchend : function(){
-		
+				var scrollEl = Scroll.scrollEl, top = getTop(scrollEl);
+
+				if(top > 0){
+					setTop(scrollEl, 0);
+				}
+				else {
+					var h = (scrollEl.height() - scrollEl.parent().height()) * -1;
+
+					if(top < h){
+						setTop(scrollEl, h);
+					}
+				}
+				touchTimer.break();
 			}
 		});
 	};
 	Scroll = new StaticClass(Scroll, "jQun.Scroll", {
-		sourceEl : jQun(window)
+		pageY : 0,
+		scrollTimer : new Timer(75),
+		sourceEl : jQun(window),
+		touchTimer : new Timer()
 	});
 
 	return Scroll;
 }(
-	// setTimeout
-	setTimeout
+	// getTop
+	function(scrollEl){
+		return scrollEl.get("top", "css").split("px").join("") - 0 || 0;
+	},
+	// setTop
+	function(scrollEl, top){
+		scrollEl.set("top", Math.round(top) + "px", "css");
+	}
 ));
 
 jQun.defineProperties(jQun, this);
 
 }.call(
 	{},
+	jQun.NonstaticClass,
 	jQun.StaticClass,
 	jQun
 ));

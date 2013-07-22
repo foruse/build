@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.2.2
- *  本次修改：Browser添加判断手机浏览器类型
+ *  文档状态：1.0.2.4
+ *  本次修改：修改HTMLElement.prototype.metrics方法不能正确处理小数问题
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  *  待优化 ： html模板
  */
@@ -719,7 +719,7 @@ this.Ajax = (function(stateChanged, getSendString){
 			///	<param name="name" type="string">名称。</param>
 			///	<param name="value" type="string">值。</param>
 			this.name = name;
-			this.value = this;
+			this.value = value;
 			return this;
 		}
 	});
@@ -1718,8 +1718,9 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 			///	</summary>
 			///	<param name="name" type="string">盒模型属性名称。</param>
 			///	<param name="_value" type="string, number">盒模型属性值。</param>
-			if(_value === undefined)
-				return this.get(name, "css").split(/\D*/).join("") - 0;
+			if(_value === undefined){
+				return this.get(name, "css").split(/[^\d\.]*/).join("") - 0;
+			}
 
 			this.style[name] = _value;
 			return this;

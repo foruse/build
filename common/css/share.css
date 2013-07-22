@@ -4,6 +4,7 @@
 	list-style : none none outside;
 	box-sizing : border-box;
 	-moz-box-sizing : border-box;
+	-webkit-user-select : none;
 }
 
 body {
