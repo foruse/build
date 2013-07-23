@@ -3,7 +3,11 @@
 this.Bao = (function(Bao){
 	// 以下路径是相对于本文件的路径
 	Bao.members({
-		API : new Namespace(),
+		API : new Namespace().members({
+			Manager : new Namespace().members({ // api/manager.js
+				Timer : null
+			})
+		}),
 		CallServer : jQun.Ajax,
 		Page : new Namespace().members({
 			Index : new Namespace().members({ // ../../pertinence/javascript/index
@@ -27,7 +31,13 @@ this.Bao = (function(Bao){
 				})
 			})
 		}),
-		UI : new Namespace()
+		UI : new Namespace().members({
+			Control : new Namespace().members({ // ui/control
+				Drag : new Namespace().members({ // ui/control/drag.js
+					Scroll : null
+				})
+			})
+		})
 	});
 
 	return Bao;

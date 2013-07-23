@@ -1,0 +1,11 @@
+﻿.scroll {
+	width : 10px;
+	background-color : rgba(50, 50, 50, 0.3);
+	display : none;
+}
+.scroll, .scroll > button {
+	border-radius : 5px;
+}
+.scroll > button {
+	background-color : rgba(200, 20, 0, 0.7);
+}

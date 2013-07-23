@@ -116,6 +116,8 @@ Index.members(this);
 (function(History){
 
 window.onload = function(){
+	new Bao.UI.Control.Drag.Scroll();
+
 	new History().go("project");
 };
 
