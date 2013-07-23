@@ -12,7 +12,7 @@ CallServer.save([
 	// allFormatters
 	{
 		getProjects : function(data){
-			return Bao.Test.DummyData.Index.SPP.getProjects(20);
+			return Bao.Test.DummyData.Index.SPP.getProjects(50);
 		}
 	}
 ));
