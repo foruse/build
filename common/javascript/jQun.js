@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.2.4
- *  本次修改：修改HTMLElement.prototype.metrics方法不能正确处理小数问题
+ *  文档状态：1.0.2.5
+ *  本次修改：修正了CSSPropertyCollection赋予数字出错问题
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  *  待优化 ： html模板
  */
@@ -444,7 +444,7 @@ this.Independent = (function(){
 			this.assign({
 				agent : agent === "AppleWebkit" ? "Safari" : agent,
 				isMobile : info[3] === "Mobile",
-				version : info[2] || "mobile"
+				version : info[2]
 			});
 
 			return false;
@@ -1172,9 +1172,6 @@ this.PropertyCollection = (function(List, Common){
 			///	设置集合中所有元素的CSS属性。
 			///	</summary>
 			///	<param name="properties" type="object">CSS属性键值对。</param>
-			if(typeof value === "number")
-				value += "px";
-
 			this.forEach(function(style){
 				style[name] = value;
 			});
@@ -1722,7 +1719,11 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 				return this.get(name, "css").split(/[^\d\.]*/).join("") - 0;
 			}
 
-			this.style[name] = _value;
+			if(typeof _value === "number"){
+				_value += "px";
+			}
+
+			this.set(name, _value, "css");
 			return this;
 		},
 		width : function(w){

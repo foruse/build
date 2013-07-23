@@ -3,26 +3,33 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 	function Scroll(){
 		var scroll = this,
 			
-			scrollTimer = new Timer(), touchTimer = new Timer();
+			scrollTimer = new Timer(), touchTimer = new Timer(),
 
-		html.create().appendTo(document.body);
+			scrollEl = html.create();
+
+		this.assign({
+			scrollEl : scrollEl
+		});
+
+		scrollEl.appendTo(document.body);
 
 		this.sourceEl.attach({
 			touchstart : function(e){
 				//	记录pageY
 				scroll.pageY = e.touches[0].pageY;
 
-				var scrollEl = jQun(e.target).between(".scrollPanel");
+				var overflowEl = jQun(e.target).between(".overflowPanel");
 
 				// 如果没有需要滚动条的元素就return
-				if(scrollEl.length === 0)
+				if(overflowEl.length === 0)
 					return;
 
-				scroll.scrollEl = scrollEl;
-				scroll.top = getTop(scrollEl);
+				scroll.overflowEl = overflowEl;
+				scroll.top = getTop(overflowEl);
 
 				// 将滚动元素设为relative，便于使用top，而不打乱其他布局，比marginTop好
-				scrollEl.set("position", "relative", "css");
+				overflowEl.set("position", "relative", "css");
+				scroll.show(overflowEl);
 				// 停止滚动计时器
 				scrollTimer.stop();
 				// 启动计时器
@@ -34,30 +41,30 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 					return;
 
 				// 设置top
-				setTop(scroll.scrollEl, scroll.top + e.touches[0].pageY - scroll.pageY);
+				setTop(scroll.overflowEl, scroll.top + e.touches[0].pageY - scroll.pageY);
 			},
 			touchend : function(e){
-				var scrollEl = scroll.scrollEl;
+				var overflowEl = scroll.overflowEl;
 				
-				if(!scrollEl)
+				if(!overflowEl)
 					return;
 
-				onborder(scrollEl, getTop(scrollEl), function(t){
-					setTop(scrollEl, t);
+				onborder(overflowEl, getTop(overflowEl), function(t){
+					setTop(overflowEl, t);
 				});
 
-				this.scrollEl = undefined;
+				this.overflowEl = undefined;
 
 				// 停止计时器
 				touchTimer.stop(function(){
 					var y = e.touches[0].pageY - scroll.pageY,
 
-						precent = Math.abs((y / scrollEl.parent().height()).toFixed(2));
+						precent = Math.abs((y / overflowEl.parent().height()).toFixed(2));
 
 					if(precent < 0.4)
 						return;
 
-					var top = getTop(scrollEl),
+					var top = getTop(overflowEl),
 
 						speed = 100, i = precent > 0.75 ? 0 : 3,
 
@@ -75,16 +82,17 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 						}
 
 						// 滚动到了边界的处理方法
-						onborder(scrollEl, top, function(t){
+						onborder(overflowEl, top, function(t){
 							top = t;
 							isEnd = true;
 						})
 	
-						setTop(scrollEl, top);
+						setTop(overflowEl, top);
 						scrollTimer.stop();					
 
 						// 滚动结束
 						if(isEnd){
+							scroll.hide();
 							return;
 						}
 
@@ -94,11 +102,38 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 			}
 		});
 	};
-	Scroll = new NonstaticClass(Scroll, "jQun.Scroll", {
+	Scroll = new NonstaticClass(Scroll, "jQun.Scroll");
+
+	Scroll.properties({
+		hide : function(){
+			this.scrollEl.classList.remove("show");
+		},
+		// 溢出的元素（其父容器就应该需要滚动条）
+		overflowEl : undefined,
 		// touchstart时，记录的pageY值
 		pageY : 0,
-		// 当前需要滚动的元素
 		scrollEl : undefined,
+		show : function(overflowEl){
+			var scrollEl = this.scrollEl, overflowEl = this.overflowEl,
+
+				style = scrollEl.style, rect = overflowEl.parent()[0].getBoundingClientRect();
+				
+			jQun.forEach(rect, function(value, name){
+				if(name === "width")
+					return;
+
+				if(name === "left"){
+					value += rect.width - 10;
+				}
+
+				style[name] = value + "px";
+			});
+
+			var a = rect.height * 100 / overflowEl.height();
+
+			scrollEl.find(">button").height((rect.height * 100 / overflowEl.height()) + "%");
+			scrollEl.classList.add("show");
+		},
 		// 监听滚动的事件元素
 		sourceEl : jQun(window),
 		// touchstart时，记录的top值
@@ -114,22 +149,22 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 		'</aside>'
 	].join("")),
 	// getTop
-	function(scrollEl){
-		return scrollEl.get("top", "css").split("px").join("") - 0 || 0;
+	function(overflowEl){
+		return overflowEl.get("top", "css").split("px").join("") - 0 || 0;
 	},
 	// setTop
-	function(scrollEl, top){
-		scrollEl.set("top", Math.round(top) + "px", "css");
+	function(overflowEl, top){
+		overflowEl.set("top", Math.round(top) + "px", "css");
 	},
 	// onborder
-	function(scrollEl, top, fn){
+	function(overflowEl, top, fn){
 		// 如果是最上方的时候
 		if(top > 0){
 			fn(0, "top");
 			return;
 		}
 		
-		var t = (scrollEl.height() - scrollEl.parent().height()) * -1;
+		var t = (overflowEl.height() - overflowEl.parent().height()) * -1;
 
 		// 如果是最下方的时候
 		if(top < t){
