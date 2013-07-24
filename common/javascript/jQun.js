@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.2.5
- *  本次修改：修正了CSSPropertyCollection赋予数字出错问题
+ *  文档状态：1.0.2.6
+ *  本次修改：jQun.HTML开始支持id参数。如： new jQun.HTML("script_html", true); 第二参数为true(说明第一个参数为id)
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  *  待优化 ： html模板
  */
