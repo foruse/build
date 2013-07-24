@@ -3,7 +3,7 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 	function Scroll(){
 		var scroll = this,
 			
-			scrollTimer = new Timer(), touchTimer = new Timer(),
+			scrollTimer = new Timer(70), touchTimer = new Timer(250),
 
 			scrollEl = html.create();
 
@@ -33,15 +33,22 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 				// 停止滚动计时器
 				scrollTimer.stop();
 				// 启动计时器
-				touchTimer.start(250);
+				touchTimer.start();
 			},
 			touchmove : function(e){
 				// 如果计时器是未启动的，就return
 				if(!touchTimer.isEnabled)
 					return;
 
+				// 如果还在等待上一个touchmove的操作，以避免太过频繁执行事件，那么return
+				if(scrollTimer.isEnabled)
+					return;
+
 				// 设置top
 				setTop(scroll.overflowEl, scroll.top + e.touches[0].pageY - scroll.pageY);
+				scrollTimer.start(function(){
+					scrollTimer.stop();
+				});
 			},
 			touchend : function(e){
 				var overflowEl = scroll.overflowEl;
@@ -49,6 +56,9 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 				if(!overflowEl)
 					return;
 
+				scrollTimer.stop();
+
+				// 超出边界所执行的函数
 				onborder(overflowEl, getTop(overflowEl), function(t){
 					setTop(overflowEl, t);
 				});
@@ -69,8 +79,8 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 						speed = 100, i = precent > 0.75 ? 0 : 3,
 
 						n = y > 0 ? 1 : -1;
-
-					scrollTimer.start(75, function(){
+					
+					scrollTimer.start(function(){
 						var isEnd = false;
 
 						top = top + speed * n;
@@ -96,7 +106,7 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 							return;
 						}
 
-						scrollTimer.start(75, arguments.callee);
+						scrollTimer.start(arguments.callee);
 					});
 				});
 			}
@@ -128,8 +138,6 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 
 				style[name] = value + "px";
 			});
-
-			var a = rect.height * 100 / overflowEl.height();
 
 			scrollEl.find(">button").height((rect.height * 100 / overflowEl.height()) + "%");
 			scrollEl.classList.add("show");

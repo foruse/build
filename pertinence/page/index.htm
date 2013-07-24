@@ -29,7 +29,7 @@
 									<dl>
 										<dd class="inlineBlock">
 											@for(pro.users ->> user){
-												<img src="{user.avatar}" />
+												<img src="{user.avatar}" complete="false"/>
 											}
 										</dd>
 										<dd>
@@ -45,31 +45,17 @@
 						}
 					</script>
 				</section>
-				<section id="partner"></section>
+				<section id="partner">
+				
+				</section>
 			</article>
 			<footer class="tab_SPP">
-				<ul class="inlineBlock">
-					<li>
-						<button tab="scd">
-							<span>日程</span>
-						</button>
-					</li>
-					<li>
-						<button tab="prj" class="focused">
-							<span>项目</span>
-						</button>
-					</li>
-					<li>
-						<button tab="ptn">
-							<span>拍档</span>
-						</button>
-					</li>
-				</ul>
-				<script type="text/html">
+				<ul class="inlineBlock"></ul>
+				<script id="spp_item_html" type="text/html">
 					@for([
-						{ tab : "scd", title : "日程" },
-						{ tab : "prj", title : "项目" },
-						{ tab : "ptn", title : "拍档" }
+						{ tab : "schedule", title : "日程" },
+						{ tab : "project", title : "项目" },
+						{ tab : "partner", title : "拍档" }
 					] ->> t){
 						<li>
 							<button tab="{t.tab}">
@@ -84,6 +70,7 @@
 	<script src="../../common/javascript/jQun.js" type="text/javascript"></script>
 	<script src="../../common/javascript/jQun_mobile.js" type="text/javascript"></script>
 	<script src="../../common/javascript/structure.js" type="text/javascript"></script>
+	<script src="../../common/javascript/api/dom.js" type="text/javascript"></script>
 	<script src="../../common/javascript/api/manager.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/drag.js" type="text/javascript"></script>
 

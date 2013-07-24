@@ -1,22 +1,20 @@
 ﻿(function(Namespace, NonstaticClass, StaticClass){
-
 this.Bao = (function(Bao){
 	// 以下路径是相对于本文件的路径
 	Bao.members({
 		API : new Namespace().members({
+			DOM : new Namespace().members({ // api/dom.js
+				Panel : null
+			}),
 			Manager : new Namespace().members({ // api/manager.js
+				History : null,
 				Timer : null
 			})
 		}),
 		CallServer : jQun.Ajax,
 		Page : new Namespace().members({
 			Index : new Namespace().members({ // ../../pertinence/javascript/index
-				History : null, // ../../pertinence/javascript/index/index.js
-				SPP : new Namespace().members({ // ../../pertinence/javascript/index/spp.js
-					Partner : null,
-					Project : null,
-					Schedule : null
-				})
+				SPP : null // ../../pertinence/javascript/index/spp.js
 			})
 		}),
 		Test : new Namespace().members({ 

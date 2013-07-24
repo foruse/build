@@ -503,14 +503,17 @@ this.Independent = (function(){
 }());
 
 this.Replacement = (function(sRegx, fRegx, rRegx, tRegx){
-	function HTML(html){
+	function HTML(str, _isId){
 		///	<summary>
 		///	html模板。
 		///	</summary>
-		///	<param name="html" type="string">html模板源字符串。</param>
+		///	<param name="str" type="string">html模板源字符串。</param>
+		///	<param name="_isId" type="boolean">给定的字符串是否为id。</param>
 
 		// 此类代码还需优化
-		var arr = [], variables = {}, tReplace = Text.replace;
+		var arr = [], variables = {}, tReplace = Text.replace,
+
+			html = _isId === true ? jQun("#" + str).innerHTML : str;
 
 		arr.push("with(this){ return (function(", "undefined){ this.push('");
 

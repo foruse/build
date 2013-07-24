@@ -45,7 +45,7 @@
 	padding : 0 10px;
 }
 
-
+#project {display : none;}
 #project > ul {
 	max-width : 620px;
 	margin : 0 auto;
@@ -184,10 +184,10 @@
 	text-indent : 10px;
 	background : url(../../../common/image/width48.png) no-repeat 11px -98px;
 }
-.tab_SPP button[tab="prj"] span {
+.tab_SPP button[tab="project"] span {
 	background-image : url(../../../common/image/width60.png);
 	background-position : 1px -48px;
 }
-.tab_SPP button[tab="ptn"] span {
+.tab_SPP button[tab="partner"] span {
 	background-position : 13px -148px;
 }
