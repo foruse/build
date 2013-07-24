@@ -8,7 +8,7 @@
 }
 
 
-.title_SPP {
+#title_SPP {
 	top : 0;
 	line-height : 50px;
 	background-image : -webkit-linear-gradient(top, #db3615, #b70d00);
@@ -17,7 +17,7 @@
 	box-shadow : 0 0 5px #080103;
 	z-index : 2;
 }
-.title_SPP > button {
+#title_SPP > button {
 	float : left;
 	height : 54px;
 	width : 70px;
@@ -28,11 +28,11 @@
 	box-shadow : inset 0 2px 0 rgba(255, 255, 255, 0.1);
 	background : url(../../../common/image/width48.png) no-repeat 6px 6px content-box content-box;
 }
-.title_SPP > button[action="add"] {
+#title_SPP > button[action="add"] {
 	background-position : 9px -45px;
 	float : right;
 }
-.title_SPP > span {
+#title_SPP > span {
 	color : #f2f2f2;
 	font-size : 30px;
 }
@@ -142,27 +142,27 @@
 }
 
 
-.tab_SPP {
+#tab_SPP {
 	bottom : 0;
 	height : 76px !important;
 	background-image : -webkit-linear-gradient(top, #373737, #171717);
 	padding : 4px 15px;
 }
-.tab_SPP li {
+#tab_SPP li {
 	width : 33.33%;
 	height : 68px;
 }
-.tab_SPP li:nth-child(2) {
+#tab_SPP li:nth-child(2) {
 	padding : 0 15px;
 }
-.tab_SPP button {
+#tab_SPP button {
 	width : 100%;
 	height : 100%;
 	padding : 9px 0;
 	border : 0 none;
 	background-color : transparent;
 }
-.tab_SPP button.focused {
+#tab_SPP button.focused {
 	background : #3a3a3a -webkit-linear-gradient(top, #3a3a3a, #3a3a3a 58%, #181818);
 	box-shadow : inset 0 3px 5px rgba(0, 0, 0, 0.5);
 	border-radius : 5px;
@@ -170,10 +170,10 @@
 	border-top : 0 none;
 	border-bottom-width : 3px;
 }
-.tab_SPP button.focused span {
+#tab_SPP button.focused span {
 	color : #e42c19;
 }
-.tab_SPP span {
+#tab_SPP span {
 	display : inline-block;
 	height : 50px;
 	line-height : 50px;
@@ -184,10 +184,10 @@
 	text-indent : 10px;
 	background : url(../../../common/image/width48.png) no-repeat 11px -98px;
 }
-.tab_SPP button[tab="project"] span {
+#tab_SPP button[tab="project"] span {
 	background-image : url(../../../common/image/width60.png);
 	background-position : 1px -48px;
 }
-.tab_SPP button[tab="partner"] span {
+#tab_SPP button[tab="partner"] span {
 	background-position : 13px -148px;
 }
