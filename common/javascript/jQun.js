@@ -608,7 +608,7 @@ this.Replacement = (function(sRegx, fRegx, rRegx, tRegx){
 			///	渲染模板。
 			///	</summary>
 			///	<param name="_data" type="object, array">需要渲染的数据。</param>
-			return new Function(this.template).call(_data || {});
+			return new Function("jQun", this.template).call(_data || {}, jQun);
 		},
 		template : ""
 	});

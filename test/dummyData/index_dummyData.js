@@ -15,9 +15,13 @@ this.Common = Common = (function(){
 
 	Common.properties({
 		getUser : function(){
+			var name = String.random(5), firstLetter = name.substring(0, 1);
+
 			return {
 				id : Number.id(),
-				avatar : String.random()
+				name : name,
+				pinyin : firstLetter.match(/[A-Za-z]/) ? firstLetter : "z", // 这里只返回拼音首字母
+				avatar : "javascript:void(0);"
 			};
 		},
 		getUsers : function(_len){

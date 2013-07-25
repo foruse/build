@@ -33,6 +33,9 @@ this.Bao = (function(Bao){
 			Control : new Namespace().members({ // ui/control
 				Drag : new Namespace().members({ // ui/control/drag.js
 					Scroll : null
+				}),
+				List : new Namespace().members({ // ui/control/list.js
+					UserList : null
 				})
 			})
 		})

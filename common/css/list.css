@@ -1,0 +1,44 @@
+﻿.userList > ol > li {
+	padding : 15px 0 35px 0;
+}
+.userList dt {
+	padding-top : 12px;
+	height : 45px;
+	overflow : hidden;
+}
+.userList strong, .userList aside {
+	font-family : 幼圆;
+}
+.userList strong {
+	padding-left : 1em;
+	text-indent : -1em;
+	text-shadow : -1px 0 1px rgba(0, 0, 0, 0.4);
+	color : #fff;
+	line-height : 0;
+	vertical-align : top;
+	font-size : 28px;
+	display : block;
+	position : relative;
+	left : 15px;
+	height : 3px;
+	background-image : -webkit-linear-gradient(top, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5) 50%);
+	background-clip : content-box;
+}
+.userList figure {
+	width : 145px;
+}
+.userList figure img {
+	margin : 0 auto;
+	width : 130px;
+	height : 130px;
+	border-radius : 130px;
+	border : 5px solid #fff;
+	box-shadow : 0 0 6px rgba(8, 1, 3, 0.75);
+}
+.userList figcaption {
+	margin-top : 20px;
+	text-align : center;
+	font-size : 24px;
+	text-overflow : ellipsis;
+	overflow : hidden;
+}

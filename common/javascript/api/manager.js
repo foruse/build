@@ -10,9 +10,11 @@ this.History = (function(List, Index, CallServer){
 			///	</summary>
 			return new Index.SPP(
 				jQun("#SPP"),
-				"project",
-				function(oncallBack, name){
-					CallServer.open({ project : "getProjects" }[name], null, oncallBack);
+				function(oncallBack, name, params){
+					CallServer.open({
+						partner : "getPartners",
+						project : "getProjects"
+					}[name], params, oncallBack);
 				}
 			);
 		}
@@ -83,6 +85,8 @@ this.History = (function(List, Index, CallServer){
 
 			// 记录当前索引
 			this.idx = lastIdx + 1;
+
+			return panel;
 		},
 		homePage : "project",
 		indexOf : function(name){

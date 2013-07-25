@@ -8,7 +8,7 @@
 </head>
 <body>
 	<div class="main">
-		<div id="SPP">
+		<div id="SPP" focusedtab="">
 			<header id="title_SPP">
 				<button action="set"></button>
 				<span></span>
@@ -29,7 +29,7 @@
 									<dl>
 										<dd class="inlineBlock">
 											@for(pro.users ->> user){
-												<img src="{user.avatar}" complete="false"/>
+												<img src="{user.avatar}" />
 											}
 										</dd>
 										<dd>
@@ -45,8 +45,39 @@
 						}
 					</script>
 				</section>
-				<section id="partner">
-					<header></header>
+				<section id="partner" class="overflowPanel">
+					<ul>
+						<li></li>
+						<li></li>
+					</ul>
+					<script id="xx" type="text/html">
+						<div class="userList">
+							<ol>
+								@for(userListCollection ->> userList){
+									<li>
+										<dl>
+											<dt>
+												<strong>{userList.firstLetter}</strong>
+											</dt>
+											<dd>
+											@for(userList.users ->> u){
+												<figure id="{u.id}">
+													<p>
+														<img src="{u.avatar}" />
+													</p>
+													<figcaption>{u.name}</figcaption>
+												</figure>
+											}
+											</dd>
+										</dl>
+									</li>
+								}
+							</ol>
+							<aside>
+								<ol></ol>
+							</aside>
+						</div>
+					</script>
 				</section>
 			</article>
 			<footer id="tab_SPP">
@@ -70,9 +101,12 @@
 	<script src="../../common/javascript/jQun.js" type="text/javascript"></script>
 	<script src="../../common/javascript/jQun_mobile.js" type="text/javascript"></script>
 	<script src="../../common/javascript/structure.js" type="text/javascript"></script>
+
 	<script src="../../common/javascript/api/dom.js" type="text/javascript"></script>
 	<script src="../../common/javascript/api/manager.js" type="text/javascript"></script>
+
 	<script src="../../common/javascript/ui/control/drag.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/list.js" type="text/javascript"></script>
 
 	<script src="../javascript/index/spp.js" type="text/javascript"></script>
 	<script src="../javascript/index/index.js" type="text/javascript"></script>
