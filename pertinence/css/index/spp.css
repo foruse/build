@@ -52,7 +52,6 @@
 #project > ul {
 	max-width : 620px;
 	margin : 0 auto;
-	white-space : normal;
 }
 #project li {
 	width : 50%;
@@ -99,7 +98,6 @@
 #project dd {
 	height : 1px;
 	margin-bottom : -1px;
-	white-space : normal;
 }
 #project dd:first-of-type {
 	height : 75px;

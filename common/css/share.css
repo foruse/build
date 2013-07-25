@@ -86,6 +86,7 @@ h6 {
 
 .inlineBlock {
 	font-size : 0;
+	white-space : normal;
 }
 .inlineBlock > * {
 	font-size : 12px;

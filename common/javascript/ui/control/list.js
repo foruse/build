@@ -25,7 +25,7 @@ this.UserList = (function(HTMLElementList, panelHtml, listHtml){
 	new HTML([
 		'<ol>',
 			'@for(userListCollection ->> userList){',
-				'<li>',
+				'<li letter="{userList.firstLetter}">',
 					'<dl>',
 						'<dt>',
 							'<strong>{userList.firstLetter}</strong>',
@@ -45,7 +45,11 @@ this.UserList = (function(HTMLElementList, panelHtml, listHtml){
 			'}',
 		'</ol>',
 		'<aside>',
-			'<ol></ol>',
+			'<ol>',
+				'@for("ABCDEFGHIJKLMNOPQRSTUVWXYZ" ->> letter){',
+					'<li letter="{letter}">{letter}</li>',
+				'}',
+			'</ol>',
 		'</aside>',
 	].join(""))
 ));

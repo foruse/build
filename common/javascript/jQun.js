@@ -1573,7 +1573,7 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 		},
 		parent : function(){
 			///	<summary>
-			///	返回该集合的所有父元素。
+			///	返回该集合所有元素的父元素。
 			///	</summary>
 			var list = this.createList();
 

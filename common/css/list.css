@@ -1,5 +1,8 @@
-﻿.userList > ol > li {
-	padding : 15px 0 35px 0;
+﻿.userList {
+	padding-right : 15px;
+}
+.userList > ol > li {
+	padding-top : 5px;
 }
 .userList dt {
 	padding-top : 12px;
@@ -10,7 +13,7 @@
 	font-family : 幼圆;
 }
 .userList strong {
-	padding-left : 1em;
+	padding : 0 50px 0 1em;
 	text-indent : -1em;
 	text-shadow : -1px 0 1px rgba(0, 0, 0, 0.4);
 	color : #fff;
@@ -26,6 +29,7 @@
 }
 .userList figure {
 	width : 145px;
+	padding-bottom : 45px;
 }
 .userList figure img {
 	margin : 0 auto;
@@ -41,4 +45,16 @@
 	font-size : 24px;
 	text-overflow : ellipsis;
 	overflow : hidden;
+}
+.userList aside {
+	width : 22px;
+	position : fixed;
+	right : 15px;
+	top : 135px;
+	font-size : 18px;
+	color : #6a737d;
+	line-height : 25px;
+}
+.userList aside li {
+	text-align : center;
 }
