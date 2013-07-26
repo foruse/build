@@ -1,6 +1,6 @@
 ﻿(function(List, NonstaticClass, HTML){
 this.UserList = (function(HTMLElementList, panelHtml, listHtml){
-	function UserList(){
+	function UserList(onletter){
 		var userList = this;
 
 		this.combine(panelHtml.create());
@@ -8,10 +8,12 @@ this.UserList = (function(HTMLElementList, panelHtml, listHtml){
 		this.attach({
 			click : function(e){
 				var targetEl = jQun(e.target),
-					el = targetEl.between("aside li", this);
+					el = targetEl.between('aside li', this);
 
 				if(el.length > 0){
-					console.log(el[0].getBoundingClientRect());
+					onletter(
+						userList.rect("top") - userList.find('> ol > [letter="' + el.get("letter", "attr") + '"]').rect("top")
+					);
 				}
 			}
 		});

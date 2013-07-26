@@ -9,9 +9,6 @@
 	height : 45px;
 	overflow : hidden;
 }
-.userList strong, .userList aside {
-	font-family : 幼圆;
-}
 .userList strong {
 	padding : 0 50px 0 1em;
 	text-indent : -1em;
@@ -48,12 +45,16 @@
 }
 .userList aside {
 	width : 22px;
+	height : 710px;
 	position : fixed;
 	right : 15px;
 	top : 135px;
 	font-size : 18px;
 	color : #6a737d;
 	line-height : 25px;
+}
+.userList ol {
+	-webkit-column-count : auto;
 }
 .userList aside li {
 	text-align : center;

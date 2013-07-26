@@ -1768,7 +1768,7 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 			///	<param name="_name" type="string">需要只返回单个属性值的属性名称。</param>
 			var rect = this[0].getBoundingClientRect();
 
-			return _name in rect ? rect[0] : rect;
+			return _name in rect ? rect[_name] : rect;
 		},
 		show : function(_display){
 			///	<summary>

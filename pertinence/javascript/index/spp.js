@@ -37,7 +37,11 @@ this.SPP = (function(UserList){
 
 
 	function Partner(panelEl){
-		var userList = new UserList();
+		var userList, panelStyle = panelEl.style;
+		
+		userList = new UserList(function(top){
+			panelStyle.top = top + "px";
+		});
 
 		this.assign({
 			userList : userList
