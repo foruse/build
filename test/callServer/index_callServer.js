@@ -14,14 +14,19 @@ CallServer.save([
 	(function(Index){
 		return {
 			getPartners : function(){
-				var userListCollection = [], letters = {}, charCodeAt = "".charCodeAt;
+				var userListCollection = [], letters = {},
+					forEach = jQun.forEach, charCodeAt = "".charCodeAt;
 
-				jQun.forEach(Index.Common.getUsers(30), function(user){
+				forEach("ABCDEFGHIJKLMNOPQRSTUVWXYZ", function(l){
+					letters[l] = -1;
+				});
+
+				forEach(Index.Common.getUsers(30), function(user){
 					var firstLetter = user.pinyin.substring(0, 1).toUpperCase(),
 						
 						idx = letters[firstLetter];
 
-					if(idx === undefined){
+					if(idx === -1){
 						letters[firstLetter] = userListCollection.length;
 						userListCollection.push({
 							firstLetter : firstLetter,
@@ -39,6 +44,7 @@ CallServer.save([
 				});
 
 				return {
+					letters : letters,
 					userListCollection : userListCollection
 				};
 			},

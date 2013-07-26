@@ -1,7 +1,20 @@
 ﻿(function(List, NonstaticClass, HTML){
 this.UserList = (function(HTMLElementList, panelHtml, listHtml){
 	function UserList(){
+		var userList = this;
+
 		this.combine(panelHtml.create());
+
+		this.attach({
+			click : function(e){
+				var targetEl = jQun(e.target),
+					el = targetEl.between("aside li", this);
+
+				if(el.length > 0){
+					console.log(el[0].getBoundingClientRect());
+				}
+			}
+		});
 	};
 	UserList = new NonstaticClass(UserList, "Bao.UI.Control.List", HTMLElementList.prototype);
 
@@ -46,8 +59,8 @@ this.UserList = (function(HTMLElementList, panelHtml, listHtml){
 		'</ol>',
 		'<aside>',
 			'<ol>',
-				'@for("ABCDEFGHIJKLMNOPQRSTUVWXYZ" ->> letter){',
-					'<li letter="{letter}">{letter}</li>',
+				'@for(letters ->> idx, letter){',
+					'<li letter="{letter}" idx="{idx}">{letter}</li>',
 				'}',
 			'</ol>',
 		'</aside>',

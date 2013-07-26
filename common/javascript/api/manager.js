@@ -76,6 +76,7 @@ this.History = (function(List, Index, CallServer){
 			else {
 				// 加载、初始化新panel信息
 				panel = this.Loader[name]();
+				panel.show();
 			}
 
 			this.push({

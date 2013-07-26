@@ -100,7 +100,7 @@ this.SPP = (function(UserList){
 			///	<summary>
 			///	让选项卡失去焦点。
 			///	</summary>
-			var focusedEl = this.btnEls.between(".focused", this.panel[0]);
+			var focusedEl = this.btnEls.between(".focused", this.panelEl[0]);
 
 			if(focusedEl.length === 0)
 				return;
@@ -135,8 +135,7 @@ this.SPP = (function(UserList){
 
 		this.assign({
 			partner : new Partner.constructor(
-				panelEl.find("#partner"),
-				new HTML("xx", true)
+				panelEl.find("#partner")
 			),
 			project : new Project.constructor(
 				panelEl.find("#project"),
@@ -178,9 +177,10 @@ this.SPP = (function(UserList){
 	SPP = new NonstaticClass(SPP, "Bao.Page.Index.SPP", Panel.prototype);
 
 	SPP.properties({
-		tabEl : undefined,
-		headerEl : undefined,
-		project : undefined
+		parnter : undefined,
+		project : undefined,
+		tab : undefined,
+		title : undefined
 	});
 
 	return SPP.constructor;

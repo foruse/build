@@ -9,6 +9,9 @@
 	width : 100%;
 	position : fixed;
 }
+#SPP article > section {
+	display : none;
+}
 
 
 #title_SPP {
@@ -144,7 +147,7 @@
 
 
 #partner {
-
+	
 }
 
 

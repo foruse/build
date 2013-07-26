@@ -20,8 +20,8 @@ this.Common = Common = (function(){
 			return {
 				id : Number.id(),
 				name : name,
-				pinyin : firstLetter.match(/[A-Za-z]/) ? firstLetter : "z", // 这里只返回拼音首字母
-				avatar : "javascript:void(0);"
+				pinyin : firstLetter.match(/[A-Za-z]/) ? firstLetter : isNaN(firstLetter - 0) ? "z" : "a", // 这里只返回拼音首字母
+				avatar : "../../test/image/avatar/" + Number.random(16) + ".jpg"
 			};
 		},
 		getUsers : function(_len){

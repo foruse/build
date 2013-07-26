@@ -21,8 +21,10 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 				var overflowEl = jQun(e.target).between(".overflowPanel");
 
 				// 如果没有需要滚动条的元素就return
-				if(overflowEl.length === 0)
+				if(overflowEl.length === 0){
+					scroll.overflowEl = undefined;
 					return;
+				}
 
 				scroll.overflowEl = overflowEl;
 				scroll.top = getTop(overflowEl);
@@ -98,7 +100,7 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 						})
 	
 						setTop(overflowEl, top);
-						scrollTimer.stop();					
+						scrollTimer.stop();	
 
 						// 滚动结束
 						if(isEnd){
@@ -166,13 +168,13 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 	},
 	// onborder
 	function(overflowEl, top, fn){
-		// 如果是最上方的时候
-		if(top > 0){
+		var t = (overflowEl.height() - overflowEl.parent().height()) * -1;
+		
+		// 如果是最上方的时候 或者 父容器比溢出容器还要高（未溢出或隐藏了）
+		if(top > 0 || t > 0){
 			fn(0, "top");
 			return;
 		}
-		
-		var t = (overflowEl.height() - overflowEl.parent().height()) * -1;
 
 		// 如果是最下方的时候
 		if(top < t){

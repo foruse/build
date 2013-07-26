@@ -1,10 +1,9 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.2.6
- *  本次修改：jQun.HTML开始支持id参数。如： new jQun.HTML("script_html", true); 第二参数为true(说明第一个参数为id)
+ *  文档状态：1.0.2.9
+ *  本次修改：新增HTMLElement.rect方法，以获取clientRect
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
- *  待优化 ： html模板
  */
 
 (function(Object, Array, Function, undefined){
@@ -345,6 +344,13 @@ this.BaseClass = (function(methods, argumentRegx, argumentListRegx){
 			///	</summary>
 			///	<param name="AncestorClass" type="object, function">指定的类，或指定类的构造函数。</param>
 			return this instanceof AncestorClass.constructor;
+		},
+		override : function(properties){
+			///	<summary>
+			///	重写一个或多个属性的值。
+			///	</summary>
+			///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
+			return this.assign(properties);
 		},
 		properties : function(properties, _descriptor){
 			///	<summary>
@@ -970,22 +976,11 @@ this.List = (function(addArrayMethods){
 				return i !== item;
 			});
 		},
-		createList : function(args){
+		createList : function(){
 			///	<summary>
-			///	根据构造函数重新创建个新的列表。
+			///	创建个新的列表。
 			///	</summary>
-			///	<param name="args" type="*">用于传递给构造函数的参数列表。</param>
-			var constructor = this.constructor;
-
-			if(arguments.length === 0)
-				return new constructor();
-
-			return new (
-				constructor.bind.apply(
-					constructor,
-					this.combine.call([null], arguments)
-				)
-			);
+			return new List.constructor();
 		},
 		distinct : function(){
 			///	<summary>
@@ -1357,6 +1352,15 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 	};
 	NodeList = new NonstaticClass(NodeList, "jQun.NodeList", List.prototype);
 
+	NodeList.override({
+		createList : function(){
+			///	<summary>
+			///	创建个新的节点集合。
+			///	</summary>
+			return new NodeList.constructor();
+		}
+	});
+
 	NodeList.properties({
 		attributes : {
 			get : function(){
@@ -1468,6 +1472,17 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 		}
 	};
 	ElementList = new NonstaticClass(ElementList, "jQun.ElementList", NodeList);
+
+	ElementList.override({
+		createList : function(selector, _parent){
+			///	<summary>
+			///	创建个新的元素集合。
+			///	</summary>
+			///	<param name="selector" type="string, object">选择器、html或dom元素。</param>
+			///	<param name="_parent" type="object">指定查询的父节点。</param>
+			return new ElementList.constructor(selector, _parent);
+		}
+	});
 
 	ElementList.properties({
 		attach : function(events, _capture){
@@ -1686,6 +1701,17 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 		}
 	);
 
+	HTMLElementList.override({
+		createList : function(selector, _parent){
+			///	<summary>
+			///	创建个新的HTML元素集合。
+			///	</summary>
+			///	<param name="selector" type="string, object">选择器、html或dom元素。</param>
+			///	<param name="_parent" type="object">指定查询的父节点。</param>
+			return new HTMLElementList.constructor(selector, _parent);
+		}
+	});
+
 	HTMLElementList.properties({
 		style : {
 			get : function(){
@@ -1712,6 +1738,12 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 			///	<param name="h" type="string, number">元素的高。</param>
 			return this.metrics("height", h);
 		},
+		hide : function(){
+			///	<summary>
+			///	隐藏元素。
+			///	</summary>
+			this.set("display", "none", "css");
+		},
 		metrics : function(name, _value){
 			///	<summary>
 			///	获取或设置元素指定盒模型属性值。
@@ -1728,6 +1760,22 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 
 			this.set(name, _value, "css");
 			return this;
+		},
+		rect : function(_name){
+			///	<summary>
+			///	获取第一个元素的客户端属性。
+			///	</summary>
+			///	<param name="_name" type="string">需要只返回单个属性值的属性名称。</param>
+			var rect = this[0].getBoundingClientRect();
+
+			return _name in rect ? rect[0] : rect;
+		},
+		show : function(_display){
+			///	<summary>
+			///	显示元素。
+			///	</summary>
+			///	<param name="_display" type="string">修改元素display的css值。</param>
+			return this.set("display", _display || "block", "css");
 		},
 		width : function(w){
 			///	<summary>
