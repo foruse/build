@@ -63,26 +63,59 @@ this.SPP = (function(UserList){
 			userList : userList
 		});
 
+		panelEl.attach({
+			click : function(e){
+				var targetEl = jQun(e.target), el = targetEl.between(".groupingBar button", this);
+
+				if(el.length > 0){
+					if(el.get("action", "attr") === "addGroup"){
+						console.log(el);
+						return;
+					}
+					
+					partner.focus(el.get("groupId", "attr"), el);
+				}
+			}
+		});
+
 		userList.appendTo(panelEl.find(">ul>li:last-child")[0]);
 
 		CallServer.open("getPartnerGroups", null, function(data){
+			var groups = data.groups;
+
 			panelEl.find(".groupingBar").innerHTML = groupingHtml.render(data);
 
-			CallServer.open("getPartners", {}, function(dt){
-				partner.add(dt);
-			});
+			if(groups.length === 0)
+				return;
+
+			partner.focus(groups[0].id);
 		});
 	};
 	Partner = new NonstaticClass(Partner, null, Panel.prototype);
 
 	Partner.properties({
-		add : function(data){
-			this.userList.render(data);
-		},
 		getParams : function(){
 			return {
 				tab : "workmate"
 			};
+		},
+		focus : function(groupId, _groupEl){
+			var partner = this;
+
+			if(!_groupEl){
+				_groupEl = this.panelEl.find('.groupingBar button[groupid="' + groupId + '"]');
+			}
+			
+			if(_groupEl.classList.contains("focused")){
+				return;	
+			}
+
+			this.panelEl.find('.groupingBar button.focused').classList.remove("focused");
+			_groupEl.classList.add("focused");
+
+			CallServer.open("getPartners", { id : groupId }, function(data){
+				partner.userList.render(data);
+			});
 		},
 		userList : undefined
 	});

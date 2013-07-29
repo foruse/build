@@ -75,12 +75,12 @@
 								<dd class="inlineBlock">
 									<aside>
 										<button action="addGroup">添加组</button>
-										<button>全部</button>
+										<button groupid="-1">全部</button>
 									</aside>
 									<ul class="inlineBlock">
 										@for(groups ->> gp){
-											<li groupid="{gp.id}">
-												<button>{gp.name}</button>
+											<li>
+												<button groupid="{gp.id}">{gp.name}</button>
 											</li>
 										}
 									</ul>

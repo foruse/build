@@ -20,6 +20,8 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 
 				var overflowEl = jQun(e.target).between(".overflowPanel");
 
+				overflowEl.splice(1);
+
 				// 如果没有需要滚动条的元素就return
 				if(overflowEl.length === 0){
 					scroll.overflowEl = undefined;

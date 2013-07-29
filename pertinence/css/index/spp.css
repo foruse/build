@@ -191,14 +191,17 @@
 #partner {
 	
 }
+#partner .groupingBar {
+	padding : 0 25px;
+}
 #partner .groupingBar > dd {
 	height : 45px;
-	padding : 10px 25px 0 25px;
+	padding-top : 10px;
 	white-space : nowrap;
 	overflow : hidden;
 }
 #partner .groupingBar aside {
-	width : 250px;
+	width : 210px;
 }
 #partner .groupingBar ul {
 	overflow : hidden;
@@ -209,7 +212,7 @@
 	height : 32px;
 	line-height : 24px;
 	font-size : 24px;
-	margin : 0 30px;
+	margin : 0 10px;
 	background-color : transparent;
 	border : 0 none;
 	text-align : center;
@@ -218,11 +221,17 @@
 #partner .groupingBar button[action="addGroup"] {
 	width : 115px;
 	padding-left : 30px;
-	border : 1px solid rgba(0, 0, 0, 0.3);
+	border : 1px inset rgba(0, 0, 0, 0.3);
 	margin : 0;
 	box-shadow : inset 0 1px 2px #fff;
 	border-radius : 5px;
 	background : url(../../../common/image/width24.png) no-repeat 5px -55px;
+}
+#partner .groupingBar .focused {
+	background-color : #da3720;
+	box-shadow : inset 0 2px 4px rgba(10, 0, 5, 0.4);
+	color : #fff;
+	border-radius : 7px;
 }
 #partner .groupingBar > dt {
 	height : 20px;
