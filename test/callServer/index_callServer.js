@@ -3,8 +3,10 @@ CallServer.beginTesting();
 CallServer.setResponseType("json");
 
 CallServer.save([
+	["getPartnerGroups",			"",		""],
 	["getPartners",			"?tab={tab}",		""],
-	["getProjects",			"",		""]
+	["getProjects",			"",		""],
+	["getSchedule",			"?last={last}&next={next}",		""]
 ], allFormatters);
 
 }(
@@ -13,7 +15,15 @@ CallServer.save([
 	// allFormatters
 	(function(Index){
 		return {
-			getPartners : function(){
+			getPartnerGroups : function(){
+				var groups = Index.SPP.getPartnerGroups();
+
+				return {
+					groups : groups,
+					maxPage : Math.ceil(groups.length / 3)
+				};
+			},
+			getPartners : function(data){
 				var userListCollection = [], letters = {},
 					forEach = jQun.forEach, charCodeAt = "".charCodeAt;
 
@@ -51,6 +61,11 @@ CallServer.save([
 			getProjects : function(data){
 				return {
 					projects : Index.SPP.getProjects(50)
+				};
+			},
+			getSchedule : function(){
+				return {
+					schedule : Index.SPP.getSchedule(new Date(Date.now()), 2, 2)
 				};
 			}
 		};

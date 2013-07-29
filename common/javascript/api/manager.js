@@ -8,15 +8,7 @@ this.History = (function(List, Index, CallServer){
 			///	<summary>
 			///	加载项目区域。
 			///	</summary>
-			return new Index.SPP(
-				jQun("#SPP"),
-				function(oncallBack, name, params){
-					CallServer.open({
-						partner : "getPartners",
-						project : "getProjects"
-					}[name], params, oncallBack);
-				}
-			);
+			return new Index.SPP(jQun("#SPP"));
 		}
 	});
 

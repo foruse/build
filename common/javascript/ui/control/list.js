@@ -11,6 +11,9 @@ this.UserList = (function(HTMLElementList, panelHtml, listHtml){
 					el = targetEl.between('aside li', this);
 
 				if(el.length > 0){
+					if(el.get("idx", "attr") === "-1")
+						return;
+
 					onletter(
 						userList.rect("top") - userList.find('> ol > [letter="' + el.get("letter", "attr") + '"]').rect("top")
 					);

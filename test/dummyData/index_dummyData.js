@@ -47,6 +47,24 @@ this.SPP = (function(){
 	SPP = new StaticClass(null, "Bao.Test.DummyData.Test");
 
 	SPP.properties({
+		getPartnerGroups : function(){
+			var groups = [], length = Number.random(15);
+
+			for(var i = 0;i < length;i++){
+				groups.push({
+					name : String.random(6),
+					id : Number.random(10000)
+				});
+			}
+
+			return groups;
+		},
+		getPartners : function(name){
+			return {
+				partners : Common.getUsers(),
+				letter : ["a", "b", "c"]
+			};
+		},
 		getProjects : function(_len){
 			var projects = [];
 
@@ -66,6 +84,25 @@ this.SPP = (function(){
 			}
 
 			return projects;
+		},
+		getSchedule : function(date, last, next){
+			var schedule = [], beginDate = new Date(date.getTime());
+
+			beginDate.setDate(beginDate.getDate() - (beginDate.getDay() + last * 0));
+
+			for(var i = 0, j = next + last + 1;i < j;i++){
+				var scd = [];
+
+				for(var n = 0;n < 7;n++){
+					scd.push({
+						date : beginDate.setDate(beginDate.getDate() + 1),
+						count : Number.random(10)
+					});
+				}
+				schedule.push(scd);
+			}
+
+			return schedule;
 		}
 	});
 

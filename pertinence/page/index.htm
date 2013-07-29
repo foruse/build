@@ -10,15 +10,37 @@
 	<div class="main">
 		<div id="SPP" focusedtab="">
 			<header id="title_SPP">
-				<button action="set"></button>
+				<button action="set">
+					<span></span>
+				</button>
 				<span></span>
-				<button action="add"></button>
+				<button action="add">
+					<span></span>
+				</button>
 			</header>
 			<article class="content_SPP">
-				<section id="schedule"></section>
+				<section id="schedule">
+					<header>
+						<dl></dl>
+						<script id="spp_schedule_html" type="text/html">
+							<dt class="inlineBlock">
+								@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title){
+									<span>{title}</span>
+								}
+							</dt>
+							@for(schedule ->> week){
+								<ol>
+									@for(week ->> day){
+										<li></li>
+									}
+								</ol>
+							}
+						</script>
+					</header>
+				</section>
 				<section id="project" class="overflowPanel">
 					<ul class="inlineBlock"></ul>
-					<script id="project_html" type="text/html">
+					<script id="spp_project_html" type="text/html">
 						@for(projects ->> pro){
 							<li>
 								<figure isimportant="{pro.isImportant}">
@@ -47,37 +69,31 @@
 				</section>
 				<section id="partner" class="overflowPanel">
 					<ul>
-						<li></li>
+						<li>
+							<dl class="groupingBar"></dl>
+							<script id="spp_partnerGroups_html" type="text/html">
+								<dd class="inlineBlock">
+									<aside>
+										<button action="addGroup">添加组</button>
+										<button>全部</button>
+									</aside>
+									<ul class="inlineBlock">
+										@for(groups ->> gp){
+											<li groupid="{gp.id}">
+												<button>{gp.name}</button>
+											</li>
+										}
+									</ul>
+								</dd>
+								<dt>
+									@for(maxPage ->> idx){
+										<button idx="{idx}"></button>
+									}
+								</dt>
+							</script>
+						</li>
 						<li></li>
 					</ul>
-					<script id="xx" type="text/html">
-						<div class="userList">
-							<ol>
-								@for(userListCollection ->> userList){
-									<li>
-										<dl>
-											<dt>
-												<strong>{userList.firstLetter}</strong>
-											</dt>
-											<dd>
-											@for(userList.users ->> u){
-												<figure id="{u.id}">
-													<p>
-														<img src="{u.avatar}" />
-													</p>
-													<figcaption>{u.name}</figcaption>
-												</figure>
-											}
-											</dd>
-										</dl>
-									</li>
-								}
-							</ol>
-							<aside>
-								<ol></ol>
-							</aside>
-						</div>
-					</script>
 				</section>
 			</article>
 			<footer id="tab_SPP">

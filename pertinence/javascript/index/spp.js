@@ -1,4 +1,4 @@
-﻿(function(Index, Panel, NonstaticClass, HTML){
+﻿(function(Index, Panel, CallServer, NonstaticClass, HTML){
 this.SPP = (function(UserList){
 	function Title(panelEl){
 	
@@ -9,6 +9,21 @@ this.SPP = (function(UserList){
 		set : function(title){
 			this.panelEl.find(">span").innerHTML = title;
 		}
+	});
+
+
+	function Schedule(panelEl, html){
+		this.assign({
+			html : html
+		});
+	};
+	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
+
+	Schedule.properties({
+		add : function(data){
+			this.panelEl.find("> header > dl").innerHTML = this.html.render(data);
+		},
+		html : undefined
 	});
 
 
@@ -36,8 +51,9 @@ this.SPP = (function(UserList){
 	});
 
 
-	function Partner(panelEl){
-		var userList, panelStyle = panelEl.style;
+	function Partner(panelEl, groupingHtml){
+		var partner = this, 
+			userList, panelStyle = panelEl.style;
 		
 		userList = new UserList(function(top){
 			panelStyle.top = top + "px";
@@ -48,6 +64,14 @@ this.SPP = (function(UserList){
 		});
 
 		userList.appendTo(panelEl.find(">ul>li:last-child")[0]);
+
+		CallServer.open("getPartnerGroups", null, function(data){
+			panelEl.find(".groupingBar").innerHTML = groupingHtml.render(data);
+
+			CallServer.open("getPartners", {}, function(dt){
+				partner.add(dt);
+			});
+		});
 	};
 	Partner = new NonstaticClass(Partner, null, Panel.prototype);
 
@@ -128,22 +152,25 @@ this.SPP = (function(UserList){
 	});
 
 
-	function SPP(panelEl, oncallserver){
+	function SPP(panelEl){
 		///	<summary>
 		///	日程、项目、拍档页。
 		///	</summary>
 		/// <params name="panelEl" type="jQun.HTMLElementList">对应的元素</params>
-		/// <params name="oncallServer" type="function">获取数据的时候所调用的函数</params>
-		/// <params name="name" type="string">首先初始化的子区域</params>
 		var spp = this, panelAttr = panelEl.attributes;
 
 		this.assign({
 			partner : new Partner.constructor(
-				panelEl.find("#partner")
+				panelEl.find("#partner"),
+				new HTML("spp_partnerGroups_html", true)
 			),
 			project : new Project.constructor(
 				panelEl.find("#project"),
-				new HTML("project_html", true)
+				new HTML("spp_project_html", true)
+			),
+			schedule : new Schedule.constructor(
+				panelEl.find("#schedule"),
+				new HTML("spp_schedule_html", true)
 			),
 			tab : new Tab.constructor(
 				// panelEl
@@ -157,12 +184,6 @@ this.SPP = (function(UserList){
 					///	</summary>
 					/// <params name="name" type="string">需要焦点的panel名称</params>
 					var	childPanel = spp[name];
-
-					// 访问服务器取数据
-					oncallserver(function(data){
-						// 给对应的panel添加数据
-						childPanel.add(data);
-					}, name, childPanel.getParams ? childPanel.getParams() : null);
 
 					spp.title.set(title);
 					panelAttr.set("focusedtab", name);
@@ -197,6 +218,7 @@ Index.members(this);
 	{},
 	Bao.Page.Index,
 	Bao.API.DOM.Panel,
+	Bao.CallServer,
 	jQun.NonstaticClass,
 	jQun.HTML
 ));
