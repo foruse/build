@@ -1,4 +1,4 @@
-﻿(function(Index, Panel, CallServer, NonstaticClass, HTML){
+﻿(function(Index, Panel, Cache, CallServer, NonstaticClass, HTML){
 this.SPP = (function(UserList){
 	function Title(panelEl){
 	
@@ -33,8 +33,14 @@ this.SPP = (function(UserList){
 		///	</summary>
 		/// <params name="panelEl" type="jQun.HTMLElementList">对应的元素</params>
 		/// <params name="html" type="jQun.HTML">项目html模板</params>
+		var project = this;
+		
 		this.assign({
 			html : html
+		});
+
+		CallServer.open("getProjects", null, function(data){
+			project.add(data);
 		});
 	};
 	Project = new NonstaticClass(Project, null, Panel.prototype);
@@ -55,24 +61,30 @@ this.SPP = (function(UserList){
 		var partner = this, 
 			userList, panelStyle = panelEl.style;
 		
+		// 初始化用户列表
 		userList = new UserList(function(top){
 			panelStyle.top = top + "px";
 		});
 
 		this.assign({
+			cache : new Cache("partner"),
 			userList : userList
 		});
 
+		// 监听事件
 		panelEl.attach({
 			click : function(e){
 				var targetEl = jQun(e.target), el = targetEl.between(".groupingBar button", this);
 
+				// 如果点击的是分组栏上的按钮
 				if(el.length > 0){
+					// 如果点击的是添加分组
 					if(el.get("action", "attr") === "addGroup"){
 						console.log(el);
 						return;
 					}
 					
+					// 否则点击的是分组按钮
 					partner.focus(el.get("groupId", "attr"), el);
 				}
 			}
@@ -80,6 +92,7 @@ this.SPP = (function(UserList){
 
 		userList.appendTo(panelEl.find(">ul>li:last-child")[0]);
 
+		// 获取分组数据
 		CallServer.open("getPartnerGroups", null, function(data){
 			var groups = data.groups;
 
@@ -94,27 +107,38 @@ this.SPP = (function(UserList){
 	Partner = new NonstaticClass(Partner, null, Panel.prototype);
 
 	Partner.properties({
-		getParams : function(){
-			return {
-				tab : "workmate"
-			};
-		},
+		cache : undefined,
 		focus : function(groupId, _groupEl){
 			var partner = this;
 
+			// 如果分组元素不存在
 			if(!_groupEl){
 				_groupEl = this.panelEl.find('.groupingBar button[groupid="' + groupId + '"]');
 			}
 			
+			// 如果聚焦的分组已经是当前分组
 			if(_groupEl.classList.contains("focused")){
 				return;	
 			}
 
+			// 聚焦当前分组
 			this.panelEl.find('.groupingBar button.focused').classList.remove("focused");
 			_groupEl.classList.add("focused");
+			this.panelEl.set("top", 0, "css");
 
+			// 已经加载完成了，表明有数据，那么应该取缓存
+			if(_groupEl.get("complete", "attr") != null){
+				partner.userList.render(this.cache.get(groupId));
+				return;
+			}
+
+			// 还没当前分组的数据，那么就去取数据，再进行加载
 			CallServer.open("getPartners", { id : groupId }, function(data){
+				// 将数据存入缓存
+				partner.cache.set(groupId, data);
+				// 渲染数据
 				partner.userList.render(data);
+				_groupEl.set("complete", "", "attr")
 			});
 		},
 		userList : undefined
@@ -194,15 +218,21 @@ this.SPP = (function(UserList){
 
 		this.assign({
 			partner : new Partner.constructor(
+				// panelEl
 				panelEl.find("#partner"),
+				// groupingHtml
 				new HTML("spp_partnerGroups_html", true)
 			),
 			project : new Project.constructor(
+				// panelEl
 				panelEl.find("#project"),
+				// html
 				new HTML("spp_project_html", true)
 			),
 			schedule : new Schedule.constructor(
+				// panelEl
 				panelEl.find("#schedule"),
+				// html
 				new HTML("spp_schedule_html", true)
 			),
 			tab : new Tab.constructor(
@@ -251,6 +281,7 @@ Index.members(this);
 	{},
 	Bao.Page.Index,
 	Bao.API.DOM.Panel,
+	Bao.API.Data.Cache,
 	Bao.CallServer,
 	jQun.NonstaticClass,
 	jQun.HTML

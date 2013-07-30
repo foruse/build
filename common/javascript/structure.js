@@ -3,6 +3,9 @@ this.Bao = (function(Bao){
 	// 以下路径是相对于本文件的路径
 	Bao.members({
 		API : new Namespace().members({
+			Data : new Namespace().members({ // api/data.js
+				Cache : null
+			}),
 			DOM : new Namespace().members({ // api/dom.js
 				Panel : null
 			}),

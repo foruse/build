@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.2.9
- *  本次修改：新增HTMLElement.rect方法，以获取clientRect
+ *  文档状态：1.0.3.0
+ *  本次修改：新增NodeList.hasChild:判断指定节点是否是该集合中某个元素的后代节点。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -1392,6 +1392,15 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 			///	<param name="parentNode" type="object">指定的父节点。</param>
 			this.insertTo(parentNode);
 			return this;
+		},
+		hasChild : function(childNode){
+			///	<summary>
+			///	判断指定节点是否是该集合中某个元素的后代节点。
+			///	</summary>
+			///	<param name="childNode" type="DOM">指定的节点。</param>
+			return !this.every(function(node){
+				return !node.contains(childNode);
+			});
 		},
 		insertTo : function(parentNode, _idx){
 			///	<summary>
