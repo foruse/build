@@ -2,56 +2,53 @@
 	padding-right : 15px;
 }
 .userList > ol > li {
-	padding-top : 5px;
+	padding-top : 2px;
 }
 .userList dt {
-	padding-top : 12px;
-	height : 45px;
+	padding-top : 6px;
+	height : 22px;
 	overflow : hidden;
 }
 .userList strong {
-	padding : 0 50px 0 1em;
+	padding : 0 25px 0 1em;
 	text-indent : -1em;
 	text-shadow : -2px 0 1px rgba(0, 0, 0, 0.4);
 	color : #fff;
 	line-height : 0;
 	vertical-align : top;
-	font-size : 28px;
+	font-size : 14px;
 	display : block;
 	position : relative;
-	left : 15px;
-	height : 3px;
+	left : 7px;
+	height : 2px;
 	background-image : -webkit-linear-gradient(top, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5) 50%);
 	background-clip : content-box;
 }
 .userList figure {
-	width : 145px;
-	padding-bottom : 45px;
+	width : 72px;
+	padding-bottom : 22px;
 }
 .userList figure img {
 	margin : 0 auto;
-	width : 130px;
-	height : 130px;
-	border-radius : 130px;
-	border : 5px solid rgba(255, 255, 255, 0.5);
-	box-shadow : 0 0 6px rgba(8, 1, 3, 0.75);
+	width : 65px;
+	height : 65px;
+	border-radius : 65px;
+	border : 2px solid rgba(255, 255, 255, 0.5);
+	box-shadow : 0 0 3px rgba(8, 1, 3, 0.75);
 }
 .userList figcaption {
-	margin-top : 20px;
+	margin-top : 10px;
 	text-align : center;
-	font-size : 24px;
 	text-overflow : ellipsis;
 	overflow : hidden;
 }
 .userList aside {
-	width : 22px;
-	height : 710px;
+	width : 11px;
+	height : 338px;
 	position : fixed;
-	right : 15px;
-	top : 135px;
-	font-size : 18px;
+	right : 8px;
+	top : 88px;
 	color : #6a737d;
-	line-height : 25px;
 }
 .userList ol {
 	-webkit-column-count : auto;
@@ -59,6 +56,8 @@
 .userList aside li {
 	text-align : center;
 	font-weight : bold;
+	font-size : 10px;
+	line-height : 12px;
 }
 .userList aside li[idx="-1"] {
 	font-weight : normal;

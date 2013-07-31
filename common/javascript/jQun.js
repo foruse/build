@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.3.0
- *  本次修改：新增NodeList.hasChild:判断指定节点是否是该集合中某个元素的后代节点。
+ *  文档状态：1.0.3.1
+ *  本次修改：jQun.forEach支持数字循环，简化HTML的"替换for循环函数"。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -117,6 +117,13 @@ jQun = (function(methods){
 		}
 
 		var func = _this === undefined ? fn : fn.bind(_this);
+
+		if(typeof obj === "number"){
+			for(var i = 0;i < obj;i++){
+				func(undefined, i, obj);
+			}
+			return obj;
+		}
 
 		for(var o in obj){
 			func(obj[o], o, obj);
@@ -531,21 +538,11 @@ this.Replacement = (function(sRegx, fRegx, rRegx, tRegx){
 					.replace(sRegx, "")
 					// 替换for循环
 					.replace(fRegx, function(str, condition, i){
-						var replacement = ["');"];
-
-						replacement.push("jQun.forEach(");
-
-						// 如果条件为对象循环
-						if(isNaN(condition - 0)){
-							replacement.push(condition.split("{").join("\t").split("}").join("\n"));
-						}
-						// 如果条件为数字循环
-						else {
-							replacement.push("new Array(" + condition + " - 0 + 1).join(' ')");
-						}
-
-						replacement.push(", function(" + (i || "THIS") + ")\t this.push('");
-						return replacement.join("");
+						return [
+							"');jQun.forEach(",
+							condition.split("{").join("\t").split("}").join("\n"),
+							", function(" + (i || "THIS") + ")\t this.push('"
+						].join("");
 				})
 			}, function(str, modifier, word){
 				if(modifier === ":"){

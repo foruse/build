@@ -1,15 +1,16 @@
 ﻿.scroll {
-	width : 10px;
+	width : 5px;
 	background-color : rgba(50, 50, 50, 0.3);
 	position : absolute;
 	z-index : 2;
 	overflow : hidden;
+	display : none !important;
 }
 .scroll.show {
 	display : block;
 }
 .scroll, .scroll > button {
-	border-radius : 10px;
+	border-radius : 5px;
 }
 .scroll > button {
 	background-color : rgba(200, 50, 50, 0.7);

@@ -75,7 +75,7 @@ this.SPP = (function(){
 			for(var i = 0;i < _len;i++){
 				projects.push({
 					id : Number.id(),
-					isImportant : i % 3 === 0,
+					importantLevel : Number.random(3),
 					title : String.random(),
 					users : Common.getUsers(Number.random(20)),
 					lastMessage : String.random(),

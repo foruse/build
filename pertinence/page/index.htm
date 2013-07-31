@@ -53,10 +53,14 @@
 					<script id="spp_project_html" type="text/html">
 						@for(projects ->> pro){
 							<li>
-								<figure isimportant="{pro.isImportant}">
+								<figure>
 									<figcaption>
-										{pro.title}
-										<span></span>
+										<span>{pro.title}</span>
+										<strong class="inlineBlock">
+											@for(pro.importantLevel){
+												<span></span>
+											}
+										</strong>
 									</figcaption>
 									<dl>
 										<dd class="inlineBlock">

@@ -80,7 +80,7 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 
 					var top = getTop(overflowEl),
 
-						speed = 100, i = precent > 0.75 ? 0 : 3,
+						speed = 50, i = precent > 0.75 ? 0 : 1.5,
 
 						n = y > 0 ? 1 : -1;
 					
@@ -137,7 +137,7 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 					return;
 
 				if(name === "left"){
-					value += rect.width - 10;
+					value += rect.width - 5;
 				}
 
 				style[name] = value + "px";
