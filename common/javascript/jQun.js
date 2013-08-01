@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.3.1
- *  本次修改：jQun.forEach支持数字循环，简化HTML的"替换for循环函数"。
+ *  文档状态：1.0.4.0
+ *  本次修改：类库改版
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -11,61 +11,344 @@ var jQun,
 
 	NonstaticClass, StaticClass,
 
-	List,
+	List, ElementPropertyCollection,
 
-	forEach;
+	forEach,
+	
+	emptyAttrCollection;
 
-jQun = (function(methods){
-	return methods;
-}({
-	define : function(obj, name, value, _descriptor){
+
+jQun = (function(argRegx, argListRegx, every){
+	var forEach;
+
+	function jQun(selector){
 		///	<summary>
-		///	将属性添加到对象或修改现有属性的特性。
+		///	返回一个通过指定选择器筛选出来的元素集合。
 		///	</summary>
-		///	<param name="obj" type="object">对其添加或修改属性的对象。</param>
-		///	<param name="name" type="string">需要添加或修改的属性名。</param>
-		///	<param name="value" type="*">需要添加或修改的属性值。</param>
-		///	<param name="_descriptor" type="object">需要添加或修改的属性描述符。</param>
-		var isAccessor, desc = { configurable : true, writable : true };
-
-		_descriptor = _descriptor || {};
-		isAccessor = _descriptor.gettable || _descriptor.settable;
-
-		forEach(_descriptor, function(value, name){
-			desc[name] = value;
-		});
-
-		if(isAccessor){
-			delete desc["writable"];
-			desc.get = value.get;
-			desc.set = value.set;
-		}
-		else{
-			desc.value = value;
+		///	<param name="selector" type="string, element，array">选择器、html、dom元素或dom元素数组。</param>
+		if(jQun.isInstanceOf(this, arguments.callee)){
+			return this.creator.apply(this, arguments);
 		}
 
-		Object.defineProperty(obj, name, desc);
+		return new jQun.HTMLElementList(selector);
+	};
+	jQun.prototype = Object.create(null, { constructor : { value : jQun, writable : true } });
+	
+	forEach = function(obj, fn, _this){
+		every(obj, function(){
+			fn.apply(this, arguments);
+			return true;
+		}, _this);
+	};
 
-		if(!isAccessor && _descriptor.extensible === false)
-			Object.preventExtensions(obj[name]);
+	with(jQun){
+		// 为jQun添加常用方法
+		forEach({
+			define : function(obj, name, value, _descriptor){
+				///	<summary>
+				///	将属性添加到对象或修改现有属性的特性。
+				///	</summary>
+				///	<param name="obj" type="object">对其添加或修改属性的对象。</param>
+				///	<param name="name" type="string">需要添加或修改的属性名。</param>
+				///	<param name="value" type="*">需要添加或修改的属性值。</param>
+				///	<param name="_descriptor" type="object">需要添加或修改的属性描述符。</param>
+				var isAccessor, desc = { configurable : true, writable : true };
 
-		return obj;
-	},
-	defineProperties : function(obj, properties, _descriptor){
-		///	<summary>
-		///	将一个或多个属性添加到对象，并/或修改现有属性的特性。
-		///	</summary>
-		///	<param name="obj" type="object">对其添加或修改属性的对象。</param>
-		///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
-		///	<param name="_descriptor" type="object">需要添加或修改的属性描述符。</param>
-		var define = jQun.define;
+				if(!_descriptor){
+					_descriptor = {};
+				}
 
-		forEach(properties, function(value, name){
-			define(obj, name, value, _descriptor);
+				isAccessor = !!(_descriptor.gettable || _descriptor.settable);
+
+				forEach(_descriptor, function(name){
+					desc[name] = _descriptor[name];
+				});
+
+				if(isAccessor){
+					desc.get = value.get;
+					desc.set = value.set;
+
+					delete desc["writable"];
+				}
+				else{
+					desc.value = value;
+				}
+
+				Object.defineProperty(obj, name, desc);
+
+				if(desc.extensible === false && !isAccessor){
+					Object.preventExtensions(obj[name]);
+				}
+
+				return obj;
+			},
+			defineProperties : function(obj, properties, _descriptor){
+				///	<summary>
+				///	将一个或多个属性添加到对象，并/或修改现有属性的特性。
+				///	</summary>
+				///	<param name="obj" type="object">对其添加或修改属性的对象。</param>
+				///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
+				///	<param name="_descriptor" type="object">需要添加或修改的属性描述符。</param>
+				forEach(properties, function(value, name){
+					define(obj, name, value, _descriptor);
+				});
+
+				return obj;
+			},
+			every : every,
+			except : function(args, properties){
+				///	<summary>
+				///	返回一个不包含所有指定属性名称的合并对象。
+				///	</summary>
+				///	<param name="args" type="object">用于合并的对象集合。</param>
+				///	<param name="properties" type="array">需要排除的属性名称数组。</param>
+				var result = {};
+
+				forEach(toArray(arguments, 0, -1), function(obj){
+					for(var name in obj){
+						result[name] = obj[name];
+					}
+				});
+
+				forEach(arguments[arguments.length - 1], function(name){
+					delete result[name];
+				});
+				return result;
+			},
+			forEach : forEach,
+			isInstanceOf : function(obj, constructor){
+				///	<summary>
+				///	判断对象是否为指定类构造函数的一级实例（即直接由该类实例化）。
+				///	</summary>
+				///	<param name="obj" type="object">用于判断的实例对象。</param>
+				///	<param name="constructor" type="function">指定的类。</param>
+				return Object.getPrototypeOf(obj) === constructor.prototype;
+			},
+			isPropertyOf : function(obj, property){
+				///	<summary>
+				///	检测对象自己是否具有指定属性或访问器。
+				///	</summary>
+				///	<param name="obj" type="object">一个可能具有指定属性或访问器的对象。</param>
+				///	<param name="property" type="*">用于检测的属性或访问器。</param>
+				var names = ["value", "get", "set"];
+
+				return !Object.getOwnPropertyNames(obj).every(function(name){
+					return every(3, function(i){
+						return this[names[i]] !== property;
+					}, this(obj, name));
+				}, Object.getOwnPropertyDescriptor);
+			},
+			merge : function(obj, args){
+				///	<summary>
+				///	深度合并对象中所有项，返回一个新的对象。
+				///	</summary>
+				///	<param name="obj" type="object, array">需要合并的项。</param>
+				///	<param name="args" type="object, array">其他需要合并的项列表。</param>
+				if(obj instanceof Array)
+					return obj.concat.apply(obj, toArray(arguments, 1));
+
+				var result = {}, another = arguments[1];
+
+				nesting(arguments, function(value, name){
+					result[name] = typeof value === "object" ? merge(value) : value;
+				});
+				return result;
+			},
+			nesting : function(obj, fn, _this){
+				///	<summary>
+				///	将对象中的每个枚举元素进行再枚举并执行指定操作（双重嵌套的forEach）。
+				///	</summary>
+				///	<param name="obj" type="object">需要嵌套枚举并执行指定操作的对象（一般为json）。</param>
+				///	<param name="fn" type="function">指定的操作函数。</param>
+				///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
+				if(fn === undefined){
+					fn = fn.bind(_this);
+				}
+
+				forEach(obj, function(o){
+					forEach(o, fn);
+				});
+			},
+			set : function(obj, properties){
+				///	<summary>
+				///	添加或修改指定对象的属性。
+				///	</summary>
+				///	<param name="obj" type="object">需要添加或修改属性的对象。</param>
+				///	<param name="properties" type="object">需要添加或修改的属性集合。</param>
+				for(var name in properties){
+					obj[name] = properties[name];
+				}
+
+				return obj;
+			},
+			toArray : function(obj, _start, _end){
+				///	<summary>
+				///	将类似数组的对象转化为数组。
+				///	</summary>
+				///	<param name="obj" type="object">需要转化为数组的对象。</param>
+				///	<param name="_start" type="number">进行截取，截取的起始索引。</param>
+				///	<param name="_start" type="number">需要截取的末尾索引。</param>
+				return [].slice.call(obj, _start || 0, _end);
+			}
+		}, function(method, name){
+			jQun[name] = method;
 		});
-		return obj;
-	},
-	every : function(obj, fn, _this){
+		
+		// 定义类的基础方法
+		defineProperties(jQun.prototype, {
+			assign : function(properties){
+				///	<summary>
+				///	给该类的属性赋值。
+				///	</summary>
+				///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
+				return set(this, properties);
+			},
+			base : function(args){
+				///	<summary>
+				///	子类访问父类。
+				///	</summary>
+				///	<param name="args" type="*">子类的参数列表。</param>
+				var ParentClass = this.constructor.prototype.getParentClass();
+
+				if(ParentClass.constructor === jQun)
+					return;
+
+				var arg = {}, parentList = [];
+
+				for(
+					var argumentList = arguments.callee.caller.argumentList,
+						i = 0,
+						j = argumentList.length;
+					i < j;
+					i++
+				){
+					arg[argumentList[i]] = arguments[i];
+				}
+
+				while(ParentClass){
+					if(ParentClass === NonstaticClass.prototype)
+						break;
+
+					parentList.unshift(ParentClass);
+					ParentClass = ParentClass.getParentClass();
+				}
+
+				for(var i = 0, j = parentList.length;i < j;i++){
+					var passArgList = [], constructor = parentList[i].constructor;
+
+					for(
+						var argumentList = constructor.argumentList,
+							n = 0,
+							m = argumentList.length;
+						n < m;
+						n++
+					){
+						passArgList.push(arg[argumentList[n]]);
+					}
+
+					constructor.source.apply(this, passArgList);
+				}
+			},
+			creator : function(_constructor, _name, _ParentClass){
+				///	<summary>
+				///	派生出一个类。
+				///	</summary>
+				///	<param name="_constructor" type="function">源构造函数。</param>
+				///	<param name="_name" type="string">构造函数的名称。</param>
+				///	<param name="_ParentClass" type="object">需要继承的父类</param>
+				var Pseudo, argumentList = [];
+
+				if(!_constructor){
+					_constructor = this.empty;
+				}
+
+				if(!_name){
+					_name = _constructor.name || "AnonymousClass";
+				}
+
+				argumentList.push.apply(
+					argumentList,
+					_constructor.toString().match(argListRegx)[1].match(argRegx)
+				);
+
+				Pseudo = Object.getOwnPropertyDescriptor(
+					new Function([
+						"return {",
+							"get '" + _name + "' (" + (argumentList.length > 0 ? "/* " + argumentList.join(", ") + " */" : "") + "){\r",
+								"if(typeof this.base === 'function'){\r",
+									"this.base.apply(this, arguments);\r",
+								"}\r",
+								"return arguments.callee.source.apply(this, arguments);\r",
+							"}",
+						" };"
+					].join(""))(),
+					_name
+				).get;
+
+				this.properties.call(Pseudo, {
+					source : _constructor,
+					argumentList : argumentList
+				});
+
+				Pseudo.prototype = Object.create(
+					_ParentClass || this.getOwnClass(),
+					{
+						constructor : {
+							value : Pseudo,
+							writable : true,
+							configurable : true
+						}
+					}
+				);
+				return Pseudo.prototype;
+			},
+			empty : function(){ },
+			getOwnClass : function(){
+				///	<summary>
+				///	获取自身类。
+				///	</summary>
+				return this.constructor.prototype;
+			},
+			getParentClass : function(){
+				///	<summary>
+				///	获取父类。
+				///	</summary>
+				return Object.getPrototypeOf(this);
+			},
+			isChildOf : function(AncestorClass){
+				///	<summary>
+				///	判断该类是否是指定类的子孙类。
+				///	</summary>
+				///	<param name="AncestorClass" type="object, function">指定的类，或指定类的构造函数。</param>
+				return this instanceof AncestorClass.constructor;
+			},
+			override : function(properties, _descriptor){
+				///	<summary>
+				///	重写一个或多个属性的值。
+				///	</summary>
+				///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
+				///	<param name="_descriptor" type="object">被添加或修改属性的描述符。</param>
+				return this.properties(properties, _descriptor);
+			},
+			properties : function(properties, _descriptor){
+				///	<summary>
+				///	将一个或多个属性添加到该类，并/或修改现有属性的特性。
+				///	</summary>
+				///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
+				///	<param name="_descriptor" type="object">被添加或修改属性的描述符。</param>
+				return defineProperties(this, properties, _descriptor);
+			}
+		});
+	}
+
+	return jQun;
+}(
+	// argRegx
+	/([^\s\,]+)/g,
+	// argListRegx
+	/function[^\(]*\(([^\))]*)/,
+	// every
+	function(obj, fn, _this){
 		///	<summary>
 		///	确定对象的所有枚举成员是否满足指定的测试。
 		///	</summary>
@@ -75,302 +358,30 @@ jQun = (function(methods){
 		if(obj instanceof Array)
 			return obj.every(fn, _this);
 
-		var func = _this === undefined ? fn : fn.bind(_this);
+		var isNumber = typeof obj === "number";
+
+		if(fn === undefined){
+			fn = fn.bind(_this);
+		}
+
+		if(isNumber){
+			obj = new Array(obj).join(" ");
+		}
 
 		for(var o in obj){
-			if(func(obj[o], o, obj))
+			if(fn.apply(_this, isNumber ? [o] : [obj[o], o, obj])){
 				continue;
-			
+			}
+
 			return false;
 		}
 		return true;
-	},
-	except : function(args, properties){
-		///	<summary>
-		///	返回一个不包含所有指定属性名称的合并对象。
-		///	</summary>
-		///	<param name="args" type="object">用于合并的对象集合。</param>
-		///	<param name="properties" type="array">需要排除的属性名称数组。</param>
-		var result = {};
-
-		forEach(jQun.toArray(arguments, 0, -1), function(obj){
-			for(var name in obj){
-				result[name] = obj[name];
-			}
-		});
-
-		forEach(arguments[arguments.length - 1], function(name){
-			delete result[name];
-		});
-		return result;
-	},
-	forEach : function(obj, fn, _this){
-		///	<summary>
-		///	为对象中的每个枚举元素执行指定操作。
-		///	</summary>
-		///	<param name="obj" type="object">需要枚举执行指定操作的对象。</param>
-		///	<param name="fn" type="function">指定的操作函数。</param>
-		///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
-		if(obj instanceof Array){
-			obj.forEach(fn, _this);
-			return obj;
-		}
-
-		var func = _this === undefined ? fn : fn.bind(_this);
-
-		if(typeof obj === "number"){
-			for(var i = 0;i < obj;i++){
-				func(undefined, i, obj);
-			}
-			return obj;
-		}
-
-		for(var o in obj){
-			func(obj[o], o, obj);
-		}
-		return obj;
-	},
-	isInstanceOf : function(obj, constructor){
-		///	<summary>
-		///	判断对象是否为指定类构造函数的一级实例（即直接由该类实例化）。
-		///	</summary>
-		///	<param name="obj" type="object">用于判断的实例对象。</param>
-		///	<param name="constructor" type="function">指定的类。</param>
-		return Object.getPrototypeOf(obj) === constructor.prototype;
-	},
-	isPropertyOf : function(property, obj){
-		///	<summary>
-		///	检测对象自己是否具有指定属性或访问器。
-		///	</summary>
-		///	<param name="property" type="*">用于检测的属性或访问器。</param>
-		///	<param name="obj" type="object">一个可能具有指定属性或访问器的对象。</param>
-		var getDescriptor = Object.getOwnPropertyDescriptor
-			descriptorNames = [ "value", "get", "set" ];
-
-		return !Object.getOwnPropertyNames(obj).every(function(name){
-			var descriptor = getDescriptor(obj, name);
-
-			for(var i = 0;i < 3;i++){
-				if(descriptor[descriptorNames[i]] === property)
-					return false;
-			}
-			return true;
-		});
-	},
-	merge : function(data, args){
-		///	<summary>
-		///	深度合并对象中所有项，返回一个新的对象。
-		///	</summary>
-		///	<param name="data" type="object, array">需要合并的项。</param>
-		///	<param name="args" type="object, array">其他需要合并的项列表。</param>
-		if(data instanceof Array)
-			return data.concat.apply(data, jQun.toArray(arguments, 1));
-
-		var result = {}, another = arguments[1];
-
-		jQun.nesting(arguments, function(value, name){
-			result[name] = typeof value === "object" ? jQun.merge(value) : value;
-		});
-		return result;
-	},
-	nesting : function(obj, fn, _this){
-		///	<summary>
-		///	将对象中的每个枚举元素进行再枚举并执行指定操作（双重嵌套的forEach）。
-		///	</summary>
-		///	<param name="obj" type="object">需要嵌套枚举并执行指定操作的对象（一般为json）。</param>
-		///	<param name="fn" type="function">指定的操作函数。</param>
-		///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
-		var func = _this === undefined ? fn : fn.bind(_this);
-
-		forEach(obj, function(o){
-			forEach(o, func);
-		});
-	},
-	set : function(obj, args){
-		///	<summary>
-		///	添加或修改指定对象的属性。
-		///	</summary>
-		///	<param name="obj" type="object">需要添加或修改属性的对象。</param>
-		///	<param name="args" type="object">需要添加或修改的属性集合。</param>
-		jQun.nesting(jQun.toArray(arguments, 1), function(property, name){
-			obj[name] = property;
-		});
-		return obj;
-	},
-	toArray : function(obj, _start, _end){
-		///	<summary>
-		///	将类似数组的对象转化为数组。
-		///	</summary>
-		///	<param name="obj" type="object">需要转化为数组的对象。</param>
-		///	<param name="_start" type="number">进行截取，截取的起始索引。</param>
-		///	<param name="_start" type="number">需要截取的末尾索引。</param>
-		return [].slice.call(obj, _start || 0, _end);
 	}
-}));
+));
 
 forEach = jQun.forEach;
 
-this.BaseClass = (function(methods, argumentRegx, argumentListRegx){
-	function jQun(selector){
-		///	<summary>
-		///	返回一个通过指定选择器筛选出来的元素集合。
-		///	</summary>
-		///	<param name="selector" type="string, element，array">选择器、html、dom元素或dom元素数组。</param>
-		if(methods.isInstanceOf(this, arguments.callee)){
-			return this.creator.apply(this, arguments);
-		}
-
-		return new jQun.HTMLElementList(selector);
-	};
-	jQun.prototype = Object.create(null, { constructor : { value : jQun, writable : true } });
-
-	methods.defineProperties(jQun.prototype, {
-		assign : function(properties){
-			///	<summary>
-			///	给该类的属性赋值。
-			///	</summary>
-			///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
-			methods.set(this, properties);
-			return this;
-		},
-		base : function(args){
-			///	<summary>
-			///	子类访问父类。
-			///	</summary>
-			///	<param name="args" type="*">子类的参数列表。</param>
-			var ParentClass = this.constructor.prototype.getParentClass();
-
-			if(ParentClass.constructor === jQun)
-				return;
-
-			var arg = {}, parentList = [];
-
-			for(
-				var argumentList = arguments.callee.caller.argumentList,
-					i = 0,
-					j = argumentList.length;
-				i < j;
-				i++
-			){
-				arg[argumentList[i]] = arguments[i];
-			}
-
-			while(ParentClass){
-				if(ParentClass === NonstaticClass)
-					break;
-
-				parentList.unshift(ParentClass);
-				ParentClass = ParentClass.getParentClass();
-			}
-
-			for(var i = 0, j = parentList.length;i < j;i++){
-				var passArgList = [], constructor = parentList[i].constructor;
-
-				for(
-					var argumentList = constructor.argumentList,
-						n = 0,
-						m = argumentList.length;
-					n < m;
-					n++
-				){
-					passArgList.push(arg[argumentList[n]]);
-				}
-
-				constructor.source.apply(this, passArgList);
-			}
-		},
-		creator : function(_constructor, _name, _ParentClass){
-			///	<summary>
-			///	派生出一个类。
-			///	</summary>
-			///	<param name="_constructor" type="function">源构造函数。</param>
-			///	<param name="_name" type="string">构造函数的名称。</param>
-			///	<param name="_ParentClass" type="object">需要继承的父类</param>
-			var Pseudo, argumentList = [];
-
-			if(!_constructor){
-				_constructor = this.empty;
-			}
-
-			if(!_name){
-				_name = _constructor.name || "AnonymousClass";
-			}
-
-			argumentList.push.apply(
-				argumentList,
-				_constructor.toString().match(argumentListRegx)[1].match(argumentRegx)
-			);
-
-			Pseudo = Object.getOwnPropertyDescriptor(
-				new Function([
-					"return {",
-						"get '" + _name + "' (" + (argumentList.length > 0 ? "/* " + argumentList.join(", ") + " */" : "") + "){\r",
-							"if(typeof this.base === 'function'){\r",
-								"this.base.apply(this, arguments);\r",
-							"}\r",
-							"return arguments.callee.source.apply(this, arguments);\r",
-						"}",
-					" };"
-				].join(""))(),
-				_name
-			).get;
-
-			this.properties.call(Pseudo, {
-				source : _constructor,
-				argumentList : argumentList
-			});
-
-			Pseudo.prototype = Object.create(
-				_ParentClass || this.getOwnClass(),
-				{
-					constructor : {
-						value : Pseudo,
-						writable : true,
-						configurable : true
-					}
-				}
-			);
-			return Pseudo.prototype;
-		},
-		empty : function(){},
-		getOwnClass : function(){
-			///	<summary>
-			///	获取自身类。
-			///	</summary>
-			return this.constructor.prototype;
-		},
-		getParentClass : function(){
-			///	<summary>
-			///	获取父类。
-			///	</summary>
-			return Object.getPrototypeOf(this);
-		},
-		isChildOf : function(AncestorClass){
-			///	<summary>
-			///	判断该类是否是指定类的子孙类。
-			///	</summary>
-			///	<param name="AncestorClass" type="object, function">指定的类，或指定类的构造函数。</param>
-			return this instanceof AncestorClass.constructor;
-		},
-		override : function(properties){
-			///	<summary>
-			///	重写一个或多个属性的值。
-			///	</summary>
-			///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
-			return this.assign(properties);
-		},
-		properties : function(properties, _descriptor){
-			///	<summary>
-			///	将一个或多个属性添加到该类，并/或修改现有属性的特性。
-			///	</summary>
-			///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
-			///	<param name="_descriptor" type="object, array">被添加或修改属性的描述符。</param>
-			methods.defineProperties(this, properties, _descriptor);
-			return this;
-		}
-	});
-
-
+this.NonstaticClass = NonstaticClass = (function(){
 	function NonstaticClass(_constructor, _name, _ParentClass){
 		///	<summary>
 		///	派生出一个非静态类。
@@ -382,7 +393,10 @@ this.BaseClass = (function(methods, argumentRegx, argumentListRegx){
 	};
 	NonstaticClass = new jQun(NonstaticClass, "NonstaticClass");
 
+	return NonstaticClass.constructor;
+}());
 
+this.StaticClass = StaticClass = (function(){
 	function StaticClass(_constructor, _name, _properties, _descriptor){
 		///	<summary>
 		///	派生出一个静态类。
@@ -398,7 +412,7 @@ this.BaseClass = (function(methods, argumentRegx, argumentListRegx){
 		});
 
 		if(_properties){
-			this.properties.call(NewClass, _properties, _descriptor);
+			NewClass.properties(_properties, _descriptor);
 		}
 
 		if(_constructor)
@@ -408,23 +422,10 @@ this.BaseClass = (function(methods, argumentRegx, argumentListRegx){
 	};
 	StaticClass = new jQun(StaticClass, "StaticClass");
 
-	return {
-		NonstaticClass : NonstaticClass.constructor,
-		StaticClass : StaticClass.constructor
-	};
-}(
-	// methods
-	jQun,
-	// argumentRegx
-	/([^\s\,]+)/g,
-	// argumentListRegx
-	/function[^\(]*\(([^\))]*)/
-));
+	return StaticClass.constructor;
+}());
 
-NonstaticClass = this.BaseClass.NonstaticClass;
-StaticClass = this.BaseClass.StaticClass;
-
-this.Independent = (function(){
+this.Browser = (function(){
 	function Browser(){
 		///	<summary>
 		///	浏览器基本信息类。
@@ -469,7 +470,10 @@ this.Independent = (function(){
 		version : "0"
 	}, { enumerable : true });
 
+	return Browser;
+}());
 
+this.JSON = (function(){
 	function JSON(){
 		///	<summary>
 		///	JSON功能类。
@@ -492,7 +496,10 @@ this.Independent = (function(){
 		stringify : window.JSON.stringify
 	});
 
+	return JSON;
+}());
 
+this.Namespace = (function(){
 	function Namespace(){
 		///	<summary>
 		///	开辟一个命名空间。
@@ -508,115 +515,10 @@ this.Independent = (function(){
 		})
 	});
 
-	return {
-		Browser : Browser,
-		JSON : JSON,
-		Namespace : Namespace.constructor
-	};
+	return Namespace.constructor;
 }());
 
-this.Replacement = (function(sRegx, fRegx, rRegx, tRegx){
-	function HTML(str, _isId){
-		///	<summary>
-		///	html模板。
-		///	</summary>
-		///	<param name="str" type="string">html模板源字符串。</param>
-		///	<param name="_isId" type="boolean">给定的字符串是否为id。</param>
-
-		// 此类代码还需优化
-		var arr = [], variables = {}, tReplace = Text.replace,
-
-			html = _isId === true ? jQun("#" + str).innerHTML : str;
-
-		arr.push("with(this){ return (function(", "undefined){ this.push('");
-
-		arr.push(
-			// 使用Text类的replace替换参数
-			tReplace.call({
-				text : html
-					// 替换掉特殊的空白字符
-					.replace(sRegx, "")
-					// 替换for循环
-					.replace(fRegx, function(str, condition, i){
-						return [
-							"');jQun.forEach(",
-							condition.split("{").join("\t").split("}").join("\n"),
-							", function(" + (i || "THIS") + ")\t this.push('"
-						].join("");
-				})
-			}, function(str, modifier, word){
-				if(modifier === ":"){
-					return "\t" + word + "\n";
-				}
-
-				if(word.indexOf(".") > -1){
-					if(modifier === "~"){
-						return "'+ (" + word + " || '') + '";
-					}
-				}
-				else{
-					variables[word] = modifier === "~";
-				}
-
-				return "'+ " + word + " + '";
-			})
-			// 替换for循环的结束标识“}”
-			.split("}").join("');}, this);this.push('")
-			// 替换临时产生的大括号
-			.replace(rRegx, function(str){
-				return str === "\n" ? "}" : "{";
-			})
-		);
-
-		arr.push("');return this.join('');}.call([]");
-
-		// 定义参数
-		forEach(variables, function(isEmpty, word){
-			arr[0] += word + ", ";
-			arr.push(
-				tReplace.call(
-					{
-						text : ", '{word}' in this ? this['{word}'] : " + (isEmpty ? "''" : "'{word}'")
-					},
-					{ word : word }
-				)
-			);
-		});
-
-		arr.push(")); }");
-
-		this.assign({
-			template : arr.join("")
-		});
-	};
-	HTML = new NonstaticClass(HTML, "jQun.HTML");
-
-	HTML.properties({
-		create : function(_data){
-			///	<summary>
-			///	将模板转化为html元素。
-			///	</summary>
-			///	<param name="data" type="object, array">需要渲染的数据。</param>
-			var htmlElementList = jQun(""), parent = document.createElement("div");
-
-			parent.innerHTML = this.render(_data);
-			htmlElementList.combine(parent.childNodes);
-
-			htmlElementList.remove();
-
-			return htmlElementList;
-		},
-		render : function(_data){
-			///	<summary>
-			///	渲染模板。
-			///	</summary>
-			///	<param name="_data" type="object, array">需要渲染的数据。</param>
-			return new Function("jQun", this.template).call(_data || {}, jQun);
-		},
-		template : ""
-	});
-
-
+this.Text = (function(tRegx){
 	function Text(text){
 		///	<summary>
 		///	用于操作字符串文本的类。
@@ -666,18 +568,9 @@ this.Replacement = (function(sRegx, fRegx, rRegx, tRegx){
 		text : ""
 	});
 
-	return {
-		HTML : HTML.constructor,
-		Text : Text.constructor
-	};
+	return Text.constructor;
 }(
-	// sRegx => space(查找特殊的空白字符)
-	/[\r\t\n]/g,
-	// fRegx => for(查找for语句)
-	/@for\s*\(([\s\S]+?)(?:\s*->>\s*([\s\S]+?))*?\)\s*\{/g,
-	// rRegx => restore(查找for语句参数里面转义的大括号)
-	/[\t\n]/g,
-	// tRegx => text(Text类的查找参数)
+	// tRegx => 查找参数
 	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g
 ));
 
@@ -696,6 +589,7 @@ this.Ajax = (function(stateChanged, getSendString){
 		type : "GET",
 		url : ""
 	}, { enumerable : true });
+
 
 	function RequestHeader(){
 		///	<summary>
@@ -761,7 +655,7 @@ this.Ajax = (function(stateChanged, getSendString){
 			///	</summary>
 			///	<param name="name" type="string">连接名称。</param>
 			///	<param name="settings" type="object">连接配置。</param>
-			this[name] = new jQun.ConnectionSettings(settings);
+			this[name] = new ConnectionSettings.constructor(settings);
 			return this;
 		}
 	});
@@ -873,12 +767,7 @@ this.Ajax = (function(stateChanged, getSendString){
 		}
 	});
 
-	return {
-		Ajax : Ajax,
-		ConnectionSettings : ConnectionSettings.constructor,
-		RequestHeader : RequestHeader,
-		RequestStorage : RequestStorage
-	};
+	return Ajax;
 }(
 	// stateChanged
 	function(request, formatter, complete, isResponseJSON){
@@ -922,12 +811,12 @@ this.Ajax = (function(stateChanged, getSendString){
 	}
 ));
 
-this.List = (function(addArrayMethods){
+this.List = List = (function(addArrayMethods){
 	function List(){
 		///	<summary>
 		///	对列表进行管理、操作的类。
 		///	</summary>
-		this.properties({ length : 0 });
+		this.override({ length : 0 });
 	};
 	List = new NonstaticClass(List, "jQun.List");
 
@@ -1009,9 +898,7 @@ this.List = (function(addArrayMethods){
 	});
 	addArrayMethods(List);
 
-	return {
-		List : List.constructor
-	};
+	return List.constructor;
 }(
 	// addArrayMethods
 	function(List){
@@ -1029,9 +916,7 @@ this.List = (function(addArrayMethods){
 	}
 ));
 
-List = this.List.List;
-
-this.PropertyCollection = (function(List, Common){
+this.ElementPropertyCollection = ElementPropertyCollection = (function(){
 	function ElementPropertyCollection(elementList){
 		///	<summary>
 		///	所有元素属性的基类。
@@ -1039,7 +924,7 @@ this.PropertyCollection = (function(List, Common){
 		///	<param name="elementList" type="array">元素列表（由 ElementList 类或其子孙类的实例）。</param>
 		var name = this.propertyName;
 
-		this.properties({
+		this.assign({
 			sources : elementList
 		});
 
@@ -1065,13 +950,12 @@ this.PropertyCollection = (function(List, Common){
 		}
 	});
 
+	return ElementPropertyCollection.constructor;
+}());
 
-	function AttributeCollection(elementList){
-		///	<summary>
-		///	元素属性类。
-		///	</summary>
-	};
-	AttributeCollection = new NonstaticClass(Common, "jQun.AttributeCollection", ElementPropertyCollection);
+this.AttributeCollection = (function(){
+	function AttributeCollection(elementList){ };
+	AttributeCollection = new NonstaticClass(AttributeCollection, "jQun.AttributeCollection", ElementPropertyCollection.prototype);
 
 	AttributeCollection.properties({
 		contains : function(name){
@@ -1145,13 +1029,14 @@ this.PropertyCollection = (function(List, Common){
 		}
 	});
 
-	
-	function CSSPropertyCollection(elementList){
-		///	<summary>
-		///	元素css属性类。
-		///	</summary>
-	};
-	CSSPropertyCollection = new NonstaticClass(Common, "jQun.CSSPropertyCollection", ElementPropertyCollection);
+	return AttributeCollection.constructor;
+}());
+
+emptyAttrCollection = new this.AttributeCollection([]);
+
+this.CSSPropertyCollection = (function(){
+	function CSSPropertyCollection(elementList){ };
+	CSSPropertyCollection = new NonstaticClass(CSSPropertyCollection, "jQun.CSSPropertyCollection", ElementPropertyCollection.prototype);
 
 	CSSPropertyCollection.properties({
 		get : function(name){
@@ -1204,13 +1089,12 @@ this.PropertyCollection = (function(List, Common){
 		CSSPropertyCollection.properties(property, { gettable : true, settable : true });
 	}, Object.prototype.hasOwnProperty);
 
+	return CSSPropertyCollection.constructor;
+}());
 
-	function ChildrenCollection(elementList){
-		///	<summary>
-		///	元素子节点类。
-		///	</summary>
-	};
-	ChildrenCollection = new NonstaticClass(Common, "jQun.ChildrenCollection", ElementPropertyCollection);
+this.ChildrenCollection = (function(){
+	function ChildrenCollection(elementList){ };
+	ChildrenCollection = new NonstaticClass(ChildrenCollection, "jQun.ChildrenCollection", ElementPropertyCollection.prototype);
 
 	ChildrenCollection.properties({
 		append : function(node){
@@ -1218,8 +1102,7 @@ this.PropertyCollection = (function(List, Common){
 			///	添加一个子节点。
 			///	</summary>
 			///	<param name="node" type="object">需要添加的子节点。</param>
-			new jQun.ElementList(node).appendTo(this.sources[0]);
-			return this;
+			return this.insert(node);
 		},
 		contains : function(node){
 			///	<summary>
@@ -1234,7 +1117,9 @@ this.PropertyCollection = (function(List, Common){
 			///	</summary>
 			///	<param name="node" type="object">需要插入的节点。</param>
 			///	<param name="_idx" type="object">指定的索引处。</param>
-			new jQun.ElementList(node).insertTo(this.sources[0], _idx);
+			var sources = this.sources;
+
+			sources.insertTo.call([node], sources[0], _idx);
 			return this;
 		},
 		propertyName : "children",
@@ -1253,13 +1138,12 @@ this.PropertyCollection = (function(List, Common){
 		}
 	});
 
+	return ChildrenCollection.constructor;
+}());
 
-	function ClassListCollection(elementList){
-		///	<summary>
-		///	元素class属性类。
-		///	</summary>
-	};
-	ClassListCollection = new NonstaticClass(Common, "jQun.ClassListCollection", ElementPropertyCollection);
+this.ClassListCollection = (function(){
+	function ClassListCollection(elementList){ };
+	ClassListCollection = new NonstaticClass(ClassListCollection, "jQun.ClassListCollection", ElementPropertyCollection.prototype);
 
 	ClassListCollection.properties({
 		add : function(className){
@@ -1322,26 +1206,10 @@ this.PropertyCollection = (function(List, Common){
 		}
 	});
 
+	return ClassListCollection.constructor;
+}());
 
-	return {
-		AttributeCollection : AttributeCollection.constructor,
-		CSSPropertyCollection : CSSPropertyCollection.constructor,
-		ChildrenCollection : ChildrenCollection.constructor,
-		ClassListCollection : ClassListCollection.constructor,
-		ElementPropertyCollection : ElementPropertyCollection.constructor
-	};
-}(
-	List,
-	// Common
-	function(elementList){
-		///	<summary>
-		///	ElementPropertyCollection 类所有的子类的共同构造函数。
-		///	</summary>
-		///	<param name="elementList" type="array">元素列表（由 ElementList 类或其子孙类的实例）。</param>
-	}
-));
-
-this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplaceRegx){
+this.NodeList = (function(AttributeCollection){
 	function NodeList(){
 		///	<summary>
 		///	节点列表类。
@@ -1364,7 +1232,7 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 				///	<summary>
 				///	获取属性集合。
 				///	</summary>
-				return new jQun.AttributeCollection(this);
+				return new AttributeCollection(this);
 			},
 			set : function(attrs){
 				///	<summary>
@@ -1426,7 +1294,12 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 		}
 	});
 
+	return NodeList.constructor;
+}(
+	this.AttributeCollection
+));
 
+this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, selectorReplaceRegx){
 	function ElementList(selector, _parent){
 		///	<summary>
 		///	通过指定选择器筛选元素。
@@ -1468,16 +1341,12 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 			return;
 		}
 
-		if(selector instanceof jQun.HTML){
-			return selector.create();
-		}
-
 		if("length" in selector){
 			this.combine(selector);
 			return;
 		}
 	};
-	ElementList = new NonstaticClass(ElementList, "jQun.ElementList", NodeList);
+	ElementList = new NonstaticClass(ElementList, "jQun.ElementList", NodeList.prototype);
 
 	ElementList.override({
 		createList : function(selector, _parent){
@@ -1653,15 +1522,15 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 				///	<summary>
 				///	获取子元素集合。
 				///	</summary>
-				return new jQun.ChildrenCollection(this);
+				return new ChildrenCollection(this);
 			},
-			set : function(elementList){
+			set : function(elements){
 				///	<summary>
 				///	移除所有现有子元素，添加指定的子元素。
 				///	</summary>
-				///	<param name="elementList" type="array">需要添加的子元素集合。</param>
+				///	<param name="elements" type="array">需要添加的子元素集合。</param>
 				this.children.remove();
-				new jQun.ElementList(elementList).appendTo(this[0]);
+				this.constructor(elementList).appendTo(this[0]);
 			}
 		},
 		classList : {
@@ -1669,7 +1538,7 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 				///	<summary>
 				///	获取class列表集合。
 				///	</summary>
-				return new jQun.ClassListCollection(this);
+				return new ClassListCollection(this);
 			},
 			set : function(className){
 				///	<summary>
@@ -1681,9 +1550,18 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 		}
 	}, { gettable : true, settable : true });
 
+	return ElementList.constructor;
+}(
+	this.NodeList,
+	this.ChildrenCollection,
+	this.ClassListCollection,
+	// selectorReplaceRegx
+	/[\#\.]\d[^\:\#\.\,\+\~\[\>]*/g
+));
 
+this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty){
 	function HTMLElementList(selector){};
-	HTMLElementList = new NonstaticClass(HTMLElementList, "jQun.HTMLElementList", ElementList);
+	HTMLElementList = new NonstaticClass(HTMLElementList, "jQun.HTMLElementList", ElementList.prototype);
 
 	// firefox 把id、innerHTML归为了Element的属性，但是w3c与IE9都归为了HTMLElement的属性
 	forEach(
@@ -1724,7 +1602,7 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 				///	<summary>
 				///	获取style属性集合。
 				///	</summary>
-				return new jQun.CSSPropertyCollection(this);
+				return new CSSPropertyCollection(this);
 			},
 			set : function(cssText){
 				///	<summary>
@@ -1792,15 +1670,10 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 		}
 	});
 
-	return {
-		ElementList : ElementList.constructor,
-		HTMLElementList : HTMLElementList.constructor,
-		NodeList : NodeList.constructor
-	};
+	return HTMLElementList.constructor;
 }(
-	List,
-	// emptyAttrCollection
-	new this.PropertyCollection.AttributeCollection([]),
+	this.ElementList,
+	this.CSSPropertyCollection,
 	// addProperty
 	function(name){
 		jQun.define(this, name, {
@@ -1811,22 +1684,125 @@ this.NodeList = (function(List, emptyAttrCollection, addProperty, selectorReplac
 				this.set(name, value);
 			}
 		}, { gettable : true, settable : true });
-	},
-	// selectorReplaceRegx
-	/[\#\.]\d[^\:\#\.\,\+\~\[\>]*/g
+	}
 ));
 
-jQun = (function(Namespaces){
-	jQun.nesting(Namespaces, function(value, name){
-		jQun[name] = value;
+this.HTML = (function(HTMLElementList, sRegx, fRegx, rRegx, tReplace){
+	function HTML(str, _isId){
+		///	<summary>
+		///	html模板。
+		///	</summary>
+		///	<param name="str" type="string">html模板源字符串。</param>
+		///	<param name="_isId" type="boolean">给定的字符串是否为id。</param>
+
+		// 此类代码还需优化
+		var arr = [], variables = {},
+
+			html = _isId === true ? new HTMLElementList("#" + str).innerHTML : str;
+
+		arr.push("with(this){ return (function(", "undefined){ this.push('");
+
+		arr.push(
+			// 使用Text类的replace替换参数
+			tReplace.call({
+				text : html
+					// 替换掉特殊的空白字符
+					.replace(sRegx, "")
+					// 替换for循环
+					.replace(fRegx, function(str, condition, i){
+						return [
+							"');jQun.forEach(",
+							condition.split("{").join("\t").split("}").join("\n"),
+							", function(" + (i || "THIS") + ")\t this.push('"
+						].join("");
+				})
+			}, function(str, modifier, word){
+				if(modifier === ":"){
+					return "\t" + word + "\n";
+				}
+
+				if(word.indexOf(".") > -1){
+					if(modifier === "~"){
+						return "'+ (" + word + " || '') + '";
+					}
+				}
+				else{
+					variables[word] = modifier === "~";
+				}
+
+				return "'+ " + word + " + '";
+			})
+			// 替换for循环的结束标识“}”
+			.split("}").join("');}, this);this.push('")
+			// 替换临时产生的大括号
+			.replace(rRegx, function(str){
+				return str === "\n" ? "}" : "{";
+			})
+		);
+
+		arr.push("');return this.join('');}.call([]");
+
+		// 定义参数
+		forEach(variables, function(isEmpty, word){
+			arr[0] += word + ", ";
+			arr.push(
+				tReplace.call(
+					{
+						text : ", '{word}' in this ? this['{word}'] : " + (isEmpty ? "''" : "'{word}'")
+					},
+					{ word : word }
+				)
+			);
+		});
+
+		arr.push(")); }");
+
+		this.assign({
+			template : arr.join("")
+		});
+	};
+	HTML = new NonstaticClass(HTML, "jQun.HTML");
+
+	HTML.properties({
+		create : function(_data){
+			///	<summary>
+			///	将模板转化为html元素。
+			///	</summary>
+			///	<param name="data" type="object, array">需要渲染的数据。</param>
+			var htmlElementList = jQun(""), parent = document.createElement("div");
+
+			parent.innerHTML = this.render(_data);
+			htmlElementList.combine(parent.childNodes);
+
+			htmlElementList.remove();
+
+			return htmlElementList;
+		},
+		render : function(_data){
+			///	<summary>
+			///	渲染模板。
+			///	</summary>
+			///	<param name="_data" type="object, array">需要渲染的数据。</param>
+			return new Function("jQun", this.template).call(_data || {}, jQun);
+		},
+		template : ""
 	});
 
-	return jQun.defineProperties(
-		Object.getPrototypeOf(NonstaticClass.prototype).constructor,
-		jQun
-	);
-}(this));
+	return HTML.constructor;
+}(
+	this.HTMLElementList,
+	// sRegx => space(查找特殊的空白字符)
+	/[\r\t\n]/g,
+	// fRegx => for(查找for语句)
+	/@for\s*\(([\s\S]+?)(?:\s*->>\s*([\s\S]+?))*?\)\s*\{/g,
+	// rRegx => restore(查找for语句参数里面转义的大括号)
+	/[\t\n]/g,
+	// tReplace
+	this.Text.prototype.replace
+));
 
-window.jQun = jQun;
-
-}.call({}, Object, Array, Function, undefined));
+with(jQun){
+	defineProperties(jQun, this);
+	define(window, "jQun", jQun);
+}
+}.call({}, Object, Array, Function,	undefined));
