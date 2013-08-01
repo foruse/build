@@ -19,11 +19,11 @@
 <body>
 	<div class="main">
 		<div id="SPP" focusedtab="">
-			<header id="title_SPP">
+			<header id="title_SPP" class="themeBgColor whiteColor">
+				<span></span>
 				<button action="set">
 					<span></span>
 				</button>
-				<span></span>
 				<button action="add">
 					<span></span>
 				</button>
@@ -114,13 +114,13 @@
 				<ul class="inlineBlock"></ul>
 				<script id="spp_item_html" type="text/html">
 					@for([
-						{ tab : "schedule", title : "日程" },
-						{ tab : "project", title : "项目" },
-						{ tab : "partner", title : "拍档" }
+						{ tab : "schedule", text : "日程" },
+						{ tab : "project", text : "PROJECT 项目" },
+						{ tab : "partner", text : "拍档" }
 					] ->> t){
 						<li>
 							<button tab="{t.tab}">
-								<span>{t.title}</span>
+								<span text="{t.text}"></span>
 							</button>
 						</li>
 					}

@@ -114,6 +114,7 @@ jQun.defineProperties(MouseEvent.prototype, this);
 	{
 		touchstart : "mousedown",
 		touchmove : "mousemove",
-		touchend : "mouseup"
+		touchend : "mouseup",
+		touchcancel : "mouseup"
 	}
 ));

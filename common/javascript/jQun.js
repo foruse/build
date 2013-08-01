@@ -189,11 +189,19 @@ jQun = (function(argRegx, argListRegx, every){
 				///	<param name="_start" type="number">进行截取，截取的起始索引。</param>
 				///	<param name="_start" type="number">需要截取的末尾索引。</param>
 				return [].slice.call(obj, _start || 0, _end);
+			},
+			toString : function(){
+				return "function jQun() { [native code] }";
 			}
-		}, function(method, name){
-			jQun[name] = method;
+		}, function(value, name, methods){
+			if(name === "toString"){
+				methods.define(jQun, name, value, { configurable : true });
+				return;
+			}
+
+			jQun[name] = value;
 		});
-		
+
 		// 定义类的基础方法
 		defineProperties(jQun.prototype, {
 			assign : function(properties){
