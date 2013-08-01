@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.0
- *  本次修改：类库改版
+ *  文档状态：1.0.4.1
+ *  本次修改：将本类库所有方法及类伪造成本地代码
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -18,9 +18,7 @@ var jQun,
 	emptyAttrCollection;
 
 
-jQun = (function(argRegx, argListRegx, every){
-	var forEach;
-
+jQun = (function(argRegx, argListRegx, every, toNative){
 	function jQun(selector){
 		///	<summary>
 		///	返回一个通过指定选择器筛选出来的元素集合。
@@ -33,17 +31,10 @@ jQun = (function(argRegx, argListRegx, every){
 		return new jQun.HTMLElementList(selector);
 	};
 	jQun.prototype = Object.create(null, { constructor : { value : jQun, writable : true } });
-	
-	forEach = function(obj, fn, _this){
-		every(obj, function(){
-			fn.apply(this, arguments);
-			return true;
-		}, _this);
-	};
 
 	with(jQun){
 		// 为jQun添加常用方法
-		forEach({
+		every({
 			define : function(obj, name, value, _descriptor){
 				///	<summary>
 				///	将属性添加到对象或修改现有属性的特性。
@@ -60,9 +51,9 @@ jQun = (function(argRegx, argListRegx, every){
 
 				isAccessor = !!(_descriptor.gettable || _descriptor.settable);
 
-				forEach(_descriptor, function(name){
-					desc[name] = _descriptor[name];
-				});
+				for(var d in _descriptor){
+					desc[d] = _descriptor[d];
+				}
 
 				if(isAccessor){
 					desc.get = value.get;
@@ -115,7 +106,12 @@ jQun = (function(argRegx, argListRegx, every){
 				});
 				return result;
 			},
-			forEach : forEach,
+			forEach : function(obj, fn, _this){
+				every(obj, function(){
+					fn.apply(this, arguments);
+					return true;
+				}, _this);
+			},
 			isInstanceOf : function(obj, constructor){
 				///	<summary>
 				///	判断对象是否为指定类构造函数的一级实例（即直接由该类实例化）。
@@ -190,16 +186,14 @@ jQun = (function(argRegx, argListRegx, every){
 				///	<param name="_start" type="number">需要截取的末尾索引。</param>
 				return [].slice.call(obj, _start || 0, _end);
 			},
-			toString : function(){
-				return "function jQun() { [native code] }";
-			}
+			toString : toNative
 		}, function(value, name, methods){
-			if(name === "toString"){
-				methods.define(jQun, name, value, { configurable : true });
-				return;
-			}
+			var define = methods.define;
 
-			jQun[name] = value;
+			define(value, "toString", methods.toString);
+			define(jQun, name, value);
+
+			return true;
 		});
 
 		// 定义类的基础方法
@@ -294,8 +288,9 @@ jQun = (function(argRegx, argListRegx, every){
 				).get;
 
 				this.properties.call(Pseudo, {
+					argumentList : argumentList,
 					source : _constructor,
-					argumentList : argumentList
+					toString : toNative
 				});
 
 				Pseudo.prototype = Object.create(
@@ -384,6 +379,15 @@ jQun = (function(argRegx, argListRegx, every){
 			return false;
 		}
 		return true;
+	},
+	// toNative
+	function(){
+		///	<summary>
+		///	使函数方法在控制台里看起来像本地代码。
+		///	</summary>
+		var name = this.name;
+
+		return "function" + (name ? " " + name : "") + "() { [native code] }";
 	}
 ));
 
@@ -582,7 +586,7 @@ this.Text = (function(tRegx){
 	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g
 ));
 
-this.Ajax = (function(stateChanged, getSendString){
+this.ConnectionSettings = (function(){
 	function ConnectionSettings(settings){
 		///	<summary>
 		///	连接配置。
@@ -598,12 +602,15 @@ this.Ajax = (function(stateChanged, getSendString){
 		url : ""
 	}, { enumerable : true });
 
+	return ConnectionSettings.constructor;
+}());
 
+this.RequestHeader = (function(){
 	function RequestHeader(){
 		///	<summary>
 		///	请求头部信息。
 		///	</summary>
-	}
+	};
 	RequestHeader = new StaticClass(undefined, "jQun.RequestHeader");
 
 	RequestHeader.properties({
@@ -632,7 +639,10 @@ this.Ajax = (function(stateChanged, getSendString){
 		}
 	});
 
+	return RequestHeader;
+}());
 
+this.RequestStorage = (function(ConnectionSettings){
 	function RequestStorage(){
 		///	<summary>
 		///	连接配置存储器。
@@ -663,12 +673,17 @@ this.Ajax = (function(stateChanged, getSendString){
 			///	</summary>
 			///	<param name="name" type="string">连接名称。</param>
 			///	<param name="settings" type="object">连接配置。</param>
-			this[name] = new ConnectionSettings.constructor(settings);
+			this[name] = new ConnectionSettings(settings);
 			return this;
 		}
 	});
 
+	return RequestStorage;
+}(
+	this.ConnectionSettings
+));
 
+this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString){
 	function Ajax(){
 		///	<summary>
 		///	ajax异步类。
@@ -777,6 +792,8 @@ this.Ajax = (function(stateChanged, getSendString){
 
 	return Ajax;
 }(
+	this.RequestHeader,
+	this.RequestStorage,
 	// stateChanged
 	function(request, formatter, complete, isResponseJSON){
 		///	<summary>
