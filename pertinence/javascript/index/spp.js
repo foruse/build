@@ -7,7 +7,7 @@ this.SPP = (function(UserList){
 
 	Title.properties({
 		set : function(title){
-			this.panelEl.find(">span").innerHTML = title;
+			this.panelEl.find(">strong").innerHTML = title;
 		}
 	});
 
@@ -41,6 +41,7 @@ this.SPP = (function(UserList){
 
 		CallServer.open("getProjects", null, function(data){
 			project.add(data);
+			project.addUnopenedProject();
 		});
 	};
 	Project = new NonstaticClass(Project, null, Panel.prototype);
@@ -51,7 +52,27 @@ this.SPP = (function(UserList){
 			///	添加数据。
 			///	</summary>
 			/// <params name="data" type="array">项目数据</params>
-			this.panelEl.find(">ul").innerHTML = this.html.render(data);
+			this.html.create(data).appendTo(this.panelEl.find(">ul")[0]);
+		},
+		addUnopenedProject : function(){
+			///	<summary>
+			///	添加未解锁的项目，1次为10个。
+			///	</summary>
+			var data = [], i = {
+				id : -1,
+				importantLevel : 0,
+				title : "",
+				users : [],
+				lastMessage : "",
+				unread : 0,
+				status : -1
+			};
+
+			jQun.forEach(10, function(){
+				data.push(i);
+			});
+
+			this.add({ projects : data });
 		},
 		html : undefined
 	});
@@ -202,7 +223,7 @@ this.SPP = (function(UserList){
 			var buttonEl = this.btnEls.between('[tab="' + name + '"]', this.panelEl[0]);
 
 			buttonEl.classList.add("focused");
-			this.onfocus(name, buttonEl.find("span").innerHTML);
+			this.onfocus(name, buttonEl.find("span").get("text", "attr"));
 		},
 		onblur : undefined,
 		onfocus : undefined

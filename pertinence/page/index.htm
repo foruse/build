@@ -19,14 +19,10 @@
 <body>
 	<div class="main">
 		<div id="SPP" focusedtab="">
-			<header id="title_SPP" class="themeBgColor whiteColor">
-				<span></span>
-				<button action="set">
-					<span></span>
-				</button>
-				<button action="add">
-					<span></span>
-				</button>
+			<header id="title_SPP" class="themeColor onlyBorderBottom whiteFont">
+				<strong></strong>
+				<button action="set"></button>
+				<button action="add"></button>
 			</header>
 			<article class="content_SPP">
 				<section id="schedule">
@@ -53,8 +49,8 @@
 					<script id="spp_project_html" type="text/html">
 						@for(projects ->> pro){
 							<li>
-								<figure>
-									<figcaption>
+								<figure class="themeBdColor" status="{pro.status}">
+									<figcaption class="themeBgColor whiteFont">
 										<span>{pro.title}</span>
 										<strong class="inlineBlock">
 											@for(pro.importantLevel){
@@ -71,9 +67,11 @@
 										<dd>
 											<hr />
 										</dd>
-										<dt>
+										<dt class="grayFont">
 											<span>{pro.lastMessage}</span>
-											<a unread="{pro.unread}">{pro.unread}</a>
+											<a class="themeBgColor whiteFont" unread="{pro.unread}">
+												{pro.unread}
+											</a>
 										</dt>
 									</dl>		
 								</figure>
@@ -119,8 +117,8 @@
 						{ tab : "partner", text : "拍档" }
 					] ->> t){
 						<li>
-							<button tab="{t.tab}">
-								<span text="{t.text}"></span>
+							<button class="themeBdColor" tab="{t.tab}">
+								<span class="themeBgColor" text="{t.text}"></span>
 							</button>
 						</li>
 					}

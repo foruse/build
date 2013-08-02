@@ -60,7 +60,7 @@ CallServer.save([
 			},
 			getProjects : function(data){
 				return {
-					projects : Index.SPP.getProjects(50)
+					projects : Index.SPP.getProjects(3)
 				};
 			},
 			getSchedule : function(){

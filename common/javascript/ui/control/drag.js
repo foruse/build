@@ -170,18 +170,32 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 	},
 	// onborder
 	function(overflowEl, top, fn){
-		var t = (overflowEl.height() - overflowEl.parent().height()) * -1;
+		var type = "",
+			t = (overflowEl.height() - overflowEl.parent().height()) * -1;
 		
 		// 如果是最上方的时候 或者 父容器比溢出容器还要高（未溢出或隐藏了）
 		if(top > 0 || t > 0){
-			fn(0, "top");
+			type = "top";
+			top = 0;
+		}
+		// 如果是最下方的时候
+		else if(top < t){
+			type = "bottom";
+			top = t;
+		}
+		// 如果不是最上方也不是最下方
+		else{
 			return;
 		}
 
-		// 如果是最下方的时候
-		if(top < t){
-			fn(t, "bottom");
-		}
+		var element = overflowEl[0];
+
+		fn(top, type);
+		
+		if(typeof element.onborder !== "function")
+			return;
+
+		element.onborder(top, type);
 	}
 ));
 

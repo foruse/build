@@ -190,7 +190,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 		}, function(value, name, methods){
 			var define = methods.define;
 
-			define(value, "toString", methods.toString);
+			define(value, "toString", toNative);
 			define(jQun, name, value);
 
 			return true;
@@ -276,7 +276,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				Pseudo = Object.getOwnPropertyDescriptor(
 					new Function([
 						"return {",
-							"get '" + _name + "' (" + (argumentList.length > 0 ? "/* " + argumentList.join(", ") + " */" : "") + "){\r",
+							"get '" + _name + "' (){\r",
 								"if(typeof this.base === 'function'){\r",
 									"this.base.apply(this, arguments);\r",
 								"}\r",
@@ -368,7 +368,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 		}
 
 		if(isNumber){
-			obj = new Array(obj).join(" ");
+			obj = new Array(obj + 1).join(" ");
 		}
 
 		for(var o in obj){
