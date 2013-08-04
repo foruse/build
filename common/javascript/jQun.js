@@ -6,16 +6,18 @@
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
-(function(Object, Array, Function, undefined){
+(function(Object, Array, Function){
 var jQun,
 
 	NonstaticClass, StaticClass,
 
 	List, ElementPropertyCollection,
 
-	forEach,
-	
-	emptyAttrCollection;
+	emptyAttrCollection,
+
+	undefined,
+
+	forEach;
 
 
 jQun = (function(argRegx, argListRegx, every, toNative){
@@ -505,13 +507,14 @@ this.ConnectionSettings = (function(){
 }());
 
 this.Event = (function(attach, define){
-	function Event(init, name, _type){
+	function Event(name, _tagName, _type, _init){
 		///	<summary>
 		///	DOM事件类。
 		///	</summary>
-		///	<param name="init" type="function">事件初始化函数(在一定条件下必须触发事件)。</param>
 		///	<param name="name" type="string">事件名称。</param>
+		///	<param name="_tagName" type="string">标签名称。</param>
 		///	<param name="_type" type="string">事件类型(MouseEvent、UIEvent、WheelEvent等)。</param>
+		///	<param name="_init" type="function">事件初始化函数。</param>
 		var source;
 
 		if(!_type || !(_type in window)){
@@ -526,7 +529,14 @@ this.Event = (function(attach, define){
 			type : _type
 		});
 
-		init.call(this, source);
+		if(_tagName){
+			this.attachTo(_tagName);
+		}
+
+		if(typeof _init !== "function")
+			return;
+		
+		_init.call(this, source);
 	};
 	Event = new NonstaticClass(Event, "jQun.Event");
 
@@ -539,8 +549,8 @@ this.Event = (function(attach, define){
 			var name = this.name;
 
 			define(
-				(_tagName ? document.createElement(_tagName).constructor : Node).prototype,
-				name,
+				(_tagName && _tagName !== "*" ? document.createElement(_tagName).constructor : Node).prototype,
+				"on" + name,
 				{
 					set : function(fn){
 						var obj = {};
@@ -556,12 +566,12 @@ this.Event = (function(attach, define){
 		},
 		name : "",
 		source : undefined,
-		trigger : function(element){
+		trigger : function(target){
 			///	<summary>
 			///	触发事件。
 			///	</summary>
-			///	<param name="element" type="element">触发该事件的元素。</param>
-			return element.dispatchEvent(this.source);
+			///	<param name="target" type="element">触发该事件的元素。</param>
+			return target.dispatchEvent(this.source);
 		},
 		type : "Event"
 	});
@@ -1392,7 +1402,7 @@ this.NodeList = (function(AttributeCollection){
 	this.AttributeCollection
 ));
 
-this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, selectorReplaceRegx){
+this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, window, selectorReplaceRegx){
 	function ElementList(selector, _parent){
 		///	<summary>
 		///	通过指定选择器筛选元素。
@@ -1401,8 +1411,6 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 		///	<param name="_parent" type="object">指定查询的父节点。</param>
 		if(!selector)
 			return;
-
-		var window = this.view;
 
 		if(typeof selector === "string"){
 			var elements, doc = window.document;
@@ -1605,8 +1613,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			///	返回集合中所有元素之后的兄弟元素。
 			///	</summary>
 			return this.find("~*");
-		},
-		view : window
+		}
 	});
 
 	ElementList.properties({
@@ -1648,6 +1655,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 	this.NodeList,
 	this.ChildrenCollection,
 	this.ClassListCollection,
+	window,
 	// selectorReplaceRegx
 	/[\#\.]\d[^\:\#\.\,\+\~\[\>]*/g
 ));
@@ -1898,4 +1906,4 @@ with(jQun){
 	defineProperties(jQun, this);
 	define(window, "jQun", jQun);
 }
-}.call({}, Object, Array, Function,	undefined));
+}.call({}, Object, Array, Function));

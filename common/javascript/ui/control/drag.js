@@ -15,10 +15,10 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 
 		this.sourceEl.attach({
 			touchstart : function(e){
+				var overflowEl = jQun(e.target).between(".overflowPanel");
+
 				//	记录pageY
 				scroll.pageY = e.touches[0].pageY;
-
-				var overflowEl = jQun(e.target).between(".overflowPanel");
 
 				overflowEl.splice(1);
 
@@ -65,6 +65,8 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 				// 超出边界所执行的函数
 				onborder(overflowEl, getTop(overflowEl), function(t){
 					setTop(overflowEl, t);
+					scrollTimer.stop();
+					touchTimer.stop();
 				});
 
 				this.overflowEl = undefined;
@@ -99,7 +101,7 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 						onborder(overflowEl, top, function(t){
 							top = t;
 							isEnd = true;
-						})
+						});
 	
 						setTop(overflowEl, top);
 						scrollTimer.stop();	
@@ -187,16 +189,11 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 		else{
 			return;
 		}
-
-		var element = overflowEl[0];
-
-		fn(top, type);
 		
-		if(typeof element.onborder !== "function")
-			return;
-
-		element.onborder(top, type);
-	}
+		this.source.direction = type;
+		this.trigger(overflowEl[0]);
+		fn(top, type);
+	}.bind(new jQun.Event("overflow", "*"))
 ));
 
 Drag.members(this);

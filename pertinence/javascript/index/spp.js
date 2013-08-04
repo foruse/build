@@ -39,6 +39,12 @@ this.SPP = (function(UserList){
 			html : html
 		});
 
+		panelEl.attach({
+			"overflow" : function(e){
+				console.log(e);
+			}
+		});
+
 		CallServer.open("getProjects", null, function(data){
 			project.add(data);
 			project.addUnopenedProject();
