@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.1
- *  本次修改：将本类库所有方法及类伪造成本地代码
+ *  文档状态：1.0.4.2
+ *  本次修改：添加jQun.Event类，用于自定义事件
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -485,6 +485,93 @@ this.Browser = (function(){
 	return Browser;
 }());
 
+this.ConnectionSettings = (function(){
+	function ConnectionSettings(settings){
+		///	<summary>
+		///	连接配置。
+		///	</summary>
+		///	<param name="settings" type="object">连接配置。</param>
+		this.assign(settings);
+	};
+	ConnectionSettings = new NonstaticClass(ConnectionSettings, "jQun.ConnectionSettings");
+
+	ConnectionSettings.properties({
+		formatter : undefined,
+		type : "GET",
+		url : ""
+	}, { enumerable : true });
+
+	return ConnectionSettings.constructor;
+}());
+
+this.Event = (function(attach, define){
+	function Event(init, name, _type){
+		///	<summary>
+		///	DOM事件类。
+		///	</summary>
+		///	<param name="init" type="function">事件初始化函数(在一定条件下必须触发事件)。</param>
+		///	<param name="name" type="string">事件名称。</param>
+		///	<param name="_type" type="string">事件类型(MouseEvent、UIEvent、WheelEvent等)。</param>
+		var source;
+
+		if(!_type || !(_type in window)){
+			_type = this.type;
+		}
+
+		source = new window[_type](name);
+
+		this.assign({
+			name : name,
+			source : source,
+			type : _type
+		});
+
+		init.call(this, source);
+	};
+	Event = new NonstaticClass(Event, "jQun.Event");
+
+	Event.properties({
+		attachTo : function(_tagName){
+			///	<summary>
+			///	应该附加该事件的标签。
+			///	</summary>
+			///	<param name="_tagName" type="string">标签名称。</param>
+			var name = this.name;
+
+			define(
+				(_tagName ? document.createElement(_tagName).constructor : Node).prototype,
+				name,
+				{
+					set : function(fn){
+						var obj = {};
+
+						obj[name] = fn;
+						attach(obj);
+					}
+				},
+				{ settable : true }
+			);
+
+			return this;
+		},
+		name : "",
+		source : undefined,
+		trigger : function(element){
+			///	<summary>
+			///	触发事件。
+			///	</summary>
+			///	<param name="element" type="element">触发该事件的元素。</param>
+			return element.dispatchEvent(this.source);
+		},
+		type : "Event"
+	});
+
+	return Event.constructor;
+}(
+	jQun.attach,
+	jQun.define
+));
+
 this.JSON = (function(){
 	function JSON(){
 		///	<summary>
@@ -510,6 +597,111 @@ this.JSON = (function(){
 
 	return JSON;
 }());
+
+this.List = List = (function(addArrayMethods){
+	function List(){
+		///	<summary>
+		///	对列表进行管理、操作的类。
+		///	</summary>
+		this.override({ length : 0 });
+	};
+	List = new NonstaticClass(List, "jQun.List");
+
+	List.properties({
+		alternate : function(num, _remainder){
+			///	<summary>
+			///	交替性取出集合中的符合项。
+			///	</summary>
+			///	<param name="num" type="number">取模运算值。</param>
+			///	<param name="_remainder" type="number">余数。</param>
+			var list = this.createList();
+
+			_remainder = _remainder || 0;
+
+			this.forEach(function(item, i){
+				if(i % num === _remainder){
+					list.push(item);
+				}
+			});
+			return list;
+		},
+		clear : function(){
+			///	<summary>
+			///	清空整个集合。
+			///	</summary>
+			this.splice(0);
+			return this;
+		},
+		combine : function(list){
+			///	<summary>
+			///	合并另一个集合。
+			///	</summary>
+			///	<param name="list" type="array">另一个集合。</param>
+			this.push.apply(this, list);
+			return this;
+		},
+		contains : function(item){
+			///	<summary>
+			///	返回一个布尔值，表示该列表中是否包含指定项。
+			///	</summary>
+			///	<param name="item" type="*">可能包含的项。</param>
+			return !this.every(function(i){
+				return i !== item;
+			});
+		},
+		createList : function(){
+			///	<summary>
+			///	创建个新的列表。
+			///	</summary>
+			return new List.constructor();
+		},
+		distinct : function(){
+			///	<summary>
+			///	对列表进行去重。
+			///	</summary>
+			var list = this;
+
+			this.splice(0).forEach(function(item){
+				if(list.contains(item))
+					return;
+
+				list.push(item);
+			});
+			return list;
+		},
+		even : function(){
+			///	<summary>
+			///	返回集合中偶数项集合。
+			///	</summary>
+			return this.alternate(2);
+		},
+		length : undefined,
+		odd : function(){
+			///	<summary>
+			///	返回集合中奇数项集合。
+			///	</summary>
+			return this.alternate(2, 1);
+		}
+	});
+	addArrayMethods(List);
+
+	return List.constructor;
+}(
+	// addArrayMethods
+	function(List){
+		var define = jQun.define, hasOwnProperty = {}.hasOwnProperty;
+
+		forEach(
+			Object.getOwnPropertyNames(Array.prototype),
+			function(name){
+				if(hasOwnProperty.call(List, name))
+					return;
+
+				define(List, name, [][name]);
+			}
+		);
+	}
+));
 
 this.Namespace = (function(){
 	function Namespace(){
@@ -585,25 +777,6 @@ this.Text = (function(tRegx){
 	// tRegx => 查找参数
 	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g
 ));
-
-this.ConnectionSettings = (function(){
-	function ConnectionSettings(settings){
-		///	<summary>
-		///	连接配置。
-		///	</summary>
-		///	<param name="settings" type="object">连接配置。</param>
-		this.assign(settings);
-	};
-	ConnectionSettings = new NonstaticClass(ConnectionSettings, "jQun.ConnectionSettings");
-
-	ConnectionSettings.properties({
-		formatter : undefined,
-		type : "GET",
-		url : ""
-	}, { enumerable : true });
-
-	return ConnectionSettings.constructor;
-}());
 
 this.RequestHeader = (function(){
 	function RequestHeader(){
@@ -833,111 +1006,6 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 		arr.splice(-1);
 
 		return arr.join("");
-	}
-));
-
-this.List = List = (function(addArrayMethods){
-	function List(){
-		///	<summary>
-		///	对列表进行管理、操作的类。
-		///	</summary>
-		this.override({ length : 0 });
-	};
-	List = new NonstaticClass(List, "jQun.List");
-
-	List.properties({
-		alternate : function(num, _remainder){
-			///	<summary>
-			///	交替性取出集合中的符合项。
-			///	</summary>
-			///	<param name="num" type="number">取模运算值。</param>
-			///	<param name="_remainder" type="number">余数。</param>
-			var list = this.createList();
-
-			_remainder = _remainder || 0;
-
-			this.forEach(function(item, i){
-				if(i % num === _remainder){
-					list.push(item);
-				}
-			});
-			return list;
-		},
-		clear : function(){
-			///	<summary>
-			///	清空整个集合。
-			///	</summary>
-			this.splice(0);
-			return this;
-		},
-		combine : function(list){
-			///	<summary>
-			///	合并另一个集合。
-			///	</summary>
-			///	<param name="list" type="array">另一个集合。</param>
-			this.push.apply(this, list);
-			return this;
-		},
-		contains : function(item){
-			///	<summary>
-			///	返回一个布尔值，表示该列表中是否包含指定项。
-			///	</summary>
-			///	<param name="item" type="*">可能包含的项。</param>
-			return !this.every(function(i){
-				return i !== item;
-			});
-		},
-		createList : function(){
-			///	<summary>
-			///	创建个新的列表。
-			///	</summary>
-			return new List.constructor();
-		},
-		distinct : function(){
-			///	<summary>
-			///	对列表进行去重。
-			///	</summary>
-			var list = this;
-
-			this.splice(0).forEach(function(item){
-				if(list.contains(item))
-					return;
-
-				list.push(item);
-			});
-			return list;
-		},
-		even : function(){
-			///	<summary>
-			///	返回集合中偶数项集合。
-			///	</summary>
-			return this.alternate(2);
-		},
-		length : undefined,
-		odd : function(){
-			///	<summary>
-			///	返回集合中奇数项集合。
-			///	</summary>
-			return this.alternate(2, 1);
-		}
-	});
-	addArrayMethods(List);
-
-	return List.constructor;
-}(
-	// addArrayMethods
-	function(List){
-		var define = jQun.define, hasOwnProperty = {}.hasOwnProperty;
-
-		forEach(
-			Object.getOwnPropertyNames(Array.prototype),
-			function(name){
-				if(hasOwnProperty.call(List, name))
-					return;
-
-				define(List, name, [][name]);
-			}
-		);
 	}
 ));
 
@@ -1599,7 +1667,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 		HTMLElementList
 	);
 
-	// firefox 把onmouseenter、onmouseleave、onwheel归为了Element的属性
+	// firefox 把onmouseenter、onmouseleave、onwheel归为了Element的属性(chrome并不支持该3个事件)
 	forEach(
 		Object.getOwnPropertyNames(window.constructor.prototype),
 		function(name){
