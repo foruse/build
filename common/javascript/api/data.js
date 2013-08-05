@@ -82,7 +82,7 @@ this.Pagination = (function(){
 				return;
 			}
 
-			this.max = max;
+			this.max = _max;
 		},
 		size : 10
 	});
