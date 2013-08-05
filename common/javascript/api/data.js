@@ -61,6 +61,35 @@ this.Cache = (function(JSON, sessionStorage){
 	sessionStorage
 ));
 
+this.Pagination = (function(){
+	function Pagination(_size){
+		this.assign({
+			size : _size || this.size
+		});
+	};
+	Pagination = new NonstaticClass(Pagination, "Bao.API.Data.Pagination");
+
+	Pagination.properties({
+		index : 0,
+		isLastPage : function(){
+			return this.index == this.max;
+		},
+		max : 0,
+		set : function(index, _max){
+			this.index = index;
+
+			if(_max == undefined){
+				return;
+			}
+
+			this.max = max;
+		},
+		size : 10
+	});
+
+	return Pagination.constructor;
+}());
+
 Data.members(this);
 }.call(
 	{},

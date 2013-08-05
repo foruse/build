@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.2
- *  本次修改：添加jQun.Event类，用于自定义事件
+ *  文档状态：1.0.4.3
+ *  本次修改：jQun.prototype.getParentClass获取错误的修复
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -318,7 +318,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				///	<summary>
 				///	获取父类。
 				///	</summary>
-				return Object.getPrototypeOf(this);
+				return Object.getPrototypeOf(this.constructor.prototype);
 			},
 			isChildOf : function(AncestorClass){
 				///	<summary>

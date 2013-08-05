@@ -1,6 +1,16 @@
-﻿(function(CallServer, Text, allFormatters){
+﻿(function(CallServer, Text, open, allFormatters){
 CallServer.beginTesting();
 CallServer.setResponseType("json");
+
+CallServer.override({
+	open : function(){
+		var CallServer = this, args = arguments;
+
+		setTimeout(function(){
+			open.apply(CallServer, args);
+		}, 2000)
+	}
+});
 
 CallServer.save([
 	["getPartnerGroups",			"",		""],
@@ -12,6 +22,7 @@ CallServer.save([
 }(
 	Bao.CallServer,
 	jQun.Text,
+	Bao.CallServer.open,
 	// allFormatters
 	(function(Index){
 		return {
@@ -60,7 +71,9 @@ CallServer.save([
 			},
 			getProjects : function(data){
 				return {
-					projects : Index.SPP.getProjects(3)
+					projects : Index.SPP.getProjects(3),
+					pageIndex : 1,
+					max : 1
 				};
 			},
 			getSchedule : function(){

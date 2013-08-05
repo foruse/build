@@ -6,9 +6,6 @@
 	overflow : hidden;
 	display : none !important;
 }
-.scroll.show {
-	display : block;
-}
 .scroll, .scroll > button {
 	border-radius : 5px;
 }

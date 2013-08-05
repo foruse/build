@@ -1,5 +1,5 @@
-﻿(function(List, NonstaticClass, HTML){
-this.UserList = (function(HTMLElementList, panelHtml, listHtml){
+﻿(function(List, NonstaticClass, HTMLElementList, HTML){
+this.UserList = (function(panelHtml, listHtml){
 	function UserList(onletter){
 		var userList = this;
 
@@ -33,8 +33,6 @@ this.UserList = (function(HTMLElementList, panelHtml, listHtml){
 
 	return UserList.constructor;
 }(
-	// HTMLElementList
-	jQun.HTMLElementList,
 	// panelHtml
 	new HTML([
 		'<div class="userList"></div>'
@@ -77,5 +75,6 @@ List.members(this);
 	{},
 	Bao.UI.Control.List,
 	jQun.NonstaticClass,
+	jQun.HTMLElementList,
 	jQun.HTML
 ));

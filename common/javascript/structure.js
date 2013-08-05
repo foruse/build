@@ -4,7 +4,8 @@ this.Bao = (function(Bao){
 	Bao.members({
 		API : new Namespace().members({
 			Data : new Namespace().members({ // api/data.js
-				Cache : null
+				Cache : null,
+				Pagination : null
 			}),
 			DOM : new Namespace().members({ // api/dom.js
 				Panel : null
@@ -39,6 +40,9 @@ this.Bao = (function(Bao){
 				}),
 				List : new Namespace().members({ // ui/control/list.js
 					UserList : null
+				}),
+				Wait : new Namespace().members({ // ui/control/wait.js
+					LoadingBar : null
 				})
 			})
 		})

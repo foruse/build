@@ -78,10 +78,12 @@
 	
 }
 
-
-#project > ul {
+#project {
 	max-width : 310px;
 	margin : 0 auto;
+}
+#project > ul {
+	width : 100%;
 }
 #project li {
 	width : 50%;

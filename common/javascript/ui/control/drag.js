@@ -1,17 +1,11 @@
-﻿(function(Drag, NonstaticClass, Timer){
+﻿(function(Drag, NonstaticClass, HTMLElementList, Timer){
 this.Scroll = (function(html, getTop, setTop, onborder){
 	function Scroll(){
 		var scroll = this,
 			
-			scrollTimer = new Timer(70), touchTimer = new Timer(250),
+			scrollTimer = new Timer(70), touchTimer = new Timer(250);
 
-			scrollEl = html.create();
-
-		this.assign({
-			scrollEl : scrollEl
-		});
-
-		scrollEl.appendTo(document.body);
+		this.combine(html.create()).appendTo(document.body);
 
 		this.sourceEl.attach({
 			touchstart : function(e){
@@ -118,21 +112,24 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 			}
 		});
 	};
-	Scroll = new NonstaticClass(Scroll, "jQun.Scroll");
+	Scroll = new NonstaticClass(Scroll, "jQun.Scroll", HTMLElementList.prototype);
 
 	Scroll.properties({
-		hide : function(){
-			this.scrollEl.classList.remove("show");
-		},
 		// 溢出的元素（其父容器就应该需要滚动条）
 		overflowEl : undefined,
 		// touchstart时，记录的pageY值
 		pageY : 0,
-		scrollEl : undefined,
-		show : function(overflowEl){
-			var scrollEl = this.scrollEl, overflowEl = this.overflowEl,
+		// 监听滚动的事件元素
+		sourceEl : jQun(window),
+		// touchstart时，记录的top值
+		top : 0
+	});
 
-				style = scrollEl.style, rect = overflowEl.parent()[0].getBoundingClientRect();
+	Scroll.override({
+		show : function(overflowEl){
+			var overflowEl = this.overflowEl,
+
+				style = this.style, rect = overflowEl.parent()[0].getBoundingClientRect();
 				
 			jQun.forEach(rect, function(value, name){
 				if(name === "width")
@@ -145,13 +142,9 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 				style[name] = value + "px";
 			});
 
-			scrollEl.find(">button").height((rect.height * 100 / overflowEl.height()) + "%");
-			scrollEl.classList.add("show");
-		},
-		// 监听滚动的事件元素
-		sourceEl : jQun(window),
-		// touchstart时，记录的top值
-		top : 0
+			this.find(">button").height((rect.height * 100 / overflowEl.height()) + "%");
+			this.getParentClass().show.call(this);
+		}
 	});
 
 	return Scroll.constructor;
@@ -201,5 +194,6 @@ Drag.members(this);
 	{},
 	Bao.UI.Control.Drag,
 	jQun.NonstaticClass,
+	jQun.HTMLElementList,
 	Bao.API.Manager.Timer
 ));

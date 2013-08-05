@@ -1,4 +1,4 @@
-﻿(function(Index, Panel, Cache, CallServer, NonstaticClass, HTML){
+﻿(function(Index, Panel, NonstaticClass, Cache, CallServer, HTML, LoadingBar, Pagination){
 this.SPP = (function(UserList){
 	function Title(panelEl){
 	
@@ -33,22 +33,25 @@ this.SPP = (function(UserList){
 		///	</summary>
 		/// <params name="panelEl" type="jQun.HTMLElementList">对应的元素</params>
 		/// <params name="html" type="jQun.HTML">项目html模板</params>
-		var project = this;
+		var project = this, loadingBar = new LoadingBar(panelEl);
 		
 		this.assign({
-			html : html
+			html : html,
+			loadingBar : loadingBar,
+			pagination : new Pagination()
 		});
 
 		panelEl.attach({
 			"overflow" : function(e){
-				console.log(e);
+				if(e.direction !== "bottom")
+					return;
+
+				project.call();
 			}
 		});
 
-		CallServer.open("getProjects", null, function(data){
-			project.add(data);
-			project.addUnopenedProject();
-		});
+		loadingBar.appendTo(panelEl[0]);
+		this.call();
 	};
 	Project = new NonstaticClass(Project, null, Panel.prototype);
 
@@ -60,7 +63,7 @@ this.SPP = (function(UserList){
 			/// <params name="data" type="array">项目数据</params>
 			this.html.create(data).appendTo(this.panelEl.find(">ul")[0]);
 		},
-		addUnopenedProject : function(){
+		addUnopenedProject : function(_len){
 			///	<summary>
 			///	添加未解锁的项目，1次为10个。
 			///	</summary>
@@ -74,13 +77,45 @@ this.SPP = (function(UserList){
 				status : -1
 			};
 
-			jQun.forEach(10, function(){
+			jQun.forEach(_len == undefined ? this.pagination.size : _len, function(){
 				data.push(i);
 			});
 
 			this.add({ projects : data });
 		},
-		html : undefined
+		call : function(){
+			var project = this, 
+			
+				pagination = this.pagination, index = pagination.index + 1,
+				
+				loadingBar = this.loadingBar;
+
+			if(loadingBar.nomore){
+				project.addUnopenedProject();
+				return;
+			}
+
+			loadingBar.show();
+
+			CallServer.open("getProjects", {
+				pageIndex : index,
+				size : pagination.size
+			}, function(data){
+				loadingBar.hide();
+				project.add(data);
+
+				pagination.set(index, data.max);
+
+				if(pagination.isLastPage()){
+					loadingBar.nomore = true;
+					project.addUnopenedProject(pagination.size - data.projects.length);
+					return;
+				}
+			});
+		},
+		html : undefined,
+		loadingBar : undefined,
+		pagination : undefined
 	});
 
 
@@ -308,8 +343,10 @@ Index.members(this);
 	{},
 	Bao.Page.Index,
 	Bao.API.DOM.Panel,
+	jQun.NonstaticClass,
 	Bao.API.Data.Cache,
 	Bao.CallServer,
-	jQun.NonstaticClass,
-	jQun.HTML
+	jQun.HTML,
+	Bao.UI.Control.Wait.LoadingBar,
+	Bao.API.Data.Pagination
 ));
