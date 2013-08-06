@@ -1,16 +1,10 @@
 ﻿#SPP {
-	background-color : #f1f1f1;
+	background-color : #fff;
 }
 #SPP > * {
 	height : 30px;
 	width : 100%;
 	position : absolute;
-}
-#SPP[focusedTab="partner"] .content_SPP {
-	top : 85px;
-}
-#SPP[focusedTab="partner"] button[action="add"] > span {
-	background-position : 5px -149px;
 }
 #SPP[focusedTab="schedule"] {
 	background-color : #f2ebe5;
@@ -18,11 +12,14 @@
 #SPP[focusedtab="schedule"] .content_SPP {
 	top : 62px;
 }
-#SPP[focusedtab="schedule"] #title_SPP {
-	text-indent : -70px;
-}
-#SPP[focusedtab="schedule"] #title_SPP > button[action="add"] {
+#SPP[focusedtab="project"] #title_SPP > button[action="add"] {
 	display : none;
+}
+#SPP[focusedTab="partner"] .content_SPP {
+	top : 85px;
+}
+#SPP[focusedTab="partner"] button[action="add"] > span {
+	background-position : 5px -149px;
 }
 #SPP article > section {
 	display : none;
@@ -45,11 +42,17 @@
 	width : 12px;
 	padding : 3px 0;
 	border : 0 none;
+	margin-right : 10px;
 	background : url(../../../common/image/width12.png) no-repeat 0 0 content-box content-box;
 }
+#title_SPP > button:first-of-type {
+	margin-right : 0;
+}
 #title_SPP > button[action="add"] {
-	display : none;
-	background-position : 5px -24px;
+	width : 16px;
+	padding : 2px 0;
+	background-image : url(../../../common/image/width24.png);
+	background-position : 0 -100px;
 }
 
 
@@ -103,9 +106,10 @@
 }
 #project figure[status="-1"] {
 	opacity : 0.5;
+	background : url(../../image/project_lock.png) no-repeat center;
 }
-#project figure[status="-1"] figcaption {
-	background-color : transparent;
+#project figure[status="-1"] > * {
+	display : none;
 }
 #project figure[isimportant="true"] figcaption span {
 	background-position : 0 -15px;
@@ -249,7 +253,7 @@
 #tab_SPP {
 	bottom : 0;
 	height : 60px !important;
-	background-color : rgba(255, 255, 255, 0.7);
+	background-color : rgba(255, 255, 255, 0.6);
 	padding : 5px 5px 7px 5px;
 }
 #tab_SPP li {
@@ -262,39 +266,45 @@
 	border-radius : 48px;
 	display : block;
 	margin : 0 auto;
-	background-color : #fff;
 }
 #tab_SPP button.focused {
 	border-width : 5px;
 }
 #tab_SPP button.focused span {
+	width : 38px;
+	height : 38px;
+	border-radius : 38px;
+	margin : 0;
+	padding : 9px;
 	color : #e42c19;
+	border : 2px solid #fff;
+	background : url(../../../common/image/width12.png) no-repeat content-box content-box;
 }
 #tab_SPP span {
 	display : inline-block;
-	height : 24px;
-	width : 24px;
-	border-radius : 24px;
-	margin : 12px;
-	color : #fefefe;
-	text-indent : 5px;
+	height : 46px;
+	width : 46px;
+	border-radius : 46px;
+	border : 13px solid #fff;
 	background-image : url(../../../common/image/width24.png);
-	background-position : 3px 3px;
 	background-repeat : no-repeat;
+}
+#tab_SPP button[tab="schedule"] span {
+	border-width : 11px;
+	background-position : 2px 2px;
 }
 #tab_SPP button[tab="schedule"].focused span {
 	background-position : 6px -123px;
 }
 #tab_SPP button[tab="project"] span {
-	background-image : url(../../../common/image/width36.png);
-	background-position : 0 2px;
+	background-position : -2px -27px;
 }
 #tab_SPP button[tab="project"].focused span {
-	background-position : 0 -24px;
+	background-position : 3px -60px;
 }
 #tab_SPP button[tab="partner"] span {
-	background-position : 5px -73px;
+	background-position : -2px -52px;
 }
 #tab_SPP button[tab="partner"].focused span {
-	background-position : 5px -98px;
+	background-position : 3px -75px;
 }

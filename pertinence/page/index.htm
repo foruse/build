@@ -112,12 +112,12 @@
 				<ul class="inlineBlock"></ul>
 				<script id="spp_item_html" type="text/html">
 					@for([
-						{ tab : "schedule", text : "日程" },
-						{ tab : "project", text : "PROJECT 项目" },
-						{ tab : "partner", text : "拍档" }
+						{ tab : "schedule", text : "Schedule 日程" },
+						{ tab : "project", text : "PROJECTS 项目" },
+						{ tab : "partner", text : "PARTNERS 拍档" }
 					] ->> t){
 						<li>
-							<button class="themeBdColor" tab="{t.tab}">
+							<button class="themeBdColor themeBgColor" tab="{t.tab}">
 								<span class="themeBgColor" text="{t.text}"></span>
 							</button>
 						</li>

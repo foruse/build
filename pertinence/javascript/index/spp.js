@@ -14,7 +14,8 @@ this.SPP = (function(UserList){
 
 	function Schedule(panelEl, html){
 		this.assign({
-			html : html
+			html : html,
+			pagination : new Pagination("getSchedule")
 		});
 	};
 	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
@@ -22,6 +23,9 @@ this.SPP = (function(UserList){
 	Schedule.properties({
 		add : function(data){
 			this.panelEl.find("> header > dl").innerHTML = this.html.render(data);
+		},
+		call : function(){
+			
 		},
 		html : undefined
 	});
@@ -54,12 +58,12 @@ this.SPP = (function(UserList){
 				if(e.direction !== "bottom")
 					return;
 
-				project.call();
+				project.load();
 			}
 		});
 
 		loadingBar.appendTo(panelEl[0]);
-		this.call();
+		this.load();
 	};
 	Project = new NonstaticClass(Project, null, Panel.prototype);
 
@@ -91,7 +95,11 @@ this.SPP = (function(UserList){
 
 			this.add({ projects : data });
 		},
-		call : function(){
+		html : undefined,
+		load : function(){
+			///	<summary>
+			///	去服务器取数据，并加载。
+			///	</summary>
 			var pagination = this.pagination;
 
 			if(pagination.isLastPage()){
@@ -102,16 +110,21 @@ this.SPP = (function(UserList){
 			this.loadingBar.show();
 			this.pagination.callServer();
 		},
-		html : undefined,
 		loadingBar : undefined,
 		pagination : undefined
 	});
 
 
 	function Partner(panelEl, groupingHtml){
-		var partner = this, 
-			userList, panelStyle = panelEl.style;
+		var partner = this, userList,
+
+			loadingBar = new LoadingBar(panelEl),
+
+			panelStyle = panelEl.style;
 		
+		// 添加loadingBar
+		loadingBar.appendTo(panelEl[0]);
+
 		// 初始化用户列表
 		userList = new UserList(function(top){
 			panelStyle.top = top + "px";
@@ -119,6 +132,7 @@ this.SPP = (function(UserList){
 
 		this.assign({
 			cache : new Cache("partner"),
+			loadingBar : loadingBar,
 			userList : userList
 		});
 
@@ -142,6 +156,7 @@ this.SPP = (function(UserList){
 		});
 
 		userList.appendTo(panelEl.find(">ul>li:last-child")[0]);
+		loadingBar.show();
 
 		// 获取分组数据
 		CallServer.open("getPartnerGroups", null, function(data){
@@ -160,15 +175,17 @@ this.SPP = (function(UserList){
 	Partner.properties({
 		cache : undefined,
 		focus : function(groupId, _groupEl){
-			var partner = this;
+			var partner = this, classList;
 
 			// 如果分组元素不存在
 			if(!_groupEl){
 				_groupEl = this.panelEl.find('.groupingBar button[groupid="' + groupId + '"]');
 			}
+
+			classList = _groupEl.classList;
 			
 			// 如果聚焦的分组已经是当前分组
-			if(_groupEl.classList.contains("focused")){
+			if(classList.contains("focused")){
 				return;	
 			}
 
@@ -183,15 +200,29 @@ this.SPP = (function(UserList){
 				return;
 			}
 
+			var userList = this.userList, loadingBar = this.loadingBar;
+
+			userList.hide();
+			loadingBar.show();
+
 			// 还没当前分组的数据，那么就去取数据，再进行加载
 			CallServer.open("getPartners", { id : groupId }, function(data){
+				loadingBar.hide();
 				// 将数据存入缓存
 				partner.cache.set(groupId, data);
 				// 渲染数据
-				partner.userList.render(data);
-				_groupEl.set("complete", "", "attr")
+				userList.render(data);
+				userList.show();
+				_groupEl.set("complete", "", "attr");
+
+				// 防止用户快速切换分组导致数据错误
+				if(classList.contains("focused"))
+					return;
+
+				partner.focus(groupId, _groupEl);
 			});
 		},
+		loadingBar : undefined,
 		userList : undefined
 	});
 
