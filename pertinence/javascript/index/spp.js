@@ -38,7 +38,15 @@ this.SPP = (function(UserList){
 		this.assign({
 			html : html,
 			loadingBar : loadingBar,
-			pagination : new Pagination()
+			pagination : new Pagination("getProjects", function(data){
+				loadingBar.hide();
+				project.add(data);
+
+				if(!this.isLastPage())
+					return;
+				
+				project.addUnopenedProject(this.size - data.projects.length);
+			})
 		});
 
 		panelEl.attach({
@@ -84,34 +92,15 @@ this.SPP = (function(UserList){
 			this.add({ projects : data });
 		},
 		call : function(){
-			var project = this, 
-			
-				pagination = this.pagination, index = pagination.index + 1,
-				
-				loadingBar = this.loadingBar;
+			var pagination = this.pagination;
 
-			if(loadingBar.nomore){
-				project.addUnopenedProject();
+			if(pagination.isLastPage()){
+				this.addUnopenedProject();
 				return;
 			}
 
-			loadingBar.show();
-
-			CallServer.open("getProjects", {
-				pageIndex : index,
-				size : pagination.size
-			}, function(data){
-				loadingBar.hide();
-				project.add(data);
-
-				pagination.set(index, data.max);
-
-				if(pagination.isLastPage()){
-					loadingBar.nomore = true;
-					project.addUnopenedProject(pagination.size - data.projects.length);
-					return;
-				}
-			});
+			this.loadingBar.show();
+			this.pagination.callServer();
 		},
 		html : undefined,
 		loadingBar : undefined,

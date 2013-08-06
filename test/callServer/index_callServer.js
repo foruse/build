@@ -73,7 +73,7 @@ CallServer.save([
 				return {
 					projects : Index.SPP.getProjects(3),
 					pageIndex : 1,
-					max : 1
+					pageMax : 1
 				};
 			},
 			getSchedule : function(){

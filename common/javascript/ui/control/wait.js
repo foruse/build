@@ -30,7 +30,6 @@ this.LoadingBar = (function(Timer, html){
 			this.text(str, "error");
 		},
 		errorText : "加载数据超时，请重新加载！",
-		isLoading : false,
 		nomore : false,
 		text : function(str, _type){
 			///	<summary>
