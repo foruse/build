@@ -275,7 +275,7 @@
 	height : 38px;
 	border-radius : 38px;
 	margin : 0;
-	padding : 9px;
+	padding : 9px 9px 10px 9px;
 	color : #e42c19;
 	border : 2px solid #fff;
 	background : url(../../../common/image/width12.png) no-repeat content-box content-box;
@@ -300,11 +300,11 @@
 	background-position : -2px -27px;
 }
 #tab_SPP button[tab="project"].focused span {
-	background-position : 3px -60px;
+	background-position : 3px -59px;
 }
 #tab_SPP button[tab="partner"] span {
 	background-position : -2px -52px;
 }
 #tab_SPP button[tab="partner"].focused span {
-	background-position : 3px -75px;
+	background-position : 2px -74px;
 }

@@ -1,4 +1,4 @@
-﻿(function(Index, Panel, NonstaticClass, Cache, CallServer, HTML, LoadingBar, Pagination){
+﻿(function(Index, Panel, NonstaticClass, Cache, CallServer, HTML, LoadingBar, BatchLoad){
 this.SPP = (function(UserList){
 	function Title(panelEl){
 	
@@ -15,7 +15,7 @@ this.SPP = (function(UserList){
 	function Schedule(panelEl, html){
 		this.assign({
 			html : html,
-			pagination : new Pagination("getSchedule")
+			batchLoad : new BatchLoad("getSchedule")
 		});
 	};
 	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
@@ -37,21 +37,29 @@ this.SPP = (function(UserList){
 		///	</summary>
 		/// <params name="panelEl" type="jQun.HTMLElementList">对应的元素</params>
 		/// <params name="html" type="jQun.HTML">项目html模板</params>
-		var project = this, loadingBar = new LoadingBar(panelEl);
+		var project = this,
+
+			loadingBar = new LoadingBar(panelEl),
+
+			batchLoad = new BatchLoad("getProjects", function(data){
+				loadingBar.hide();
+				project.add(data);
+
+				if(!this.isEqual("pageIndex", "pageMax"))
+					return;
+				
+				project.addUnopenedProject(this.getParam("pageSize") - data.projects.length);
+			});
 		
 		this.assign({
 			html : html,
 			loadingBar : loadingBar,
-			pagination : new Pagination("getProjects", function(data){
-				loadingBar.hide();
-				project.add(data);
-
-				if(!this.isLastPage())
-					return;
-				
-				project.addUnopenedProject(this.size - data.projects.length);
-			})
+			batchLoad : batchLoad
 		});
+
+		batchLoad.setParam("pageIndex", 0, 1);
+		batchLoad.setParam("pageSize", 10);
+		batchLoad.setParam("pageMax", -1);
 
 		panelEl.attach({
 			"overflow" : function(e){
@@ -64,6 +72,7 @@ this.SPP = (function(UserList){
 
 		loadingBar.appendTo(panelEl[0]);
 		this.load();
+		window.aa = batchLoad;
 	};
 	Project = new NonstaticClass(Project, null, Panel.prototype);
 
@@ -89,7 +98,7 @@ this.SPP = (function(UserList){
 				status : -1
 			};
 
-			jQun.forEach(_len == undefined ? this.pagination.size : _len, function(){
+			jQun.forEach(_len == undefined ? this.batchLoad.getParam("pageSize") : _len, function(){
 				data.push(i);
 			});
 
@@ -100,18 +109,18 @@ this.SPP = (function(UserList){
 			///	<summary>
 			///	去服务器取数据，并加载。
 			///	</summary>
-			var pagination = this.pagination;
+			var batchLoad = this.batchLoad;
 
-			if(pagination.isLastPage()){
+			if(batchLoad.isEqual("pageIndex", "pageMax")){
 				this.addUnopenedProject();
 				return;
 			}
 
 			this.loadingBar.show();
-			this.pagination.callServer();
+			batchLoad.callServer();
 		},
 		loadingBar : undefined,
-		pagination : undefined
+		batchLoad : undefined
 	});
 
 
@@ -368,5 +377,5 @@ Index.members(this);
 	Bao.CallServer,
 	jQun.HTML,
 	Bao.UI.Control.Wait.LoadingBar,
-	Bao.API.Data.Pagination
+	Bao.API.Data.BatchLoad
 ));

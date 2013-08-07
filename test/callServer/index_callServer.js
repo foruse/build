@@ -1,4 +1,4 @@
-﻿(function(CallServer, Text, open, allFormatters){
+﻿(function(CallServer, Text, open, allHandlers){
 CallServer.beginTesting();
 CallServer.setResponseType("json");
 
@@ -17,13 +17,13 @@ CallServer.save([
 	["getPartners",			"?tab={tab}",		""],
 	["getProjects",			"",		""],
 	["getSchedule",			"?last={last}&next={next}",		""]
-], allFormatters);
+], allHandlers);
 
 }(
 	Bao.CallServer,
 	jQun.Text,
 	Bao.CallServer.open,
-	// allFormatters
+	// allHandlers
 	(function(Index){
 		return {
 			getPartnerGroups : function(){

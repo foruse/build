@@ -4,8 +4,8 @@ this.Bao = (function(Bao){
 	Bao.members({
 		API : new Namespace().members({
 			Data : new Namespace().members({ // api/data.js
-				Cache : null,
-				Pagination : null
+				BatchLoad : null,
+				Cache : null
 			}),
 			DOM : new Namespace().members({ // api/dom.js
 				Panel : null

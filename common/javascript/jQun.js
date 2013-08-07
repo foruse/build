@@ -498,7 +498,7 @@ this.ConnectionSettings = (function(){
 	ConnectionSettings = new NonstaticClass(ConnectionSettings, "jQun.ConnectionSettings");
 
 	ConnectionSettings.properties({
-		formatter : undefined,
+		handler : undefined,
 		type : "GET",
 		url : ""
 	}, { enumerable : true });
@@ -919,13 +919,13 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 						readyState : 4,
 						status : 200,
 						responseText : ""
-					}, item.formatter, _complete, isResponseJSON);
+					}, item.handler, _complete, isResponseJSON);
 
 					return;
 				}
 
 				request.onreadystatechange =  function(){
-					stateChanged(this, item.formatter, _complete, isResponseJSON);
+					stateChanged(this, item.handler, _complete, isResponseJSON);
 				};
 			}
 
@@ -940,17 +940,17 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 			return request;
 		},
 		responseType : "text",
-		save : function(allSettings, _allFormatters){
+		save : function(allSettings, _handlers){
 			///	<summary>
 			///	存储ajax连接信息。
 			///	</summary>
 			///	<param name="allSettings" type="array">ajax连接信息，如：["name", new jQun.Text("url"), "get", _formatter]。</param>
-			///	<param name="_allFormatters" type="function">所有的数据格式转换函数。</param>
+			///	<param name="_handlers" type="function">所有的数据格式转换函数。</param>
 			var Storage = this.RequestStorage,
 				toUpperCase = String.prototype.toUpperCase;
 
-			if(!_allFormatters){
-				_allFormatters = {};
+			if(!_handlers){
+				_handlers = {};
 			}
 
 			forEach(allSettings, function(settings){
@@ -959,7 +959,7 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 				Storage.set(name, {
 					url : settings[1],
 					type : toUpperCase.call(settings[2]) === "POST" ? "POST" : "GET",
-					formatter : _allFormatters[name] || settings[3]
+					handler : _handlers[name] || settings[3]
 				});
 			});
 			return Storage;
@@ -978,12 +978,12 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 	this.RequestHeader,
 	this.RequestStorage,
 	// stateChanged
-	function(request, formatter, complete, isResponseJSON){
+	function(request, handler, complete, isResponseJSON){
 		///	<summary>
 		///	异步状态改变时所执行的函数。
 		///	</summary>
 		///	<param name="request" type="object">字符串文本。</param>
-		///	<param name="formatter" type="function">返回数据的格式转换函数。</param>
+		///	<param name="handler" type="function">返回数据的格式转换函数。</param>
 		///	<param name="complete" type="function">当异步执行完毕所执行的函数。</param>
 		///	<param name="isResponseJSON" type="boolean">返回的数据是否为json格式。</param>
 		if(request.readyState < 4)
@@ -995,8 +995,8 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 			responseData = jQun.JSON.parse(responseData);
 		}
 
-		if(typeof formatter === "function"){
-			responseData = formatter(responseData);
+		if(typeof handler === "function"){
+			responseData = handler(responseData);
 		}
 
 		complete(responseData);

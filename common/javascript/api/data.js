@@ -1,4 +1,98 @@
 ﻿(function(Data, NonstaticClass, StaticClass){
+this.BatchLoad = (function(CallServer){
+	function BatchLoad(name, _complete){
+		///	<summary>
+		///	分页加载。
+		///	</summary>
+		/// <params name="name" type="string">ajax名称</params>
+		/// <params name="_complete" type="function">当ajax完成时所执行的函数</params>
+
+		this.assign({
+			name : name,
+			params : {},
+			complete : _complete
+		});
+	};
+	BatchLoad = new NonstaticClass(BatchLoad, "Bao.API.Data.BatchLoad");
+
+	BatchLoad.properties({
+		callServer : function(){
+			///	<summary>
+			///	访问服务器取数据。
+			///	</summary>
+			var p = {},	params = this.params, forEach = jQun.forEach;
+
+			// 初始化ajax参数
+			forEach(params, function(param, name){
+				var handler = param.handler, value = param.value;
+
+				// 如果没有处理逻辑
+				if(handler === undefined){
+					p[name] = value;
+					return;
+				}
+
+				p[name] = typeof handler === "function" ? handler(value, name) : value + handler;
+			});
+
+			// 访问服务器
+			CallServer.open(this.name, p, function(data){
+				// 设置回馈参数信息，确保参数统一
+				forEach(params, function(param, name){
+					var value = data[name];
+
+					if(value === undefined)
+						return;
+
+					param.value = value;
+				});
+
+				// 是否执行完成时所需调用的函数
+				if(typeof this.complete !== "function")
+					return;
+
+				this.complete(data);
+			}.bind(this));
+		},
+		complete : undefined,
+		getParam : function(name){
+			///	<summary>
+			///	获取参数值。
+			///	</summary>
+			/// <params name="name" type="string">参数的名称</params>
+			var param = this.params[name];
+
+			return param ? param.value : undefined;
+		},
+		isEqual : function(name, anotherName){
+			///	<summary>
+			///	判断2个参数的值是否相等。
+			///	</summary>
+			/// <params name="name" type="string">参数的名称</params>
+			/// <params name="anotherName" type="string">需要对比的另一个参数名称</params>
+			return this.getParam(name) == this.getParam(anotherName);
+		},
+		name : "",
+		params : undefined,
+		setParam : function(name, value, _handle){
+			///	<summary>
+			///	设置参数。
+			///	</summary>
+			/// <params name="name" type="string">参数的名称</params>
+			/// <params name="value" type="*">参数的值</params>
+			/// <params name="_handle" type="*">参数的处理逻辑</params>
+			this.params[name] = {
+				value : value,
+				handle : _handle
+			};
+		}
+	});
+
+	return BatchLoad.constructor;
+}(
+	Bao.CallServer
+));
+
 this.Cache = (function(JSON, sessionStorage){
 	function Cache(name){
 		///	<summary>
@@ -59,84 +153,6 @@ this.Cache = (function(JSON, sessionStorage){
 	jQun.JSON,
 	// sessionStorage
 	sessionStorage
-));
-
-this.Pagination = (function(CallServer){
-	function Pagination(ajaxName, _complete, _before){
-		///	<summary>
-		///	分页加载。
-		///	</summary>
-		/// <params name="ajaxName" type="string">ajax名称</params>
-		/// <params name="_complete" type="function">当ajax完成时所执行的函数</params>
-		/// <params name="_before" type="function">当ajax将要执行的前奏函数</params>
-
-		this.assign({
-			ajaxName : ajaxName,
-			before : _before,
-			complete : _complete
-		});
-	};
-	Pagination = new NonstaticClass(Pagination, "Bao.API.Data.Pagination");
-
-	Pagination.properties({
-		ajaxName : "",
-		before : undefined,
-		callServer : function(){
-			///	<summary>
-			///	访问服务器取数据。
-			///	</summary>
-			var params = {
-				pageIndex : this.index++,
-				pageSize : this.size
-			};
-
-			if(typeof this.before === "function"){
-				this.before(params);
-			}
-
-			CallServer.open(this.ajaxName, params, function(data){
-				this.resetIndex(data.pageIndex);
-				this.resetMax(data.pageMax);
-
-				if(typeof this.complete !== "function")
-					return;
-
-				this.complete(data);
-			}.bind(this));
-		},
-		complete : undefined,
-		index : 0,
-		isLastPage : function(){
-			return this.index == this.max;
-		},
-		max : -1,
-		resetIndex : function(index){
-			///	<summary>
-			///	设置分页索引。
-			///	</summary>
-			/// <params name="index" type="number">分页索引</params>
-			this.index = index;
-		},
-		resetMax : function(max){
-			///	<summary>
-			///	设置分页索引最大值。
-			///	</summary>
-			/// <params name="max" type="number">分页索引最大值</params>
-			this.max = max;
-		},
-		resetSize : function(size){
-			///	<summary>
-			///	设置分页大小。
-			///	</summary>
-			/// <params name="size" type="number">分页大小</params>
-			this.size = size;
-		},
-		size : 10
-	});
-
-	return Pagination.constructor;
-}(
-	Bao.CallServer
 ));
 
 Data.members(this);
