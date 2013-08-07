@@ -147,7 +147,6 @@ this.Timer = (function(setTimeout, clearTimeout){
 			///	<summary>
 			///	开始计时器，该计时器需要人为手动停止。
 			///	</summary>
-			///	<param name="_timeout" type="number">超时时间，单位毫秒。</param>
 			///	<param name="_ontimeout" type="function">超时所执行的函数。</param>
 
 			// 如果已经开始，则return
@@ -177,6 +176,57 @@ this.Timer = (function(setTimeout, clearTimeout){
 	setTimeout,
 	// clearTimeout
 	clearTimeout
+));
+
+this.IntervalTimer = (function(Timer){
+	function IntervalTimer(_timeout){ };
+	IntervalTimer = new NonstaticClass(IntervalTimer, "Bao.API.Manager.IntervalTimer", Timer.prototype);
+
+	IntervalTimer.override({
+		start : function(oninterval, _times){
+			///	<summary>
+			///	开始计时器，该计时器需要人为手动停止。
+			///	</summary>
+			///	<param name="oninterval" type="function">间隔时间所执行的函数。</param>
+			///	<param name="_times" type="number">执行次数。</param>
+			var intervalTimer = this,
+
+				// 记录当前执行了多少次
+				i = 0,
+
+				isNaN = window.isNaN,
+
+				start = Timer.prototype.start;
+
+			// 如果不存在，则表明是无限次数
+			if(!_times){
+				i = NaN;
+				_times = -1;
+			}
+
+			start.call(this, function(){
+				// 如果是有限次数，则记录
+				if(!isNaN(i)){
+					i = i + 1;
+				}
+
+				// 执行间隔函数
+				oninterval(i);
+				intervalTimer.stop();
+
+				// 达到最大次数
+				if(i === _times)
+					return;
+
+				// 递归
+				start.call(intervalTimer, arguments.callee);
+			});
+		}
+	});
+
+	return IntervalTimer.constructor;
+}(
+	this.Timer
 ));
 
 Manager.members(this);

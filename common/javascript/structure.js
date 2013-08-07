@@ -12,6 +12,7 @@ this.Bao = (function(Bao){
 			}),
 			Manager : new Namespace().members({ // api/manager.js
 				History : null,
+				IntervalTimer : null,
 				Timer : null
 			})
 		}),
@@ -36,6 +37,7 @@ this.Bao = (function(Bao){
 		UI : new Namespace().members({
 			Control : new Namespace().members({ // ui/control
 				Drag : new Namespace().members({ // ui/control/drag.js
+					Navigator : null,
 					Scroll : null
 				}),
 				List : new Namespace().members({ // ui/control/list.js

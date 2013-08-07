@@ -81,31 +81,26 @@
 				</section>
 				<section id="partner" class="overflowPanel">
 					<ul>
-						<li>
-							<dl class="groupingBar"></dl>
-							<script id="spp_partnerGroups_html" type="text/html">
-								<dd class="inlineBlock">
-									<aside>
-										<button action="addGroup">添加组</button>
-										<button groupid="-1">全部</button>
-									</aside>
-									<ul class="inlineBlock">
-										@for(groups ->> gp){
-											<li>
-												<button groupid="{gp.id}">{gp.name}</button>
-											</li>
-										}
-									</ul>
-								</dd>
-								<dt>
-									@for(maxPage ->> idx){
-										<button idx="{idx}"></button>
-									}
-								</dt>
-							</script>
-						</li>
+						<li></li>
 						<li></li>
 					</ul>
+					<script id="spp_partnerGroups_html" type="text/html">
+						<dl class="partnerGroup inlineBlock">
+							<dt>
+								<button class="themeBdColor" action="addGroup">添加组</button>
+								<button groupid="-1">全部</button>
+							</dt>
+							<dd>
+								<ul class="inlineBlock">
+									@for(groups ->> gp){
+										<li>
+											<button groupid="{gp.id}">{gp.name}</button>
+										</li>
+									}
+								</ul>
+							</dd>
+						</dl>
+					</script>
 				</section>
 			</article>
 			<footer id="tab_SPP">

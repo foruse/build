@@ -1,5 +1,5 @@
 ﻿(function(Index, Panel, NonstaticClass, Cache, CallServer, HTML, LoadingBar, BatchLoad){
-this.SPP = (function(UserList){
+this.SPP = (function(UserList, Navigator){
 	function Title(panelEl){
 	
 	};
@@ -125,14 +125,14 @@ this.SPP = (function(UserList){
 
 
 	function Partner(panelEl, groupingHtml){
-		var partner = this, userList,
+		var partner = this, userList, groupPanel,
+
+			panelStyle = panelEl.style,
 
 			loadingBar = new LoadingBar(panelEl),
 
-			panelStyle = panelEl.style;
-		
-		// 添加loadingBar
-		loadingBar.appendTo(panelEl[0]);
+			navigator = new Navigator();
+
 
 		// 初始化用户列表
 		userList = new UserList(function(top){
@@ -144,6 +144,11 @@ this.SPP = (function(UserList){
 			loadingBar : loadingBar,
 			userList : userList
 		});
+
+		// 添加loadingBar
+		loadingBar.appendTo(panelEl[0]);		
+		// 添加navigator
+		navigator.appendTo(panelEl.find(">ul>li:first-child")[0]);
 
 		// 监听事件
 		panelEl.attach({
@@ -169,11 +174,14 @@ this.SPP = (function(UserList){
 
 		// 获取分组数据
 		CallServer.open("getPartnerGroups", null, function(data){
-			var groups = data.groups;
+			var groups = data.groups, len = groups.length;
+				
+			// 添加分组区域
+			navigator.content(groupingHtml.render(data));
+			navigator.tab(Math.ceil(len / 3));
+			navigator.focusTab(0);
 
-			panelEl.find(".groupingBar").innerHTML = groupingHtml.render(data);
-
-			if(groups.length === 0)
+			if(len === 0)
 				return;
 
 			partner.focus(groups[0].id);
@@ -184,11 +192,16 @@ this.SPP = (function(UserList){
 	Partner.properties({
 		cache : undefined,
 		focus : function(groupId, _groupEl){
+			///	<summary>
+			///	切换分组。
+			///	</summary>
+			/// <params name="groupId" type="number">分组的id</params>
+			/// <params name="_groupEl" type="jQun.HTMLElementList">该分组元素</params>
 			var partner = this, classList;
 
 			// 如果分组元素不存在
 			if(!_groupEl){
-				_groupEl = this.panelEl.find('.groupingBar button[groupid="' + groupId + '"]');
+				_groupEl = this.panelEl.find('.partnerGroup button[groupid="' + groupId + '"]');
 			}
 
 			classList = _groupEl.classList;
@@ -364,7 +377,8 @@ this.SPP = (function(UserList){
 
 	return SPP.constructor;
 }(
-	Bao.UI.Control.List.UserList
+	Bao.UI.Control.List.UserList,
+	Bao.UI.Control.Drag.Navigator
 ));
 
 Index.members(this);

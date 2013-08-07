@@ -1,6 +1,9 @@
-﻿(function(Drag, NonstaticClass, HTMLElementList, Timer){
+﻿(function(Drag, NonstaticClass, HTMLElementList, HTML, Timer){
 this.Scroll = (function(html, getTop, setTop, onborder){
 	function Scroll(){
+		///	<summary>
+		///	滚动条。
+		///	</summary>
 		var scroll = this,
 			
 			scrollTimer = new Timer(70), touchTimer = new Timer(250);
@@ -127,9 +130,11 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 
 	Scroll.override({
 		show : function(overflowEl){
-			var overflowEl = this.overflowEl,
-
-				style = this.style, rect = overflowEl.parent()[0].getBoundingClientRect();
+			///	<summary>
+			///	显示滚动条。
+			///	</summary>
+			/// <params name="overflowEl" type="jQun.HTMLElementList">溢出的元素</params>
+			var style = this.style, rect = overflowEl.parent()[0].getBoundingClientRect();
 				
 			jQun.forEach(rect, function(value, name){
 				if(name === "width")
@@ -150,7 +155,7 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 	return Scroll.constructor;
 }(
 	// html
-	new jQun.HTML([
+	new HTML([
 		'<aside class="scroll">',
 			'<button></button>',
 		'</aside>'
@@ -189,11 +194,119 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 	}.bind(new jQun.Event("overflow", "*"))
 ));
 
+this.Navigator = (function(panelHtml, tabItemsHtml){
+	function Navigator(){
+		///	<summary>
+		///	导航。
+		///	</summary>
+		var navigator = this;
+
+		this.combine(panelHtml.create());
+
+		this.assign({
+			contentEl : this.find(">nav"),
+			tabEl : this.find(">aside>ol"),
+			timer : new Timer(1000)
+		});
+
+		this.attach({
+			click : function(e){
+				var buttonEls = navigator.buttonEls;
+
+				if(!buttonEls)
+					return;
+
+				var target = e.target;
+
+				if(!buttonEls.contains(target))
+					return;
+
+				navigator.focus(jQun(target).get("idx", "attr"));
+			}
+		});
+	};
+	Navigator = new NonstaticClass(Navigator, "Bao.UI.Control.Drag.Navigator", HTMLElementList.prototype);
+
+	Navigator.properties({
+		buttonEls : undefined,
+		content : function(htmlStr){
+			///	<summary>
+			///	设置导航的主体内容。
+			///	</summary>
+			/// <params name="htmlStr" type="string">主体内容html字符串</params>
+			this.find(">nav").innerHTML = htmlStr;
+		},
+		contentEl : undefined,
+		focusTab : function(idx){
+			///	<summary>
+			///	切换tab。
+			///	</summary>
+			/// <params name="idx" type="number">tab的索引</params>
+			var timer = this.timer;
+
+			if(timer.isEnabled)
+				return;
+
+			var tabEl = this.tabEl, focusEl = tabEl.find('button[idx="' + idx + '"]');
+
+			if(focusEl.length === 0)
+				return;
+
+			var classList = focusEl.classList;
+
+			if(classList.contains("focused"))
+				return;
+
+			var contentEl = this.contentEl;
+			
+			timer.start(function(){
+			
+			});
+
+			tabEl.find('button.focused').classList.remove("focused");
+			classList.add("focused");
+		},
+		tab : function(len){
+			///	<summary>
+			///	设置选项卡。
+			///	</summary>
+			/// <params name="len" type="number">选项卡的个数</params>
+			var tabItemsEl = tabItemsHtml.create({ length : len });
+
+			this.buttonEls = tabItemsEl.find(">button");
+			tabItemsEl.appendTo(this.tabEl[0]);
+		},
+		tabEl : undefined,
+		timer : undefined
+	});
+
+	return Navigator.constructor;
+}(
+	// panelHtml
+	new HTML([
+		'<div class="navigator">',
+			'<nav></nav>',
+			'<aside>',
+				'<ol class="inlineBlock"></ol>',
+			'</aside>',
+		'</div>'
+	].join("")),
+	// tabItemsHtml
+	new HTML([
+		'@for(length ->> idx){',
+			 '<li>',
+				'<button idx="{idx}"></button>',
+			 '</li>',
+		'}'
+	].join(""))
+));
+
 Drag.members(this);
 }.call(
 	{},
 	Bao.UI.Control.Drag,
 	jQun.NonstaticClass,
 	jQun.HTMLElementList,
+	jQun.HTML,
 	Bao.API.Manager.Timer
 ));

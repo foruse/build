@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.3
- *  本次修改：jQun.prototype.getParentClass获取错误的修复
+ *  文档状态：1.0.4.4
+ *  本次修改：解决jQun.HTML参数带有单引号出错的问题
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -1807,6 +1807,8 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, rRegx, tReplace){
 			// 使用Text类的replace替换参数
 			tReplace.call({
 				text : html
+					// 给单引号加保护
+					.split("'").join("\\'")
 					// 替换掉特殊的空白字符
 					.replace(sRegx, "")
 					// 替换for循环
