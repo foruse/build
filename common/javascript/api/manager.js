@@ -212,6 +212,11 @@ this.IntervalTimer = (function(Timer){
 
 				// 执行间隔函数
 				oninterval(i);
+
+				// 如果该计时器在oninterval函数内被中断，就return
+				if(!intervalTimer.isEnabled)
+					return;
+
 				intervalTimer.stop();
 
 				// 达到最大次数

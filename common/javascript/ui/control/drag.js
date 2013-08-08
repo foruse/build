@@ -1,4 +1,4 @@
-﻿(function(Drag, NonstaticClass, HTMLElementList, HTML, Timer){
+﻿(function(Drag, NonstaticClass, HTMLElementList, HTML, Timer, IntervalTimer){
 this.Scroll = (function(html, getTop, setTop, onborder){
 	function Scroll(){
 		///	<summary>
@@ -6,7 +6,7 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 		///	</summary>
 		var scroll = this,
 			
-			scrollTimer = new Timer(70), touchTimer = new Timer(250);
+			scrollTimer = new IntervalTimer(70), touchTimer = new Timer(250);
 
 		this.combine(html.create()).appendTo(document.body);
 
@@ -62,7 +62,6 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 				// 超出边界所执行的函数
 				onborder(overflowEl, getTop(overflowEl), function(t){
 					setTop(overflowEl, t);
-					scrollTimer.stop();
 					touchTimer.stop();
 				});
 
@@ -101,15 +100,13 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 						});
 	
 						setTop(overflowEl, top);
-						scrollTimer.stop();	
 
 						// 滚动结束
-						if(isEnd){
-							scroll.hide();
+						if(!isEnd)
 							return;
-						}
 
-						scrollTimer.start(arguments.callee);
+						scroll.hide();
+						scrollTimer.stop();
 					});
 				});
 			}
@@ -308,5 +305,6 @@ Drag.members(this);
 	jQun.NonstaticClass,
 	jQun.HTMLElementList,
 	jQun.HTML,
-	Bao.API.Manager.Timer
+	Bao.API.Manager.Timer,
+	Bao.API.Manager.IntervalTimer
 ));
