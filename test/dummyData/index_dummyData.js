@@ -85,7 +85,7 @@ this.SPP = (function(){
 
 			return projects;
 		},
-		getSchedule : function(date, last, next){
+		getSchedules : function(date, last, next){
 			var schedule = [], beginDate = new Date(date.getTime());
 
 			beginDate.setDate(beginDate.getDate() - (beginDate.getDay() + last * 0));
@@ -95,8 +95,8 @@ this.SPP = (function(){
 
 				for(var n = 0;n < 7;n++){
 					scd.push({
-						date : beginDate.setDate(beginDate.getDate() + 1),
-						count : Number.random(10)
+						time : beginDate.setDate(beginDate.getDate() + 1),
+						projects : this.getProjects(Number.random(5))
 					});
 				}
 				schedule.push(scd);

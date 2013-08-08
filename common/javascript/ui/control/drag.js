@@ -188,7 +188,9 @@ this.Scroll = (function(html, getTop, setTop, onborder){
 		this.source.direction = type;
 		this.trigger(overflowEl[0]);
 		fn(top, type);
-	}.bind(new jQun.Event("overflow", "*"))
+	}.bind(new jQun.Event("overflow", function(){
+		this.attachTo("*");
+	}))
 ));
 
 this.Navigator = (function(panelHtml, tabItemsHtml){

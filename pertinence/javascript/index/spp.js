@@ -13,10 +13,18 @@ this.SPP = (function(UserList, Navigator){
 
 
 	function Schedule(panelEl, html){
+		var schedule = this, batchLoad;
+		
+		batchLoad = new BatchLoad("getSchedules", function(data){
+			console.log(data);
+		});
+
 		this.assign({
 			html : html,
-			batchLoad : new BatchLoad("getSchedule")
+			batchLoad : batchLoad
 		});
+
+		this.call();
 	};
 	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
 
@@ -24,8 +32,9 @@ this.SPP = (function(UserList, Navigator){
 		add : function(data){
 			this.panelEl.find("> header > dl").innerHTML = this.html.render(data);
 		},
+		batchLoad : undefined,
 		call : function(){
-			
+			this.batchLoad.callServer();
 		},
 		html : undefined
 	});

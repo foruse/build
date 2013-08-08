@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.4
- *  本次修改：解决jQun.HTML参数带有单引号出错的问题
+ *  文档状态：1.0.4.5
+ *  本次修改：解决jQun.Event.prototype.attachTo的bug
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -505,82 +505,6 @@ this.ConnectionSettings = (function(){
 
 	return ConnectionSettings.constructor;
 }());
-
-this.Event = (function(attach, define){
-	function Event(name, _tagName, _type, _init){
-		///	<summary>
-		///	DOM事件类。
-		///	</summary>
-		///	<param name="name" type="string">事件名称。</param>
-		///	<param name="_tagName" type="string">标签名称。</param>
-		///	<param name="_type" type="string">事件类型(MouseEvent、UIEvent、WheelEvent等)。</param>
-		///	<param name="_init" type="function">事件初始化函数。</param>
-		var source;
-
-		if(!_type || !(_type in window)){
-			_type = this.type;
-		}
-
-		source = new window[_type](name);
-
-		this.assign({
-			name : name,
-			source : source,
-			type : _type
-		});
-
-		if(_tagName){
-			this.attachTo(_tagName);
-		}
-
-		if(typeof _init !== "function")
-			return;
-		
-		_init.call(this, source);
-	};
-	Event = new NonstaticClass(Event, "jQun.Event");
-
-	Event.properties({
-		attachTo : function(_tagName){
-			///	<summary>
-			///	应该附加该事件的标签。
-			///	</summary>
-			///	<param name="_tagName" type="string">标签名称。</param>
-			var name = this.name;
-
-			define(
-				(_tagName && _tagName !== "*" ? document.createElement(_tagName).constructor : Node).prototype,
-				"on" + name,
-				{
-					set : function(fn){
-						var obj = {};
-
-						obj[name] = fn;
-						attach(obj);
-					}
-				},
-				{ settable : true }
-			);
-
-			return this;
-		},
-		name : "",
-		source : undefined,
-		trigger : function(target){
-			///	<summary>
-			///	触发事件。
-			///	</summary>
-			///	<param name="target" type="element">触发该事件的元素。</param>
-			return target.dispatchEvent(this.source);
-		},
-		type : "Event"
-	});
-
-	return Event.constructor;
-}(
-	jQun.attach,
-	jQun.define
-));
 
 this.JSON = (function(){
 	function JSON(){
@@ -1361,6 +1285,31 @@ this.NodeList = (function(AttributeCollection){
 			this.insertTo(parentNode);
 			return this;
 		},
+		attach : function(events, _capture){
+			///	<summary>
+			///	向集合中所有元素注册事件侦听器。
+			///	</summary>
+			///	<param name="events" type="object">事件侦听器键值对。</param>
+			///	<param name="_capture" type="boolean">侦听器是否运行于捕获阶段。</param>
+			this.forEach(function(node){
+				forEach(events, function(fn, type){
+					node.addEventListener(type, fn, _capture);
+				});
+			});
+			return this;
+		},
+		detach : function(events){
+			///	<summary>
+			///	移除集合中所有元素的事件侦听器。
+			///	</summary>
+			///	<param name="events" type="object">事件侦听器键值对。</param>
+			this.forEach(function(node){
+				forEach(events, function(fn, type){
+					node.removeEventListener(type, fn);
+				});
+			});
+			return this;
+		},
 		hasChild : function(childNode){
 			///	<summary>
 			///	判断指定节点是否是该集合中某个元素的后代节点。
@@ -1461,19 +1410,6 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 	});
 
 	ElementList.properties({
-		attach : function(events, _capture){
-			///	<summary>
-			///	向集合中所有元素注册事件侦听器。
-			///	</summary>
-			///	<param name="events" type="object">事件侦听器键值对。</param>
-			///	<param name="_capture" type="boolean">侦听器是否运行于捕获阶段。</param>
-			this.forEach(function(element){
-				forEach(events, function(fn, type){
-					element.addEventListener(type, fn, _capture);
-				});
-			});
-			return this;
-		},
 		between : function(_selector, _ancestor){
 			///	<summary>
 			///	在该集合内的每一个元素与指定的祖先元素之间，查找其他符合条件的元素。
@@ -1517,18 +1453,6 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 
 			this.forEach(function(element){
 				delete element[name];
-			});
-			return this;
-		},
-		detach : function(events){
-			///	<summary>
-			///	移除集合中所有元素的事件侦听器。
-			///	</summary>
-			///	<param name="events" type="object">事件侦听器键值对。</param>
-			this.forEach(function(element){
-				forEach(events, function(fn, type){
-					element.removeEventListener(type, fn);
-				});
 			});
 			return this;
 		},
@@ -1786,6 +1710,79 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 			}
 		}, { gettable : true, settable : true });
 	}
+));
+
+this.Event = (function(attach, define){
+	function Event(name, _init, _type){
+		///	<summary>
+		///	DOM事件类。
+		///	</summary>
+		///	<param name="name" type="string">事件名称。</param>
+		///	<param name="_init" type="function">事件初始化函数。</param>
+		///	<param name="_type" type="string">事件类型(MouseEvent、UIEvent、WheelEvent等)。</param>
+		var source;
+
+		if(!_type || !(_type in window)){
+			_type = this.type;
+		}
+
+		source = new window[_type](name);
+
+		this.assign({
+			name : name,
+			source : source,
+			type : _type
+		});
+
+		source.initEvent(name, true, true);
+
+		if(typeof _init !== "function")
+			return;
+		
+		_init.call(this, source);
+	};
+	Event = new NonstaticClass(Event, "jQun.Event");
+
+	Event.properties({
+		attachTo : function(_tagName){
+			///	<summary>
+			///	应该附加该事件的标签。
+			///	</summary>
+			///	<param name="_tagName" type="string">标签名称。</param>
+			var name = this.name;
+
+			define(
+				(_tagName && _tagName !== "*" ? document.createElement(_tagName).constructor : Node).prototype,
+				"on" + name,
+				{
+					set : function(fn){
+						var obj = {};
+
+						obj[name] = fn;
+						attach.call([this], obj);
+					}
+				},
+				{ settable : true }
+			);
+
+			return this;
+		},
+		name : "",
+		source : undefined,
+		trigger : function(target){
+			///	<summary>
+			///	触发事件。
+			///	</summary>
+			///	<param name="target" type="element">触发该事件的元素。</param>
+			return target.dispatchEvent(this.source);
+		},
+		type : "Event"
+	});
+
+	return Event.constructor;
+}(
+	this.HTMLElementList.prototype.attach,
+	jQun.define
 ));
 
 this.HTML = (function(HTMLElementList, sRegx, fRegx, rRegx, tReplace){

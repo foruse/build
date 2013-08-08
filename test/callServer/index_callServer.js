@@ -16,7 +16,7 @@ CallServer.save([
 	["getPartnerGroups",			"",		""],
 	["getPartners",			"?tab={tab}",		""],
 	["getProjects",			"",		""],
-	["getSchedule",			"?last={last}&next={next}",		""]
+	["getSchedules",			"?last={last}&next={next}",		""]
 ], allHandlers);
 
 }(
@@ -26,12 +26,11 @@ CallServer.save([
 	// allHandlers
 	(function(Index){
 		return {
-			getPartnerGroups : function(){
-				var groups = Index.SPP.getPartnerGroups();
+			getPartnerGroups : function(data){
+				data = Index.SPP.getPartnerGroups();
 
 				return {
-					groups : groups,
-					maxPage : Math.ceil(groups.length / 3)
+					groups : data
 				};
 			},
 			getPartners : function(data){
@@ -42,7 +41,9 @@ CallServer.save([
 					letters[l] = -1;
 				});
 
-				forEach(Index.Common.getUsers(30), function(user){
+				data = Index.Common.getUsers(30);
+
+				forEach(data, function(user){
 					var firstLetter = user.pinyin.substring(0, 1).toUpperCase(),
 						
 						idx = letters[firstLetter];
@@ -70,15 +71,30 @@ CallServer.save([
 				};
 			},
 			getProjects : function(data){
-				return {
+				data = {
 					projects : Index.SPP.getProjects(3),
 					pageIndex : 1,
 					pageMax : 1
 				};
+
+				return data;
 			},
-			getSchedule : function(){
+			getSchedules : function(data){
+				data = Index.SPP.getSchedules(new Date(Date.now()), 2, 2);
+
+				data.forEach(function(dt){
+					dt.forEach(function(d){
+						var localDate = new Date(d.time);
+
+						jQun.set(d, {
+							localDate : localDate,
+							date : localDate.getDate()
+						});
+					});
+				});
+
 				return {
-					schedule : Index.SPP.getSchedule(new Date(Date.now()), 2, 2)
+					schedules : data
 				};
 			}
 		};

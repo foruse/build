@@ -8,6 +8,7 @@ this.Bao = (function(Bao){
 				Cache : null
 			}),
 			DOM : new Namespace().members({ // api/dom.js
+				EventCollection : null,
 				Panel : null
 			}),
 			Manager : new Namespace().members({ // api/manager.js

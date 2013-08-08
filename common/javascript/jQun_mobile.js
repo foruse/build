@@ -4,8 +4,8 @@ if(jQun.Browser.isMobile){
 	return;
 }
 
-// 重写ElementList的attach、detach
-(function(ElementList, forEach){
+// 重写NodeList的attach、detach
+(function(NodeList, forEach){
 	this.attach = function(events, _capture){
 		///	<summary>
 		///	向集合中所有元素注册事件侦听器。
@@ -41,10 +41,10 @@ if(jQun.Browser.isMobile){
 		return this;
 	};
 
-	ElementList.prototype.properties(this);
+	NodeList.prototype.properties(this);
 }.call(
 	{},
-	jQun.ElementList,
+	jQun.NodeList,
 	jQun.forEach
 ));
 
