@@ -203,7 +203,7 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 		this.assign({
 			contentEl : this.find(">nav"),
 			tabEl : this.find(">aside>ol"),
-			timer : new Timer(1000)
+			timer : new IntervalTimer(70)
 		});
 
 		this.attach({
@@ -218,7 +218,7 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 				if(!buttonEls.contains(target))
 					return;
 
-				navigator.focus(jQun(target).get("idx", "attr"));
+				navigator.focusTab(jQun(target).get("idx", "attr"));
 			}
 		});
 	};
@@ -239,11 +239,6 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 			///	切换tab。
 			///	</summary>
 			/// <params name="idx" type="number">tab的索引</params>
-			var timer = this.timer;
-
-			if(timer.isEnabled)
-				return;
-
 			var tabEl = this.tabEl, focusEl = tabEl.find('button[idx="' + idx + '"]');
 
 			if(focusEl.length === 0)
@@ -254,11 +249,21 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 			if(classList.contains("focused"))
 				return;
 
-			var contentEl = this.contentEl;
+			var timer = this.timer, contentEl = this.contentEl,
+				
+				times = 20, round = Math.round,
+				
+				left = (contentEl.get("left", "css").split("px").join("") - 0) || 0,
+
+				w = (contentEl.width() * idx * -1 - left) / times;
+
+			if(timer.isEnabled){
+				timer.stop();
+			}
 			
-			timer.start(function(){
-			
-			});
+			timer.start(function(i){
+				contentEl.set("left", round(left + w * i) + "px", "css");
+			}, times);
 
 			tabEl.find('button.focused').classList.remove("focused");
 			classList.add("focused");

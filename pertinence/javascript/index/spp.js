@@ -201,7 +201,7 @@ this.SPP = (function(UserList, Navigator){
 
 			// 如果分组元素不存在
 			if(!_groupEl){
-				_groupEl = this.panelEl.find('.partnerGroup button[groupid="' + groupId + '"]');
+				_groupEl = this.panelEl.find('.group button[groupid="' + groupId + '"]');
 			}
 
 			classList = _groupEl.classList;

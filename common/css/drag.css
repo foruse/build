@@ -19,9 +19,11 @@
 
 .navigator {
 	height : 38px;
+	overflow : hidden;
 }
-.navigator > navigator {
+.navigator > nav {
 	height : 28px;
+	position : relative;
 }
 .navigator > aside {
 	height : 10px;
@@ -42,7 +44,6 @@
 	width : 5px;
 	height : 5px;
 	border-radius : 5px;
-	
 	background-color : #c9c9c9;
 	border : 0 none;
 }

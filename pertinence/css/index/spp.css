@@ -201,23 +201,32 @@
 	width : 100%;
 	z-index : 0;
 }
-#partner .partnerGroup button {
+#partner .group dt {
+	position : fixed;
+	background-color : #fff;
+}
+#partner .group dd {
+	margin-left : 90px;
+}
+#partner .group button {
 	width : 36px;
 	height : 16px;
 	background-color : transparent;
 	border-radius : 3px;
 }
-#partner .partnerGroup button[groupid] {
+#partner .group button[groupid] {
 	border : 0 none;
 }
-#partner .partnerGroup button[action="addGroup"] {
+#partner .group button[action="addGroup"] {
 	width : 53px;
 	height : 18px;
 }
-#partner .partnerGroup button.focused {
+#partner .group button.focused {
 	background-color : #ff0;
 }
-
+#partner .group ul {
+	white-space : nowrap;
+}
 
 #tab_SPP {
 	bottom : 0;
