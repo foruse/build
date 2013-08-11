@@ -4,7 +4,7 @@ this.LoadingBar = (function(Timer, html){
 		///	<summary>
 		///	加载类。
 		///	</summary>
-		/// <params name="panelEl" type="jQun.HTMLElementList">对应的元素</params>
+		/// <param name="panelEl" type="jQun.HTMLElementList">对应的元素</param>
 		this.assign({
 			errorText : _errorText ? _errorText : this.errorText,
 			timer : new Timer(_timeout || 30000)
@@ -26,7 +26,7 @@ this.LoadingBar = (function(Timer, html){
 			///	<summary>
 			///	显示加载错误信息。
 			///	</summary>
-			/// <params name="str" type="string">错误信息文本。</params>
+			/// <param name="str" type="string">错误信息文本。</param>
 			this.text(str, "error");
 		},
 		errorText : "加载数据超时，请重新加载！",
@@ -35,8 +35,8 @@ this.LoadingBar = (function(Timer, html){
 			///	<summary>
 			///	显示加载信息。
 			///	</summary>
-			/// <params name="str" type="string">信息文本。</params>
-			/// <params name="_type" type="string">信息类型。</params>
+			/// <param name="str" type="string">信息文本。</param>
+			/// <param name="_type" type="string">信息类型。</param>
 			this.find(">span").innerHTML = str;
 			this.set("type", _type || "normal", "attr");
 		},
@@ -45,7 +45,7 @@ this.LoadingBar = (function(Timer, html){
 			///	<summary>
 			///	警告信息。
 			///	</summary>
-			/// <params name="str" type="string">警告信息文本。</params>
+			/// <param name="str" type="string">警告信息文本。</param>
 			this.text(str, "warn");
 		}
 	});

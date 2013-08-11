@@ -4,8 +4,8 @@ this.BatchLoad = (function(CallServer){
 		///	<summary>
 		///	分页加载。
 		///	</summary>
-		/// <params name="name" type="string">ajax名称</params>
-		/// <params name="_complete" type="function">当ajax完成时所执行的函数</params>
+		/// <param name="name" type="string">ajax名称</param>
+		/// <param name="_complete" type="function">当ajax完成时所执行的函数</param>
 
 		this.assign({
 			name : name,
@@ -59,7 +59,7 @@ this.BatchLoad = (function(CallServer){
 			///	<summary>
 			///	获取参数值。
 			///	</summary>
-			/// <params name="name" type="string">参数的名称</params>
+			/// <param name="name" type="string">参数的名称</param>
 			var param = this.params[name];
 
 			return param ? param.value : undefined;
@@ -68,8 +68,8 @@ this.BatchLoad = (function(CallServer){
 			///	<summary>
 			///	判断2个参数的值是否相等。
 			///	</summary>
-			/// <params name="name" type="string">参数的名称</params>
-			/// <params name="anotherName" type="string">需要对比的另一个参数名称</params>
+			/// <param name="name" type="string">参数的名称</param>
+			/// <param name="anotherName" type="string">需要对比的另一个参数名称</param>
 			return this.getParam(name) == this.getParam(anotherName);
 		},
 		name : "",
@@ -78,9 +78,9 @@ this.BatchLoad = (function(CallServer){
 			///	<summary>
 			///	设置参数。
 			///	</summary>
-			/// <params name="name" type="string">参数的名称</params>
-			/// <params name="value" type="*">参数的值</params>
-			/// <params name="_handle" type="*">参数的处理逻辑</params>
+			/// <param name="name" type="string">参数的名称</param>
+			/// <param name="value" type="*">参数的值</param>
+			/// <param name="_handle" type="*">参数的处理逻辑</param>
 			this.params[name] = {
 				value : value,
 				handle : _handle
@@ -98,7 +98,7 @@ this.Cache = (function(JSON, sessionStorage){
 		///	<summary>
 		///	缓存数据。
 		///	</summary>
-		/// <params name="name" type="string">缓存数据的标识名称</params>
+		/// <param name="name" type="string">缓存数据的标识名称</param>
 		this.assign({
 			name : name
 		});
@@ -110,7 +110,7 @@ this.Cache = (function(JSON, sessionStorage){
 			///	<summary>
 			///	删除某一条缓存数据。
 			///	</summary>
-			/// <params name="key" type="string">缓存数据的主键</params>
+			/// <param name="key" type="string">缓存数据的主键</param>
 			var storage = this.get();
 
 			delete storage[key];
@@ -120,7 +120,7 @@ this.Cache = (function(JSON, sessionStorage){
 			///	<summary>
 			///	获取某一条缓存数据。
 			///	</summary>
-			/// <params name="_key" type="string">缓存数据的主键</params>
+			/// <param name="_key" type="string">缓存数据的主键</param>
 			var storage = JSON.parse(sessionStorage.getItem(this.name));
 
 			if(!storage){
@@ -138,8 +138,8 @@ this.Cache = (function(JSON, sessionStorage){
 			///	<summary>
 			///	设置某一条缓存数据。
 			///	</summary>
-			/// <params name="key" type="string">缓存数据的主键</params>
-			/// <params name="value" type="object,string,number">缓存数据的值</params>
+			/// <param name="key" type="string">缓存数据的主键</param>
+			/// <param name="value" type="object,string,number">缓存数据的值</param>
 			var storage = this.get();
 
 			storage[key] = value;

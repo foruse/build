@@ -1744,30 +1744,43 @@ this.Event = (function(attach, define){
 	Event = new NonstaticClass(Event, "jQun.Event");
 
 	Event.properties({
-		attachTo : function(_tagName){
+		attachTo : function(tagName){
 			///	<summary>
 			///	应该附加该事件的标签。
 			///	</summary>
-			///	<param name="_tagName" type="string">标签名称。</param>
+			///	<param name="tagName" type="string">标签名称。</param>
 			var name = this.name;
 
-			define(
-				(_tagName && _tagName !== "*" ? document.createElement(_tagName).constructor : Node).prototype,
-				"on" + name,
-				{
-					set : function(fn){
-						var obj = {};
-
-						obj[name] = fn;
-						attach.call([this], obj);
-					}
+			forEach(
+				tagName === "*" ? [Node, Window] : [document.createElement(tagName).constructor],
+				function(constructor){
+					define(
+						constructor.prototype,
+						"on" + name,
+						{
+							set : this
+						},
+						{ settable : true }
+					);
 				},
-				{ settable : true }
+				function(fn){
+					var obj = {};
+
+					obj[name] = fn;
+					attach.call([this], obj);
+				}
 			);
 
 			return this;
 		},
 		name : "",
+		setEventAttrs : function(attrs){
+			///	<summary>
+			///	设置事件属性。
+			///	</summary>
+			///	<param name="attrs" type="object">属性键值对。</param>
+			return jQun.set(this.source, attrs);
+		},
 		source : undefined,
 		trigger : function(target){
 			///	<summary>

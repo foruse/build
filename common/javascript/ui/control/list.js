@@ -35,7 +35,7 @@ this.UserList = (function(panelHtml, listHtml){
 }(
 	// panelHtml
 	new HTML([
-		'<div class="userList overflowPanel"></div>'
+		'<div class="userList"></div>'
 	].join("")),
 	// listHtml
 	new HTML([

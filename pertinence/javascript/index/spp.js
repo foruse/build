@@ -1,4 +1,4 @@
-﻿(function(Index, Panel, NonstaticClass, Cache, CallServer, HTML, LoadingBar, BatchLoad){
+﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Cache, CallServer, HTML, LoadingBar, BatchLoad){
 this.SPP = (function(UserList, Navigator){
 	function Title(panelEl){
 	
@@ -44,8 +44,8 @@ this.SPP = (function(UserList, Navigator){
 		///	<summary>
 		///	项目。
 		///	</summary>
-		/// <params name="panelEl" type="jQun.HTMLElementList">对应的元素</params>
-		/// <params name="html" type="jQun.HTML">项目html模板</params>
+		/// <param name="panelEl" type="jQun.HTMLElementList">对应的元素</param>
+		/// <param name="html" type="jQun.HTML">项目html模板</param>
 		var project = this,
 
 			loadingBar = new LoadingBar(panelEl),
@@ -83,14 +83,14 @@ this.SPP = (function(UserList, Navigator){
 		this.load();
 		window.aa = batchLoad;
 	};
-	Project = new NonstaticClass(Project, null, Panel.prototype);
+	Project = new NonstaticClass(Project, null, OverflowPanel.prototype);
 
 	Project.properties({
 		add : function(data){
 			///	<summary>
 			///	添加数据。
 			///	</summary>
-			/// <params name="data" type="array">项目数据</params>
+			/// <param name="data" type="array">项目数据</param>
 			this.html.create(data).appendTo(this.panelEl.find(">ul")[0]);
 		},
 		addUnopenedProject : function(_len){
@@ -196,7 +196,7 @@ this.SPP = (function(UserList, Navigator){
 			partner.focus(groups[0].id);
 		});
 	};
-	Partner = new NonstaticClass(Partner, null, Panel.prototype);
+	Partner = new NonstaticClass(Partner, null, OverflowPanel.prototype);
 
 	Partner.properties({
 		cache : undefined,
@@ -204,8 +204,8 @@ this.SPP = (function(UserList, Navigator){
 			///	<summary>
 			///	切换分组。
 			///	</summary>
-			/// <params name="groupId" type="number">分组的id</params>
-			/// <params name="_groupEl" type="jQun.HTMLElementList">该分组元素</params>
+			/// <param name="groupId" type="number">分组的id</param>
+			/// <param name="_groupEl" type="jQun.HTMLElementList">该分组元素</param>
 			var partner = this, classList;
 
 			// 如果分组元素不存在
@@ -262,10 +262,10 @@ this.SPP = (function(UserList, Navigator){
 		///	<summary>
 		///	SPP脚部选项卡。
 		///	</summary>
-		/// <params name="panelEl" type="jQun.HTMLElementList">对应的元素</params>
-		/// <params name="itemHtml" type="jQun.HTML">选项卡html模板</params>
-		/// <params name="onfocus" type="function">选项卡聚焦事件</params>
-		/// <params name="onblur" type="function">选项卡失去焦点事件</params>
+		/// <param name="panelEl" type="jQun.HTMLElementList">对应的元素</param>
+		/// <param name="itemHtml" type="jQun.HTML">选项卡html模板</param>
+		/// <param name="onfocus" type="function">选项卡聚焦事件</param>
+		/// <param name="onblur" type="function">选项卡失去焦点事件</param>
 		var btnEls, btnClassList, tab = this;
 
 		panelEl.find("ul").innerHTML = itemHtml.render();
@@ -311,7 +311,7 @@ this.SPP = (function(UserList, Navigator){
 			///	<summary>
 			///	使指定名称的选项卡聚焦。
 			///	</summary>
-			/// <params name="name" type="string">选项卡名称</params>
+			/// <param name="name" type="string">选项卡名称</param>
 			var buttonEl = this.btnEls.between('[tab="' + name + '"]', this.panelEl[0]);
 
 			buttonEl.classList.add("focused");
@@ -326,7 +326,7 @@ this.SPP = (function(UserList, Navigator){
 		///	<summary>
 		///	日程、项目、拍档页。
 		///	</summary>
-		/// <params name="panelEl" type="jQun.HTMLElementList">对应的元素</params>
+		/// <param name="panelEl" type="jQun.HTMLElementList">对应的元素</param>
 		var spp = this, panelAttr = panelEl.attributes;
 
 		this.assign({
@@ -358,7 +358,7 @@ this.SPP = (function(UserList, Navigator){
 					///	<summary>
 					///	聚焦某个子panel。
 					///	</summary>
-					/// <params name="name" type="string">需要焦点的panel名称</params>
+					/// <param name="name" type="string">需要焦点的panel名称</param>
 					var	childPanel = spp[name];
 
 					spp.title.set(title);
@@ -394,8 +394,9 @@ Index.members(this);
 }.call(
 	{},
 	Bao.Page.Index,
-	Bao.API.DOM.Panel,
 	jQun.NonstaticClass,
+	Bao.API.DOM.Panel,
+	Bao.API.DOM.OverflowPanel,
 	Bao.API.Data.Cache,
 	Bao.CallServer,
 	jQun.HTML,

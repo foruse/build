@@ -195,10 +195,6 @@
 	z-index : 2;
 }
 #partner > ul > li:last-child {
-	position : absolute;
-	top : 43px;
-	bottom : 0;
-	width : 100%;
 	z-index : 0;
 }
 #partner .group dt {
