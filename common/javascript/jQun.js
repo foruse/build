@@ -109,6 +109,12 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				return result;
 			},
 			forEach : function(obj, fn, _this){
+				///	<summary>
+				///	遍历对象的所有枚举成员并对其执行指定操作函数。
+				///	</summary>
+				///	<param name="obj" type="object">需要遍历的对象。</param>
+				///	<param name="fn" type="function">指定操作的函数。</param>
+				///	<param name="_this" type="*">指定操作函数的 this 对象。</param>
 				every(obj, function(){
 					fn.apply(this, arguments);
 					return true;
@@ -199,7 +205,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 		});
 
 		// 定义类的基础方法
-		defineProperties(jQun.prototype, {
+		defineProperties(prototype, {
 			assign : function(properties){
 				///	<summary>
 				///	给该类的属性赋值。
