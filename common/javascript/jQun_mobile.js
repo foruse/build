@@ -1,120 +1,82 @@
-﻿(function(jQun, mEvents){
+﻿(function(NonstaticClass, StaticClass, TouchEvent, isMobile){
 // 如果是移动设备，则不需要虚拟这些方法及事件
-if(jQun.Browser.isMobile){
+if(isMobile){
 	return;
 }
 
-// 重写NodeList的attach、detach
-(function(NodeList, forEach){
-	this.attach = function(events, _capture){
-		///	<summary>
-		///	向集合中所有元素注册事件侦听器。
-		///	</summary>
-		///	<param name="events" type="object">事件侦听器键值对。</param>
-		///	<param name="_capture" type="boolean">侦听器是否运行于捕获阶段。</param>
-		this.forEach(function(element){
-			forEach(events, function(fn, type){
-				if(type in mEvents){
-					type = mEvents[type];
-				}
-
-				element.addEventListener(type, fn, _capture);
-			});
-		});
-		return this;
-	};
-
-	this.detach = function(events){
-		///	<summary>
-		///	移除集合中所有元素的事件侦听器。
-		///	</summary>
-		///	<param name="events" type="object">事件侦听器键值对。</param>
-		this.forEach(function(element){
-			forEach(events, function(fn, type){
-				if(type in mEvents){
-					type = mEvents[type];
-				}
-
-				element.removeEventListener(type, fn);
-			});
-		});
-		return this;
-	};
-
-	NodeList.prototype.properties(this);
-}.call(
-	{},
-	jQun.NodeList,
-	jQun.forEach
-));
-
-
-// 重写HTMLElementList三个事件的赋值与获取
-(function(HTMLElementList){
-	jQun.forEach(mEvents, function(type, mType){
-		this["on" + mType] = {
-			get : function(){
-				return this.get("on" + type);
-			},
-			set : function(value){
-				this.set("on" + type, value);
-			}
-		};
-	}, this);
-
-	HTMLElementList.prototype.properties(this, { gettable : true, settable : true });
-}.call(
-	{},
-	jQun.HTMLElementList
-));
-
-
-// 给MouseEvent虚拟一些移动特有属性
-(function(MouseEvent, NonstaticClass, StaticClass){
-this.touches = (function(List, window){
+TouchEvent = (function(List, Event, window, attrs){
 	function Touch(){}
 	Touch = new StaticClass(null, "Touch");
 
-	["clientX", "clientY", "pageX", "pageY", "screenX", "screenY"].forEach(function(name){
+	attrs.forEach(function(attr){
 		var properties = {};
 
-		properties[name] = {
+		properties[attr] = {
 			get : function(){
-				return window.event[name];
+				return window.event[attr];
 			},
 			set : function(value){
-				window.event[name] = value;
+				window.event[attr] = value;
 			}
 		};
 
 		Touch.properties(properties, { gettable : true, settable : true });
 	});
 
+
 	function TouchList(){
 		this.push(Touch);
 	};
 	TouchList = new NonstaticClass(TouchList, "TouchList", List.prototype);
 
-	return new TouchList.constructor();
+
+	function TouchEvent(name, replacement){
+		var touchEvent = this, event = this.source;
+			
+		event.changedTouches = event.touches = this.touchList;
+
+		window.addEventListener(replacement, function(e){
+			attrs.forEach(function(attr){
+				event[attr] = e[attr];
+			});
+				
+			touchEvent.trigger(e.target);
+		});
+
+		this.attachTo("*");
+	};
+	TouchEvent = new NonstaticClass(TouchEvent, null, Event.prototype);
+
+	TouchEvent.properties({
+		touchList : new TouchList.constructor()
+	});
+
+	return TouchEvent.constructor;
 }(
 	jQun.List,
-	window
+	jQun.Event,
+	window,
+	// attrs
+	["clientX", "clientY", "pageX", "pageY", "screenX", "screenY"]
 ));
 
-jQun.defineProperties(MouseEvent.prototype, this);
-}.call(
-	{},
-	MouseEvent,
-	jQun.NonstaticClass,
-	jQun.StaticClass
-));
-
+(function(events){
+	jQun.forEach(events, function(replacement, name){
+		new TouchEvent(name, replacement);
+	});
 }(
-	jQun,
+	// events 手势事件pc上无法模拟（因为需要2点触发，pc上目前做不到）
 	{
 		touchstart : "mousedown",
 		touchmove : "mousemove",
 		touchend : "mouseup",
 		touchcancel : "mouseup"
 	}
+));
+
+}(
+	jQun.NonstaticClass,
+	jQun.StaticClass,
+	undefined,
+	jQun.Browser.isMobile
 ));

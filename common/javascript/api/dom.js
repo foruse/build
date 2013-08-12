@@ -46,13 +46,15 @@ this.EventCollection = (function(Event, Timer, IntervalTimer, childGestureConstr
 				lastX = pageX;
 				lastY = pageY;
 
+				e.preventDefault();
+
 				// 保护函数
 				continuousTimer.start(function(){
 					continuousTimer.stop();
 				});
 			},
 			touchend : function(e){
-				var touch = e.touches[0],
+				var touch = e.changedTouches[0],
 
 					pageX = touch.pageX, pageY = touch.pageY;
 
@@ -94,11 +96,10 @@ this.EventCollection = (function(Event, Timer, IntervalTimer, childGestureConstr
 	EventCollection = new StaticClass(EventCollection, "BAO.API.DOM.EventCollection");
 
 	EventCollection.properties({
+		overflow : new Event("overflow").attachTo("*"),
 		continuousgesture : new Event("continuousgesture", childGestureConstructor),
 		fastgesture : new Event("fastgesture", childGestureConstructor),
-		usergesture : new UserGesture.constructor("usergesture", function(){
-			this.attachTo("*");
-		})
+		usergesture : new UserGesture.constructor("usergesture").attachTo("*")
 	});
 
 	return EventCollection;
@@ -189,19 +190,27 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, onborder){
 				setTop(panelStyle, top);
 			},
 			fastgesture : function(e){
-				var y = e.gestureOffsetY / 4;
-
+				var y = e.gestureOffsetY / 4, n = y > 0 ? 50 : -50;
+				
 				// 快速滑动事件
 				timer.start(function(i){
-					var top = getTop(panelStyle) + (isNaN(i) ? 50 : y * (1 - i++ / 35));
+					var top = getTop(panelStyle) + (isNaN(i) ? n : y * (1 - i++ / 35));
 
-					onborder(panelEl, parentEl, top, function(t){
+					onborder(panelEl, parentEl, top, function(t, type){
+						// 如果是在最上方，还要往下拉，就return
+						if(type === "top" && y < 0)
+							return;
+
+						// 如果是在最下方，还要往上拉，就return
+						if(type === "bottom" && y > 0)
+							return;
+
 						top = t;
 						timer.stop();
 					});
 
 					setTop(panelStyle, top);
-				}, y > parentEl.height() * 0.75 ? undefined : 35);
+				}, Math.abs(y) > parentEl.height() / 4 * 0.7 ? undefined : 35);
 			}
 		});
 	};
@@ -226,7 +235,8 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, onborder){
 	// onborder
 	function(panelEl, parentEl, top, fn){
 		var type = "",
-			t = (panelEl.height() - panelEl.parent().height()) * -1;
+
+			t = parentEl.height() - panelEl.height();
 		
 		// 如果是最上方的时候 或者 父容器比溢出容器还要高（未溢出或隐藏了）
 		if(top > 0 || t > 0){
@@ -246,9 +256,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, onborder){
 		this.setEventAttrs({ direction : type });
 		this.trigger(panelEl[0]);
 		fn(top, type);
-	}.bind(new jQun.Event("overflow", function(){
-		this.attachTo("*");
-	}))
+	}.bind(this.EventCollection.overflow)
 ));
 
 
