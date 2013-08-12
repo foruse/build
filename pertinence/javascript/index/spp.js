@@ -81,7 +81,6 @@ this.SPP = (function(UserList, Navigator){
 
 		loadingBar.appendTo(panelEl[0]);
 		this.load();
-		window.aa = batchLoad;
 	};
 	Project = new NonstaticClass(Project, null, OverflowPanel.prototype);
 
