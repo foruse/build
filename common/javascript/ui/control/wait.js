@@ -1,10 +1,10 @@
-﻿(function(Wait, NonstaticClass, HTMLElementList, HTML){
+﻿(function(Wait, NonstaticClass, Panel, HTML){
 this.LoadingBar = (function(Timer, html){
 	function LoadingBar(panelEl, _timeout, _errorText){
 		///	<summary>
 		///	加载类。
 		///	</summary>
-		/// <param name="panelEl" type="jQun.HTMLElementList">对应的元素</param>
+		/// <param name="panelEl" type="jQun.HTMLElementList">需要加入加载条的容器</param>
 		this.assign({
 			errorText : _errorText ? _errorText : this.errorText,
 			timer : new Timer(_timeout || 30000)
@@ -13,10 +13,10 @@ this.LoadingBar = (function(Timer, html){
 		this.combine(html.create());
 		this.hide();
 	};
-	LoadingBar = new NonstaticClass(LoadingBar, "Bao.UI.Others.Wait.LoadingBar", HTMLElementList.prototype);
+	LoadingBar = new NonstaticClass(LoadingBar, "Bao.UI.Others.Wait.LoadingBar", Panel.prototype);
 
 	LoadingBar.properties({
-		clear : function(){
+		clearText : function(){
 			///	<summary>
 			///	清除文字。
 			///	</summary>
@@ -53,7 +53,7 @@ this.LoadingBar = (function(Timer, html){
 	LoadingBar.override({
 		hide : function(){
 			this.isLoading = false;
-			this.clear();
+			this.clearText();
 			this.getParentClass().hide.call(this);
 			this.timer.stop();
 		},
@@ -84,6 +84,6 @@ Wait.members(this);
 	{},
 	Bao.UI.Control.Wait,
 	jQun.NonstaticClass,
-	jQun.HTMLElementList,
+	Bao.API.DOM.Panel,
 	jQun.HTML
 ));

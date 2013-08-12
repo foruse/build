@@ -8,7 +8,7 @@ CallServer.override({
 
 		setTimeout(function(){
 			open.apply(CallServer, args);
-		}, 0)
+		}, 2000)
 	}
 });
 

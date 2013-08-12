@@ -1,4 +1,4 @@
-﻿(function(List, NonstaticClass, HTMLElementList, HTML){
+﻿(function(List, NonstaticClass, Panel, HTML){
 this.UserList = (function(panelHtml, listHtml){
 	function UserList(onletter){
 		var userList = this;
@@ -21,7 +21,7 @@ this.UserList = (function(panelHtml, listHtml){
 			}
 		});
 	};
-	UserList = new NonstaticClass(UserList, "Bao.UI.Control.List", HTMLElementList.prototype);
+	UserList = new NonstaticClass(UserList, "Bao.UI.Control.List", Panel.prototype);
 
 	UserList.properties({
 		render : function(data){
@@ -75,6 +75,6 @@ List.members(this);
 	{},
 	Bao.UI.Control.List,
 	jQun.NonstaticClass,
-	jQun.HTMLElementList,
+	Bao.API.DOM.Panel,
 	jQun.HTML
 ));

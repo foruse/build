@@ -8,7 +8,7 @@ this.History = (function(List, Index, CallServer){
 			///	<summary>
 			///	加载项目区域。
 			///	</summary>
-			return new Index.SPP(jQun("#SPP"));
+			return new Index.SPP("#SPP");
 		}
 	});
 

@@ -1,4 +1,4 @@
-﻿(function(Drag, NonstaticClass, HTMLElementList, HTML, Timer, IntervalTimer){
+﻿(function(Drag, NonstaticClass, Panel, HTML, Timer, IntervalTimer){
 this.Scroll = (function(html){
 	function Scroll(){
 		///	<summary>
@@ -8,14 +8,14 @@ this.Scroll = (function(html){
 
 		this.combine(html.create()).appendTo(document.body);
 	};
-	Scroll = new NonstaticClass(Scroll, "jQun.Scroll", HTMLElementList.prototype);
+	Scroll = new NonstaticClass(Scroll, "jQun.Scroll", Panel.prototype);
 
 	Scroll.override({
 		show : function(overflowEl){
 			///	<summary>
 			///	显示滚动条。
 			///	</summary>
-			/// <param name="overflowEl" type="jQun.HTMLElementList">溢出的元素</param>
+			/// <param name="overflowEl" type="jQun.Panel">溢出的元素</param>
 			var style = this.style, rect = overflowEl.parent()[0].getBoundingClientRect();
 				
 			jQun.forEach(rect, function(value, name){
@@ -75,7 +75,7 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 			}
 		});
 	};
-	Navigator = new NonstaticClass(Navigator, "Bao.UI.Control.Drag.Navigator", HTMLElementList.prototype);
+	Navigator = new NonstaticClass(Navigator, "Bao.UI.Control.Drag.Navigator", Panel.prototype);
 
 	Navigator.properties({
 		buttonEls : undefined,
@@ -161,7 +161,7 @@ Drag.members(this);
 	{},
 	Bao.UI.Control.Drag,
 	jQun.NonstaticClass,
-	jQun.HTMLElementList,
+	Bao.API.DOM.Panel,
 	jQun.HTML,
 	Bao.API.Manager.Timer,
 	Bao.API.Manager.IntervalTimer

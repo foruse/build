@@ -1,18 +1,18 @@
 ﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Cache, CallServer, HTML, LoadingBar, BatchLoad){
 this.SPP = (function(UserList, Navigator){
-	function Title(panelEl){
+	function Title(selector){
 	
 	};
 	Title = new NonstaticClass(Title, null, Panel.prototype);
 
 	Title.properties({
 		set : function(title){
-			this.panelEl.find(">strong").innerHTML = title;
+			this.find(">strong").innerHTML = title;
 		}
 	});
 
 
-	function Schedule(panelEl, html){
+	function Schedule(selector, html){
 		var schedule = this, batchLoad;
 		
 		batchLoad = new BatchLoad("getSchedules", function(data){
@@ -26,11 +26,11 @@ this.SPP = (function(UserList, Navigator){
 
 		this.call();
 	};
-	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
+	Schedule = new NonstaticClass(Schedule, null, OverflowPanel.prototype);
 
 	Schedule.properties({
 		add : function(data){
-			this.panelEl.find("> header > dl").innerHTML = this.html.render(data);
+			this.find("> header > dl").innerHTML = this.html.render(data);
 		},
 		batchLoad : undefined,
 		call : function(){
@@ -40,15 +40,15 @@ this.SPP = (function(UserList, Navigator){
 	});
 
 
-	function Project(panelEl, html){
+	function Project(selector, html){
 		///	<summary>
 		///	项目。
 		///	</summary>
-		/// <param name="panelEl" type="jQun.HTMLElementList">对应的元素</param>
+		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="html" type="jQun.HTML">项目html模板</param>
 		var project = this,
 
-			loadingBar = new LoadingBar(panelEl),
+			loadingBar = new LoadingBar(this),
 
 			batchLoad = new BatchLoad("getProjects", function(data){
 				loadingBar.hide();
@@ -70,7 +70,7 @@ this.SPP = (function(UserList, Navigator){
 		batchLoad.setParam("pageSize", 10);
 		batchLoad.setParam("pageMax", -1);
 
-		panelEl.attach({
+		this.attach({
 			"overflow" : function(e){
 				if(e.direction !== "bottom")
 					return;
@@ -79,7 +79,7 @@ this.SPP = (function(UserList, Navigator){
 			}
 		});
 
-		loadingBar.appendTo(panelEl[0]);
+		loadingBar.appendTo(this[0]);
 		this.load();
 	};
 	Project = new NonstaticClass(Project, null, OverflowPanel.prototype);
@@ -90,7 +90,7 @@ this.SPP = (function(UserList, Navigator){
 			///	添加数据。
 			///	</summary>
 			/// <param name="data" type="array">项目数据</param>
-			this.html.create(data).appendTo(this.panelEl.find(">ul")[0]);
+			this.html.create(data).appendTo(this.find(">ul")[0]);
 		},
 		addUnopenedProject : function(_len){
 			///	<summary>
@@ -132,12 +132,12 @@ this.SPP = (function(UserList, Navigator){
 	});
 
 
-	function Partner(panelEl, groupingHtml){
-		var partner = this, userList, groupPanel,
+	function Partner(selector, groupingHtml){
+		var userList, groupPanel,
 
-			panelStyle = panelEl.style,
+			partner = this, panelStyle = this.style,
 
-			loadingBar = new LoadingBar(panelEl),
+			loadingBar = new LoadingBar(this),
 
 			navigator = new Navigator();
 
@@ -154,14 +154,14 @@ this.SPP = (function(UserList, Navigator){
 		});
 
 		// 添加loadingBar
-		loadingBar.appendTo(panelEl[0]);		
+		loadingBar.appendTo(this[0]);		
 		// 添加navigator
-		navigator.appendTo(panelEl.find(">ul>li:first-child")[0]);
+		navigator.appendTo(this.find(">ul>li:first-child")[0]);
 
 		// 监听事件
-		panelEl.attach({
+		this.attach({
 			click : function(e){
-				var targetEl = jQun(e.target), el = targetEl.between(".groupingBar button", this);
+				var targetEl = jQun(e.target), el = targetEl.between(".group button", this);
 
 				// 如果点击的是分组栏上的按钮
 				if(el.length > 0){
@@ -177,7 +177,7 @@ this.SPP = (function(UserList, Navigator){
 			}
 		});
 
-		userList.appendTo(panelEl.find(">ul>li:last-child")[0]);
+		userList.appendTo(this.find(">ul>li:last-child")[0]);
 		loadingBar.show();
 
 		// 获取分组数据
@@ -209,7 +209,7 @@ this.SPP = (function(UserList, Navigator){
 
 			// 如果分组元素不存在
 			if(!_groupEl){
-				_groupEl = this.panelEl.find('.group button[groupid="' + groupId + '"]');
+				_groupEl = this.find('.group button[groupid="' + groupId + '"]');
 			}
 
 			classList = _groupEl.classList;
@@ -220,9 +220,9 @@ this.SPP = (function(UserList, Navigator){
 			}
 
 			// 聚焦当前分组
-			this.panelEl.find('.groupingBar button.focused').classList.remove("focused");
+			this.find('.group button.focused').classList.remove("focused");
 			_groupEl.classList.add("focused");
-			this.panelEl.set("top", 0, "css");
+			this.set("top", 0, "css");
 
 			// 已经加载完成了，表明有数据，那么应该取缓存
 			if(_groupEl.get("complete", "attr") != null){
@@ -257,25 +257,25 @@ this.SPP = (function(UserList, Navigator){
 	});
 
 
-	function Tab(panelEl, itemHtml, onfocus, onblur){
+	function Tab(selector, itemHtml, onfocus, onblur){
 		///	<summary>
 		///	SPP脚部选项卡。
 		///	</summary>
-		/// <param name="panelEl" type="jQun.HTMLElementList">对应的元素</param>
+		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="itemHtml" type="jQun.HTML">选项卡html模板</param>
 		/// <param name="onfocus" type="function">选项卡聚焦事件</param>
 		/// <param name="onblur" type="function">选项卡失去焦点事件</param>
 		var btnEls, btnClassList, tab = this;
 
-		panelEl.find("ul").innerHTML = itemHtml.render();
+		this.find("ul").innerHTML = itemHtml.render();
 
 		this.assign({
-			btnEls : panelEl.find("button"),
+			btnEls : this.find("button"),
 			onblur : onblur,
 			onfocus : onfocus
 		});
 
-		panelEl.attach({
+		this.attach({
 			click : function(e){
 				var buttonEl = jQun(e.target).between("button", this);
 
@@ -297,7 +297,7 @@ this.SPP = (function(UserList, Navigator){
 			///	<summary>
 			///	让选项卡失去焦点。
 			///	</summary>
-			var focusedEl = this.btnEls.between(".focused", this.panelEl[0]);
+			var focusedEl = this.btnEls.between(".focused", this[0]);
 
 			if(focusedEl.length === 0)
 				return;
@@ -311,7 +311,7 @@ this.SPP = (function(UserList, Navigator){
 			///	使指定名称的选项卡聚焦。
 			///	</summary>
 			/// <param name="name" type="string">选项卡名称</param>
-			var buttonEl = this.btnEls.between('[tab="' + name + '"]', this.panelEl[0]);
+			var buttonEl = this.btnEls.between('[tab="' + name + '"]', this[0]);
 
 			buttonEl.classList.add("focused");
 			this.onfocus(name, buttonEl.find("span").get("text", "attr"));
@@ -321,35 +321,35 @@ this.SPP = (function(UserList, Navigator){
 	});
 
 
-	function SPP(panelEl){
+	function SPP(selector){
 		///	<summary>
 		///	日程、项目、拍档页。
 		///	</summary>
-		/// <param name="panelEl" type="jQun.HTMLElementList">对应的元素</param>
-		var spp = this, panelAttr = panelEl.attributes;
+		/// <param name="selector" type="string">对应的元素</param>
+		var spp = this, panelAttr = this.attributes;
 
 		this.assign({
 			partner : new Partner.constructor(
-				// panelEl
-				panelEl.find("#partner"),
+				// selector
+				"#partner",
 				// groupingHtml
 				new HTML("spp_partnerGroups_html", true)
 			),
 			project : new Project.constructor(
-				// panelEl
-				panelEl.find("#project"),
+				// selector
+				"#project",
 				// html
 				new HTML("spp_project_html", true)
 			),
 			schedule : new Schedule.constructor(
-				// panelEl
-				panelEl.find("#schedule"),
+				// selector
+				"#schedule",
 				// html
 				new HTML("spp_schedule_html", true)
 			),
 			tab : new Tab.constructor(
-				// panelEl
-				panelEl.find("#tab_SPP"),
+				// selector
+				"#tab_SPP",
 				// itemHtml
 				new HTML("spp_item_html", true),
 				// onfocus
@@ -370,7 +370,7 @@ this.SPP = (function(UserList, Navigator){
 				}
 			),
 			title : new Title.constructor(
-				panelEl.find(">header")
+				this.find(">header")
 			)
 		});
 	};
