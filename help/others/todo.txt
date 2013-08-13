@@ -1,8 +1,8 @@
 ﻿★★★★★
-	// 1. inline-block溢出时自动换行，滑动时导致画面不齐
-	2. img元素未加载完成前先隐藏
-	3. 预加载
-
+	* img元素未加载完成前先隐藏
+	* 预加载
+	* 将所有类的onxx属性替换成事件监听(UserList, spp)
+	* navigate类优化：监听oncontinuousgesture或onfastgesture
 
 ★★★★
 
@@ -14,7 +14,7 @@
 
 
 ★★
-	// 1. position:relative的top性能可能比margin-top低，但是更符合逻辑。为了性能，考虑是否换成margin-top
+	1. position:relative的top性能可能比margin-top低，但是更符合逻辑。为了性能，考虑是否换成margin-top
 
 
 ★

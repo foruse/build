@@ -1,5 +1,5 @@
-﻿(function(DOM, NonstaticClass, StaticClass, windowEl){
-this.EventCollection = (function(Event, Timer, IntervalTimer, childGestureConstructor){
+﻿(function(DOM, NonstaticClass, StaticClass, Event, windowEl){
+this.EventCollection = (function(Timer, IntervalTimer, childGestureConstructor){
 	function UserGesture(name, _init){
 		///	<summary>
 		///	手势事件。
@@ -54,6 +54,9 @@ this.EventCollection = (function(Event, Timer, IntervalTimer, childGestureConstr
 				});
 			},
 			touchend : function(e){
+				if(!target)
+					return;
+
 				var touch = e.changedTouches[0],
 
 					pageX = touch.pageX, pageY = touch.pageY;
@@ -96,7 +99,6 @@ this.EventCollection = (function(Event, Timer, IntervalTimer, childGestureConstr
 	EventCollection = new StaticClass(EventCollection, "BAO.API.DOM.EventCollection");
 
 	EventCollection.properties({
-		overflow : new Event("overflow").attachTo("*"),
 		continuousgesture : new Event("continuousgesture", childGestureConstructor),
 		fastgesture : new Event("fastgesture", childGestureConstructor),
 		usergesture : new UserGesture.constructor("usergesture").attachTo("*")
@@ -104,7 +106,6 @@ this.EventCollection = (function(Event, Timer, IntervalTimer, childGestureConstr
 
 	return EventCollection;
 }(
-	jQun.Event,
 	Bao.API.Manager.Timer,
 	Bao.API.Manager.IntervalTimer,
 	// childGestureConstructor
@@ -138,13 +139,13 @@ this.Panel = (function(HTMLElementList){
 	jQun.HTMLElementList
 ));
 
-this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, onborder){
+this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder){
 	function OverflowPanel(selector, _disableScrollBar){
-		var panelEl = this,
+		var overflowPanel = this,
 		
-			panelStyle = this.style,
+			isLeaveborder = false,
 		
-			parentEl = panelEl.parent(),
+			panelStyle = this.style, parentEl = this.parent(),
 			
 			timer = new IntervalTimer(70);
 
@@ -162,35 +163,39 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, onborder){
 				var top = getTop(panelStyle) + e.gestureOffsetY;
 
 				if(e.isLastOfGestureType){
-					onborder(panelEl, parentEl, top, function(t){
+					isLeaveborder = false;
+					leaveborder(overflowPanel, parentEl.height(), top, function(t, type){
 						top = t;
+						isLeaveborder = true;
 					});
 				}
 
 				setTop(panelStyle, top);
 			},
 			fastgesture : function(e){
-				var y = e.gestureOffsetY / 4, n = y > 0 ? 50 : -50;
+				if(isLeaveborder)
+					return;
+
+				var abs = Math.abs,
 				
+					y = e.gestureOffsetY / 4, n = y > 0 ? 50 : -50;
+				
+				if(abs(y) < 10)
+					return;
+
+				var parentHeight = parentEl.height();
+
 				// 快速滑动事件
 				timer.start(function(i){
 					var top = getTop(panelStyle) + (isNaN(i) ? n : y * (1 - i++ / 35));
 
-					onborder(panelEl, parentEl, top, function(t, type){
-						// 如果是在最上方，还要往下拉，就return
-						if(type === "top" && y < 0)
-							return;
-
-						// 如果是在最下方，还要往上拉，就return
-						if(type === "bottom" && y > 0)
-							return;
-
+					leaveborder(overflowPanel, parentHeight, top, function(t, type){
 						top = t;
 						timer.stop();
 					});
 
 					setTop(panelStyle, top);
-				}, Math.abs(y) > parentEl.height() / 4 * 0.7 ? undefined : 35);
+				}, abs(y) > parentEl.height() / 4 * 0.6 ? undefined : 35);
 			}
 		});
 	};
@@ -212,11 +217,11 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, onborder){
 	function(panelStyle, top){
 		panelStyle.top = Math.round(top) + "px";
 	},
-	// onborder
-	function(panelEl, parentEl, top, fn){
+	// leaveborder
+	function(overflowPanel, parentHeight, top, fn){
 		var type = "",
 
-			t = parentEl.height() - panelEl.height();
+			t = parentHeight - overflowPanel.height();
 		
 		// 如果是最上方的时候 或者 父容器比溢出容器还要高（未溢出或隐藏了）
 		if(top > 0 || t > 0){
@@ -232,11 +237,11 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, onborder){
 		else{
 			return;
 		}
-		
+
 		this.setEventAttrs({ direction : type });
-		this.trigger(panelEl[0]);
+		this.trigger(overflowPanel[0]);
 		fn(top, type);
-	}.bind(this.EventCollection.overflow)
+	}.bind(new Event("leaveborder"))
 ));
 
 
@@ -246,6 +251,7 @@ DOM.members(this);
 	Bao.API.DOM,
 	jQun.NonstaticClass,
 	jQun.StaticClass,
+	jQun.Event,
 	// windowEl
 	jQun(window)
 ));

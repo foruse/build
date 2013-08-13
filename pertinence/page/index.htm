@@ -26,23 +26,7 @@
 			</header>
 			<article class="content_SPP">
 				<section id="schedule">
-					<header>
-						<dl></dl>
-						<script id="spp_schedule_html" type="text/html">
-							<dt class="inlineBlock">
-								@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title){
-									<span>{title}</span>
-								}
-							</dt>
-							@for(schedules ->> week){
-								<ol>
-									@for(week ->> day){
-										<li></li>
-									}
-								</ol>
-							}
-						</script>
-					</header>
+					<header></header>
 				</section>
 				<section id="project">
 					<ul class="inlineBlock"></ul>
@@ -132,6 +116,7 @@
 	<script src="../../common/javascript/ui/control/drag.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/list.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/wait.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/time.js" type="text/javascript"></script>
 
 	<script src="../javascript/index/spp.js" type="text/javascript"></script>
 	<script src="../javascript/index/index.js" type="text/javascript"></script>

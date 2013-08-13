@@ -1,5 +1,5 @@
 ﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Cache, CallServer, HTML, LoadingBar, BatchLoad){
-this.SPP = (function(UserList, Navigator){
+this.SPP = (function(Date, UserList, Navigator){
 	function Title(selector){
 	
 	};
@@ -12,21 +12,23 @@ this.SPP = (function(UserList, Navigator){
 	});
 
 
-	function Schedule(selector, html){
-		var schedule = this, batchLoad;
+	function Schedule(selector){
+		var schedule = this, batchLoad, date;
 		
 		batchLoad = new BatchLoad("getSchedules", function(data){
 			console.log(data);
 		});
 
+		date = new Date();
+		date.appendTo(this.find(">header")[0]);
+
 		this.assign({
-			html : html,
 			batchLoad : batchLoad
 		});
 
 		this.call();
 	};
-	Schedule = new NonstaticClass(Schedule, null, OverflowPanel.prototype);
+	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
 
 	Schedule.properties({
 		add : function(data){
@@ -71,7 +73,7 @@ this.SPP = (function(UserList, Navigator){
 		batchLoad.setParam("pageMax", -1);
 
 		this.attach({
-			"overflow" : function(e){
+			leaveborder : function(e){
 				if(e.direction !== "bottom")
 					return;
 
@@ -343,9 +345,7 @@ this.SPP = (function(UserList, Navigator){
 			),
 			schedule : new Schedule.constructor(
 				// selector
-				"#schedule",
-				// html
-				new HTML("spp_schedule_html", true)
+				"#schedule"
 			),
 			tab : new Tab.constructor(
 				// selector
@@ -385,6 +385,7 @@ this.SPP = (function(UserList, Navigator){
 
 	return SPP.constructor;
 }(
+	Bao.UI.Control.Time.Date,
 	Bao.UI.Control.List.UserList,
 	Bao.UI.Control.Drag.Navigator
 ));

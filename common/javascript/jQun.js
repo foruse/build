@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.5
- *  本次修改：解决jQun.Event.prototype.attachTo的bug
+ *  文档状态：1.0.4.6
+ *  本次修改：ElementList增加属性：selector，用于记录传入参数selector的值，目的是为了方便监控错误
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -244,7 +244,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				}
 
 				for(var i = 0, j = parentList.length;i < j;i++){
-					var passArgList = [], constructor = parentList[i].constructor;
+					var transferArgList = [], constructor = parentList[i].constructor;
 
 					for(
 						var argumentList = constructor.argumentList,
@@ -253,10 +253,10 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 						n < m;
 						n++
 					){
-						passArgList.push(arg[argumentList[n]]);
+						transferArgList.push(arg[argumentList[n]]);
 					}
 
-					constructor.source.apply(this, passArgList);
+					constructor.source.apply(this, transferArgList);
 				}
 			},
 			creator : function(_constructor, _name, _ParentClass){
@@ -1367,6 +1367,10 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 		if(!selector)
 			return;
 
+		this.assign({
+			selector : selector
+		});
+
 		if(typeof selector === "string"){
 			var elements, doc = window.document;
 
@@ -1508,6 +1512,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			});
 			return list;
 		},
+		selector : "",
 		set : function(name, value, _type){
 			///	<summary>
 			///	设置集合中所有元素的属性。
