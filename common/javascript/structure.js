@@ -45,7 +45,7 @@ this.Bao = (function(Bao){
 					UserList : null
 				}),
 				Time : new Namespace().members({ // ui/control/time.js
-					Date : null
+					Calendar : null
 				}),
 				Wait : new Namespace().members({ // ui/control/wait.js
 					LoadingBar : null

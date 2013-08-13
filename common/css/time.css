@@ -1,1 +1,20 @@
-﻿
+﻿.calendar span {
+	height : 26px;
+	line-height : 26px;
+	text-align : center;
+	font-family : Arial;
+	font-weight : bold;
+	font-size : 20px;
+}
+.calendar dd {
+	overflow : hidden;
+}
+.calendar span, .calendar ol li {
+	width : 14.28%;
+}
+.calendar ol li {
+	height : 42px;
+	background-color : #fff;
+	padding : 5px;
+	background-clip : content-box;
+}

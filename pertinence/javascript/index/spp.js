@@ -1,5 +1,5 @@
 ﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Cache, CallServer, HTML, LoadingBar, BatchLoad){
-this.SPP = (function(Date, UserList, Navigator){
+this.SPP = (function(Calendar, UserList, Navigator){
 	function Title(selector){
 	
 	};
@@ -19,7 +19,7 @@ this.SPP = (function(Date, UserList, Navigator){
 			console.log(data);
 		});
 
-		date = new Date();
+		date = new Calendar();
 		date.appendTo(this.find(">header")[0]);
 
 		this.assign({
@@ -385,7 +385,7 @@ this.SPP = (function(Date, UserList, Navigator){
 
 	return SPP.constructor;
 }(
-	Bao.UI.Control.Time.Date,
+	Bao.UI.Control.Time.Calendar,
 	Bao.UI.Control.List.UserList,
 	Bao.UI.Control.Drag.Navigator
 ));

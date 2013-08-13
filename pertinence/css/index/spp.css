@@ -9,8 +9,12 @@
 #SPP[focusedTab="schedule"] {
 	background-color : #f2ebe5;
 }
-#SPP[focusedtab="schedule"] .content_SPP {
-	top : 62px;
+#SPP[focusedTab="schedule"] #title_SPP {
+	border : 0 none;
+}
+#SPP[focusedTab="schedule"] .content_SPP {
+	padding : 0;
+	top : 30px;
 }
 #SPP[focusedtab="project"] #title_SPP > button[action="add"] {
 	display : none;
@@ -62,20 +66,6 @@
 
 #schedule > header {
 	width : 100%;
-	box-sizing : content-box;
-	padding : 0 10px;
-	margin-left : -10px;
-	background-image : -webkit-linear-gradient(top, #e5e5e5, #dbdbdb);
-}
-#schedule > header span {
-	width : 14.28%;
-	height : 26px;
-	line-height : 26px;
-	text-align : center;
-	font-family : Arial;
-	font-weight : bold;
-	font-size : 20px;
-	
 }
 
 #project {
