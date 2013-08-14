@@ -1,6 +1,11 @@
 ﻿(function(Time, NonstaticClass, Panel, HTML, Event){
 this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent){
 	function DateTable(selector, date){
+		///	<summary>
+		///	日期表格。
+		///	</summary>
+		/// <param name="selector" type="string">作为表格容器的选择器</param>
+		/// <param name="date" type="Date">初始化日期</param>
 		var dateTable = this;
 
 		this.attach({
@@ -13,18 +18,32 @@ this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent
 				dateTable.focus(dateEl.get("time", "attr"));
 			},
 			leaveborder : function(e){
-				console.log(333);
-			}			
+				var monthSelector, dateSelector;
+
+				if(e.direction === "top"){
+					monthSelector = "first-child";
+					dateSelector = "last-child";
+					
+				}
+				else {
+					monthSelector = "last-child";
+					dateSelector = "first-child";
+				}
+				
+				dateTable.focus(dateTable.find("li:" + monthSelector + " ol > li:" + dateSelector).get("time", "attr"));
+			}
 		});
-		date.setMonth(date.getMonth() + 1, 0);
+
 		this.focus(date);
-		//date.setMonth(date.getMonth()+2, 1);
-		//this.focus(date);
 	};
 	DateTable = new NonstaticClass(DateTable, null, OverflowPanel.prototype);
 
 	DateTable.properties({
 		addMonth : function(time){
+			///	<summary>
+			///	添加一个月的表格。
+			///	</summary>
+			/// <param name="time" type="number">当月第一天的0时0分的毫秒数</param>
 			var firstDate = new Date(time);
 			
 			// 设置本月第一天
@@ -73,10 +92,17 @@ this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent
 			}).appendTo(this[0]);
 		},
 		clearTable : function(){
+			///	<summary>
+			///	清空表格。
+			///	</summary>
 			this.save();
 			this.innerHTML = "";
 		},
 		focus : function(time){
+			///	<summary>
+			///	聚焦到某一天上。
+			///	</summary>
+			/// <param name="time" type="number">当天任意时刻的毫秒数</param>
 			var oldFocusedDateEl = this.find('ol > li.focusedDate');
 
 			time = new Date(time - 0).setHours(0, 0, 0, 0);
@@ -114,7 +140,10 @@ this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent
 			focusedDateEl.classList.add("focusedDate");
 		},
 		restore : function(time){
-			// 如果已经存在了，那么从储存的table里取出来，添加至控件下
+			///	<summary>
+			///	恢复已储存指定时间的当月表格。
+			///	</summary>
+			/// <param name="time" type="number">当月第一天的0时0分的毫秒数</param>
 			var liEl = jQun();
 
 			return !this.savedTable.every(function(li){
@@ -130,10 +159,17 @@ this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent
 			}, this);
 		},
 		save : function(){
+			///	<summary>
+			/// 储存目前的月份表格。
+			///	</summary>
 			this.savedTable = this.find(">li");
 		},
 		savedTable : undefined,
 		updateSiblingMonths : function(time){
+			///	<summary>
+			///	更新相邻的月份（指定月份的上个月，指定的月份，指定的月份的下一个月）。
+			///	</summary>
+			/// <param name="time" type="number">指定月份的第一天的0时0分的毫秒数</param>
 			var date = new Date(time),
 				
 				nextMonth = date.getMonth() + 1, year = date.getFullYear();
