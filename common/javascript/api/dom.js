@@ -99,8 +99,26 @@ this.EventCollection = (function(Timer, IntervalTimer, childGestureConstructor){
 	EventCollection = new StaticClass(EventCollection, "BAO.API.DOM.EventCollection");
 
 	EventCollection.properties({
+		// 持续的手势事件
 		continuousgesture : new Event("continuousgesture", childGestureConstructor),
+		// 快速的手势事件
 		fastgesture : new Event("fastgesture", childGestureConstructor),
+		// 点击事件：pc上防止滑动的时候触发click事件而产生的替代的、具有保护性质的事件
+		userclick : new Event("userclick", function(){
+			var userClick = this, abs = Math.abs;
+
+			windowEl.attach({
+				fastgesture : function(e){
+					// 如果任何一方向上的偏移量大于10，就不算click
+					if(abs(e.gestureOffsetY) > 10 || abs(e.gestureOffsetX > 10))
+						return;
+
+					userClick.trigger(e.target);
+				}
+			});
+
+			this.attachTo("*");
+		}),
 		usergesture : new UserGesture.constructor("usergesture").attachTo("*")
 	});
 
@@ -178,7 +196,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 
 				var abs = Math.abs,
 				
-					y = e.gestureOffsetY / 4, n = y > 0 ? 50 : -50;
+					y = e.gestureOffsetY / 2, n = y > 0 ? 100 : -100;
 				
 				if(abs(y) < 10)
 					return;
@@ -187,7 +205,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 
 				// 快速滑动事件
 				timer.start(function(i){
-					var top = getTop(panelStyle) + (isNaN(i) ? n : y * (1 - i++ / 35));
+					var top = getTop(panelStyle) + (isNaN(i) ? n : y * (1 - i++ / 15));
 
 					leaveborder(overflowPanel, parentHeight, top, function(t, type){
 						top = t;
@@ -195,7 +213,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 					});
 
 					setTop(panelStyle, top);
-				}, abs(y) > parentEl.height() / 4 * 0.6 ? undefined : 35);
+				}, abs(y) > parentEl.height() / 2 * 0.6 ? undefined : 15);
 			}
 		});
 	};

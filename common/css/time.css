@@ -6,8 +6,30 @@
 	font-weight : bold;
 	font-size : 20px;
 }
+.calendar ul > li {
+	position : relative;
+}
+.calendar p {
+	position : absolute;
+	top : 50%;
+	left : 50%;
+	width : 100px;
+	height : 80px;
+	margin : -40px -50px;
+	font-size : 26px;
+	line-height : 40px;
+	text-align : center;
+	background-color : rgba(0,0,0,0.3);
+}
+.calendar p small {
+	display : block;
+}
 .calendar dd {
+	width : 100%;
 	overflow : hidden;
+	position : absolute;
+	top : 26px;
+	bottom : 0;
 }
 .calendar span, .calendar ol li {
 	width : 14.28%;
@@ -17,4 +39,10 @@
 	background-color : #fff;
 	padding : 5px;
 	background-clip : content-box;
+}
+.calendar ol li.focusedDate {
+	background-color : #ff0 !important;
+}
+.calendar ol li[datestatus="-1"] {
+	background-color : #aaa;
 }

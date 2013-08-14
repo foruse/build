@@ -1485,7 +1485,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			///	通过选择器查找子孙元素。
 			///	</summary>
 			///	<param name="selector" type="string">选择器。</param>
-			var source = jQun.ElementList.source, list = this.createList();
+			var source = ElementList.constructor.source, list = this.createList();
 
 			this.forEach(function(htmlElement){
 				source.call(list, selector, htmlElement);
@@ -1596,7 +1596,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 ));
 
 this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty){
-	function HTMLElementList(selector){};
+	function HTMLElementList(selector, _parent){};
 	HTMLElementList = new NonstaticClass(HTMLElementList, "jQun.HTMLElementList", ElementList.prototype);
 
 	// firefox 把id、innerHTML归为了Element的属性，但是w3c与IE9都归为了HTMLElement的属性
