@@ -6,7 +6,7 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 		///	</summary>
 		/// <param name="selector" type="string">作为表格容器的选择器</param>
 		/// <param name="date" type="Date">初始化日期</param>
-		var dateTable = this;
+		var dateTable = this
 
 		this.attach({
 			userclick : function(e){
@@ -186,10 +186,29 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 	});
 
 
-	function Calendar(){
+	function Calendar(_isStretch){
 		this.combine(panelHtml.create());
 
 		new DateTable.constructor(this.find("dd>ul")[0], new Date());
+
+		
+		if(!_isStretch)
+			return;
+
+		var calendar = this, calendarClassList = this.classList;
+
+		jQun(window).attach({
+			click : function(e){
+				if(jQun(e.target).between(calendar[0], calendar.parent()[0]).length > 0){
+					if(!calendarClassList.contains("stretch")){
+						calendarClassList.add("stretch");
+					}
+						return;
+				}
+
+				calendarClassList.remove("stretch");
+			}
+		});
 	};
 	Calendar = new NonstaticClass(Calendar, "Bao.UI.Control.Time.Calendar", Panel.prototype);
 

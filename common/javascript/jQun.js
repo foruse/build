@@ -1331,8 +1331,7 @@ this.NodeList = (function(AttributeCollection){
 			///	</summary>
 			///	<param name="parentNode" type="object">指定的父节点。</param>
 			///	<param name="_idx" type="number">指定节点的索引值。</param>
-			var existingNode,
-				children = children = parentNode.children;
+			var existingNode, children = parentNode.children;
 
 			existingNode = children[_idx === undefined ? children.length : _idx];
 

@@ -19,7 +19,7 @@ this.SPP = (function(Calendar, UserList, Navigator){
 			console.log(data);
 		});
 
-		date = new Calendar();
+		date = new Calendar(true);
 		date.appendTo(this.find(">header")[0]);
 
 		this.assign({
