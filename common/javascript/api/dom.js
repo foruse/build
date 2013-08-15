@@ -182,6 +182,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 
 				if(e.isLastOfGestureType){
 					isLeaveborder = false;
+
 					leaveborder(overflowPanel, parentEl.height(), top, function(t, type){
 						top = t;
 						isLeaveborder = true;
@@ -237,23 +238,28 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 	},
 	// leaveborder
 	function(overflowPanel, parentHeight, top, fn){
+		// top等于0，说明处于恰好状态，就可以return了
+		if(top === 0)
+			return;
+		
 		var type = "",
 
 			t = parentHeight - overflowPanel.height();
 		
-		// 如果是最上方的时候 或者 父容器比溢出容器还要高（未溢出或隐藏了）
-		if(top > 0 || t > 0){
+		// 父容器比溢出容器还要高（未溢出或隐藏了，t应该为正数）
+		if(t > 0){
+			type = top > 0 ? "top" : "bottom";
+			top = 0;
+		}
+		// 如果是最上方的时候
+		else if(top > 0){
 			type = "top";
 			top = 0;
 		}
-		// 如果是最下方的时候
+		// 如果是最下方的时候(这时t应该为负数)
 		else if(top < t){
 			type = "bottom";
 			top = t;
-		}
-		// 如果不是最上方也不是最下方
-		else{
-			return;
 		}
 
 		this.setEventAttrs({ direction : type });

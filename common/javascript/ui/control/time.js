@@ -1,5 +1,5 @@
 ﻿(function(Time, NonstaticClass, Panel, HTML, Event){
-this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent){
+this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMonthEvent){
 	function DateTable(selector, date){
 		///	<summary>
 		///	日期表格。
@@ -16,21 +16,17 @@ this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent
 					return;
 
 				dateTable.focus(dateEl.get("time", "attr"));
+				console.log(1);
 			},
 			leaveborder : function(e){
-				var monthSelector, dateSelector;
+				var toFocusEl = dateTable.find(
+						'li:' + (e.direction === "top" ? "first" : "last") + '-child ol > li[datestatus="0"]'
+					);
 
-				if(e.direction === "top"){
-					monthSelector = "first-child";
-					dateSelector = "last-child";
-					
-				}
-				else {
-					monthSelector = "last-child";
-					dateSelector = "first-child";
-				}
-				
-				dateTable.focus(dateTable.find("li:" + monthSelector + " ol > li:" + dateSelector).get("time", "attr"));
+				toFocusEl.splice(1);
+
+				dateTable.focus(toFocusEl.get("time", "attr") - 0);
+				console.log(2);
 			}
 		});
 
@@ -103,32 +99,38 @@ this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent
 			///	聚焦到某一天上。
 			///	</summary>
 			/// <param name="time" type="number">当天任意时刻的毫秒数</param>
-			var oldFocusedDateEl = this.find('ol > li.focusedDate');
+			var focusedDateEl,
+			
+				oldFocusedDateEl = this.find('ol > li.focusedDate');
 
 			time = new Date(time - 0).setHours(0, 0, 0, 0);
+			focusedDateEl = this.find('ol > li[time="' + time + '"]');
 
 			if(oldFocusedDateEl.length > 0){
-				// 如果2个日期的时间差小于1天，就证明是同一天(被减的日期是当天的时间00:00)
-				if(oldFocusedDateEl.get("time", "attr") == time)
+				var oldTime = oldFocusedDateEl.get("time", "attr") - 0;
+
+				// 如果2个日期的时间差小于1天，就证明是同一天
+				if(oldTime === time){
 					return;
+				}
+
+				var date = new Date(oldTime);
+
+				oldFocusedDateEl.classList.remove("focusedDate");
+
+				// 如果是同月份的日期切换
+				if(date.getMonth() === new Date(time).getMonth()){
+					focusedDateEl.classList.add("focusedDate");
+					return;
+				}
+
+				this.find('li[time="' + date.setDate(1) + '"]').classList.remove("focused");
 			}
 			
-			var focusedDateEl, monthEl;
-			
-			oldFocusedDateEl.classList.remove("focusedDate");
-
-			focusedDateEl = this.find('ol > li[time="' + time + '"]');
-			monthEl = focusedDateEl.parent().parent();
-
-			// 如果月份元素已经聚焦
-			if(monthEl.classList.contains("focused")){
-				focusedDateEl.classList.add("focusedDate");
-				return;
-			}
+			var monthEl = this.find('li[time="' + new Date(time).setDate(1) + '"]');
 
 			// 更新月份
 			this.updateSiblingMonths(time);
-			oldFocusedDateEl.parent().parent().classList.remove("focused");
 
 			// 如果聚焦元素找不到
 			if(focusedDateEl.length === 0){
@@ -169,21 +171,16 @@ this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent
 			///	<summary>
 			///	更新相邻的月份（指定月份的上个月，指定的月份，指定的月份的下一个月）。
 			///	</summary>
-			/// <param name="time" type="number">指定月份的第一天的0时0分的毫秒数</param>
+			/// <param name="time" type="number">指定月份的某一天的0时0分的毫秒数</param>
 			var date = new Date(time),
 				
-				nextMonth = date.getMonth() + 1, year = date.getFullYear();
+				month = date.getMonth(), year = date.getFullYear();
 
 			// 清空
 			this.clearTable();
 
 			for(var i = -1;i < 2;i++){
-				/*
-					取当前月的下个月的第0天，也就是取当前月的最后一天。如果不这样，大月有31号，小月没有31号，会出错
-					正确示例 ：d.setFullYear(2013, 8 + 1 + 1, 0)，取出来的就是2013年9月30日（取10月的第0天，也就是9月最后一天）
-					错误示例 ：d.setFullYear(2013, 8 + 1)，取出来的就是2013年10月1日
-				*/
-				date.setFullYear(year, nextMonth + i, 0);
+				date.setFullYear(year, month + i, 1);
 				this.addMonth(date.getTime());
 			}
 		}
@@ -204,6 +201,7 @@ this.Calendar = (function(OverflowPanel, panelHtml, dateTableHtml, addMonthEvent
 	return Calendar.constructor;
 }(
 	Bao.API.DOM.OverflowPanel,
+	window.Date,
 	// panelHtml
 	new HTML([
 		'<div class="calendar themeBgColor">',
