@@ -1,15 +1,17 @@
 ﻿.calendar {
 	font-family : Arial;
 }
+.calendar .inlineBlock > * {
+	width : 14%;
+	border-right : 1px solid #4e4e4e;
+	border-bottom : 1px solid #4e4e4e;
+}
 .calendar dt span {
 	height : 20px;
 	line-height : 20px;
 	text-align : center;
 	font-weight : bold;
 	font-size : 10px;
-}
-.calendar dt span, .calendar ol li {
-	width : 14%;
 }
 .calendar dt span[day="0"], .calendar ol li[day="0"], .calendar dt span[day="6"], .calendar ol li[day="6"] {
 	width : 15%;
@@ -65,7 +67,6 @@
 	font-size : 24px;
 	text-align : right;
 	padding : 5px;
-	outline : 1px solid #4e4e4e;
 }
 .calendar ol li.focusedDate {
 	color : #fff !important;
