@@ -261,6 +261,9 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 			type = "bottom";
 			top = t;
 		}
+		else {
+			return;
+		}
 
 		this.setEventAttrs({ direction : type });
 		this.trigger(overflowPanel[0]);

@@ -8,6 +8,7 @@
 }
 #SPP[focusedTab="schedule"] {
 	background-color : #f2ebe5;
+	z-index : 100;
 }
 #SPP[focusedTab="schedule"] #title_SPP {
 	border : 0 none;

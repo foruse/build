@@ -1,13 +1,81 @@
-﻿.calendar span {
-	height : 26px;
-	line-height : 26px;
-	text-align : center;
+﻿.calendar {
 	font-family : Arial;
+}
+.calendar dt span {
+	height : 20px;
+	line-height : 20px;
+	text-align : center;
 	font-weight : bold;
-	font-size : 20px;
+	font-size : 10px;
+}
+.calendar dt span, .calendar ol li {
+	width : 14%;
+}
+.calendar dt span[day="0"], .calendar ol li[day="0"], .calendar dt span[day="6"], .calendar ol li[day="6"] {
+	width : 15%;
+}
+.calendar dt span, .calendar ol li.focusedDate {
+	background-color : #6f6f6f;
+}
+.calendar dt span[day="1"], .calendar ol li.focusedDate[day="1"] {
+	background-color : #e26815;
+}
+.calendar dt span[day="2"], .calendar ol li.focusedDate[day="2"] {
+	background-color : #867bc9;
+}
+.calendar dt span[day="3"], .calendar ol li.focusedDate[day="3"] {
+	background-color : #39bead;
+}
+.calendar dt span[day="4"], .calendar ol li.focusedDate[day="4"] {
+	background-color : #00b0d7;
+}
+.calendar dt span[day="5"], .calendar ol li.focusedDate[day="5"] {
+	background-color : #f1af10;
+}
+.calendar dd {
+	width : 100%;
+	height : 225px;
+	overflow : hidden;
+	position : absolute;
+	top : 20px;
+	outline : 1px solid #4e4e4e;
+}
+.calendar ul {
+	height : 100%;
+	color : #ccc;
 }
 .calendar ul > li {
 	position : relative;
+}
+.calendar ul > li.focused > p {
+	display : none;
+}
+.calendar ul > li[weeks="4"]:first-child {
+	margin-top : -180px;
+}
+.calendar ul > li[weeks="5"]:first-child {
+	margin-top : -225px;
+}
+.calendar li.focused li[datestatus="0"], .calendar li.focused+li li[datestatus="-1"] {
+	color : #484848;
+}
+.calendar ol li {
+	height : 45px;
+	background-color : #fff;
+	font-size : 24px;
+	text-align : right;
+	padding : 5px;
+	outline : 1px solid #4e4e4e;
+}
+.calendar ol li.focusedDate {
+	color : #fff !important;
+}
+.calendar ol small {
+	display : none;
+	font-size : 10px;
+}
+.calendar li.focusedDate small{
+	display : block;
 }
 .calendar p {
 	position : absolute;
@@ -23,26 +91,4 @@
 }
 .calendar p small {
 	display : block;
-}
-.calendar dd {
-	width : 100%;
-	overflow : hidden;
-	position : absolute;
-	top : 26px;
-	bottom : 0;
-}
-.calendar span, .calendar ol li {
-	width : 14.28%;
-}
-.calendar ol li {
-	height : 42px;
-	background-color : #fff;
-	padding : 5px;
-	background-clip : content-box;
-}
-.calendar ol li.focusedDate {
-	background-color : #ff0 !important;
-}
-.calendar ol li[datestatus="-1"] {
-	background-color : #aaa;
 }

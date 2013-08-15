@@ -16,7 +16,6 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 					return;
 
 				dateTable.focus(dateEl.get("time", "attr"));
-				console.log(1);
 			},
 			leaveborder : function(e){
 				var toFocusEl = dateTable.find(
@@ -26,7 +25,6 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 				toFocusEl.splice(1);
 
 				dateTable.focus(toFocusEl.get("time", "attr") - 0);
-				console.log(2);
 			}
 		});
 
@@ -71,7 +69,7 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 				monthData.push({
 					time : k.getTime(),
 					date : d,
-					localString : k.toLocaleDateString(),
+					day : k.getDay(),
 					// 0 : 表示本月日期，-1表示上个月日期
 					dateStatus : i < 0 ? "-1" : "0"
 				});
@@ -84,7 +82,8 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 				monthData : monthData,
 				month : month + 1,
 				year : firstDate.getFullYear(),
-				time : firstDate.getTime()
+				time : firstDate.getTime(),
+				weeks : Math.ceil(monthData.length / 7)
 			}).appendTo(this[0]);
 		},
 		clearTable : function(){
@@ -207,11 +206,11 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 		'<div class="calendar themeBgColor">',
 			'<dl>',
 				'<dt class="inlineBlock whiteFont">',
-					'@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title){',
-						'<span>{title}</span>',
+					'@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title, day){',
+						'<span day="{day}">{title}</span>',
 					'}',
 				'</dt>',
-				'<dd class="themeBgColor">',
+				'<dd>',
 					'<ul></ul>',
 				'</dd>',
 			'</dl>',
@@ -219,10 +218,13 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 	].join("")),
 	// dateTableHtml
 	new HTML([
-		'<li time="{time}">',
+		'<li time="{time}" weeks={weeks}>',
 			'<ol class="inlineBlock">',
 				'@for(monthData ->> dt){',
-					'<li datestatus="{dt.dateStatus}" time="{dt.time}" localstring="{dt.localString}">{dt.date}</li>',
+					'<li datestatus="{dt.dateStatus}" day="{dt.day}" time="{dt.time}">',
+						'<small>{month}月</small>',
+						'<span>{dt.date}</span>',
+					'</li>',
 				'}',
 			'</ol>',
 			'<p class="whiteFont">',
