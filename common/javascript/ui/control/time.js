@@ -172,6 +172,18 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 			this.savedTable = this.find(">li");
 		},
 		savedTable : undefined,
+		top : function(){
+			///	<summary>
+			///	将当前聚焦的日期置顶。
+			///	</summary>
+			var dateEls = this.find("li.focused ol > li");
+
+			this.set(
+				"top",
+				Math.floor(this.find("li.focused ol > li").indexOf(this.find("li.focusedDate")[0]) / 6 - 1) * -45 + "px",
+				"css"
+			);
+		},
 		updateSiblingMonths : function(time){
 			///	<summary>
 			///	更新相邻的月份（指定月份的上个月，指定的月份，指定的月份的下一个月）。
@@ -208,25 +220,23 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 		if(!_isStretch)
 			return;
 
-		var calendar = this, calendarClassList = this.classList;
+		var calendar = this, classList = calendar.classList;
 
 		jQun(window).attach({
 			touchstart : function(e){
 				if(jQun(e.target).between(calendar[0], calendar.parent()[0]).length > 0){
-					if(!calendarClassList.contains("stretch")){
-						calendarClassList.add("stretch");
-					}
+					classList.add("stretch");
 					return;
 				}
-
-				calendarClassList.remove("stretch");
-				//dateTable.top();
+	
+				dateTable.top();
+				classList.remove("stretch");
 			},
 			focusdate : function(e){
-				if(calendarClassList.contains("stretch"))
+				if(calendar.classList.contains("stretch"))
 					return;
-
-				//dateTable.top();
+				
+				dateTable.top();
 			}
 		});
 	};
@@ -234,13 +244,7 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 
 	Calendar.properties({
 		dateTable : undefined,
-		isStretch : false,
-		stretch : function(){
-			if(!this.isStretch)
-				return;
-
-
-		}
+		isStretch : false
 	});
 
 	return Calendar.constructor;

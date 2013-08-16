@@ -13,16 +13,16 @@ this.SPP = (function(Calendar, UserList, Navigator){
 
 
 	function Schedule(_selector){
-		var schedule = this, batchLoad, date;
+		var schedule = this, batchLoad, calendar;
 		
 		batchLoad = new BatchLoad("getSchedules", function(data){
 			console.log(data);
 		});
 
-		date = new Calendar(true);
-		date.appendTo(this.find(">header")[0]);
-		date.dateTable.focus(new Date());
-
+		calendar = new Calendar(true);
+		calendar.appendTo(this.find(">header")[0]);
+		calendar.dateTable.focus(new Date());
+		window.xx = calendar;
 		this.assign({
 			batchLoad : batchLoad
 		});
