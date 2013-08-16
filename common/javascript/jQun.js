@@ -2,7 +2,7 @@
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
  *  文档状态：1.0.4.6
- *  本次修改：ElementList增加属性：selector，用于记录传入参数selector的值，目的是为了方便监控错误
+ *  本次修改：ElementList增加属性：_selector，用于记录传入参数_selector的值，目的是为了方便监控错误
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -21,16 +21,16 @@ var jQun,
 
 
 jQun = (function(argRegx, argListRegx, every, toNative){
-	function jQun(selector){
+	function jQun(_selector){
 		///	<summary>
 		///	返回一个通过指定选择器筛选出来的元素集合。
 		///	</summary>
-		///	<param name="selector" type="string, element，array">选择器、html、dom元素或dom元素数组。</param>
+		///	<param name="_selector" type="string, element，array">选择器、html、dom元素或dom元素数组。</param>
 		if(jQun.isInstanceOf(this, arguments.callee)){
 			return this.creator.apply(this, arguments);
 		}
 
-		return new jQun.HTMLElementList(selector);
+		return new jQun.HTMLElementList(_selector);
 	};
 	jQun.prototype = Object.create(null, { constructor : { value : jQun, writable : true } });
 
@@ -1357,29 +1357,29 @@ this.NodeList = (function(AttributeCollection){
 ));
 
 this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, window, selectorReplaceRegx){
-	function ElementList(selector, _parent){
+	function ElementList(_selector, _parent){
 		///	<summary>
 		///	通过指定选择器筛选元素。
 		///	</summary>
-		///	<param name="selector" type="string, object">选择器、html或dom元素。</param>
+		///	<param name="_selector" type="string, object">选择器或dom元素。</param>
 		///	<param name="_parent" type="object">指定查询的父节点。</param>
-		if(!selector)
+		if(!_selector)
 			return;
 
 		this.assign({
-			selector : selector
+			selector : _selector
 		});
 
-		if(typeof selector === "string"){
+		if(typeof _selector === "string"){
 			var elements, doc = window.document;
 
-			selector = selector.replace(selectorReplaceRegx, function(word){
+			_selector = _selector.replace(selectorReplaceRegx, function(word){
 				return '[' + (word.charAt(0) === "#" ? "id" : "class~") + '="' + word.substring(1) + '"]';
 			});
 			_parent = _parent || doc;
 
 			try{
-				elements = _parent.querySelectorAll(selector);
+				elements = _parent.querySelectorAll(_selector);
 			} catch(e){
 				if(_parent === doc){
 					console.error(e.message);
@@ -1387,7 +1387,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 				}
 
 				_parent.setAttribute("__selector__", "__jQun__");
-				elements = (_parent.parentElement || _parent)["querySelectorAll"]('[__selector__="__jQun__"]' + selector);
+				elements = (_parent.parentElement || _parent)["querySelectorAll"]('[__selector__="__jQun__"]' + _selector);
 				_parent.removeAttribute("__selector__");
 			}
 
@@ -1395,26 +1395,26 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			return;
 		}
 
-		if(selector instanceof window.Node || selector instanceof window.constructor){
-			this.push(selector);
+		if(_selector instanceof window.Node || _selector instanceof window.constructor){
+			this.push(_selector);
 			return;
 		}
 
-		if("length" in selector){
-			this.combine(selector);
+		if("length" in _selector){
+			this.combine(_selector);
 			return;
 		}
 	};
 	ElementList = new NonstaticClass(ElementList, "jQun.ElementList", NodeList.prototype);
 
 	ElementList.override({
-		createList : function(selector, _parent){
+		createList : function(_selector, _parent){
 			///	<summary>
 			///	创建个新的元素集合。
 			///	</summary>
-			///	<param name="selector" type="string, object">选择器、html或dom元素。</param>
+			///	<param name="_selector" type="string, object">选择器、html或dom元素。</param>
 			///	<param name="_parent" type="object">指定查询的父节点。</param>
-			return new ElementList.constructor(selector, _parent);
+			return new ElementList.constructor(_selector, _parent);
 		}
 	});
 
@@ -1479,15 +1479,15 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 
 			return this[0][name];
 		},
-		find : function(selector){
+		find : function(_selector){
 			///	<summary>
 			///	通过选择器查找子孙元素。
 			///	</summary>
-			///	<param name="selector" type="string">选择器。</param>
+			///	<param name="_selector" type="string">选择器。</param>
 			var source = ElementList.constructor.source, list = this.createList();
 
 			this.forEach(function(htmlElement){
-				source.call(list, selector, htmlElement);
+				source.call(list, _selector, htmlElement);
 			});
 
 			if(this.length < 2)
@@ -1595,7 +1595,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 ));
 
 this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty){
-	function HTMLElementList(selector, _parent){};
+	function HTMLElementList(_selector, _parent){};
 	HTMLElementList = new NonstaticClass(HTMLElementList, "jQun.HTMLElementList", ElementList.prototype);
 
 	// firefox 把id、innerHTML归为了Element的属性，但是w3c与IE9都归为了HTMLElement的属性
@@ -1621,13 +1621,13 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 	);
 
 	HTMLElementList.override({
-		createList : function(selector, _parent){
+		createList : function(_selector, _parent){
 			///	<summary>
 			///	创建个新的HTML元素集合。
 			///	</summary>
-			///	<param name="selector" type="string, object">选择器、html或dom元素。</param>
+			///	<param name="_selector" type="string, object">选择器、html或dom元素。</param>
 			///	<param name="_parent" type="object">指定查询的父节点。</param>
-			return new HTMLElementList.constructor(selector, _parent);
+			return new HTMLElementList.constructor(_selector, _parent);
 		}
 	});
 
@@ -1836,7 +1836,7 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, rRegx, tReplace){
 						return [
 							"');jQun.forEach(",
 							condition.split("{").join("\t").split("}").join("\n"),
-							", function(" + (i || "THIS") + ")\t this.push('"
+							", function(" + (i || "") + ")\t this.push('"
 						].join("");
 				})
 			}, function(str, modifier, word){

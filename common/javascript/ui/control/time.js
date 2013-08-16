@@ -1,12 +1,14 @@
 ﻿(function(Time, NonstaticClass, Panel, HTML, Event){
-this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMonthEvent){
-	function DateTable(selector, date){
+this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dateTableHtml, focusDateEvent){
+	function DateTable(){
 		///	<summary>
 		///	日期表格。
 		///	</summary>
-		/// <param name="selector" type="string">作为表格容器的选择器</param>
-		/// <param name="date" type="Date">初始化日期</param>
-		var dateTable = this
+		var dateTable = this;
+
+		this.combine(tablePanelHtml.create());
+		// 采用溢出功能
+		new OverflowPanel(this[0]);
 
 		this.attach({
 			userclick : function(e){
@@ -18,6 +20,10 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 				dateTable.focus(dateEl.get("time", "attr"));
 			},
 			leaveborder : function(e){
+				// 如果偏离边框的距离小于2行半就return 45*2.5=112.5
+				if(e.offsetBorder < 110)
+					return;
+
 				var toFocusEl = dateTable.find(
 						'li:' + (e.direction === "top" ? "first" : "last") + '-child ol > li[datestatus="0"]'
 					);
@@ -27,10 +33,8 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 				dateTable.focus(toFocusEl.get("time", "attr") - 0);
 			}
 		});
-
-		this.focus(date);
 	};
-	DateTable = new NonstaticClass(DateTable, null, OverflowPanel.prototype);
+	DateTable = new NonstaticClass(DateTable, null, Panel.prototype);
 
 	DateTable.properties({
 		addMonth : function(time){
@@ -120,6 +124,7 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 				// 如果是同月份的日期切换
 				if(date.getMonth() === new Date(time).getMonth()){
 					focusedDateEl.classList.add("focusedDate");
+					focusDateEvent.trigger(focusedDateEl[0]);
 					return;
 				}
 
@@ -139,6 +144,7 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 			
 			monthEl.classList.add("focused");
 			focusedDateEl.classList.add("focusedDate");
+			focusDateEvent.trigger(focusedDateEl[0]);
 		},
 		restore : function(time){
 			///	<summary>
@@ -187,54 +193,75 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 
 
 	function Calendar(_isStretch){
-		this.combine(panelHtml.create());
+		var dateTable = new DateTable.constructor();
 
-		new DateTable.constructor(this.find("dd>ul")[0], new Date());
+		_isStretch = _isStretch === true;
 
-		
+		this.assign({
+			dateTable : dateTable,
+			isStretch : _isStretch
+		});
+
+		this.combine(calendarHtml.create());
+		dateTable.appendTo(this.find("dd")[0]);
+
 		if(!_isStretch)
 			return;
 
 		var calendar = this, calendarClassList = this.classList;
 
 		jQun(window).attach({
-			click : function(e){
+			touchstart : function(e){
 				if(jQun(e.target).between(calendar[0], calendar.parent()[0]).length > 0){
 					if(!calendarClassList.contains("stretch")){
 						calendarClassList.add("stretch");
 					}
-						return;
+					return;
 				}
 
 				calendarClassList.remove("stretch");
+				//dateTable.top();
+			},
+			focusdate : function(e){
+				if(calendarClassList.contains("stretch"))
+					return;
+
+				//dateTable.top();
 			}
 		});
 	};
 	Calendar = new NonstaticClass(Calendar, "Bao.UI.Control.Time.Calendar", Panel.prototype);
 
 	Calendar.properties({
-		
+		dateTable : undefined,
+		isStretch : false,
+		stretch : function(){
+			if(!this.isStretch)
+				return;
+
+
+		}
 	});
 
 	return Calendar.constructor;
 }(
 	Bao.API.DOM.OverflowPanel,
 	window.Date,
-	// panelHtml
+	// calendarHtml
 	new HTML([
-		'<div class="calendar themeBgColor">',
+		'<div class="calendar lightBdColor">',
 			'<dl>',
 				'<dt class="inlineBlock whiteFont">',
 					'@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title, day){',
 						'<span day="{day}">{title}</span>',
 					'}',
 				'</dt>',
-				'<dd>',
-					'<ul></ul>',
-				'</dd>',
+				'<dd></dd>',
 			'</dl>',
 		'</div>'
 	].join("")),
+	// tablePanelHtml
+	new HTML('<ul></ul>'),
 	// dateTableHtml
 	new HTML([
 		'<li time="{time}" weeks={weeks}>',
@@ -247,13 +274,13 @@ this.Calendar = (function(OverflowPanel, Date, panelHtml, dateTableHtml, addMont
 				'}',
 			'</ol>',
 			'<p class="whiteFont">',
-				'<small>{year}年</small>',
-				'<strong>{month}月</strong>',
+				//'<small>{year}年</small>',
+				'<strong>{year}年{month}月</strong>',
 			'</p>',
 		'</li>'
 	].join("")),
-	// addMonthEvent
-	new Event("addmonth")
+	// focusDateEvent
+	new Event("focusdate")
 ));
 
 Time.members(this);

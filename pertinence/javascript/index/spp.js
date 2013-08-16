@@ -1,6 +1,6 @@
 ﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Cache, CallServer, HTML, LoadingBar, BatchLoad){
 this.SPP = (function(Calendar, UserList, Navigator){
-	function Title(selector){
+	function Title(_selector){
 	
 	};
 	Title = new NonstaticClass(Title, null, Panel.prototype);
@@ -12,7 +12,7 @@ this.SPP = (function(Calendar, UserList, Navigator){
 	});
 
 
-	function Schedule(selector){
+	function Schedule(_selector){
 		var schedule = this, batchLoad, date;
 		
 		batchLoad = new BatchLoad("getSchedules", function(data){
@@ -21,6 +21,7 @@ this.SPP = (function(Calendar, UserList, Navigator){
 
 		date = new Calendar(true);
 		date.appendTo(this.find(">header")[0]);
+		date.dateTable.focus(new Date());
 
 		this.assign({
 			batchLoad : batchLoad
@@ -42,11 +43,11 @@ this.SPP = (function(Calendar, UserList, Navigator){
 	});
 
 
-	function Project(selector, html){
+	function Project(_selector, html){
 		///	<summary>
 		///	项目。
 		///	</summary>
-		/// <param name="selector" type="string">对应的元素选择器</param>
+		/// <param name="_selector" type="string">对应的元素选择器</param>
 		/// <param name="html" type="jQun.HTML">项目html模板</param>
 		var project = this,
 
@@ -134,7 +135,7 @@ this.SPP = (function(Calendar, UserList, Navigator){
 	});
 
 
-	function Partner(selector, groupingHtml){
+	function Partner(_selector, groupingHtml){
 		var userList, groupPanel,
 
 			partner = this, panelStyle = this.style,
@@ -259,11 +260,11 @@ this.SPP = (function(Calendar, UserList, Navigator){
 	});
 
 
-	function Tab(selector, itemHtml, onfocus, onblur){
+	function Tab(_selector, itemHtml, onfocus, onblur){
 		///	<summary>
 		///	SPP脚部选项卡。
 		///	</summary>
-		/// <param name="selector" type="string">对应的元素选择器</param>
+		/// <param name="_selector" type="string">对应的元素选择器</param>
 		/// <param name="itemHtml" type="jQun.HTML">选项卡html模板</param>
 		/// <param name="onfocus" type="function">选项卡聚焦事件</param>
 		/// <param name="onblur" type="function">选项卡失去焦点事件</param>
@@ -323,32 +324,32 @@ this.SPP = (function(Calendar, UserList, Navigator){
 	});
 
 
-	function SPP(selector){
+	function SPP(_selector){
 		///	<summary>
 		///	日程、项目、拍档页。
 		///	</summary>
-		/// <param name="selector" type="string">对应的元素</param>
+		/// <param name="_selector" type="string">对应的元素</param>
 		var spp = this, panelAttr = this.attributes;
 
 		this.assign({
 			partner : new Partner.constructor(
-				// selector
+				// _selector
 				"#partner",
 				// groupingHtml
 				new HTML("spp_partnerGroups_html", true)
 			),
 			project : new Project.constructor(
-				// selector
+				// _selector
 				"#project",
 				// html
 				new HTML("spp_project_html", true)
 			),
 			schedule : new Schedule.constructor(
-				// selector
+				// _selector
 				"#schedule"
 			),
 			tab : new Tab.constructor(
-				// selector
+				// _selector
 				"#tab_SPP",
 				// itemHtml
 				new HTML("spp_item_html", true),

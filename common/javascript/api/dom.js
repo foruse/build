@@ -149,7 +149,7 @@ this.EventCollection = (function(Timer, IntervalTimer, childGestureConstructor){
 ));
 
 this.Panel = (function(HTMLElementList){
-	function Panel(selector){};
+	function Panel(_selector){};
 	Panel = new NonstaticClass(Panel, "Bao.API.DOM.Panel", HTMLElementList.prototype);
 
 	return Panel.constructor;
@@ -158,12 +158,12 @@ this.Panel = (function(HTMLElementList){
 ));
 
 this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder){
-	function OverflowPanel(selector, _disableScrollBar){
+	function OverflowPanel(_selector, _disableScrollBar){
 		var overflowPanel = this,
 		
 			isLeaveborder = false,
 		
-			panelStyle = this.style, parentEl = this.parent(),
+			panelStyle = this.style,
 			
 			timer = new IntervalTimer(70);
 
@@ -183,7 +183,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 				if(e.isLastOfGestureType){
 					isLeaveborder = false;
 
-					leaveborder(overflowPanel, parentEl.height(), top, function(t, type){
+					leaveborder(overflowPanel, overflowPanel.parent().height(), top, function(t, type){
 						top = t;
 						isLeaveborder = true;
 					});
@@ -202,7 +202,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 				if(abs(y) < 10)
 					return;
 
-				var parentHeight = parentEl.height();
+				var parentHeight = overflowPanel.parent().height();
 
 				// 快速滑动事件
 				timer.start(function(i){
@@ -214,7 +214,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 					});
 
 					setTop(panelStyle, top);
-				}, abs(y) > parentEl.height() / 2 * 0.6 ? undefined : 15);
+				}, abs(y) > parentHeight / 2 * 0.6 ? undefined : 15);
 			}
 		});
 	};
@@ -242,12 +242,12 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 		if(top === 0)
 			return;
 		
-		var type = "",
+		var type = "", offsetBorder = top,
 
-			t = parentHeight - overflowPanel.height();
+			h = parentHeight - overflowPanel.height();
 		
 		// 父容器比溢出容器还要高（未溢出或隐藏了，t应该为正数）
-		if(t > 0){
+		if(h > 0){
 			type = top > 0 ? "top" : "bottom";
 			top = 0;
 		}
@@ -257,15 +257,19 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 			top = 0;
 		}
 		// 如果是最下方的时候(这时t应该为负数)
-		else if(top < t){
+		else if(top < h){
 			type = "bottom";
-			top = t;
+			offsetBorder = h - top;
+			top = h;
 		}
 		else {
 			return;
 		}
 
-		this.setEventAttrs({ direction : type });
+		this.setEventAttrs({
+			direction : type,
+			offsetBorder : offsetBorder
+		});
 		this.trigger(overflowPanel[0]);
 		fn(top, type);
 	}.bind(new Event("leaveborder"))

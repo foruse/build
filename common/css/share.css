@@ -87,16 +87,16 @@ h6 {
 }
 
 .themeColor, .themeBgColor {
-	background-color : #ab2424;
+	background-color : #433b38;
 }
 .themeBdColor {
-	border : 1px solid #ab2424;
+	border : 1px solid #433b38;
 }
 .lightBgColor {
-	background-color : #d8a8a8;
+	background-color : #898;
 }
 .themeColor, .lightBdColor {
-	border : 1px solid #d8a8a8;
+	border : 1px solid #898;
 }
 
 .onlyBorderBottom {
