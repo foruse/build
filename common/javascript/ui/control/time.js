@@ -176,13 +176,21 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 			///	<summary>
 			///	将当前聚焦的日期置顶。
 			///	</summary>
-			var dateEls = this.find("li.focused ol > li");
+			var top,
 
-			this.set(
-				"top",
-				Math.floor(this.find("li.focused ol > li").indexOf(this.find("li.focusedDate")[0]) / 6 - 1) * -45 + "px",
-				"css"
-			);
+				focusedDateEl = this.find("li.focusedDate"),
+
+				focusedMonthEl = focusedDateEl.between("li.focused", this[0]);
+
+			// 如果当前聚焦的日期是属于下个月的容器内
+			if(focusedMonthEl.length === 0){
+				top = this.find(">li.focused").height() * -1;
+			}
+			else {
+				top = Math.floor(focusedMonthEl.find("li").indexOf(focusedDateEl[0]) / 6 - 1) * -45;
+			}
+
+			this.set("top",	top + "px", "css");
 		},
 		updateSiblingMonths : function(time){
 			///	<summary>
