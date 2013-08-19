@@ -9,6 +9,7 @@
 
 	2013.08.12				: 实现手机上的滚动事件；将Panel类继承至HTMLElmentList
 	2013.08.13				: 修复OverflowPanel的滚动bug；Bao.UI.Control.Calendar完成70%；
+	2013.08.14 - 2013.08.16 : Bao.UI.Control.Calendar的完成及完善，并且修复bug，提高体验
 
 
 2013年7月

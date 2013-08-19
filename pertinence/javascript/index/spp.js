@@ -1,5 +1,5 @@
-﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Cache, CallServer, HTML, LoadingBar, BatchLoad){
-this.SPP = (function(Calendar, UserList, Navigator){
+﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Control, CallServer, LoadingBar, BatchLoad){
+this.Title = (function(){
 	function Title(_selector){
 	
 	};
@@ -11,18 +11,22 @@ this.SPP = (function(Calendar, UserList, Navigator){
 		}
 	});
 
+	return Title.constructor;
+}());
 
+this.Schedule = (function(Calendar, AnchorList){
 	function Schedule(_selector){
-		var schedule = this, batchLoad, calendar;
+		var batchLoad, calendar, schedule = this;
 		
 		batchLoad = new BatchLoad("getSchedules", function(data){
 			console.log(data);
 		});
 
+		// 初始化日历
 		calendar = new Calendar(true);
 		calendar.appendTo(this.find(">header")[0]);
 		calendar.dateTable.focus(new Date());
-		window.xx = calendar;
+
 		this.assign({
 			batchLoad : batchLoad
 		});
@@ -42,7 +46,13 @@ this.SPP = (function(Calendar, UserList, Navigator){
 		html : undefined
 	});
 
+	return Schedule.constructor;
+}(
+	Control.Time.Calendar,
+	Control.List.AnchorList
+));
 
+this.Project = (function(){
 	function Project(_selector, html){
 		///	<summary>
 		///	项目。
@@ -134,7 +144,10 @@ this.SPP = (function(Calendar, UserList, Navigator){
 		batchLoad : undefined
 	});
 
+	return Project.constructor;
+}());
 
+this.Partner = (function(Navigator, UserList, Cache){
 	function Partner(_selector, groupingHtml){
 		var userList, groupPanel,
 
@@ -259,7 +272,14 @@ this.SPP = (function(Calendar, UserList, Navigator){
 		userList : undefined
 	});
 
+	return Partner.constructor;
+}(
+	Control.Drag.Navigator,
+	Control.List.UserList,
+	Bao.API.Data.Cache
+));
 
+this.Tab = (function(){
 	function Tab(_selector, itemHtml, onfocus, onblur){
 		///	<summary>
 		///	SPP脚部选项卡。
@@ -323,7 +343,10 @@ this.SPP = (function(Calendar, UserList, Navigator){
 		onfocus : undefined
 	});
 
+	return Tab.constructor;
+}());
 
+this.SPP = (function(Title, Schedule, Project, Partner, Tab, HTML){
 	function SPP(_selector){
 		///	<summary>
 		///	日程、项目、拍档页。
@@ -332,23 +355,23 @@ this.SPP = (function(Calendar, UserList, Navigator){
 		var spp = this, panelAttr = this.attributes;
 
 		this.assign({
-			partner : new Partner.constructor(
+			partner : new Partner(
 				// _selector
 				"#partner",
 				// groupingHtml
 				new HTML("spp_partnerGroups_html", true)
 			),
-			project : new Project.constructor(
+			project : new Project(
 				// _selector
 				"#project",
 				// html
 				new HTML("spp_project_html", true)
 			),
-			schedule : new Schedule.constructor(
+			schedule : new Schedule(
 				// _selector
 				"#schedule"
 			),
-			tab : new Tab.constructor(
+			tab : new Tab(
 				// _selector
 				"#tab_SPP",
 				// itemHtml
@@ -370,7 +393,7 @@ this.SPP = (function(Calendar, UserList, Navigator){
 					spp[name].hide();
 				}
 			),
-			title : new Title.constructor(
+			title : new Title(
 				this.find(">header")
 			)
 		});
@@ -386,21 +409,23 @@ this.SPP = (function(Calendar, UserList, Navigator){
 
 	return SPP.constructor;
 }(
-	Bao.UI.Control.Time.Calendar,
-	Bao.UI.Control.List.UserList,
-	Bao.UI.Control.Drag.Navigator
+	this.Title,
+	this.Schedule,
+	this.Project,
+	this.Partner,
+	this.Tab,
+	jQun.HTML
 ));
 
-Index.members(this);
+Index.members({ SPP : this.SPP });
 }.call(
 	{},
 	Bao.Page.Index,
 	jQun.NonstaticClass,
 	Bao.API.DOM.Panel,
 	Bao.API.DOM.OverflowPanel,
-	Bao.API.Data.Cache,
+	Bao.UI.Control,
 	Bao.CallServer,
-	jQun.HTML,
 	Bao.UI.Control.Wait.LoadingBar,
 	Bao.API.Data.BatchLoad
 ));

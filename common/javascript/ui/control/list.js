@@ -1,4 +1,38 @@
 ﻿(function(List, NonstaticClass, Panel, HTML){
+this.AnchorList = (function(anchorListHtml){
+	function AnchorList(listData){
+		this.combine(anchorListHtml.create({ listData : listData }));
+	};
+	AnchorList = new NonstaticClass(AnchorList, "Bao.UI.Control.List.AnchorList", Panel.prototype);
+
+	AnchorList.properties({
+		
+	});
+
+	return AnchorList.constructor;
+}(
+	// anchorListHtml
+	new HTML([
+		'<div class="anchorList">',
+			'<ul>',
+				'@for(listData ->> item){',
+					'<li>',
+						'<aside>',
+							'<dl>',
+								'<dt>{?~item.title}</dt>',
+								'<dd>{?~item.desc}</dd>',
+							'</dl>',
+						'</aside>',
+						'<nav>',
+							'<a></a>',
+						'</nav>',
+					'</li>',
+				'}',
+			'</ul>',
+		'</div>'
+	].join(""))
+));
+
 this.UserList = (function(panelHtml, listHtml){
 	function UserList(onletter){
 		var userList = this;

@@ -42,6 +42,8 @@ this.Bao = (function(Bao){
 					Scroll : null
 				}),
 				List : new Namespace().members({ // ui/control/list.js
+					AnchorList : null,
+					UserAnchorList : null,
 					UserList : null
 				}),
 				Time : new Namespace().members({ // ui/control/time.js
