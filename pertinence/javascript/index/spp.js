@@ -15,23 +15,37 @@ this.Title = (function(){
 }());
 
 this.Schedule = (function(Calendar, AnchorList){
-	function Schedule(_selector){
-		var batchLoad, calendar, schedule = this;
-		
-		batchLoad = new BatchLoad("getSchedules", function(data){
-			console.log(data);
-		});
+	function Schedule(_selector, html){
+		var batchLoad, schedule = this,
+			
+			// 初始化日历
+			calendar = new Calendar(true);
 
-		// 初始化日历
-		calendar = new Calendar(true);
-		calendar.appendTo(this.find(">header")[0]);
-		calendar.dateTable.focus(new Date());
+		batchLoad = new BatchLoad("getSchedules", function(data){
+			jQun.nesting(data.schedules, function(day){
+					
+			});
+		});
 
 		this.assign({
 			batchLoad : batchLoad
 		});
 
-		this.call();
+		// 初始化日历
+		calendar.appendTo(this.find(">header")[0]);
+		calendar.dateTable.attach({
+			focusmonth : function(){
+				batchLoad.callServer();
+			}
+		});
+		calendar.dateTable.focus(new Date());
+
+
+
+		// 初始化日程信息的滚动效果
+		new OverflowPanel(this.find("ol")[0]);
+
+		this.batchLoad.callServer();
 	};
 	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
 
@@ -40,9 +54,6 @@ this.Schedule = (function(Calendar, AnchorList){
 			this.find("> header > dl").innerHTML = this.html.render(data);
 		},
 		batchLoad : undefined,
-		call : function(){
-			this.batchLoad.callServer();
-		},
 		html : undefined
 	});
 
@@ -147,7 +158,7 @@ this.Project = (function(){
 	return Project.constructor;
 }());
 
-this.Partner = (function(Navigator, UserList, Cache){
+this.Partner = (function(Navigator, UserList){
 	function Partner(_selector, groupingHtml){
 		var userList, groupPanel,
 
@@ -164,7 +175,6 @@ this.Partner = (function(Navigator, UserList, Cache){
 		});
 
 		this.assign({
-			cache : new Cache("partner"),
 			loadingBar : loadingBar,
 			userList : userList
 		});
@@ -214,7 +224,6 @@ this.Partner = (function(Navigator, UserList, Cache){
 	Partner = new NonstaticClass(Partner, null, OverflowPanel.prototype);
 
 	Partner.properties({
-		cache : undefined,
 		focus : function(groupId, _groupEl){
 			///	<summary>
 			///	切换分组。
@@ -235,31 +244,22 @@ this.Partner = (function(Navigator, UserList, Cache){
 				return;	
 			}
 
+			var userList = this.userList, loadingBar = this.loadingBar;
+
 			// 聚焦当前分组
 			this.find('.group button.focused').classList.remove("focused");
 			_groupEl.classList.add("focused");
 			this.set("top", 0, "css");
 
-			// 已经加载完成了，表明有数据，那么应该取缓存
-			if(_groupEl.get("complete", "attr") != null){
-				partner.userList.render(this.cache.get(groupId));
-				return;
-			}
-
-			var userList = this.userList, loadingBar = this.loadingBar;
-
 			userList.hide();
 			loadingBar.show();
 
 			// 还没当前分组的数据，那么就去取数据，再进行加载
-			CallServer.open("getPartners", { id : groupId }, function(data){
+			CallServer.open("getPartners", { groupId : groupId }, function(data){
 				loadingBar.hide();
-				// 将数据存入缓存
-				partner.cache.set(groupId, data);
 				// 渲染数据
 				userList.render(data);
 				userList.show();
-				_groupEl.set("complete", "", "attr");
 
 				// 防止用户快速切换分组导致数据错误
 				if(classList.contains("focused"))
@@ -275,8 +275,7 @@ this.Partner = (function(Navigator, UserList, Cache){
 	return Partner.constructor;
 }(
 	Control.Drag.Navigator,
-	Control.List.UserList,
-	Bao.API.Data.Cache
+	Control.List.UserList
 ));
 
 this.Tab = (function(){
@@ -369,7 +368,9 @@ this.SPP = (function(Title, Schedule, Project, Partner, Tab, HTML){
 			),
 			schedule : new Schedule(
 				// _selector
-				"#schedule"
+				"#schedule",
+				// html
+				new HTML("spp_schedule_html", true)
 			),
 			tab : new Tab(
 				// _selector

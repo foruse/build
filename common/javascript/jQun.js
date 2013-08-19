@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.6
- *  本次修改：ElementList增加属性：_selector，用于记录传入参数_selector的值，目的是为了方便监控错误
+ *  文档状态：1.0.4.7
+ *  本次修改：增加Ajax缓存、添加RequestConnection类
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -493,25 +493,6 @@ this.Browser = (function(){
 	return Browser;
 }());
 
-this.ConnectionSettings = (function(){
-	function ConnectionSettings(settings){
-		///	<summary>
-		///	连接配置。
-		///	</summary>
-		///	<param name="settings" type="object">连接配置。</param>
-		this.assign(settings);
-	};
-	ConnectionSettings = new NonstaticClass(ConnectionSettings, "jQun.ConnectionSettings");
-
-	ConnectionSettings.properties({
-		handler : undefined,
-		type : "GET",
-		url : ""
-	}, { enumerable : true });
-
-	return ConnectionSettings.constructor;
-}());
-
 this.JSON = (function(){
 	function JSON(){
 		///	<summary>
@@ -718,6 +699,204 @@ this.Text = (function(tRegx){
 	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g
 ));
 
+this.Cache = (function(JSON, sessionStorage){
+	function Cache(name){
+		///	<summary>
+		///	缓存数据。
+		///	</summary>
+		/// <param name="name" type="string">缓存数据的标识名称</param>
+		this.assign({
+			name : name
+		});
+	};
+	Cache = new NonstaticClass(Cache, "jQun.Cache");
+
+	Cache.properties({
+		del : function(key){
+			///	<summary>
+			///	删除某一条缓存数据。
+			///	</summary>
+			/// <param name="key" type="string">缓存数据的主键</param>
+			var storage = this.get();
+
+			delete storage[key];
+			sessionStorage.setItem(this.name, JSON.stringify(storage));
+		},
+		get : function(_key){
+			///	<summary>
+			///	获取某一条缓存数据。
+			///	</summary>
+			/// <param name="_key" type="string">缓存数据的主键</param>
+			var storage = JSON.parse(sessionStorage.getItem(this.name));
+
+			if(!storage){
+				storage = {};
+			}
+
+			if(_key === undefined){
+				return storage;
+			}
+
+			return storage[_key];
+		},
+		name : "",
+		set : function(key, value){
+			///	<summary>
+			///	设置某一条缓存数据。
+			///	</summary>
+			/// <param name="key" type="string">缓存数据的主键</param>
+			/// <param name="value" type="object,string,number">缓存数据的值</param>
+			var storage = this.get();
+
+			storage[key] = value;
+			sessionStorage.setItem(this.name, JSON.stringify(storage));
+		}
+	});
+
+	return Cache.constructor;
+}(
+	this.JSON,
+	// sessionStorage
+	sessionStorage
+));
+
+this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
+	function RequestConnection(name, url, type, _handler, _cacheable){
+		///	<summary>
+		///	ajax请求连接。
+		///	</summary>
+		///	<param name="name" type="string">连接名称。</param>
+		///	<param name="url" type="string">连接url。</param>
+		///	<param name="type" type="string">发送数据的方式("POST"、"GET")。</param>
+		///	<param name="_handler" type="function">接收数据后的处理函数。</param>
+		///	<param name="_cacheable" type="boolean">是否缓存数据。</param>
+		var cache;
+
+		_cacheable = _cacheable === true;
+
+		if(_cacheable){
+			cache = new Cache("jQun.Cache_" + name);
+		}
+
+		this.assign({
+			cache : cache,
+			name : name,
+			url : url,
+			isPost : toUpperCase.call(type) === "POST",
+			handler : _handler,
+			cacheable : _cacheable
+		});
+	};
+	RequestConnection = new NonstaticClass(RequestConnection, "jQun.RequestConnection");
+
+	RequestConnection.properties({
+		cache : undefined,
+		cacheable : false,
+		handler : undefined,
+		isPost : false,
+		name : "",
+		open : function(name, params, _complete, _responseType, _isTesting){
+			///	<summary>
+			///	开打一个ajax连接。
+			///	</summary>
+			///	<param name="name" type="string">连接名称。</param>
+			///	<param name="params" type="object">url的替换参数及post方法的传递参数。</param>
+			///	<param name="_complete" type="function">异步完成后所执行的回调函数。</param>
+			///	<param name="_responseType" type="string">返回的数据格式。</param>
+			///	<param name="_isTesting" type="boolean">是否在测试环境中。</param>
+			var url = this.url, cache = this.cache,
+
+				isJSON = _responseType === "JSON",
+
+				request = new XMLHttpRequest();
+
+			if(url instanceof Text){
+				url = url.replace(params);
+			}
+
+			if(typeof _complete === "function"){
+				if(cache){
+					var data = cache.get(url);
+
+					if(data){
+						_complete(data);
+						return;
+					}
+				}
+
+				var handler = this.handler;
+
+				request.onreadystatechange =  function(){
+					if(this.readyState < 4)
+						return;
+
+					var responseData = this.status === 200 ? this.responseText : "";
+
+					if(_responseType === "json"){
+						responseData = JSON.parse(responseData);
+					}
+
+					if(typeof handler === "function"){
+						responseData = handler(responseData);
+					}
+
+					if(cache){
+						cache.set(url, responseData);
+					}
+
+					_complete(responseData);
+				};
+			}
+
+			if(_isTesting){
+				request.onreadystatechange.call({
+					readyState : 4,
+					status : 200,
+					responseText : ""
+				});
+
+				return;
+			}
+
+			var isPost = this.isPost, type = isPost ? "POST" : "GET";
+
+			request.open(type, url, true);
+			request.responseType = _responseType === "json" ? "text" : _responseType;
+			
+			if(isPost){
+				this.RequestHeader.addTo(request);
+			}
+
+			request.send(isPost ? getSendString(params) : null);
+			return request;
+		},
+		url : ""
+	}, { enumerable : true });
+
+	return RequestConnection.constructor;
+}(
+	this.Text,
+	this.Cache,
+	this.JSON,
+	String.prototype.toUpperCase,
+	// getSendString
+	function(params){
+		///	<summary>
+		///	获取post方法的参数字符串。
+		///	</summary>
+		///	<param name="params" type="object">参数。</param>
+		var arr = [];
+
+		forEach(params, function(value, name){
+			arr.push(name + "=" + value);
+			arr.push("&");
+		});
+		arr.splice(-1);
+
+		return arr.join("");
+	}
+));
+
 this.RequestHeader = (function(){
 	function RequestHeader(){
 		///	<summary>
@@ -755,7 +934,7 @@ this.RequestHeader = (function(){
 	return RequestHeader;
 }());
 
-this.RequestStorage = (function(ConnectionSettings){
+this.RequestStorage = (function(){
 	function RequestStorage(){
 		///	<summary>
 		///	连接配置存储器。
@@ -780,23 +959,21 @@ this.RequestStorage = (function(ConnectionSettings){
 			///	<param name="name" type="string">连接名称。</param>
 			return this[name];
 		},
-		set : function(name, settings){
+		set : function(name, connectionSettings){
 			///	<summary>
 			///	设置配置项。
 			///	</summary>
 			///	<param name="name" type="string">连接名称。</param>
-			///	<param name="settings" type="object">连接配置。</param>
-			this[name] = new ConnectionSettings(settings);
+			///	<param name="settings" type="jQun.ConnectionSettings">连接配置。</param>
+			this[name] = connectionSettings;
 			return this;
 		}
 	});
 
 	return RequestStorage;
-}(
-	this.ConnectionSettings
-));
+}());
 
-this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString){
+this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
 	function Ajax(){
 		///	<summary>
 		///	ajax异步类。
@@ -819,65 +996,34 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 			this.isTesting = true;
 		},
 		isTesting : false,
-		open : function(name, params, _complete, _isNotAsyn){
+		open : function(name, params, _complete){
 			///	<summary>
 			///	开打一个ajax连接。
 			///	</summary>
 			///	<param name="name" type="string">连接名称。</param>
 			///	<param name="params" type="object">url的替换参数及post方法的传递参数。</param>
 			///	<param name="_complete" type="function">异步完成后所执行的回调函数。</param>
-			///	<param name="_isNotAsyn" type="boolean">是否执行同步。</param>
-			var item = this.RequestStorage.get(name);
+			var requstConnection = this.RequestStorage.get(name);
 
-			if(!item){
+			if(!requstConnection){
 				console.error("ajax请求信息错误：请检查连接名称是否正确。", arguments);
 				return;
 			}
 
-			var url = item.url, type = item.type, isPost = type === "POST",
-				request = new XMLHttpRequest();
+			var args = jQun.toArray(arguments);
 
-			if(url instanceof jQun.Text){
-				url = url.replace(params);
-			}
+			args.push(this.responseType, this.isTesting);
 
-			if(typeof _complete === "function"){
-				var responseType = this.responseType, isResponseJSON = responseType === "json";
-
-				if(this.isTesting){
-					stateChanged({
-						readyState : 4,
-						status : 200,
-						responseText : ""
-					}, item.handler, _complete, isResponseJSON);
-
-					return;
-				}
-
-				request.onreadystatechange =  function(){
-					stateChanged(this, item.handler, _complete, isResponseJSON);
-				};
-			}
-
-			request.open(type, url, _isNotAsyn !== false);
-			request.responseType = isResponseJSON ? "text" : responseType;
-			
-			if(isPost){
-				this.RequestHeader.addTo(request);
-			}
-
-			request.send(isPost ? getSendString(params) : null);
-			return request;
+			requstConnection.open.apply(requstConnection, args);
 		},
 		responseType : "text",
 		save : function(allSettings, _handlers){
 			///	<summary>
 			///	存储ajax连接信息。
 			///	</summary>
-			///	<param name="allSettings" type="array">ajax连接信息，如：["name", new jQun.Text("url"), "get", _formatter]。</param>
+			///	<param name="allSettings" type="array">ajax连接信息。</param>
 			///	<param name="_handlers" type="function">所有的数据格式转换函数。</param>
-			var Storage = this.RequestStorage,
-				toUpperCase = String.prototype.toUpperCase;
+			var RequestStorage = this.RequestStorage
 
 			if(!_handlers){
 				_handlers = {};
@@ -886,13 +1032,12 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 			forEach(allSettings, function(settings){
 				var name = settings[0];
 
-				Storage.set(name, {
-					url : settings[1],
-					type : toUpperCase.call(settings[2]) === "POST" ? "POST" : "GET",
-					handler : _handlers[name] || settings[3]
-				});
+				RequestStorage.set(
+					name,
+					new RequestConnection(settings[0], settings[1], settings[2], _handlers[name], settings[3])
+				);
 			});
-			return Storage;
+			return RequestStorage;
 		},
 		setResponseType : function(type){
 			///	<summary>
@@ -907,46 +1052,7 @@ this.Ajax = (function(RequestHeader, RequestStorage, stateChanged, getSendString
 }(
 	this.RequestHeader,
 	this.RequestStorage,
-	// stateChanged
-	function(request, handler, complete, isResponseJSON){
-		///	<summary>
-		///	异步状态改变时所执行的函数。
-		///	</summary>
-		///	<param name="request" type="object">字符串文本。</param>
-		///	<param name="handler" type="function">返回数据的格式转换函数。</param>
-		///	<param name="complete" type="function">当异步执行完毕所执行的函数。</param>
-		///	<param name="isResponseJSON" type="boolean">返回的数据是否为json格式。</param>
-		if(request.readyState < 4)
-			return;
-
-		var responseData = request.status === 200 ? request.responseText : "";
-
-		if(isResponseJSON){
-			responseData = jQun.JSON.parse(responseData);
-		}
-
-		if(typeof handler === "function"){
-			responseData = handler(responseData);
-		}
-
-		complete(responseData);
-	},
-	// getSendString
-	function(params){
-		///	<summary>
-		///	获取post方法的参数字符串。
-		///	</summary>
-		///	<param name="params" type="object">参数。</param>
-		var arr = [];
-
-		forEach(params, function(value, name){
-			arr.push(name + "=" + value);
-			arr.push("&");
-		});
-		arr.splice(-1);
-
-		return arr.join("");
-	}
+	this.RequestConnection
 ));
 
 this.ElementPropertyCollection = ElementPropertyCollection = (function(){

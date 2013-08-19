@@ -1,5 +1,5 @@
 ﻿(function(Time, NonstaticClass, Panel, HTML, Event){
-this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dateTableHtml, focusDateEvent){
+this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dateTableHtml, focusDateEvent, focusMonthEvent){
 	function DateTable(){
 		///	<summary>
 		///	日期表格。
@@ -144,7 +144,9 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 			
 			monthEl.classList.add("focused");
 			focusedDateEl.classList.add("focusedDate");
+
 			focusDateEvent.trigger(focusedDateEl[0]);
+			focusMonthEvent.trigger(monthEl[0]);
 		},
 		restore : function(time){
 			///	<summary>
@@ -230,6 +232,15 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 
 		var calendar = this, classList = calendar.classList;
 
+		dateTable.attach({
+			focusdate : function(e){
+				if(calendar.classList.contains("stretch"))
+					return;
+				
+				dateTable.top();
+			}
+		});
+
 		jQun(window).attach({
 			touchstart : function(e){
 				if(jQun(e.target).between(calendar[0], calendar.parent()[0]).length > 0){
@@ -239,12 +250,6 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 	
 				dateTable.top();
 				classList.remove("stretch");
-			},
-			focusdate : function(e){
-				if(calendar.classList.contains("stretch"))
-					return;
-				
-				dateTable.top();
 			}
 		});
 	};
@@ -292,7 +297,9 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 		'</li>'
 	].join("")),
 	// focusDateEvent
-	new Event("focusdate")
+	new Event("focusdate"),
+	// focusMonthEvent
+	new Event("focusmonth")
 ));
 
 Time.members(this);

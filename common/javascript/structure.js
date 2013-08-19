@@ -4,8 +4,7 @@ this.Bao = (function(Bao){
 	Bao.members({
 		API : new Namespace().members({
 			Data : new Namespace().members({ // api/data.js
-				BatchLoad : null,
-				Cache : null
+				BatchLoad : null
 			}),
 			DOM : new Namespace().members({ // api/dom.js
 				EventCollection : null,
@@ -17,7 +16,7 @@ this.Bao = (function(Bao){
 				Timer : null
 			})
 		}),
-		CallServer : jQun.Ajax,
+		CallServer : null,
 		Page : new Namespace().members({
 			Index : new Namespace().members({ // ../../pertinence/javascript/index
 				SPP : null // ../../pertinence/javascript/index/spp.js

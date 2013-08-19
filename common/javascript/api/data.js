@@ -93,68 +93,6 @@ this.BatchLoad = (function(CallServer){
 	Bao.CallServer
 ));
 
-this.Cache = (function(JSON, sessionStorage){
-	function Cache(name){
-		///	<summary>
-		///	缓存数据。
-		///	</summary>
-		/// <param name="name" type="string">缓存数据的标识名称</param>
-		this.assign({
-			name : name
-		});
-	};
-	Cache = new NonstaticClass(Cache, "Bao.API.Data.Cache");
-
-	Cache.properties({
-		del : function(key){
-			///	<summary>
-			///	删除某一条缓存数据。
-			///	</summary>
-			/// <param name="key" type="string">缓存数据的主键</param>
-			var storage = this.get();
-
-			delete storage[key];
-			sessionStorage.setItem(this.name, JSON.stringify(storage));
-		},
-		get : function(_key){
-			///	<summary>
-			///	获取某一条缓存数据。
-			///	</summary>
-			/// <param name="_key" type="string">缓存数据的主键</param>
-			var storage = JSON.parse(sessionStorage.getItem(this.name));
-
-			if(!storage){
-				storage = {};
-			}
-
-			if(_key === undefined){
-				return storage;
-			}
-
-			return storage[_key];
-		},
-		name : "",
-		set : function(key, value){
-			///	<summary>
-			///	设置某一条缓存数据。
-			///	</summary>
-			/// <param name="key" type="string">缓存数据的主键</param>
-			/// <param name="value" type="object,string,number">缓存数据的值</param>
-			var storage = this.get();
-
-			storage[key] = value;
-			sessionStorage.setItem(this.name, JSON.stringify(storage));
-		}
-	});
-
-	return Cache.constructor;
-}(
-	// JSON
-	jQun.JSON,
-	// sessionStorage
-	sessionStorage
-));
-
 Data.members(this);
 }.call(
 	{},
