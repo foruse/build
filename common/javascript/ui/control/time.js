@@ -145,8 +145,8 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 			monthEl.classList.add("focused");
 			focusedDateEl.classList.add("focusedDate");
 
-			focusDateEvent.trigger(focusedDateEl[0]);
 			focusMonthEvent.trigger(monthEl[0]);
+			focusDateEvent.trigger(focusedDateEl[0]);
 		},
 		restore : function(time){
 			///	<summary>
@@ -281,17 +281,19 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 	new HTML('<ul></ul>'),
 	// dateTableHtml
 	new HTML([
-		'<li time="{time}" weeks={weeks}>',
+		'<li class="calendar_month" time="{time}" weeks={weeks}>',
 			'<ol class="inlineBlock">',
 				'@for(monthData ->> dt){',
 					'<li datestatus="{dt.dateStatus}" day="{dt.day}" time="{dt.time}">',
-						'<small>{month}月</small>',
-						'<span>{dt.date}</span>',
+						'<aside purpose="用户自定义内容"></aside>',
+						'<p>',
+							'<small>{month}月</small>',
+							'<span>{dt.date}</span>',
+						'</p>',
 					'</li>',
 				'}',
 			'</ol>',
 			'<p class="whiteFont">',
-				//'<small>{year}年</small>',
 				'<strong>{year}年{month}月</strong>',
 			'</p>',
 		'</li>'

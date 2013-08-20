@@ -9,7 +9,12 @@ this.CallServer = (function(CallServer, open, allHandlers){
 		open : function(name, params, _complete){
 			var cache = RequestStorage["callserver_" + name];
 
-			open.call(CallServer, name, params, function(data,a){
+			open.call(CallServer, name, params, function(data, isCache){
+				if(isCache){
+					_complete(data);
+					return;
+				}
+
 				// 测试延迟设置
 				setTimeout(function(){
 					_complete(data);
@@ -22,7 +27,7 @@ this.CallServer = (function(CallServer, open, allHandlers){
 		["getPartnerGroups",			"1.htm",		"", true],
 		["getPartners",			new Text("2.htm?groupId={groupId}"),		"", true],
 		["getProjects",			"3.htm",		""],
-		["getSchedules",			"?last={last}&next={next}",		""]
+		["getSchedules",			"?last={last}&next={next}",		"", true]
 	], allHandlers);
 
 	return CallServer;

@@ -3,7 +3,6 @@
 	padding : 0;
 	outline : 0 none;
 	box-sizing : border-box;
-	-moz-box-sizing : border-box;
 	-webkit-user-select : none;
 	list-style : none none outside;
 }
@@ -77,14 +76,7 @@ h6 {
 }
 .main > * {
 	min-height : 100%;
-}
-
-.text {
-	overflow : hidden;
-	text-overflow : ellipsis;
-	max-width : 100%;
-	display : inline-block;
-	vertical-align : top;
+	display : none;
 }
 
 .themeColor, .themeBgColor {

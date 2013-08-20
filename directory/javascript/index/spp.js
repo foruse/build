@@ -14,16 +14,34 @@ this.Title = (function(){
 	return Title.constructor;
 }());
 
-this.Schedule = (function(Calendar, AnchorList){
-	function Schedule(_selector, html){
+this.Schedule = (function(Calendar, ProjectAnchorList){
+	function Schedule(_selector, html, signHtml){
 		var batchLoad, schedule = this,
+		
+			lastProjects = {},
 			
+			contentEl = this.find(">ol"),
+
 			// 初始化日历
 			calendar = new Calendar(true);
 
 		batchLoad = new BatchLoad("getSchedules", function(data){
 			jQun.nesting(data.schedules, function(day){
+				var asideEl = calendar.find('li[datestatus][time="' + day.time + '"] aside');
+
+				if(asideEl.length === 0)
+					return;
 					
+				var asideAttr = asideEl.attributes;
+
+				if(asideAttr.get("projectsLength") != null)
+					return;
+				
+				var projects = day.projects;
+
+				asideEl.innerHTML = signHtml.render(day);
+				asideAttr.set("projectsLength", projects.length);
+				lastProjects[day.time] = projects;
 			});
 		});
 
@@ -36,16 +54,15 @@ this.Schedule = (function(Calendar, AnchorList){
 		calendar.dateTable.attach({
 			focusmonth : function(){
 				batchLoad.callServer();
+			},
+			focusdate : function(e){
+				//new ProjectAnchorList(lastProjects[jQun(e.target).get("time", "attr")]).appendTo(contentEl[0]);
 			}
 		});
 		calendar.dateTable.focus(new Date());
 
-
-
 		// 初始化日程信息的滚动效果
 		new OverflowPanel(this.find("ol")[0]);
-
-		this.batchLoad.callServer();
 	};
 	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
 
@@ -60,7 +77,7 @@ this.Schedule = (function(Calendar, AnchorList){
 	return Schedule.constructor;
 }(
 	Control.Time.Calendar,
-	Control.List.AnchorList
+	Control.List.ProjectAnchorList
 ));
 
 this.Project = (function(){
@@ -370,7 +387,9 @@ this.SPP = (function(Title, Schedule, Project, Partner, Tab, HTML){
 				// _selector
 				"#schedule",
 				// html
-				new HTML("spp_schedule_html", true)
+				new HTML("spp_schedule_html", true),
+				// signHtml
+				new HTML("spp_scheduleSign_html", true)
 			),
 			tab : new Tab(
 				// _selector

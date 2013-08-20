@@ -75,8 +75,9 @@ this.SPP = (function(){
 			for(var i = 0;i < _len;i++){
 				projects.push({
 					id : Number.id(),
-					importantLevel : Number.random(3),
+					level : Number.random(3),
 					title : String.random(),
+					color : "#" + Number.random(parseInt("ffffff", 16)).toString(16),
 					users : Common.getUsers(Number.random(20)),
 					lastMessage : String.random(),
 					unread : Number.random(2) > 1 ? 0 : Number.random()
@@ -86,11 +87,17 @@ this.SPP = (function(){
 			return projects;
 		},
 		getSchedules : function(date, last, next){
-			var schedule = [], beginDate = new Date(date.getTime());
+			var endDate, schedule = [],
+			
+				beginDate = new Date(date.getTime());
 
-			beginDate.setDate(beginDate.getDate() - (beginDate.getDay() + last * 0));
+			beginDate.setMonth(beginDate.getMonth() - 1, 1);
+			beginDate.setHours(0, 0, 0, 0);
 
-			for(var i = 0, j = next + last + 1;i < j;i++){
+			endDate = new Date(beginDate.getTime());
+			endDate.setMonth(beginDate.getMonth() + 3, 0);
+
+			for(var i = 0,j = endDate.getTime();beginDate.getTime() < j;i++){
 				var scd = [];
 
 				for(var n = 0;n < 7;n++){

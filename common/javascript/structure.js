@@ -42,6 +42,7 @@ this.Bao = (function(Bao){
 				}),
 				List : new Namespace().members({ // ui/control/list.js
 					AnchorList : null,
+					ProjectAnchorList : null,
 					UserAnchorList : null,
 					UserList : null
 				}),

@@ -68,6 +68,17 @@
 #schedule > header {
 	width : 100%;
 }
+#schedule .calendar_month aside[projectslength] {
+	display : inline-block;
+	-webkit-column-width : 5px;
+	-webkit-column-gap : 0;
+	height : 40px;
+}
+.calendar_month aside > span {
+	display : block;
+	width : 5px;
+	height : 10px;
+}
 
 #project {
 	max-width : 310px;

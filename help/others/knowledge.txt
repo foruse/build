@@ -26,7 +26,7 @@
 	4. 会一种数据库(sql server、my sql)
 
 ★★
-	
+	1. float 比 inline-block要耗性能的多的多
 
 
 ★

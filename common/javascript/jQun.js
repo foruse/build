@@ -1,8 +1,9 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.7
- *  本次修改：增加Ajax缓存、添加RequestConnection类
+ *  文档状态：1.0.4.8
+ *  本次修改：增加__proto__属性，因为chrome 28以后，__proto__被归于Object.protoype之下，
+ *			 所以导致监控无法查看父类属性，增加__proto__的目的就是为了修复此bug。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -350,6 +351,22 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				return defineProperties(this, properties, _descriptor);
 			}
 		});
+
+		/*
+		(2013.08.20)目前有些浏览器不支持，如：手机QQ浏览器，手机百度浏览器
+		define(
+			prototype,
+			"__proto__",
+			Object.getOwnPropertyDescriptor(Object.prototype,"__proto__"),
+			{ settable : true, gettable : true }
+		);
+		*/
+
+		define(prototype, "__proto__", {
+			get : function(){
+				return Object.getPrototypeOf(this);
+			}
+		}, { gettable : true });
 	}
 
 	return jQun;
@@ -783,30 +800,32 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 			name : name,
 			url : url,
 			isPost : toUpperCase.call(type) === "POST",
-			handler : _handler,
-			cacheable : _cacheable
+			handler : _handler
 		});
 	};
 	RequestConnection = new NonstaticClass(RequestConnection, "jQun.RequestConnection");
 
 	RequestConnection.properties({
 		cache : undefined,
-		cacheable : false,
 		handler : undefined,
 		isPost : false,
 		name : "",
-		open : function(name, params, _complete, _responseType, _isTesting){
+		url : ""
+	}, { enumerable : true });
+
+	RequestConnection.properties({
+		open : function(name, params, complete, responseType, isTesting){
 			///	<summary>
 			///	开打一个ajax连接。
 			///	</summary>
 			///	<param name="name" type="string">连接名称。</param>
 			///	<param name="params" type="object">url的替换参数及post方法的传递参数。</param>
-			///	<param name="_complete" type="function">异步完成后所执行的回调函数。</param>
-			///	<param name="_responseType" type="string">返回的数据格式。</param>
-			///	<param name="_isTesting" type="boolean">是否在测试环境中。</param>
+			///	<param name="complete" type="function">异步完成后所执行的回调函数。</param>
+			///	<param name="responseType" type="string">返回的数据格式。</param>
+			///	<param name="isTesting" type="boolean">是否在测试环境中。</param>
 			var url = this.url, cache = this.cache,
 
-				isJSON = _responseType === "JSON",
+				isJSON = responseType === "JSON",
 
 				request = new XMLHttpRequest();
 
@@ -814,12 +833,12 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 				url = url.replace(params);
 			}
 
-			if(typeof _complete === "function"){
+			if(typeof complete === "function"){
 				if(cache){
 					var data = cache.get(url);
 
 					if(data){
-						_complete(data);
+						complete(data, true);
 						return;
 					}
 				}
@@ -832,7 +851,7 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 
 					var responseData = this.status === 200 ? this.responseText : "";
 
-					if(_responseType === "json"){
+					if(isJSON){
 						responseData = JSON.parse(responseData);
 					}
 
@@ -844,11 +863,11 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 						cache.set(url, responseData);
 					}
 
-					_complete(responseData);
+					complete(responseData, false);
 				};
 			}
 
-			if(_isTesting){
+			if(isTesting){
 				request.onreadystatechange.call({
 					readyState : 4,
 					status : 200,
@@ -861,7 +880,7 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 			var isPost = this.isPost, type = isPost ? "POST" : "GET";
 
 			request.open(type, url, true);
-			request.responseType = _responseType === "json" ? "text" : _responseType;
+			request.responseType = isJSON ? "text" : responseType;
 			
 			if(isPost){
 				this.RequestHeader.addTo(request);
@@ -869,9 +888,8 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 
 			request.send(isPost ? getSendString(params) : null);
 			return request;
-		},
-		url : ""
-	}, { enumerable : true });
+		}
+	});
 
 	return RequestConnection.constructor;
 }(
@@ -1013,7 +1031,6 @@ this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
 			var args = jQun.toArray(arguments);
 
 			args.push(this.responseType, this.isTesting);
-
 			requstConnection.open.apply(requstConnection, args);
 		},
 		responseType : "text",
@@ -1867,6 +1884,7 @@ this.Event = (function(attach, define){
 			///	<param name="tagName" type="string">标签名称。</param>
 			var name = this.name;
 
+			/* 以后用EventTarget优化此方法 */
 			forEach(
 				tagName === "*" ? [Node, Window] : [document.createElement(tagName).constructor],
 				function(constructor){

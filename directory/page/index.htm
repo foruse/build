@@ -28,6 +28,11 @@
 				<section id="schedule">
 					<header></header>
 					<ol></ol>
+					<script id="spp_scheduleSign_html" type="text/html">
+						@for(projects ->> pro){
+							<span style="background-color:{pro.color};" projectid="{pro.id}"></span>
+						}
+					</script>
 					<script id="spp_schedule_html" type="text/html">
 						@for(schedules ->> week){
 							@for(week ->> day){
@@ -48,7 +53,7 @@
 									<figcaption class="themeBgColor whiteFont">
 										<span>{pro.title}</span>
 										<strong class="inlineBlock">
-											@for(pro.importantLevel){
+											@for(pro.level){
 												<span></span>
 											}
 										</strong>
@@ -114,6 +119,31 @@
 					}
 				</script>
 			</footer>
+		</div>
+		<div id="secondary">
+			<article id="addProject">
+				<header></header>
+				<section>
+					<p>
+						<textarea placeholder="添加项目标题"></textarea>
+					</p>
+					<ul class="inlineBlock">
+						<li>标注颜色</li>
+						<li class="inlineBlock"></li>
+					</ul>
+					<script id="addProject_color_html" type="text/html">
+						@for(6 ->> idx){
+							<span projectcolor="idx"></span>
+						}
+					</script>
+					<dl>
+						<dd>
+							<textarea placeholder="添加项目内容"></textarea>
+						</dd>
+						<dt></dt>
+					</dl>
+				</section>
+			</article>
 		</div>
 	</div>
 	<script src="../../common/javascript/jQun.js" type="text/javascript"></script>
