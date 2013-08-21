@@ -92,14 +92,16 @@ this.CallServer = (function(CallServer, open, allHandlers){
 		getSchedules : function(data){
 			data = Index.SPP.getSchedules(new Date(Date.now()), 2, 2);
 
-			data.forEach(function(dt){
-				dt.forEach(function(d){
-					var localDate = new Date(d.time);
+			data.forEach(function(d){
+				var localDate = new Date(d.time);
 
-					jQun.set(d, {
-						localDateString : localDate.toLocaleDateString(),
-						date : localDate.getDate()
-					});
+				jQun.set(d, {
+					localeDateString : localDate.toLocaleDateString(),
+					date : localDate.getDate()
+				});
+
+				d.projects.forEach(function(pro){
+					pro.key = pro.id;
 				});
 			});
 

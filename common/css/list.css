@@ -1,4 +1,66 @@
-﻿.userList {
+﻿.anchorList > ul {
+	border-radius : 5px;
+}
+.anchorList li {
+	height : 45px;
+	padding : 8px 18px 0 18px;
+}
+.anchorList li:last-child {
+	border : none;
+}
+.anchorList nav {
+	width : 100%;
+	height : 100%;
+	position : relative;
+}
+.anchorList nav > * {
+	position : absolute;
+}
+.anchorList aside {
+	max-width : 245px;
+	height : 26px;
+	right : 7px;
+	left : 0;
+	top : 0;
+}
+.anchorList aside dt {
+	font-size : 15px;
+	height : 20px;
+}
+.anchorList aside dd {
+	height : 10px;
+}
+.anchorList p {
+	width : 7px;
+	height : 13px;
+	right : 0;
+	top : 0;
+	margin-top : 4px;
+}
+.anchorList a {
+	display : block;
+	background : url(../../common/image/width12.png) 0 -90px no-repeat;
+	height : 100%;
+	width : 100%;
+}
+.anchorList_level {
+	background : url(../image/width12.png) 0 -29px;
+	width : 33px;
+	height : 9px;
+}
+.anchorList_level > li {
+	height : 9px;
+	width : 9px;
+	padding : 0;
+	margin-left : 3px;
+	background : url(../image/width12.png) no-repeat 0 -15px;
+}
+.anchorList_level > li:first-child {
+	margin-left : 0;
+}
+
+
+.userList {
 	padding-right : 15px;
 }
 .userList > ol > li {

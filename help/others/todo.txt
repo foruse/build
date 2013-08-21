@@ -3,6 +3,8 @@
 	* 预加载
 	* 将所有类的onxx属性替换成事件监听(UserList, spp, spp.tab)
 	* navigate类优化：监听oncontinuousgesture或onfastgesture
+	* project页面，用projectAnchorList优化
+	* calendar的2个类使用继承。  Calendar类改名为StretchableCalendar，DateTable改名为Calendar
 
 ★★★★
 

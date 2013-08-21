@@ -19,6 +19,9 @@ this.Bao = (function(Bao){
 		CallServer : null,
 		Page : new Namespace().members({
 			Index : new Namespace().members({ // ../../pertinence/javascript/index
+				Secondary : new Namespace({ // ../../pertinence/javascript/index/secondary.js
+					AddProject : null
+				}),
 				SPP : null // ../../pertinence/javascript/index/spp.js
 			})
 		}),

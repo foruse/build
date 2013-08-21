@@ -14,20 +14,34 @@ this.Title = (function(){
 	return Title.constructor;
 }());
 
-this.Schedule = (function(Calendar, ProjectAnchorList){
-	function Schedule(_selector, html, signHtml){
-		var batchLoad, schedule = this,
-		
-			lastProjects = {},
-			
-			contentEl = this.find(">ol"),
+this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
+	function Grouping(data){
+		this.combine(groupingHtml.create({
+			dateData : data
+		}));
 
-			// 初始化日历
+		new ProjectAnchorList(data.projects).appendTo(this.find("dd")[0]);
+	};
+	Grouping = new NonstaticClass(Grouping, null, Panel.prototype);
+
+
+	function Schedule(_selector, signHtml){
+		var batchLoad,
+		
+			schedule = this, lastData = {},
+			
+			contentEl = this.find("> nav >ol"),
+
 			calendar = new Calendar(true);
 
+		// 初始化batchload
 		batchLoad = new BatchLoad("getSchedules", function(data){
-			jQun.nesting(data.schedules, function(day){
-				var asideEl = calendar.find('li[datestatus][time="' + day.time + '"] aside');
+			lastData = {};
+
+			data.schedules.forEach(function(date){
+				var asideEl = calendar.find('li[datestatus][time="' + date.time + '"] aside');
+
+				lastData[date.time] = date;
 
 				if(asideEl.length === 0)
 					return;
@@ -37,32 +51,75 @@ this.Schedule = (function(Calendar, ProjectAnchorList){
 				if(asideAttr.get("projectsLength") != null)
 					return;
 				
-				var projects = day.projects;
+				var projects = date.projects;
 
-				asideEl.innerHTML = signHtml.render(day);
+				asideEl.innerHTML = signHtml.render(date);
 				asideAttr.set("projectsLength", projects.length);
-				lastProjects[day.time] = projects;
 			});
-		});
-
-		this.assign({
-			batchLoad : batchLoad
 		});
 
 		// 初始化日历
 		calendar.appendTo(this.find(">header")[0]);
-		calendar.dateTable.attach({
+		calendar.attach({
+			shrink : function(){
+				contentEl.parent().classList.remove("calendarStretched");
+			},
+			stretch : function(){
+				contentEl.parent().classList.add("calendarStretched");
+			}
+		});
+		calendar.attach({
 			focusmonth : function(){
 				batchLoad.callServer();
 			},
 			focusdate : function(e){
-				//new ProjectAnchorList(lastProjects[jQun(e.target).get("time", "attr")]).appendTo(contentEl[0]);
+				var targetEl = jQun(e.target), topEl = contentEl.find("li.top"),
+
+					time = targetEl.get("time", "attr");
+
+				if(topEl.length > 0){
+					if(time === topEl.get("time", "attr")){
+						return;
+					}
+
+					topEl.classList.remove("top");
+				}
+
+				var date = new Date(time - 0), contentUl = contentEl[0];
+
+				contentEl.innerHTML = "";
+
+				for(var i = 0;i < 10;i++){
+					var dt = lastData[date.getTime()];
+
+
+					if(dt && dt.projects.length > 0){
+						new Grouping.constructor(dt).appendTo(contentUl);
+					}
+				
+					date.setDate(date.getDate() + 1);
+				}
 			}
 		});
-		calendar.dateTable.focus(new Date());
-
+		calendar.focusDate(new Date());
+	
 		// 初始化日程信息的滚动效果
-		new OverflowPanel(this.find("ol")[0]);
+		new OverflowPanel(contentEl[0]).attach({
+			continuousgesture : function(e){
+				var top = contentEl.get("top", "css").split("px").join("") - 0 || 0;
+				
+				if(top <= 0)
+					return;
+
+				var height = contentEl.height(),
+					
+					date = new Date(calendar.getFocusedDateEl().get("time", "attr") - 0);
+
+				date.setDate(date.getDate() - 1);
+				calendar.focusDate(date);
+				contentEl.set("top", (height - contentEl.height()) + "px", "css");
+			}
+		});
 	};
 	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
 
@@ -77,7 +134,15 @@ this.Schedule = (function(Calendar, ProjectAnchorList){
 	return Schedule.constructor;
 }(
 	Control.Time.Calendar,
-	Control.List.ProjectAnchorList
+	Control.List.ProjectAnchorList,
+	new jQun.HTML([
+		'<li time="{dateData.time}">',
+			'<dt class="whiteFont">',
+				'<span class="lightBgColor">{dateData.localeDateString}</span>',
+			'</dt>',
+			'<dd></dd>',
+		'</li>'
+	].join(""))				
 ));
 
 this.Project = (function(){
@@ -386,8 +451,6 @@ this.SPP = (function(Title, Schedule, Project, Partner, Tab, HTML){
 			schedule : new Schedule(
 				// _selector
 				"#schedule",
-				// html
-				new HTML("spp_schedule_html", true),
 				// signHtml
 				new HTML("spp_scheduleSign_html", true)
 			),

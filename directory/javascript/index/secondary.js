@@ -1,14 +1,21 @@
-﻿(function(History){
+﻿(function(Secondary, NonstaticClass, Panel){
+this.AddProject = (function(){
+	function AddProject(){
+	
+	};
+	AddProject = new NonstaticClass(AddProject, "Bao.Page.Index.Secondary.AddProject", Panel.prototype);
 
-window.onload = function(){
-	//jQun("body").set("zoom", window.screen.width / 640, "css");
+	AddProject.properties({
+	
+	});
 
-	// 初始化滚动条
-	new Bao.UI.Control.Drag.Scroll();
+	return AddProject.constructor;
+}());
 
-	new History().go("spp").tab.focus("project");
-};
-
-}(
-	Bao.API.Manager.History
+Secondary.members(this);
+}.call(
+	{},
+	Bao.Page.Index.Secondary,
+	jQun.NonstaticClass,
+	Bao.API.DOM.Panel
 ));

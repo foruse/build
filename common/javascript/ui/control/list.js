@@ -14,20 +14,22 @@ this.AnchorList = (function(anchorListHtml){
 	// anchorListHtml
 	new HTML([
 		'<div class="anchorList">',
-			'<ul>',
-				'@for(listData ->> item){',
-					'<li>',
-						'<aside>',
-							'<dl>',
-								'<dt>',
-									'<span>{?~item.title}</span>',
-									'<small>{?~item.time}</small>',	
-								'</dt>',
-								'<dd>{?~item.desc}</dd>',
-							'</dl>',
-						'</aside>',
+			'<ul class="themeBdColor">',
+				'@for(listData ->> data){',
+					'<li key="{data.key}" class="lightBdColor onlyBorderBottom inlineBlock">',
 						'<nav>',
-							'<a></a>',
+							'<aside>',
+								'<dl>',
+									'<dt>',
+										'<span>{?~data.title}</span>',
+										'<small>{?~data.time}</small>',
+									'</dt>',
+									'<dd>{?~data.desc}</dd>',
+								'</dl>',
+							'</aside>',
+							'<p>',
+								'<a href="javascript:void(0);"></a>',
+							'</p>',
 						'</nav>',
 					'</li>',
 				'}',
@@ -108,7 +110,18 @@ this.UserList = (function(panelHtml, listHtml){
 ));
 
 this.ProjectAnchorList = (function(AnchorList, levelHtml){
-	function ProjectAnchorList(){};
+	function ProjectAnchorList(listData){
+		var anchorList = this;
+
+		listData.forEach(function(project){
+			var descEl = anchorList.find('li[key="' + project.id + '"] dd');
+
+			if(descEl.length === 0)
+				return;
+
+			descEl.innerHTML = levelHtml.render(project);
+		});
+	};
 	ProjectAnchorList = new NonstaticClass(ProjectAnchorList, "Bao.UI.Control.List.ProjectAnchorList", AnchorList.prototype);
 
 	ProjectAnchorList.properties({
@@ -120,7 +133,7 @@ this.ProjectAnchorList = (function(AnchorList, levelHtml){
 	this.AnchorList,
 	// levelHtml
 	new HTML([
-		'<ul class="level">',
+		'<ul class="anchorList_level inlineBlock">',
 			'@for(level){',
 				'<li></li>',
 			'}',

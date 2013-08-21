@@ -97,16 +97,11 @@ this.SPP = (function(){
 			endDate = new Date(beginDate.getTime());
 			endDate.setMonth(beginDate.getMonth() + 3, 0);
 
-			for(var i = 0,j = endDate.getTime();beginDate.getTime() < j;i++){
-				var scd = [];
-
-				for(var n = 0;n < 7;n++){
-					scd.push({
-						time : beginDate.setDate(beginDate.getDate() + 1),
-						projects : this.getProjects(Number.random(5))
-					});
-				}
-				schedule.push(scd);
+			for(var j = endDate.getTime();beginDate.getTime() < j;){
+				schedule.push({
+					time : beginDate.setDate(beginDate.getDate() + 1),
+					projects : this.getProjects(Number.random(5))
+				});
 			}
 
 			return schedule;

@@ -1,5 +1,7 @@
 ﻿(function(Time, NonstaticClass, Panel, HTML, Event){
-this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dateTableHtml, focusDateEvent, focusMonthEvent){
+var DateTable;
+
+DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, focusDateEvent, focusMonthEvent){
 	function DateTable(){
 		///	<summary>
 		///	日期表格。
@@ -104,7 +106,7 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 			/// <param name="time" type="number">当天任意时刻的毫秒数</param>
 			var focusedDateEl,
 			
-				oldFocusedDateEl = this.find('ol > li.focusedDate');
+				oldFocusedDateEl = this.getFocused();
 
 			time = new Date(time - 0).setHours(0, 0, 0, 0);
 			focusedDateEl = this.find('ol > li[time="' + time + '"]');
@@ -147,6 +149,12 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 
 			focusMonthEvent.trigger(monthEl[0]);
 			focusDateEvent.trigger(focusedDateEl[0]);
+		},
+		getFocused : function(){
+			///	<summary>
+			///	获取当前聚焦的日期元素。
+			///	</summary>
+			return this.find('ol > li.focusedDate');
 		},
 		restore : function(time){
 			///	<summary>
@@ -213,70 +221,10 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 		}
 	});
 
-
-	function Calendar(_isStretch){
-		var dateTable = new DateTable.constructor();
-
-		_isStretch = _isStretch === true;
-
-		this.assign({
-			dateTable : dateTable,
-			isStretch : _isStretch
-		});
-
-		this.combine(calendarHtml.create());
-		dateTable.appendTo(this.find("dd")[0]);
-
-		if(!_isStretch)
-			return;
-
-		var calendar = this, classList = calendar.classList;
-
-		dateTable.attach({
-			focusdate : function(e){
-				if(calendar.classList.contains("stretch"))
-					return;
-				
-				dateTable.top();
-			}
-		});
-
-		jQun(window).attach({
-			touchstart : function(e){
-				if(jQun(e.target).between(calendar[0], calendar.parent()[0]).length > 0){
-					classList.add("stretch");
-					return;
-				}
-	
-				dateTable.top();
-				classList.remove("stretch");
-			}
-		});
-	};
-	Calendar = new NonstaticClass(Calendar, "Bao.UI.Control.Time.Calendar", Panel.prototype);
-
-	Calendar.properties({
-		dateTable : undefined,
-		isStretch : false
-	});
-
-	return Calendar.constructor;
+	return DateTable.constructor;
 }(
 	Bao.API.DOM.OverflowPanel,
 	window.Date,
-	// calendarHtml
-	new HTML([
-		'<div class="calendar lightBdColor">',
-			'<dl>',
-				'<dt class="inlineBlock whiteFont">',
-					'@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title, day){',
-						'<span day="{day}">{title}</span>',
-					'}',
-				'</dt>',
-				'<dd></dd>',
-			'</dl>',
-		'</div>'
-	].join("")),
 	// tablePanelHtml
 	new HTML('<ul></ul>'),
 	// dateTableHtml
@@ -302,6 +250,125 @@ this.Calendar = (function(OverflowPanel, Date, calendarHtml, tablePanelHtml, dat
 	new Event("focusdate"),
 	// focusMonthEvent
 	new Event("focusmonth")
+));
+
+this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
+	function Calendar(_isStretch){
+		///	<summary>
+		///	日历控件。
+		///	</summary>
+		/// <param name="_isStretch" type="boolean">该控件是否可以伸展的</param>
+		var dateTable = new DateTable();
+
+		_isStretch = _isStretch === true;
+
+		this.assign({
+			dateTable : dateTable,
+			isStretch : _isStretch
+		});
+
+		// 添加日期表格
+		this.combine(calendarHtml.create());
+		dateTable.appendTo(this.find("dd")[0]);
+
+		if(!_isStretch)
+			return;
+
+		var calendar = this;
+
+		// 重写classList属性
+		this.override({
+			classList : this.classList
+		});
+
+		dateTable.attach({
+			focusdate : function(e){
+				if(calendar.isStretched())
+					return;
+				
+				dateTable.top();
+			}
+		});
+
+		jQun(window).attach({
+			touchstart : function(e){
+				// 如果点的是在该日历控件上，那么展开，否则收起
+				if(jQun(e.target).between(calendar[0], calendar.parent()[0]).length > 0){
+					calendar.stretch();
+					return;
+				}
+	
+				dateTable.top();
+				calendar.shrink();
+			}
+		});
+	};
+	Calendar = new NonstaticClass(Calendar, "Bao.UI.Control.Time.Calendar", Panel.prototype);
+
+	Calendar.properties({
+		dateTable : undefined,
+		focusDate : function(date){
+			///	<summary>
+			///	聚焦到某一天上。
+			///	</summary>
+			/// <param name="time" type="number">当天任意时刻的毫秒数</param>
+			this.dateTable.focus(date);
+		},
+		getFocusedDateEl : function(){
+			///	<summary>
+			///	获取当前聚焦的元素。
+			///	</summary>
+			return this.dateTable.getFocused();
+		},
+		isStretch : false,
+		isStretched : function(){
+			///	<summary>
+			///	判断该日历是否已经是展开的。
+			///	</summary>
+			return this.classList.contains("stretch");
+		},
+		shrink : function(){
+			///	<summary>
+			///	收起该日历。
+			///	</summary>
+			if(!this.isStretched())
+				return;
+
+			this.classList.remove("stretch");
+			shrinkEvent.trigger(this[0]);
+		},
+		stretch : function(){
+			///	<summary>
+			///	展开该日历。
+			///	</summary>
+			if(this.isStretched())
+				return;
+
+			this.classList.add("stretch");
+			stretchEvent.trigger(this[0]);
+		}
+	});
+
+	return Calendar.constructor;
+}(
+	DateTable,
+	// calendarHtml
+	new HTML([
+		'<div class="calendar lightBdColor">',
+			'<dl>',
+				'<dt class="inlineBlock whiteFont">',
+					'@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title, day){',
+						'<span day="{day}">{title}</span>',
+					'}',
+				'</dt>',
+				'<dd></dd>',
+			'</dl>',
+		'</div>'
+	].join("")),
+	// stretch
+	new Event("stretch"),
+	// shrink
+	new Event("shrink")
 ));
 
 Time.members(this);

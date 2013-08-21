@@ -1,14 +1,10 @@
 ﻿#SPP {
-	background-color : #fff;
+	background-color : #f9f7f3;
 }
 #SPP > * {
 	height : 30px;
 	width : 100%;
 	position : absolute;
-}
-#SPP[focusedTab="schedule"] {
-	background-color : #f2ebe5;
-	z-index : 100;
 }
 #SPP[focusedTab="schedule"] #title_SPP {
 	border : 0 none;
@@ -68,17 +64,47 @@
 #schedule > header {
 	width : 100%;
 }
+#schedule .calendar {
+	z-index : 2;
+}
 #schedule .calendar_month aside[projectslength] {
 	display : inline-block;
 	-webkit-column-width : 5px;
 	-webkit-column-gap : 0;
 	height : 40px;
 }
+#schedule > nav {
+	position : absolute;
+	bottom : 0;
+	top : 115px;
+	left : 10px;
+	right : 10px;
+}
+#schedule > nav.calendarStretched {
+	top : 292px;
+}
+.schedule_list {
+	min-height : 100%;
+}
+.schedule_list dt.whiteFont {
+	height : 20px;
+	padding : 3px 0;
+}
+.schedule_list dt.whiteFont > span {
+	display : block;
+	width : 105px;
+	height : 14px;
+	line-height : 14px;
+	margin : 0 auto;
+	text-align : center;
+	border-radius : 3px;
+}
 .calendar_month aside > span {
 	display : block;
 	width : 5px;
 	height : 10px;
 }
+
 
 #project {
 	max-width : 310px;
