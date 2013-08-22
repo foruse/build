@@ -74,16 +74,16 @@ this.BatchLoad = (function(CallServer){
 		},
 		name : "",
 		params : undefined,
-		setParam : function(name, value, _handle){
+		setParam : function(name, value, _handler){
 			///	<summary>
 			///	设置参数。
 			///	</summary>
 			/// <param name="name" type="string">参数的名称</param>
 			/// <param name="value" type="*">参数的值</param>
-			/// <param name="_handle" type="*">参数的处理逻辑</param>
+			/// <param name="_handler" type="*">参数的处理逻辑</param>
 			this.params[name] = {
 				value : value,
-				handle : _handle
+				handler : _handler
 			};
 		}
 	});

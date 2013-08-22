@@ -84,7 +84,9 @@ this.CallServer = (function(CallServer, open, allHandlers){
 			data = {
 				projects : Index.SPP.getProjects(3),
 				pageIndex : 1,
-				pageMax : 1
+				pageMax : 1,
+				pageSize : 15,
+				emptyFolders : 3
 			};
 
 			return data;

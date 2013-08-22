@@ -9,10 +9,11 @@
 
 body {
 	white-space : nowrap;
+	background-color : #f9f8f5;
 }
 
 body, button {
-	color : #2e2e2e;
+	color : #454545;
 	font-size : 12px;
 	font-family : 微软雅黑;
 }
@@ -66,30 +67,23 @@ h6 {
 	font-size : 0.67em;
 }
 
-.main {
-	position : absolute;
-	top : 0;
-	bottom : 0;
-	left : 0;
-	right : 0;
-	overflow : hidden;
-}
-.main > * {
-	min-height : 100%;
-	display : none;
-}
-
 .themeColor, .themeBgColor {
-	background-color : #433b38;
+	background-color : #433b37;
 }
 .themeBdColor {
-	border : 1px solid #433b38;
+	border : 1px solid #433b37;
 }
 .lightBgColor {
-	background-color : #c7c7c7;
+	background-color : #a1a1a1;
 }
 .themeColor, .lightBdColor {
-	border : 1px solid #c7c7c7;
+	border : 1px solid #a1a1a1;
+}
+.whiteFont {
+	color : #fefefe;
+}
+.grayFont {
+	color : #666;
 }
 
 .onlyBorderBottom {
@@ -106,11 +100,4 @@ h6 {
 	font-size : 12px;
 	display : inline-block;
 	vertical-align : top;
-}
-
-.whiteFont {
-	color : #fefefe;
-}
-.grayFont {
-	color : #666;
 }

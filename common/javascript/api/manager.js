@@ -4,6 +4,9 @@ this.History = (function(List, Index, CallServer){
 	Loader = new StaticClass(null, "Loader");
 
 	Loader.properties({
+		addProject : function(){
+			return new Index.Secondary.AddProject("#addProject");
+		},
 		spp : function(){
 			///	<summary>
 			///	加载项目区域。
@@ -54,13 +57,14 @@ this.History = (function(List, Index, CallServer){
 				}
 				else {
 					// 隐藏上一个panel
-					this[lastIdx].hide();
+					this[lastIdx].panel.hide();
 				}
 			}
 
-			var panel = this[idx];
+			var panel;
 
 			if(idx > -1){
+				panel = this[idx].panel;
 				// 显示当前的panel
 				panel.show();
 				this.splice(idx, 1);

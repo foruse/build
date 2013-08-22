@@ -307,19 +307,6 @@ this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
 
 	Calendar.properties({
 		dateTable : undefined,
-		focusDate : function(date){
-			///	<summary>
-			///	聚焦到某一天上。
-			///	</summary>
-			/// <param name="time" type="number">当天任意时刻的毫秒数</param>
-			this.dateTable.focus(date);
-		},
-		getFocusedDateEl : function(){
-			///	<summary>
-			///	获取当前聚焦的元素。
-			///	</summary>
-			return this.dateTable.getFocused();
-		},
 		isStretch : false,
 		isStretched : function(){
 			///	<summary>

@@ -1,0 +1,33 @@
+﻿.main {
+	position : absolute;
+	top : 0;
+	bottom : 0;
+	left : 0;
+	right : 0;
+	overflow : hidden;
+}
+.main > div {
+	position : absolute;
+	width : 100%;
+	top : 28px;
+	bottom : 0;
+	display : none;
+}
+
+#titleBar {
+	height : 28px;
+	padding : 5px 0;
+	text-indent : 10px;
+}
+#titleBar strong {
+	line-height : 20px;
+}
+#titleBar > ul button {
+	float : right;
+	height : 20px;
+	width : 12px;
+	padding : 3px 0;
+	border : 0 none;
+	margin-right : 10px;
+	background : url(../../../common/image/width12.png) no-repeat 0 0 content-box content-box;
+}

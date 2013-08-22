@@ -1,4 +1,4 @@
-﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Control, CallServer, LoadingBar, BatchLoad){
+﻿(function(Index, NonstaticClass, Panel, OverflowPanel, Control, CallServer, LoadingBar, BatchLoad, History){
 this.Title = (function(){
 	function Title(_selector){
 	
@@ -23,6 +23,46 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 		new ProjectAnchorList(data.projects).appendTo(this.find("dd")[0]);
 	};
 	Grouping = new NonstaticClass(Grouping, null, Panel.prototype);
+
+
+	function ScheduleContent(selector, calendar){
+		var topLi, scheduleContent = this,
+
+			dateTable = calendar.dateTable,
+
+			rect = this.rect(), x = rect.x + this.width() / 2, y = rect.y + 20;
+
+		// 初始化日程信息的滚动效果
+		this.attach({
+			continuousgesture : function(e){
+				var date = new Date(dateTable.getFocused().get("time", "attr") - 0),
+				
+					top = scheduleContent.get("top", "css").split("px").join("") - 0 || 0;
+
+				if(top < 0){
+					if(scheduleContent.height() + top <= scheduleContent.parent().height()){
+						date.setDate(date.getDate() + 1);
+					}
+					else {
+						var rect = scheduleContent.parent().rect(),
+
+							pointEl = jQun(document.elementFromPoint(rect.left + scheduleContent.width() / 2, rect.top + 20)).between(">li", this);
+
+						if(pointEl[0] !== topLi){
+							topLi = pointEl[0];
+							date = new Date(pointEl.get("time", "attr") - 0);
+						}
+					}
+				}
+				else {
+					date.setDate(date.getDate() - 1);
+				}
+				
+				dateTable.focus(date);
+			}
+		});
+	};
+	ScheduleContent = new NonstaticClass(ScheduleContent, null, OverflowPanel.prototype);
 
 
 	function Schedule(_selector, signHtml){
@@ -85,41 +125,50 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 					topEl.classList.remove("top");
 				}
 
-				var date = new Date(time - 0), contentUl = contentEl[0];
+				var date = new Date(time - 0), contentUl = contentEl[0],
 
+					scheduleItemEls = contentEl.find(">li");
+
+				if(scheduleItemEls.length > 0){
+					var d = new Date(time - 0),
+					
+						t = d.setDate(d.getDate() + 1);
+
+					if(jQun(scheduleItemEls[0]).get("time", "attr") == t){
+						var el = new Grouping.constructor(lastData[time]);
+
+						el.insertTo(contentUl, 0);
+						scheduleItemEls.splice(0, scheduleItemEls.length - 1);
+						scheduleItemEls.remove();
+						contentEl.set("top", el.height() * -1 + "px", "css");
+						return;
+					}
+
+					t = d.setDate(d.getDate() - 2);
+
+					if(jQun(scheduleItemEls[scheduleItemEls.length - 1]).get("time", "attr") == t){
+						var el = new Grouping.constructor(lastData[time]);
+
+						el.appendTo(contentUl, 0);
+						scheduleItemEls.splice(0, 1);
+						scheduleItemEls.remove();
+						return;
+					}
+				}
+				
 				contentEl.innerHTML = "";
 
 				for(var i = 0;i < 10;i++){
-					var dt = lastData[date.getTime()];
-
-
-					if(dt && dt.projects.length > 0){
-						new Grouping.constructor(dt).appendTo(contentUl);
+					if(lastData[date.getTime()]){
+					new Grouping.constructor(lastData[date.getTime()]).appendTo(contentUl);
 					}
-				
 					date.setDate(date.getDate() + 1);
 				}
 			}
 		});
-		calendar.focusDate(new Date());
+		calendar.dateTable.focus(new Date());
 	
-		// 初始化日程信息的滚动效果
-		new OverflowPanel(contentEl[0]).attach({
-			continuousgesture : function(e){
-				var top = contentEl.get("top", "css").split("px").join("") - 0 || 0;
-				
-				if(top <= 0)
-					return;
-
-				var height = contentEl.height(),
-					
-					date = new Date(calendar.getFocusedDateEl().get("time", "attr") - 0);
-
-				date.setDate(date.getDate() - 1);
-				calendar.focusDate(date);
-				contentEl.set("top", (height - contentEl.height()) + "px", "css");
-			}
-		});
+		new ScheduleContent.constructor(contentEl[0], calendar);
 	};
 	Schedule = new NonstaticClass(Schedule, null, Panel.prototype);
 
@@ -136,7 +185,7 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 	Control.Time.Calendar,
 	Control.List.ProjectAnchorList,
 	new jQun.HTML([
-		'<li time="{dateData.time}">',
+		'<li time="{dateData.time}" projectslength="{dateData.projects.length}">',
 			'<dt class="whiteFont">',
 				'<span class="lightBgColor">{dateData.localeDateString}</span>',
 			'</dt>',
@@ -145,7 +194,7 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 	].join(""))				
 ));
 
-this.Project = (function(){
+this.Project = (function(Global){
 	function Project(_selector, html){
 		///	<summary>
 		///	项目。
@@ -163,7 +212,10 @@ this.Project = (function(){
 				if(!this.isEqual("pageIndex", "pageMax"))
 					return;
 				
-				project.addUnopenedProject(this.getParam("pageSize") - data.projects.length);
+				// 添加空文件夹
+				project.addEmptyFolders(data.emptyFolders);
+				// 添加未解锁的项目
+				project.addEmptyFolders(this.getParam("pageSize") - data.projects.length, true);
 			});
 		
 		this.assign({
@@ -182,6 +234,13 @@ this.Project = (function(){
 					return;
 
 				project.load();
+			},
+			click : function(e){
+				var targetEl = jQun(e.target);
+
+				if(targetEl.between('figure[status="0"]', this).length > 0){
+					Global.history.go("addProject");
+				}
 			}
 		});
 
@@ -198,7 +257,7 @@ this.Project = (function(){
 			/// <param name="data" type="array">项目数据</param>
 			this.html.create(data).appendTo(this.find(">ul")[0]);
 		},
-		addUnopenedProject : function(_len){
+		addEmptyFolders : function(_len, _isUnopened){
 			///	<summary>
 			///	添加未解锁的项目，1次为10个。
 			///	</summary>
@@ -209,7 +268,7 @@ this.Project = (function(){
 				users : [],
 				lastMessage : "",
 				unread : 0,
-				status : -1
+				status : _isUnopened ? -1 : 0
 			};
 
 			jQun.forEach(_len == undefined ? this.batchLoad.getParam("pageSize") : _len, function(){
@@ -226,7 +285,7 @@ this.Project = (function(){
 			var batchLoad = this.batchLoad;
 
 			if(batchLoad.isEqual("pageIndex", "pageMax")){
-				this.addUnopenedProject();
+				this.addEmptyFolders(10, true);
 				return;
 			}
 
@@ -238,7 +297,9 @@ this.Project = (function(){
 	});
 
 	return Project.constructor;
-}());
+}(
+	Index.Share.Global
+));
 
 this.Partner = (function(Navigator, UserList){
 	function Partner(_selector, groupingHtml){
@@ -510,5 +571,6 @@ Index.members({ SPP : this.SPP });
 	Bao.UI.Control,
 	Bao.CallServer,
 	Bao.UI.Control.Wait.LoadingBar,
-	Bao.API.Data.BatchLoad
+	Bao.API.Data.BatchLoad,
+	Bao.API.Manager.History
 ));

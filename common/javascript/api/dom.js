@@ -158,7 +158,7 @@ this.Panel = (function(HTMLElementList){
 ));
 
 this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder){
-	function OverflowPanel(_selector, _disableScrollBar){
+	function OverflowPanel(selector, _disableScrollBar){
 		var overflowPanel = this,
 		
 			isLeaveborder = false,

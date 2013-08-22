@@ -20,9 +20,14 @@ this.Bao = (function(Bao){
 		Page : new Namespace().members({
 			Index : new Namespace().members({ // ../../pertinence/javascript/index
 				Secondary : new Namespace({ // ../../pertinence/javascript/index/secondary.js
-					AddProject : null
+					AddProject : null,
+					SecondaryPanel : null
 				}),
-				SPP : null // ../../pertinence/javascript/index/spp.js
+				SPP : null, // ../../pertinence/javascript/index/spp.js
+				Share : new Namespace({  // ../../pertinence/javascript/index/ahare.js
+					Global : null,
+					TitleBar : null
+				})
 			})
 		}),
 		Test : new Namespace().members({ 

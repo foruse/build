@@ -1,9 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.8
- *  本次修改：增加__proto__属性，因为chrome 28以后，__proto__被归于Object.protoype之下，
- *			 所以导致监控无法查看父类属性，增加__proto__的目的就是为了修复此bug。
+ *  文档状态：1.0.4.9
+ *  本次修改：支持子类继承父类的时候，可以将父类的可选参数做为必选参数（省下划线）。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -219,23 +218,17 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				///	子类访问父类。
 				///	</summary>
 				///	<param name="args" type="*">子类的参数列表。</param>
-				var ParentClass = this.constructor.prototype.getParentClass();
+				var ParentClass = this.getParentClass();
 
 				if(ParentClass.constructor === jQun)
 					return;
 
-				var arg = {}, parentList = [];
+				var arg = {}, parentList = [], localeArg = arguments;
 
-				for(
-					var argumentList = arguments.callee.caller.argumentList,
-						i = 0,
-						j = argumentList.length;
-					i < j;
-					i++
-				){
-					arg[argumentList[i]] = arguments[i];
-				}
-
+				forEach(arguments.callee.caller.argumentList, function(name, i, argumentList){
+					arg["_" + name] = arg[name] = localeArg[i];
+				});
+				
 				while(ParentClass){
 					if(ParentClass === NonstaticClass.prototype)
 						break;
@@ -244,21 +237,15 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 					ParentClass = ParentClass.getParentClass();
 				}
 
-				for(var i = 0, j = parentList.length;i < j;i++){
-					var transferArgList = [], constructor = parentList[i].constructor;
+				forEach(parentList, function(parent){
+					var transferArgList = [], constructor = parent.constructor;
 
-					for(
-						var argumentList = constructor.argumentList,
-							n = 0,
-							m = argumentList.length;
-						n < m;
-						n++
-					){
-						transferArgList.push(arg[argumentList[n]]);
-					}
+					forEach(constructor.argumentList, function(name){
+						transferArgList.push(arg[name]);
+					});
 
 					constructor.source.apply(this, transferArgList);
-				}
+				}, this);
 			},
 			creator : function(_constructor, _name, _ParentClass){
 				///	<summary>
@@ -388,7 +375,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 
 		var isNumber = typeof obj === "number";
 
-		if(fn === undefined){
+		if(_this !== undefined){
 			fn = fn.bind(_this);
 		}
 
@@ -1784,7 +1771,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 			///	<summary>
 			///	隐藏元素。
 			///	</summary>
-			this.set("display", "none", "css");
+			return this.set("display", "none", "css");
 		},
 		metrics : function(name, _value){
 			///	<summary>
