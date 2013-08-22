@@ -17,7 +17,18 @@
 #titleBar {
 	height : 28px;
 	padding : 5px 0;
-	text-indent : 10px;
+}
+#titleBar > * {
+	height : 100%;
+}
+#titleBar button {
+	border : 0 none;
+	display : block;
+}
+#titleBar > nav > button {
+	width : 24px;
+	height : 18px;
+	background : url(../../../common/image/width12.png) no-repeat 8px -104px;
 }
 #titleBar strong {
 	line-height : 20px;

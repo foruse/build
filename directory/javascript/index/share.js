@@ -9,7 +9,7 @@ this.TitleBar = (function(){
 			toolsPanel : this.find(">ul")
 		});
 
-		this.find(">nav>button").onclick = function(){
+		this.find(">nav>button").onuserclick = function(){
 			history.go(titleBar.redirect);
 		};
 	};

@@ -235,7 +235,7 @@ this.Project = (function(Global){
 
 				project.load();
 			},
-			click : function(e){
+			userclick : function(e){
 				var targetEl = jQun(e.target);
 
 				if(targetEl.between('figure[status="0"]', this).length > 0){
@@ -329,7 +329,7 @@ this.Partner = (function(Navigator, UserList){
 
 		// 监听事件
 		this.attach({
-			click : function(e){
+			userclick : function(e){
 				var targetEl = jQun(e.target), el = targetEl.between(".group button", this);
 
 				// 如果点击的是分组栏上的按钮
@@ -421,27 +421,23 @@ this.Partner = (function(Navigator, UserList){
 	Control.List.UserList
 ));
 
-this.Tab = (function(){
-	function Tab(_selector, itemHtml, onfocus, onblur){
+this.Tab = (function(focusTabEvent, blurTabEvent){
+	function Tab(_selector, itemHtml){
 		///	<summary>
 		///	SPP脚部选项卡。
 		///	</summary>
 		/// <param name="_selector" type="string">对应的元素选择器</param>
 		/// <param name="itemHtml" type="jQun.HTML">选项卡html模板</param>
-		/// <param name="onfocus" type="function">选项卡聚焦事件</param>
-		/// <param name="onblur" type="function">选项卡失去焦点事件</param>
 		var btnEls, btnClassList, tab = this;
 
 		this.find("ul").innerHTML = itemHtml.render();
 
 		this.assign({
-			btnEls : this.find("button"),
-			onblur : onblur,
-			onfocus : onfocus
+			btnEls : this.find("button")
 		});
 
 		this.attach({
-			click : function(e){
+			userclick : function(e){
 				var buttonEl = jQun(e.target).between("button", this);
 
 				if(buttonEl.length === 0)
@@ -468,7 +464,7 @@ this.Tab = (function(){
 				return;
 
 			focusedEl.classList.remove("focused");
-			this.onblur(focusedEl.get("tab", "attr"));
+			blurTabEvent.trigger(focusedEl[0]);
 		},
 		btnEls : undefined,
 		focus : function(name){
@@ -479,14 +475,15 @@ this.Tab = (function(){
 			var buttonEl = this.btnEls.between('[tab="' + name + '"]', this[0]);
 
 			buttonEl.classList.add("focused");
-			this.onfocus(name, buttonEl.find("span").get("text", "attr"));
-		},
-		onblur : undefined,
-		onfocus : undefined
+			focusTabEvent.trigger(buttonEl[0]);
+		}
 	});
 
 	return Tab.constructor;
-}());
+}(
+	new jQun.Event("focustab"),
+	new jQun.Event("blurtab")
+));
 
 this.SPP = (function(Title, Schedule, Project, Partner, Tab, HTML){
 	function SPP(_selector){
@@ -519,27 +516,26 @@ this.SPP = (function(Title, Schedule, Project, Partner, Tab, HTML){
 				// _selector
 				"#tab_SPP",
 				// itemHtml
-				new HTML("spp_item_html", true),
-				// onfocus
-				function(name, title){
-					///	<summary>
-					///	聚焦某个子panel。
-					///	</summary>
-					/// <param name="name" type="string">需要焦点的panel名称</param>
-					var	childPanel = spp[name];
-
-					spp.title.set(title);
-					panelAttr.set("focusedtab", name);
-					childPanel.show();
-				},
-				// onblur
-				function(name){
-					spp[name].hide();
-				}
+				new HTML("spp_item_html", true)
 			),
 			title : new Title(
 				this.find(">header")
 			)
+		});
+
+		this.tab.attach({
+			blurtab : function(e){
+				spp[jQun(e.target).get("tab", "attr")].hide();
+			},
+			focustab : function(e){
+				var targetEl = jQun(e.target),
+					
+					name = targetEl.get("tab", "attr"), childPanel = spp[name];
+
+				spp.title.set(targetEl.find("span").get("text", "attr"));
+				panelAttr.set("focusedtab", name);
+				childPanel.show();
+			}
 		});
 	};
 	SPP = new NonstaticClass(SPP, "Bao.Page.Index.SPP", Panel.prototype);
