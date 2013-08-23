@@ -1,25 +1,53 @@
-﻿(function(Manager, NonstaticClass, StaticClass){
-this.History = (function(List, Index, CallServer){
+﻿(function(Management, NonstaticClass, StaticClass){
+this.Loader = (function(Storage, Index, HTML){
 	function Loader(){};
-	Loader = new StaticClass(null, "Loader");
+	Loader = new StaticClass(Loader);
 
 	Loader.properties({
 		addProject : function(){
 			return new Index.Secondary.AddProject("#addProject");
 		},
+		load : function(name){
+			var pagePanel = this.pageStorage.get(name);
+
+			if(!pagePanel){
+				pagePanel = this.pageStorage[name] = this[name]();
+			}
+
+			return pagePanel;
+		},
+		pageStorage : new Storage(),
+		partner : function(){
+			this.load("spp");
+			return new Index.Home.Partner("#partner", new HTML("spp_partnerGroups_html", true));
+		},
+		project : function(){
+			this.load("spp");
+			return new Index.Home.Project("#project", new HTML("spp_project_html", true));
+		},
+		schedule : function(){
+			this.load("spp");
+			return new Index.Home.Schedule("#schedule", new HTML("spp_scheduleSign_html", true));
+		},
 		spp : function(){
-			///	<summary>
-			///	加载项目区域。
-			///	</summary>
-			return new Index.SPP("#SPP");
+			var sppPanel = this.pageStorage.get("spp");
+
+			return sppPanel ? sppPanel : new Index.Home.SPP("#SPP");
 		}
 	});
 
+	return Loader;
+}(
+	jQun.Storage,
+	Bao.Page.Index,
+	jQun.HTML
+));
+
+this.History = (function(List, Loader, redirectEvent){
 	function History(){};
-	History = new NonstaticClass(History, "Bao.Page.Index.History", List.prototype);
+	History = new NonstaticClass(History, "Bao.API.Management.History", List.prototype);
 
 	History.properties({
-		Loader : Loader,
 		back : function(){
 			///	<summary>
 			///	回到上一个记录。
@@ -57,28 +85,27 @@ this.History = (function(List, Index, CallServer){
 				}
 				else {
 					// 隐藏上一个panel
-					this[lastIdx].panel.hide();
+					Loader.pageStorage[this[lastIdx]].hide();
 				}
 			}
 
 			var panel;
 
+			redirectEvent.trigger(window);
+
 			if(idx > -1){
-				panel = this[idx].panel;
+				panel = Loader.pageStorage[this[idx]];
 				// 显示当前的panel
 				panel.show();
 				this.splice(idx, 1);
 			}
 			else {
 				// 加载、初始化新panel信息
-				panel = this.Loader[name]();
+				panel = Loader.load(name);
 				panel.show();
 			}
 
-			this.push({
-				name : name,
-				panel : panel
-			});
+			this.push(name);
 
 			// 记录当前索引
 			this.idx = lastIdx + 1;
@@ -86,29 +113,18 @@ this.History = (function(List, Index, CallServer){
 			return panel;
 		},
 		homePage : "project",
-		indexOf : function(name){
-			///	<summary>
-			///	检索历史记录中是否有指定名称的页面。
-			///	</summary>
-			/// <param name="name" type="string">检索的页面名称</param>
-			for(var i = 0, j = this.length;i < j;i++){
-				if(this[i].name === name){
-					return i;
-				}
-			}
-
-			return -1;
-		},
 		idx : -1
 	});
 
 	return History.constructor;
 }(
 	jQun.List,
-	Bao.Page.Index,
-	Bao.CallServer
+	this.Loader,
+	// redirectEvent
+	new jQun.Event("redirect", function(){
+		this.attachTo(window);
+	})
 ));
-
 
 this.Timer = (function(setTimeout, clearTimeout){
 	function Timer(_timeout){
@@ -120,7 +136,7 @@ this.Timer = (function(setTimeout, clearTimeout){
 			timeout : _timeout || 200
 		});
 	};
-	Timer = new NonstaticClass(Timer, "Bao.API.Manager.Timer");
+	Timer = new NonstaticClass(Timer, "Bao.API.Management.Timer");
 
 	Timer.properties({
 		stop : function(_onbreak){
@@ -184,7 +200,7 @@ this.Timer = (function(setTimeout, clearTimeout){
 
 this.IntervalTimer = (function(Timer){
 	function IntervalTimer(_timeout){ };
-	IntervalTimer = new NonstaticClass(IntervalTimer, "Bao.API.Manager.IntervalTimer", Timer.prototype);
+	IntervalTimer = new NonstaticClass(IntervalTimer, "Bao.API.Management.IntervalTimer", Timer.prototype);
 
 	IntervalTimer.override({
 		start : function(oninterval, _times){
@@ -238,10 +254,10 @@ this.IntervalTimer = (function(Timer){
 	this.Timer
 ));
 
-Manager.members(this);
+Management.members(this);
 }.call(
 	{},
-	Bao.API.Manager,
+	Bao.API.Management,
 	jQun.NonstaticClass,
 	jQun.StaticClass
 ));

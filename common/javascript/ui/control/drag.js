@@ -163,6 +163,6 @@ Drag.members(this);
 	jQun.NonstaticClass,
 	Bao.API.DOM.Panel,
 	jQun.HTML,
-	Bao.API.Manager.Timer,
-	Bao.API.Manager.IntervalTimer
+	Bao.API.Management.Timer,
+	Bao.API.Management.IntervalTimer
 ));

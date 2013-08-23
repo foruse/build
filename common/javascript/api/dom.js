@@ -1,4 +1,4 @@
-﻿(function(DOM, NonstaticClass, StaticClass, Event, windowEl){
+﻿(function(DOM, NonstaticClass, StaticClass, Management, Event, windowEl){
 this.EventCollection = (function(Timer, IntervalTimer, childGestureConstructor){
 	function UserGesture(name, _init){
 		///	<summary>
@@ -124,8 +124,8 @@ this.EventCollection = (function(Timer, IntervalTimer, childGestureConstructor){
 
 	return EventCollection;
 }(
-	Bao.API.Manager.Timer,
-	Bao.API.Manager.IntervalTimer,
+	Management.Timer,
+	Management.IntervalTimer,
 	// childGestureConstructor
 	function(event){
 		var gesture = this;
@@ -155,6 +155,28 @@ this.Panel = (function(HTMLElementList){
 	return Panel.constructor;
 }(
 	jQun.HTMLElementList
+));
+
+this.ChildPanel = (function(Panel){
+	function ChildPanel(selector){};
+	ChildPanel = new NonstaticClass(ChildPanel, "Bao.API.DOM.ChildPanel", Panel.prototype);
+
+	ChildPanel.override({
+		hide : function(){
+			this.parent().hide();
+			
+			return Panel.prototype.hide.apply(this, arguments);
+		},
+		show : function(){
+			this.parent().show();
+			
+			return Panel.prototype.show.apply(this, arguments);
+		}
+	});
+
+	return ChildPanel.constructor;
+}(
+	this.Panel
 ));
 
 this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder){
@@ -227,7 +249,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 	return OverflowPanel.constructor;
 }(
 	this.Panel,
-	Bao.API.Manager.IntervalTimer,
+	Management.IntervalTimer,
 	// getTop
 	function(panelStyle){
 		return panelStyle.top.toString().split("px").join("") - 0 || 0;
@@ -282,6 +304,7 @@ DOM.members(this);
 	Bao.API.DOM,
 	jQun.NonstaticClass,
 	jQun.StaticClass,
+	Bao.API.Management,
 	jQun.Event,
 	// windowEl
 	jQun(window)

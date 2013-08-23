@@ -70,7 +70,7 @@ this.LoadingBar = (function(Timer, html){
 
 	return LoadingBar.constructor;
 }(
-	Bao.API.Manager.Timer,
+	Bao.API.Management.Timer,
 	// html
 	new HTML([
 		'<div class="loadingBar" type="normal">',

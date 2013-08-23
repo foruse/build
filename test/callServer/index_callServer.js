@@ -1,4 +1,4 @@
-﻿(function(Bao, RequestStorage, JSON, Text, Index){
+﻿(function(Bao, JSON, Text, Index){
 this.CallServer = (function(CallServer, open, allHandlers){
 	CallServer.setResponseType("json");
 	// 开始测试
@@ -7,8 +7,6 @@ this.CallServer = (function(CallServer, open, allHandlers){
 	// 重写open方法
 	CallServer.override({
 		open : function(name, params, _complete){
-			var cache = RequestStorage["callserver_" + name];
-
 			open.call(CallServer, name, params, function(data, isCache){
 				if(isCache){
 					_complete(data);
@@ -118,7 +116,6 @@ Bao.members(this);
 }.call(
 	{},
 	Bao,
-	jQun.RequestStorage,
 	jQun.JSON,
 	jQun.Text,
 	// 以下为测试用的类

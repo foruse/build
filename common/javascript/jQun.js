@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.4.9
- *  本次修改：支持子类继承父类的时候，可以将父类的可选参数做为必选参数（省下划线）。
+ *  文档状态：1.0.5.0
+ *  本次修改：Event.attachTo支持单个元素；开放RequestStorage类，并更名为Storage类，用于数据操作。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -503,7 +503,7 @@ this.JSON = (function(){
 		///	JSON功能类。
 		///	</summary>
 	};
-	JSON = new StaticClass(undefined, "jQun.JSON");
+	JSON = new StaticClass(null, "jQun.JSON");
 
 	JSON.properties({
 		parse : function(jsonStr){
@@ -908,7 +908,7 @@ this.RequestHeader = (function(){
 		///	请求头部信息。
 		///	</summary>
 	};
-	RequestHeader = new StaticClass(undefined, "jQun.RequestHeader");
+	RequestHeader = new StaticClass(null, "jQun.RequestHeader");
 
 	RequestHeader.properties({
 		name : "Content-type",
@@ -939,46 +939,49 @@ this.RequestHeader = (function(){
 	return RequestHeader;
 }());
 
-this.RequestStorage = (function(){
-	function RequestStorage(){
-		///	<summary>
-		///	连接配置存储器。
-		///	</summary>
-	};
-	RequestStorage = new StaticClass(undefined, "jQun.RequestStorage");
+this.Storage = (function(){
+	function Storage(){ };
+	Storage = new NonstaticClass(Storage, "jQun.Storage");
 
-	RequestStorage.properties({
+	Storage.properties({
 		clear : function(){
 			///	<summary>
-			///	清空所有连接配置。
+			///	清空所有储存数据。
 			///	</summary>
-			forEach(this, function(value, name){
-				delete this[name];
-			});
+			forEach(this, function(value, key){
+				this.del(key);
+			}, this);
 			return this;
 		},
-		get : function(name){
+		del : function(key){
 			///	<summary>
-			///	获取连接配置项。
+			///	删除一项储存数据。
 			///	</summary>
-			///	<param name="name" type="string">连接名称。</param>
-			return this[name];
+			///	<param name="key" type="string">数据主键。</param>
+			return delete this[key];
 		},
-		set : function(name, connectionSettings){
+		get : function(key){
 			///	<summary>
-			///	设置配置项。
+			///	获取数据。
 			///	</summary>
-			///	<param name="name" type="string">连接名称。</param>
-			///	<param name="settings" type="jQun.ConnectionSettings">连接配置。</param>
-			this[name] = connectionSettings;
+			///	<param name="key" type="string">数据主键。</param>
+			return this[key];
+		},
+		set : function(key, value){
+			///	<summary>
+			///	设置数据。
+			///	</summary>
+			///	<param name="key" type="string">数据主键。</param>
+			///	<param name="value" type="*">数据值。</param>
+			this[key] = value;
 			return this;
 		}
 	});
 
-	return RequestStorage;
+	return Storage.constructor;
 }());
 
-this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
+this.Ajax = (function(Storage, RequestHeader, RequestConnection){
 	function Ajax(){
 		///	<summary>
 		///	ajax异步类。
@@ -996,7 +999,6 @@ this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
 
 	Ajax.properties({
 		RequestHeader : RequestHeader,
-		RequestStorage : RequestStorage,
 		beginTesting : function(){
 			this.isTesting = true;
 		},
@@ -1008,7 +1010,7 @@ this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
 			///	<param name="name" type="string">连接名称。</param>
 			///	<param name="params" type="object">url的替换参数及post方法的传递参数。</param>
 			///	<param name="_complete" type="function">异步完成后所执行的回调函数。</param>
-			var requstConnection = this.RequestStorage.get(name);
+			var requstConnection = this.requestStorage.get(name);
 
 			if(!requstConnection){
 				console.error("ajax请求信息错误：请检查连接名称是否正确。", arguments);
@@ -1020,6 +1022,7 @@ this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
 			args.push(this.responseType, this.isTesting);
 			requstConnection.open.apply(requstConnection, args);
 		},
+		requestStorage : new Storage(),
 		responseType : "text",
 		save : function(allSettings, _handlers){
 			///	<summary>
@@ -1027,7 +1030,7 @@ this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
 			///	</summary>
 			///	<param name="allSettings" type="array">ajax连接信息。</param>
 			///	<param name="_handlers" type="function">所有的数据格式转换函数。</param>
-			var RequestStorage = this.RequestStorage
+			var requestStorage = this.requestStorage
 
 			if(!_handlers){
 				_handlers = {};
@@ -1036,12 +1039,12 @@ this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
 			forEach(allSettings, function(settings){
 				var name = settings[0];
 
-				RequestStorage.set(
+				requestStorage.set(
 					name,
 					new RequestConnection(settings[0], settings[1], settings[2], _handlers[name], settings[3])
 				);
 			});
-			return RequestStorage;
+			return requestStorage;
 		},
 		setResponseType : function(type){
 			///	<summary>
@@ -1054,8 +1057,8 @@ this.Ajax = (function(RequestHeader, RequestStorage, RequestConnection){
 
 	return Ajax;
 }(
+	this.Storage,
 	this.RequestHeader,
-	this.RequestStorage,
 	this.RequestConnection
 ));
 
@@ -1864,25 +1867,20 @@ this.Event = (function(attach, define){
 	Event = new NonstaticClass(Event, "jQun.Event");
 
 	Event.properties({
-		attachTo : function(tagName){
+		attachTo : function(target){
 			///	<summary>
 			///	应该附加该事件的标签。
 			///	</summary>
-			///	<param name="tagName" type="string">标签名称。</param>
+			///	<param name="target" type="string, element">标签名称。</param>
 			var name = this.name;
 
 			/* 以后用EventTarget优化此方法 */
 			forEach(
-				tagName === "*" ? [Node, Window] : [document.createElement(tagName).constructor],
-				function(constructor){
-					define(
-						constructor.prototype,
-						"on" + name,
-						{
-							set : this
-						},
-						{ settable : true }
-					);
+				typeof target === "string" ?
+					target === "*" ? [Node.prototype, Window.prototype] : [document.createElement(target).constructor.prototype] :
+					[target],
+				function(tg){
+					define(tg, "on" + name, { set : this },	{ settable : true });
 				},
 				function(fn){
 					var obj = {};

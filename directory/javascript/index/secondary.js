@@ -1,33 +1,9 @@
-﻿(function(Secondary, NonstaticClass, Panel){
-var SecondaryPanel;
-
-this.SecondaryPanel = (function(){
-	function SecondaryPanel(selector){};
-	SecondaryPanel = new NonstaticClass(SecondaryPanel, "Bao.Page.Index.Secondary.SecondaryPanel", Panel.prototype);
-
-	SecondaryPanel.override({
-		hide : function(){
-			this.parent().hide();
-			
-			return Panel.prototype.hide.apply(this, arguments);
-		},
-		show : function(){
-			this.parent().show();
-			
-			return Panel.prototype.show.apply(this, arguments);
-		}
-	});
-
-	return SecondaryPanel.constructor;
-}());
-
-SecondaryPanel = this.SecondaryPanel;
-
+﻿(function(Secondary, NonstaticClass, ChildPanel){
 this.AddProject = (function(){
 	function AddProject(selector){
 	
 	};
-	AddProject = new NonstaticClass(AddProject, "Bao.Page.Index.Secondary.AddProject", SecondaryPanel.prototype);
+	AddProject = new NonstaticClass(AddProject, "Bao.Page.Index.Secondary.AddProject", ChildPanel.prototype);
 
 	AddProject.properties({
 	
@@ -41,5 +17,5 @@ Secondary.members(this);
 	{},
 	Bao.Page.Index.Secondary,
 	jQun.NonstaticClass,
-	Bao.API.DOM.Panel
+	Bao.API.DOM.ChildPanel
 ));

@@ -1,31 +1,8 @@
 ﻿#SPP > * {
-	height : 30px;
 	width : 100%;
 	position : absolute;
-}
-#SPP[focusedTab="schedule"] #title_SPP {
-	border : 0 none;
-}
-#SPP[focusedTab="schedule"] .content_SPP {
-	padding : 0;
-	top : 30px;
-}
-#SPP[focusedtab="project"] #title_SPP > button[action="add"] {
-	display : none;
-}
-#SPP[focusedTab="partner"] button[action="add"] > span {
-	background-position : 5px -149px;
-}
-#SPP article > section {
-	display : none;
-	min-height : 100%;
-}
-
-.content_SPP {
-	height : auto !important;
-	top : 35px;
-	bottom : 65px;
-	padding : 0 5px;
+	bottom : 60px;
+	top : 0;
 }
 
 #schedule > header {
@@ -43,14 +20,14 @@
 #schedule .calendar_month aside[projectslength="0"], .schedule_list > li[projectslength="0"] {
 	display : none;
 }
-#schedule > nav {
+#schedule > section > nav {
 	position : absolute;
 	bottom : 0;
 	top : 115px;
 	left : 10px;
 	right : 10px;
 }
-#schedule > nav.calendarStretched {
+#schedule > section > nav.calendarStretched {
 	top : 292px;
 }
 .schedule_list {
@@ -77,11 +54,11 @@
 
 
 #project {
-	max-width : 310px;
-	margin : 0 auto;
+	
 }
 #project > ul {
-	width : 100%;
+	max-width : 310px;
+	margin : 0 auto;
 }
 #project li {
 	width : 50%;
@@ -223,6 +200,7 @@
 }
 
 #tab_SPP {
+	top : auto;
 	bottom : 0;
 	height : 60px !important;
 	background-color : rgba(255, 255, 255, 0.6);

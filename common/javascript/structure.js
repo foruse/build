@@ -7,12 +7,14 @@ this.Bao = (function(Bao){
 				BatchLoad : null
 			}),
 			DOM : new Namespace().members({ // api/dom.js
+				ChildPanel : null,
 				EventCollection : null,
 				Panel : null
 			}),
-			Manager : new Namespace().members({ // api/manager.js
+			Management : new Namespace().members({ // api/management.js
 				History : null,
 				IntervalTimer : null,
+				Loader : null,
 				Timer : null
 			})
 		}),
@@ -21,9 +23,15 @@ this.Bao = (function(Bao){
 			Index : new Namespace().members({ // ../../pertinence/javascript/index
 				Secondary : new Namespace({ // ../../pertinence/javascript/index/secondary.js
 					AddProject : null,
-					SecondaryPanel : null
+					SecondaryPage : null
 				}),
-				SPP : null, // ../../pertinence/javascript/index/spp.js
+				Home : new Namespace({ // ../../pertinence/javascript/index/home.js
+					Partner : null,
+					Project : null,
+					SPP : null,
+					Schedule : null,
+					Tab : null
+				}),
 				Share : new Namespace({  // ../../pertinence/javascript/index/ahare.js
 					Global : null,
 					TitleBar : null

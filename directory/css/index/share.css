@@ -13,6 +13,9 @@
 	bottom : 0;
 	display : none;
 }
+.main > div > article {
+	display : none;
+}
 
 #titleBar {
 	height : 28px;

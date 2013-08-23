@@ -1,6 +1,11 @@
 ﻿(function(Share, NonstaticClass, StaticClass, Panel){
 this.TitleBar = (function(){
 	function TitleBar(selector, toolsHtml){
+		///	<summary>
+		///	标题栏。
+		///	</summary>
+		///	<param name="selector" type="string">标题栏元素选择器。</param>
+		///	<param name="toolsHtml" type="jQun.HTML">工具html模板。</param>
 		var titleBar = this;
 
 		this.assign({
@@ -10,29 +15,36 @@ this.TitleBar = (function(){
 		});
 
 		this.find(">nav>button").onuserclick = function(){
-			history.go(titleBar.redirect);
+			Share.Global.history.go(titleBar.redirect);
+		};
+
+		window.onredirect = function(){
+			titleBar.hide();
+			titleBar.backButtonEl.hide();
 		};
 	};
 	TitleBar = new NonstaticClass(TitleBar, "Bao.Page.Index.Share", Panel.prototype);
 
 	TitleBar.properties({
+		backButtonEl : undefined,
 		resetTools : function(tools){
+			///	<summary>
+			///	重新设置工具栏。
+			///	</summary>
+			///	<param name="tools" type="array">工具栏数据。</param>
 			this.find(">ul").innerHTML = this.toolsHtml.render({ tools : tools });
-		},
-		redirect : "project",
-		setRedirect : function(redirect){
-			this.redirect = redirect;
 		},
 		toolsHtml : undefined
 	});
 
 	return TitleBar.constructor;
-}(
-	
-));
+}());
 
 this.Global = (function(TitleBar, History, Scroll, HTML){
 	function Global(){
+		///	<summary>
+		///	全局类，用于存储页面中的一些全局属性。
+		///	</summary>
 		var Global = this;
 
 		window.onload = function(){
@@ -51,7 +63,7 @@ this.Global = (function(TitleBar, History, Scroll, HTML){
 			// 初始化滚动条
 			new Scroll();
 
-			Global.history.go("spp").tab.focus("project");
+			Global.history.go("project");
 			// Global.history.go("spp").tab.focus("project"),
 		};
 	};
@@ -63,7 +75,7 @@ this.Global = (function(TitleBar, History, Scroll, HTML){
 	return Global;
 }(
 	this.TitleBar,
-	Bao.API.Manager.History,
+	Bao.API.Management.History,
 	Bao.UI.Control.Drag.Scroll,
 	jQun.HTML
 ));
