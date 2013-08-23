@@ -20,7 +20,6 @@ this.TitleBar = (function(){
 
 		window.onredirect = function(){
 			titleBar.hide();
-			titleBar.backButtonEl.hide();
 		};
 	};
 	TitleBar = new NonstaticClass(TitleBar, "Bao.Page.Index.Share", Panel.prototype);
@@ -35,6 +34,20 @@ this.TitleBar = (function(){
 			this.find(">ul").innerHTML = this.toolsHtml.render({ tools : tools });
 		},
 		toolsHtml : undefined
+	});
+
+	TitleBar.override({
+		show : function(tools, hideBackButton){
+			///	<summary>
+			///	显示标题栏。
+			///	</summary>
+			///	<param name="tools" type="array">工具栏数据。</param>
+			///	<param name="hideBackButton" type="boolean">是否隐藏回退按钮。</param>
+			this.resetTools(tools);
+			this.backButtonEl[hideBackButton ? "hide" : "show"]();
+
+			return Panel.prototype.show.call(this);
+		}
 	});
 
 	return TitleBar.constructor;

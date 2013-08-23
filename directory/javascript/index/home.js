@@ -1,4 +1,4 @@
-﻿(function(Home, NonstaticClass, Panel, ChildPanel, OverflowPanel, Control, CallServer, LoadingBar, BatchLoad){
+﻿(function(Home, NonstaticClass, Panel, ChildPanel, OverflowPanel, Control, LoadingBar, BatchLoad, Global){
 this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 	function Grouping(data){
 		this.combine(groupingHtml.create({
@@ -229,6 +229,8 @@ this.Project = (function(Global){
 			}
 		});
 
+		Global.titleBar.show();
+
 		loadingBar.appendTo(this[0]);
 		new OverflowPanel(this.find(">ul"));
 		this.load();
@@ -287,7 +289,7 @@ this.Project = (function(Global){
 	Bao.Page.Index.Share.Global
 ));
 
-this.Partner = (function(Navigator, UserList){
+this.Partner = (function(Navigator, UserList, CallServer){
 	function Partner(selector, groupingHtml){
 		var userList, groupPanel,
 
@@ -406,7 +408,8 @@ this.Partner = (function(Navigator, UserList){
 	return Partner.constructor;
 }(
 	Control.Drag.Navigator,
-	Control.List.UserList
+	Control.List.UserList,
+	Bao.CallServer
 ));
 
 this.Tab = (function(focusTabEvent, blurTabEvent){
@@ -512,7 +515,7 @@ Home.members(this);
 	Bao.API.DOM.ChildPanel,
 	Bao.API.DOM.OverflowPanel,
 	Bao.UI.Control,
-	Bao.CallServer,
 	Bao.UI.Control.Wait.LoadingBar,
-	Bao.API.Data.BatchLoad
+	Bao.API.Data.BatchLoad,
+	Bao.Page.Index.Share.Global
 ));
