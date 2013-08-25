@@ -1,8 +1,5 @@
 ﻿#SPP > * {
-	width : 100%;
-	position : absolute;
 	bottom : 60px;
-	top : 0;
 }
 
 #schedule > header {
@@ -200,6 +197,7 @@
 }
 
 #tab_SPP {
+	display : block;
 	top : auto;
 	bottom : 0;
 	height : 60px !important;

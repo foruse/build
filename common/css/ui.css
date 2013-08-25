@@ -13,8 +13,12 @@
 	bottom : 0;
 	display : none;
 }
-.main > div > article {
+.main > div > * {
 	display : none;
+	width : 100%;
+	position : absolute;
+	bottom : 0;
+	top : 0;
 }
 
 #titleBar {
@@ -33,8 +37,11 @@
 	height : 18px;
 	background : url(../../../common/image/width12.png) no-repeat 8px -104px;
 }
+#titleBar > p {
+	text-indent : 8px;
+}
 #titleBar strong {
-	line-height : 20px;
+	line-height : 17px;
 }
 #titleBar > ul button {
 	float : right;
@@ -44,4 +51,23 @@
 	border : 0 none;
 	margin-right : 10px;
 	background : url(../../../common/image/width12.png) no-repeat 0 0 content-box content-box;
+}
+
+.projectColor_orange {
+	background-color : #f1af0f;
+}
+.projectColor_BY {
+	background-color : #e26917;
+}
+.projectColor_BG {
+	background-color : #39bead;
+}
+.projectColor_blue {
+	background-color : #00b0d6;
+}
+.projectColor_BR {
+	background-color : #ce312d;
+}
+.projectColor_purple {
+	background-color : #867bc8;
 }

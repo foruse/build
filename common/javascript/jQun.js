@@ -339,21 +339,17 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 			}
 		});
 
-		/*
-		(2013.08.20)目前有些浏览器不支持，如：手机QQ浏览器，手机百度浏览器
-		define(
-			prototype,
-			"__proto__",
-			Object.getOwnPropertyDescriptor(Object.prototype,"__proto__"),
-			{ settable : true, gettable : true }
-		);
-		*/
-
-		define(prototype, "__proto__", {
-			get : function(){
-				return Object.getPrototypeOf(this);
-			}
-		}, { gettable : true });
+		
+		// (2013.08.20)目前有些浏览器不支持，如：手机QQ浏览器，手机百度浏览器
+		try {
+			define(
+				prototype,
+				"__proto__",
+				Object.getOwnPropertyDescriptor(Object.prototype, "__proto__"),
+				{ settable : true, gettable : true }
+			);
+		}
+		catch(e){}
 	}
 
 	return jQun;
@@ -1103,6 +1099,10 @@ this.AttributeCollection = (function(){
 	function AttributeCollection(elementList){ };
 	AttributeCollection = new NonstaticClass(AttributeCollection, "jQun.AttributeCollection", ElementPropertyCollection.prototype);
 
+	AttributeCollection.override({
+		propertyName : "attributes"
+	});
+
 	AttributeCollection.properties({
 		contains : function(name){
 			///	<summary>
@@ -1131,7 +1131,6 @@ this.AttributeCollection = (function(){
 			});
 			return this;
 		},
-		propertyName : "attributes",
 		remove : function(name){
 			///	<summary>
 			///	移除具有指定名称的属性。
@@ -1184,6 +1183,10 @@ this.CSSPropertyCollection = (function(){
 	function CSSPropertyCollection(elementList){ };
 	CSSPropertyCollection = new NonstaticClass(CSSPropertyCollection, "jQun.CSSPropertyCollection", ElementPropertyCollection.prototype);
 
+	CSSPropertyCollection.override({
+		propertyName : "style"
+	});
+
 	CSSPropertyCollection.properties({
 		get : function(name){
 			///	<summary>
@@ -1192,7 +1195,6 @@ this.CSSPropertyCollection = (function(){
 			///	<param name="name" type="string">CSS属性名。</param>
 			return this[0][name];
 		},
-		propertyName : "style",
 		set : function(name, value){
 			///	<summary>
 			///	设置集合中所有元素的CSS属性。
@@ -1242,6 +1244,10 @@ this.ChildrenCollection = (function(){
 	function ChildrenCollection(elementList){ };
 	ChildrenCollection = new NonstaticClass(ChildrenCollection, "jQun.ChildrenCollection", ElementPropertyCollection.prototype);
 
+	ChildrenCollection.override({
+		propertyName : "children"
+	});
+
 	ChildrenCollection.properties({
 		append : function(node){
 			///	<summary>
@@ -1268,7 +1274,6 @@ this.ChildrenCollection = (function(){
 			sources.insertTo.call([node], sources[0], _idx);
 			return this;
 		},
-		propertyName : "children",
 		remove : function(){
 			///	<summary>
 			///	移除所有子节点。
@@ -1291,6 +1296,10 @@ this.ClassListCollection = (function(){
 	function ClassListCollection(elementList){ };
 	ClassListCollection = new NonstaticClass(ClassListCollection, "jQun.ClassListCollection", ElementPropertyCollection.prototype);
 
+	ClassListCollection.override({
+		propertyName : "classList"
+	});
+
 	ClassListCollection.properties({
 		add : function(className){
 			///	<summary>
@@ -1311,7 +1320,6 @@ this.ClassListCollection = (function(){
 				return !classList.contains(className);
 			});
 		},
-		propertyName : "classList",
 		remove : function(className){
 			///	<summary>
 			///	为集合中每一个元素移除指定的单个class。

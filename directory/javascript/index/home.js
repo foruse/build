@@ -1,4 +1,4 @@
-﻿(function(Home, NonstaticClass, Panel, ChildPanel, OverflowPanel, Control, LoadingBar, BatchLoad, Global){
+﻿(function(Home, NonstaticClass, Panel, PagePanel, OverflowPanel, Control, LoadingBar, BatchLoad, Global){
 this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 	function Grouping(data){
 		this.combine(groupingHtml.create({
@@ -155,7 +155,7 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 	
 		new ScheduleContent.constructor(contentEl[0], calendar);
 	};
-	Schedule = new NonstaticClass(Schedule, null, ChildPanel.prototype);
+	Schedule = new NonstaticClass(Schedule, null, PagePanel.prototype);
 
 	Schedule.properties({
 		add : function(data){
@@ -179,7 +179,7 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 	].join(""))				
 ));
 
-this.Project = (function(Global){
+this.Project = (function(){
 	function Project(selector, html){
 		///	<summary>
 		///	项目。
@@ -229,13 +229,17 @@ this.Project = (function(Global){
 			}
 		});
 
-		Global.titleBar.show();
-
 		loadingBar.appendTo(this[0]);
 		new OverflowPanel(this.find(">ul"));
 		this.load();
 	};
-	Project = new NonstaticClass(Project, null, ChildPanel.prototype);
+	Project = new NonstaticClass(Project, null, PagePanel.prototype);
+
+	Project.override({
+		hideBackButton : true,
+		title : "MY PROJECTS 项目",
+		tools : []
+	});
 
 	Project.properties({
 		add : function(data){
@@ -285,9 +289,7 @@ this.Project = (function(Global){
 	});
 
 	return Project.constructor;
-}(
-	Bao.Page.Index.Share.Global
-));
+}());
 
 this.Partner = (function(Navigator, UserList, CallServer){
 	function Partner(selector, groupingHtml){
@@ -354,7 +356,7 @@ this.Partner = (function(Navigator, UserList, CallServer){
 
 		new OverflowPanel(this[0]);
 	};
-	Partner = new NonstaticClass(Partner, null, ChildPanel.prototype);
+	Partner = new NonstaticClass(Partner, null, PagePanel.prototype);
 
 	Partner.properties({
 		focus : function(groupId, _groupEl){
@@ -476,7 +478,7 @@ this.Tab = (function(focusTabEvent, blurTabEvent){
 	new jQun.Event("blurtab")
 ));
 
-this.SPP = (function(Tab, HTML, Global){
+this.SPP = (function(Tab, HTML){
 	function SPP(selector){
 		///	<summary>
 		///	日程、项目、拍档页。
@@ -502,8 +504,7 @@ this.SPP = (function(Tab, HTML, Global){
 	return SPP.constructor;
 }(
 	this.Tab,
-	jQun.HTML,
-	Bao.Page.Index.Share.Global
+	jQun.HTML
 ));
 
 Home.members(this);
@@ -512,10 +513,10 @@ Home.members(this);
 	Bao.Page.Index.Home,
 	jQun.NonstaticClass,
 	Bao.API.DOM.Panel,
-	Bao.API.DOM.ChildPanel,
+	Bao.API.DOM.PagePanel,
 	Bao.API.DOM.OverflowPanel,
 	Bao.UI.Control,
 	Bao.UI.Control.Wait.LoadingBar,
 	Bao.API.Data.BatchLoad,
-	Bao.Page.Index.Share.Global
+	Bao.Page.Index.Global
 ));

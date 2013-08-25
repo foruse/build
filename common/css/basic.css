@@ -12,10 +12,16 @@ body {
 	background-color : #f9f8f5;
 }
 
-body, button {
+body {
 	color : #454545;
 	font-size : 12px;
 	font-family : 微软雅黑;
+}
+
+button, input, textarea {
+	font-size : inherit;
+	line-height : inherit;
+	font-family : inherit;
 }
 
 script {

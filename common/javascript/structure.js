@@ -7,8 +7,8 @@ this.Bao = (function(Bao){
 				BatchLoad : null
 			}),
 			DOM : new Namespace().members({ // api/dom.js
-				ChildPanel : null,
 				EventCollection : null,
+				PagePanel : null,
 				Panel : null
 			}),
 			Management : new Namespace().members({ // api/management.js
@@ -20,21 +20,18 @@ this.Bao = (function(Bao){
 		}),
 		CallServer : null,
 		Page : new Namespace().members({
-			Index : new Namespace().members({ // ../../pertinence/javascript/index
-				Secondary : new Namespace({ // ../../pertinence/javascript/index/secondary.js
-					AddProject : null,
-					SecondaryPage : null
-				}),
-				Home : new Namespace({ // ../../pertinence/javascript/index/home.js
+			Index : new Namespace().members({ // ../../directoy/javascript/index
+				Home : new Namespace({ // ../../directoy/javascript/index/home.js
 					Partner : null,
 					Project : null,
 					SPP : null,
 					Schedule : null,
 					Tab : null
 				}),
-				Share : new Namespace({  // ../../pertinence/javascript/index/ahare.js
-					Global : null,
-					TitleBar : null
+				Global : null, // ../../directoy/javascript/index/global.js
+				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
+					AddProject : null,
+					SecondaryPage : null
 				})
 			})
 		}),
@@ -68,6 +65,9 @@ this.Bao = (function(Bao){
 				Wait : new Namespace().members({ // ui/control/wait.js
 					LoadingBar : null
 				})
+			}),
+			Fixed : new Namespace({ // ui/fixed.js
+				TitleBar : null
 			})
 		})
 	});

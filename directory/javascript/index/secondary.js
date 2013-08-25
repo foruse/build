@@ -1,9 +1,14 @@
-﻿(function(Secondary, NonstaticClass, ChildPanel){
+﻿(function(Secondary, NonstaticClass, PagePanel){
 this.AddProject = (function(){
-	function AddProject(selector){
-	
+	function AddProject(selector, colorHtml){
+		this.find('section[desc="color"] dd').innerHTML = colorHtml.render();
 	};
-	AddProject = new NonstaticClass(AddProject, "Bao.Page.Index.Secondary.AddProject", ChildPanel.prototype);
+	AddProject = new NonstaticClass(AddProject, "Bao.Page.Index.Secondary.AddProject", PagePanel.prototype);
+
+	AddProject.override({
+		backUrl : "project",
+		title : "添加项目"
+	});
 
 	AddProject.properties({
 	
@@ -17,5 +22,5 @@ Secondary.members(this);
 	{},
 	Bao.Page.Index.Secondary,
 	jQun.NonstaticClass,
-	Bao.API.DOM.ChildPanel
+	Bao.API.DOM.PagePanel
 ));

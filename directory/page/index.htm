@@ -125,32 +125,36 @@
 		</div>
 		<div class="secondary">
 			<article id="addProject">
-				<header></header>
-				<section>
-					<ul>
-						<li desc="user"></li>
-						<li desc="title">
-							<textarea placeholder="添加项目标题"></textarea>
-						</li>
-						<li class="inlineBlock" desc="color">
-							<span>标注颜色</span>
-							<p></p>
-							<script id="addProject_color_html" type="text/html">
-								@for(6 ->> idx){
-									<button projectcolor="idx"></button>
-								}
-							</script>
-						</li>
-						<li desc="content">
-							<dl>
-								<dd>
-									<textarea placeholder="添加项目内容"></textarea>
-								</dd>
-								<dt></dt>
-							</dl>
-						</li>
-					</ul>
+				<header class="lightBdColor"></header>
+				<section class="lightBdColor" desc="title">
+					<input type="text" placeholder="添加项目标题"/>
 				</section>
+				<section class="lightBdColor" desc="color">
+					<dl class="inlineBlock">
+						<dt>标注颜色</dt>
+						<dd></dd>
+					</dl>
+					<script id="addProject_color_html" type="text/html">
+						@for([
+							"projectColor_orange",
+							"projectColor_BY",
+							"projectColor_BG",
+							"projectColor_blue",
+							"projectColor_BR",
+							"projectColor_purple"
+						] ->> color){
+							<button class="{color}"></button>
+						}
+					</script>
+				</section>
+				<footer class="lightBdColor">
+					<dl>
+						<dd>
+							<textarea placeholder="添加项目内容"></textarea>
+						</dd>
+						<dt></dt>
+					</dl>
+				</footer>
 			</article>
 		</div>
 	</div>
@@ -163,12 +167,13 @@
 	<script src="../../common/javascript/api/data.js" type="text/javascript"></script>
 	<script src="../../common/javascript/api/dom.js" type="text/javascript"></script>
 
+	<script src="../../common/javascript/ui/fixed.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/drag.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/list.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/wait.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/time.js" type="text/javascript"></script>
 
-	<script src="../javascript/index/share.js" type="text/javascript"></script>
+	<script src="../javascript/index/global.js" type="text/javascript"></script>
 	<script src="../javascript/index/home.js" type="text/javascript"></script>
 	<script src="../javascript/index/secondary.js" type="text/javascript"></script>
 

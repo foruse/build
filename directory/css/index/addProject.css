@@ -1,0 +1,50 @@
+﻿#addProject {
+	font-size : 14px;
+	padding : 10px;
+}
+#addProject > * {
+	height : 45px;
+	line-height : 25px;
+	border-radius : 5px;
+	margin-top : 5px;
+	padding : 10px;
+	overflow : hidden;
+	background-color : #fff;
+}
+#addProject > *:first-child {
+	margin-top : 0;
+}
+#addProject textarea, #addProject input {
+	display : block;
+	border : 0 none;
+	height : 100%;
+	width : 100%;
+}
+#addProject > section.inlineBlock > * {
+	font-size : 14px;
+}
+#addProject > section dt {
+	color : #a9a9a9;
+	width : 25%;
+}
+#addProject > section dd {
+	width : 75%;
+	text-align : center;
+}
+#addProject > section button {
+	width : 22px;
+	height : 22px;
+	border : 0 none;
+	border-radius : 22px;
+	margin-right : 10px;
+}
+#addProject > footer {
+	height : auto;
+}
+#addProject > footer dl {
+	
+}
+#addProject > footer textarea {
+	max-height : 105px;
+	min-height : 105px;
+}

@@ -5,7 +5,7 @@ this.Loader = (function(Storage, Index, HTML){
 
 	Loader.properties({
 		addProject : function(){
-			return new Index.Secondary.AddProject("#addProject");
+			return new Index.Secondary.AddProject("#addProject", new HTML("addProject_color_html", true));
 		},
 		load : function(name){
 			var pagePanel = this.pageStorage.get(name);

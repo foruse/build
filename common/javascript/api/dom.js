@@ -157,26 +157,53 @@ this.Panel = (function(HTMLElementList){
 	jQun.HTMLElementList
 ));
 
-this.ChildPanel = (function(Panel){
-	function ChildPanel(selector){};
-	ChildPanel = new NonstaticClass(ChildPanel, "Bao.API.DOM.ChildPanel", Panel.prototype);
+this.PagePanel = (function(Panel, showPanelEvent, hidePanelEvent){
+	function PagePanel(selector){};
+	PagePanel = new NonstaticClass(PagePanel, "Bao.API.DOM.PagePanel", Panel.prototype);
 
-	ChildPanel.override({
+	PagePanel.properties({
+		backUrl : "",
+		hideBackButton : false,
+		showTitleBar : true,
+		title : "",
+		tools : undefined
+	});
+
+	PagePanel.override({
 		hide : function(){
 			this.parent().hide();
-			
-			return Panel.prototype.hide.apply(this, arguments);
+			Panel.prototype.hide.apply(this, arguments);
+
+			hidePanelEvent.setEventAttrs({
+				currentPanel : this
+			});
+			hidePanelEvent.trigger(this[0]);
+
+			return this;
 		},
 		show : function(){
 			this.parent().show();
+			Panel.prototype.show.apply(this, arguments);
+			showPanelEvent.setEventAttrs({
+				currentPanel : this
+			});
+			showPanelEvent.trigger(this[0]);
 			
-			return Panel.prototype.show.apply(this, arguments);
+			return this;
 		}
 	});
 
-	return ChildPanel.constructor;
+	return PagePanel.constructor;
 }(
-	this.Panel
+	this.Panel,
+	// showPanelEvent
+	new Event("showpanel", function(){
+		this.attachTo("*");
+	}),
+	// hidePanelEvent
+	new Event("hidepanel", function(){
+		this.attachTo("*");
+	})
 ));
 
 this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder){
