@@ -1925,7 +1925,7 @@ this.Event = (function(attach, define){
 	jQun.define
 ));
 
-this.HTML = (function(HTMLElementList, sRegx, fRegx, rRegx, tReplace){
+this.HTML = (function(HTMLElementList, sRegx, fRegx, tReplace){
 	function HTML(str, _isId){
 		///	<summary>
 		///	html模板。
@@ -1973,9 +1973,8 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, rRegx, tReplace){
 			// 替换for循环的结束标识“}”
 			.split("}").join("');}, this);this.push('")
 			// 替换临时产生的大括号
-			.replace(rRegx, function(str){
-				return str === "\n" ? "}" : "{";
-			})
+			.split("\t").join("{")
+			.split("\n").join("}")
 		);
 
 		arr.push("');return this.join('');}.call([]");
@@ -2033,8 +2032,6 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, rRegx, tReplace){
 	/[\r\t\n]/g,
 	// fRegx => for(查找for语句)
 	/@for\s*\(([\s\S]+?)(?:\s*->>\s*([\s\S]+?))*?\)\s*\{/g,
-	// rRegx => restore(查找for语句参数里面转义的大括号)
-	/[\t\n]/g,
 	// tReplace
 	this.Text.prototype.replace
 ));
