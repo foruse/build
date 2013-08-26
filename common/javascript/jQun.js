@@ -1953,7 +1953,7 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, tReplace){
 							condition.split("{").join("\t").split("}").join("\n"),
 							", function(" + (i || "") + ")\t this.push('"
 						].join("");
-				})
+					})
 			}, function(str, modifier, word){
 				if(modifier === ":"){
 					return "\t" + word + "\n";

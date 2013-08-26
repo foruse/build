@@ -182,7 +182,10 @@ this.UserSelectionList = (function(UserList, html){
 			_userData = [];
 		}
 
-		userList.render();
+		this.render(_userData.concat([
+			{ id : -1, avatar : "", name : "addUser" },
+			{ id : -1, avatar : "", name : "delUser" }
+		]));
 	};
 	UserSelectionList = new NonstaticClass(UserSelectionList, "Bao.UI.Control.List.UserSelectionList", UserList.prototype);
 

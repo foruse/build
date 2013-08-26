@@ -162,10 +162,19 @@ this.PagePanel = (function(Panel, showPanelEvent, hidePanelEvent){
 	PagePanel = new NonstaticClass(PagePanel, "Bao.API.DOM.PagePanel", Panel.prototype);
 
 	PagePanel.properties({
+		// 返回按钮的连接
 		backUrl : "",
+		// 是否隐藏返回按钮
 		hideBackButton : false,
+		// 该panel是否是无痕的
+		isNoTraces : false,
+		// 在无痕的情况下所执行的还原函数
+		restore : undefined,
+		// 是否显示标题栏
 		showTitleBar : true,
+		// 标题
 		title : "",
+		// 工具
 		tools : undefined
 	});
 
@@ -183,7 +192,13 @@ this.PagePanel = (function(Panel, showPanelEvent, hidePanelEvent){
 		},
 		show : function(){
 			this.parent().show();
+
+			if(this.isNoTraces){
+				this.restore();
+			}
+
 			Panel.prototype.show.apply(this, arguments);
+
 			showPanelEvent.setEventAttrs({
 				currentPanel : this
 			});

@@ -1,12 +1,13 @@
 ﻿(function(Secondary, NonstaticClass, PagePanel){
-this.AddProject = (function(){
+this.AddProject = (function(UserSelectionList){
 	function AddProject(selector, colorHtml){
 		var addProject = this;
 
-		this.find('section[desc="color"] dd').innerHTML = colorHtml.render();
+		this.assign({
+			colorHtml : colorHtml,
+			userSelectionList : new UserSelectionList()
+		});
 
-		this.initHtml = this.innerHTML;
-		
 		this.attach({
 			userclick : function(e){
 				var targetEl = jQun(e.target);
@@ -17,25 +18,34 @@ this.AddProject = (function(){
 				}
 			}
 		});
+
+		this.userSelectionList.appendTo(this.find(">header")[0]);
 	};
 	AddProject = new NonstaticClass(AddProject, "Bao.Page.Index.Secondary.AddProject", PagePanel.prototype);
 
 	AddProject.override({
 		backUrl : "project",
+		restore : function(){
+			// 还原标题
+			this.find(">section input").value = "";
+			// 还原颜色
+			this.find('>section[desc="color"] dd').innerHTML = this.colorHtml.render();
+			this.find(">footer textarea").value = "";
+		},
 		title : "添加项目",
-		tools : [{ backUrl : "javascript:void(0);", action : "submit" }],
-		show : function(){
-			this.innerHTML = this.initHtml;
-			this.parentClass().show.call(this);
-		}
+		isNoTraces : true,
+		tools : [{ backUrl : "javascript:void(0);", action : "submit" }]
 	});
 
 	AddProject.properties({
-		initHtml : ""
+		colorHtml : undefined,
+		userSelectionList : undefined
 	});
 
 	return AddProject.constructor;
-}());
+}(
+	Bao.UI.Control.List.UserSelectionList
+));
 
 Secondary.members(this);
 }.call(
