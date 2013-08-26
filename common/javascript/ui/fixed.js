@@ -16,9 +16,18 @@ this.TitleBar = (function(){
 			toolsPanel : this.find(">ul")
 		});
 
-		this.find(">nav>button").attach({
-			userclick : function(){
-				history.go(titleBar.redirect);
+		this.attach({
+			userclick : function(e){
+				var targetEl = jQun(e.target);
+
+				if(targetEl.between("button", this).length > 0){
+					var backUrl = targetEl.get("backurl", "attr");
+
+					if(backUrl === "javascript:void(0);")
+						return;
+
+					history.go(backUrl);
+				}
 			}
 		});
 
@@ -52,13 +61,12 @@ this.TitleBar = (function(){
 
 	TitleBar.properties({
 		backButtonEl : undefined,
-		backUrl : "project",
 		resetBackUrl : function(backUrl){
 			///	<summary>
 			///	重新回退链接。
 			///	</summary>
 			///	<param name="backUrl" type="string">链接。</param>
-			this.backUrl = backUrl;
+			this.backButtonEl.set("backurl", backUrl, "attr");
 		},
 		resetTitle : function(title){
 			///	<summary>

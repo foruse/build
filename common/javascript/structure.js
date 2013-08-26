@@ -57,7 +57,9 @@ this.Bao = (function(Bao){
 					AnchorList : null,
 					ProjectAnchorList : null,
 					UserAnchorList : null,
-					UserList : null
+					UserIndexList : null,
+					UserList : null,
+					UserSelectionList : null
 				}),
 				Time : new Namespace().members({ // ui/control/time.js
 					Calendar : null

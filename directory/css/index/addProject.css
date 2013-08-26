@@ -1,4 +1,9 @@
-﻿#addProject {
+﻿#titleBar button[action="submit"] {
+	background-color : #ffc000;
+	background : #ffc000 url(../../../common/image/width24.png) no-repeat 7px -118px;
+}
+
+#addProject {
 	font-size : 14px;
 	padding : 10px;
 }
@@ -23,6 +28,9 @@
 #addProject > section.inlineBlock > * {
 	font-size : 14px;
 }
+#addProject > section > dl, #addProject > section dd {
+	height : 100%;
+}
 #addProject > section dt {
 	color : #a9a9a9;
 	width : 25%;
@@ -38,13 +46,27 @@
 	border-radius : 22px;
 	margin-right : 10px;
 }
+#addProject > section button:last-child {
+	margin-right : 0;
+}
+#addProject > section button.selected {
+	width : 30px;
+	height : 30px;
+	padding : 3px;
+	border-radius : 30px;
+	background-clip : content-box;
+	border : 1px solid;
+	margin : -4px 6px -4px -4px;
+}
+#addProject > section button.selected:last-child {
+	margin-right : -4px;
+}
 #addProject > footer {
 	height : auto;
-}
-#addProject > footer dl {
-	
 }
 #addProject > footer textarea {
 	max-height : 105px;
 	min-height : 105px;
+	max-width : 100%;
+	min-width : 100%;
 }

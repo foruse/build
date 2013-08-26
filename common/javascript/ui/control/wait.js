@@ -54,13 +54,13 @@ this.LoadingBar = (function(Timer, html){
 		hide : function(){
 			this.isLoading = false;
 			this.clearText();
-			this.getParentClass().hide.call(this);
+			this.parentClass().hide.call(this);
 			this.timer.stop();
 		},
 		show : function(){
 			this.isLoading = true;
 			this.text("", "loading");
-			this.getParentClass().show.call(this);
+			this.parentClass().show.call(this);
 			
 			this.timer.start(function(){
 				this.error(this.errorText);

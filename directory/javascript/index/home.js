@@ -291,9 +291,9 @@ this.Project = (function(){
 	return Project.constructor;
 }());
 
-this.Partner = (function(Navigator, UserList, CallServer){
+this.Partner = (function(Navigator, UserIndexList, CallServer){
 	function Partner(selector, groupingHtml){
-		var userList, groupPanel,
+		var userIndexList, groupPanel,
 
 			partner = this, panelStyle = this.style,
 
@@ -303,13 +303,13 @@ this.Partner = (function(Navigator, UserList, CallServer){
 
 
 		// 初始化用户列表
-		userList = new UserList(function(top){
+		userIndexList = new UserIndexList(function(top){
 			panelStyle.top = top + "px";
 		});
 
 		this.assign({
 			loadingBar : loadingBar,
-			userList : userList
+			userIndexList : userIndexList
 		});
 
 		// 添加loadingBar
@@ -336,7 +336,7 @@ this.Partner = (function(Navigator, UserList, CallServer){
 			}
 		});
 
-		userList.appendTo(this.find(">ul>li:last-child")[0]);
+		userIndexList.appendTo(this.find(">ul>li:last-child")[0]);
 		loadingBar.show();
 
 		// 获取分组数据
@@ -379,22 +379,22 @@ this.Partner = (function(Navigator, UserList, CallServer){
 				return;	
 			}
 
-			var userList = this.userList, loadingBar = this.loadingBar;
+			var userIndexList = this.userIndexList, loadingBar = this.loadingBar;
 
 			// 聚焦当前分组
 			this.find('.group button.focused').classList.remove("focused");
 			_groupEl.classList.add("focused");
 			this.set("top", 0, "css");
 
-			userList.hide();
+			userIndexList.hide();
 			loadingBar.show();
 
 			// 还没当前分组的数据，那么就去取数据，再进行加载
 			CallServer.open("getPartners", { groupId : groupId }, function(data){
 				loadingBar.hide();
 				// 渲染数据
-				userList.render(data);
-				userList.show();
+				userIndexList.refresh(data);
+				userIndexList.show();
 
 				// 防止用户快速切换分组导致数据错误
 				if(classList.contains("focused"))
@@ -404,13 +404,13 @@ this.Partner = (function(Navigator, UserList, CallServer){
 			});
 		},
 		loadingBar : undefined,
-		userList : undefined
+		userIndexList : undefined
 	});
 
 	return Partner.constructor;
 }(
 	Control.Drag.Navigator,
-	Control.List.UserList,
+	Control.List.UserIndexList,
 	Bao.CallServer
 ));
 

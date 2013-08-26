@@ -24,6 +24,10 @@ button, input, textarea {
 	font-family : inherit;
 }
 
+textarea, input {
+	-webkit-user-select : auto;
+}
+
 script {
 	display : none !important;
 }

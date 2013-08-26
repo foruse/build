@@ -25,7 +25,7 @@ this.Global = (function(TitleBar, History, Scroll, HTML){
 			// 初始化滚动条
 			new Scroll();
 
-			history.go("project");
+			history.go("addProject");
 		};
 	};
 	Global = new StaticClass(Global, "Bao.Page.Index.Global", {

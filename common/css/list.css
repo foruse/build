@@ -60,18 +60,32 @@
 }
 
 
-.userList {
+.userList figure {
+	width : 72px;
+	padding-bottom : 22px;
+}
+.userList figure img {
+	margin : 0 auto;
+	width : 65px;
+	height : 65px;
+	border-radius : 65px;
+	border : 2px solid rgba(255, 255, 255, 0.5);
+	box-shadow : 0 0 3px rgba(8, 1, 3, 0.75);
+}
+
+
+.userIndexList {
 	padding-right : 15px;
 }
-.userList > ol > li {
+.userIndexList > ol > li {
 	padding-top : 2px;
 }
-.userList dt {
+.userIndexList dt {
 	padding-top : 6px;
 	height : 22px;
 	overflow : hidden;
 }
-.userList strong {
+.userIndexList strong {
 	padding : 0 25px 0 1em;
 	text-indent : -1em;
 	text-shadow : -2px 0 1px rgba(0, 0, 0, 0.4);
@@ -86,25 +100,13 @@
 	background-image : -webkit-linear-gradient(top, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5) 50%);
 	background-clip : content-box;
 }
-.userList figure {
-	width : 72px;
-	padding-bottom : 22px;
-}
-.userList figure img {
-	margin : 0 auto;
-	width : 65px;
-	height : 65px;
-	border-radius : 65px;
-	border : 2px solid rgba(255, 255, 255, 0.5);
-	box-shadow : 0 0 3px rgba(8, 1, 3, 0.75);
-}
-.userList figcaption {
+.userIndexList figcaption {
 	margin-top : 10px;
 	text-align : center;
 	text-overflow : ellipsis;
 	overflow : hidden;
 }
-.userList aside {
+.userIndexList aside {
 	width : 11px;
 	height : 338px;
 	position : fixed;
@@ -112,15 +114,15 @@
 	top : 88px;
 	color : #6a737d;
 }
-.userList ol {
+.userIndexList ol {
 	-webkit-column-count : auto;
 }
-.userList aside li {
+.userIndexList aside li {
 	text-align : center;
 	font-weight : bold;
 	font-size : 10px;
 	line-height : 12px;
 }
-.userList aside li[idx="-1"] {
+.userIndexList aside li[idx="-1"] {
 	font-weight : normal;
 }

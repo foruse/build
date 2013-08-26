@@ -30,7 +30,7 @@ this.Scroll = (function(html){
 			});
 
 			this.find(">button").height((rect.height * 100 / overflowEl.height()) + "%");
-			this.getParentClass().show.call(this);
+			this.parentClass().show.call(this);
 		}
 	});
 

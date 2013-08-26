@@ -218,7 +218,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				///	子类访问父类。
 				///	</summary>
 				///	<param name="args" type="*">子类的参数列表。</param>
-				var ParentClass = this.getParentClass();
+				var ParentClass = this.parentClass();
 
 				if(ParentClass.constructor === jQun)
 					return;
@@ -234,7 +234,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 						break;
 
 					parentList.unshift(ParentClass);
-					ParentClass = ParentClass.getParentClass();
+					ParentClass = ParentClass.parentClass();
 				}
 
 				forEach(parentList, function(parent){
@@ -290,7 +290,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				});
 
 				Pseudo.prototype = Object.create(
-					_ParentClass || this.getOwnClass(),
+					_ParentClass || this.ownClass(),
 					{
 						constructor : {
 							value : Pseudo,
@@ -302,18 +302,6 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				return Pseudo.prototype;
 			},
 			empty : function(){ },
-			getOwnClass : function(){
-				///	<summary>
-				///	获取自身类。
-				///	</summary>
-				return this.constructor.prototype;
-			},
-			getParentClass : function(){
-				///	<summary>
-				///	获取父类。
-				///	</summary>
-				return Object.getPrototypeOf(this.constructor.prototype);
-			},
 			isChildOf : function(AncestorClass){
 				///	<summary>
 				///	判断该类是否是指定类的子孙类。
@@ -328,6 +316,18 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
 				///	<param name="_descriptor" type="object">被添加或修改属性的描述符。</param>
 				return this.properties(properties, _descriptor);
+			},
+			ownClass : function(){
+				///	<summary>
+				///	获取自身类。
+				///	</summary>
+				return this.constructor.prototype;
+			},
+			parentClass : function(){
+				///	<summary>
+				///	获取父类。
+				///	</summary>
+				return Object.getPrototypeOf(this.constructor.prototype);
 			},
 			properties : function(properties, _descriptor){
 				///	<summary>
@@ -409,7 +409,7 @@ this.NonstaticClass = NonstaticClass = (function(){
 		///	<param name="_constructor" type="function">源构造函数。</param>
 		///	<param name="_name" type="string">构造函数的名称。</param>
 		///	<param name="_ParentClass" type="function">需要继承的父类</param>
-		return new jQun(_constructor, _name, _ParentClass || this.getOwnClass());
+		return new jQun(_constructor, _name, _ParentClass || this.ownClass());
 	};
 	NonstaticClass = new jQun(NonstaticClass, "NonstaticClass");
 
@@ -425,7 +425,7 @@ this.StaticClass = StaticClass = (function(){
 		///	<param name="_name" type="string">构造函数的名称。</param>
 		///	<param name="_properties" type="object">类的属性。</param>
 		///	<param name="_descriptor" type="object, array">被添加属性的描述符。</param>
-		var NewClass = new jQun(_constructor, _name, this.getOwnClass());
+		var NewClass = new jQun(_constructor, _name, this.ownClass());
 
 		NewClass.properties({
 			base : undefined
@@ -1934,16 +1934,14 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, rRegx, tReplace){
 		///	<param name="_isId" type="boolean">给定的字符串是否为id。</param>
 
 		// 此类代码还需优化
-		var arr = [], variables = {},
-
-			html = _isId === true ? new HTMLElementList("#" + str).innerHTML : str;
+		var arr = [], variables = {};
 
 		arr.push("with(this){ return (function(", "undefined){ this.push('");
 
 		arr.push(
 			// 使用Text类的replace替换参数
 			tReplace.call({
-				text : html
+				text : (_isId === true ? new HTMLElementList("#" + str).innerHTML : str)
 					// 给单引号加保护
 					.split("'").join("\\'")
 					// 替换掉特殊的空白字符
