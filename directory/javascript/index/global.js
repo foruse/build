@@ -1,5 +1,5 @@
 ﻿(function(Index, StaticClass){
-this.Global = (function(TitleBar, History, Scroll, HTML){
+this.Global = (function(Mask, TitleBar, History, Scroll, HTML){
 	function Global(){
 		///	<summary>
 		///	全局类，用于存储页面中的一些全局属性。
@@ -14,6 +14,7 @@ this.Global = (function(TitleBar, History, Scroll, HTML){
 
 			Global.assign({
 				history :　history,
+				mask : new Mask("#mask"),
 				// 初始化标题栏
 				titleBar : new TitleBar(
 					"#titleBar",
@@ -24,7 +25,7 @@ this.Global = (function(TitleBar, History, Scroll, HTML){
 
 			// 初始化滚动条
 			new Scroll();
-
+			// 跳转到指定页
 			history.go("addProject");
 		};
 	};
@@ -35,6 +36,7 @@ this.Global = (function(TitleBar, History, Scroll, HTML){
 
 	return Global;
 }(
+	Bao.UI.Fixed.Mask,
 	Bao.UI.Fixed.TitleBar,
 	Bao.API.Management.History,
 	Bao.UI.Control.Drag.Scroll,

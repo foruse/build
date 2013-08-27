@@ -1,10 +1,9 @@
 ﻿(function(Wait, NonstaticClass, Panel, HTML){
 this.LoadingBar = (function(Timer, html){
-	function LoadingBar(panelEl, _timeout, _errorText){
+	function LoadingBar(_timeout, _errorText){
 		///	<summary>
 		///	加载类。
 		///	</summary>
-		/// <param name="panelEl" type="jQun.HTMLElementList">需要加入加载条的容器</param>
 		this.assign({
 			errorText : _errorText ? _errorText : this.errorText,
 			timer : new Timer(_timeout || 30000)

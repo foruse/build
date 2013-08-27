@@ -188,7 +188,7 @@ this.Project = (function(){
 		/// <param name="html" type="jQun.HTML">项目html模板</param>
 		var project = this,
 
-			loadingBar = new LoadingBar(this),
+			loadingBar = new LoadingBar(),
 
 			batchLoad = new BatchLoad("getProjects", function(data){
 				loadingBar.hide();
@@ -297,15 +297,13 @@ this.Partner = (function(Navigator, UserIndexList, CallServer){
 
 			partner = this, panelStyle = this.style,
 
-			loadingBar = new LoadingBar(this),
+			loadingBar = new LoadingBar(),
 
 			navigator = new Navigator();
 
 
 		// 初始化用户列表
-		userIndexList = new UserIndexList(function(top){
-			panelStyle.top = top + "px";
-		});
+		userIndexList = new UserIndexList();
 
 		this.assign({
 			loadingBar : loadingBar,
@@ -353,8 +351,6 @@ this.Partner = (function(Navigator, UserIndexList, CallServer){
 
 			partner.focus(groups[0].id);
 		});
-
-		new OverflowPanel(this[0]);
 	};
 	Partner = new NonstaticClass(Partner, null, PagePanel.prototype);
 

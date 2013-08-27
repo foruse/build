@@ -69,6 +69,7 @@ this.Bao = (function(Bao){
 				})
 			}),
 			Fixed : new Namespace({ // ui/fixed.js
+				Mask : null,
 				TitleBar : null
 			})
 		})

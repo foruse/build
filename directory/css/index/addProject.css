@@ -22,9 +22,7 @@
 #addProject > header {
 	height : auto;
 }
-#addProject > header figcaption {
-	display : none;
-}
+
 #addProject textarea, #addProject input {
 	display : block;
 	border : 0 none;

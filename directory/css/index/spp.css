@@ -158,16 +158,15 @@
 	display : none;
 }
 
-
-#partner {
-	
-}
 #partner > ul > li {
 	position : relative;
 	z-index : 2;
 }
 #partner > ul > li:last-child {
 	z-index : 0;
+	position : absolute;
+	top : 38px;
+	bottom : 0;
 }
 #partner .group dt {
 	position : fixed;

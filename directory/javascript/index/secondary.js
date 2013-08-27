@@ -1,11 +1,11 @@
 ﻿(function(Secondary, NonstaticClass, PagePanel){
-this.AddProject = (function(UserSelectionList){
+this.AddProject = (function(Global, UserSelectionList){
 	function AddProject(selector, colorHtml){
 		var addProject = this;
 
 		this.assign({
 			colorHtml : colorHtml,
-			userSelectionList : new UserSelectionList()
+			userSelectionList : new UserSelectionList("添加项目拍档", Global.mask)
 		});
 
 		this.attach({
@@ -44,6 +44,7 @@ this.AddProject = (function(UserSelectionList){
 
 	return AddProject.constructor;
 }(
+	Bao.Page.Index.Global,
 	Bao.UI.Control.List.UserSelectionList
 ));
 

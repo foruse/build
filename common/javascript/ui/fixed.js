@@ -1,4 +1,40 @@
 ﻿(function(Fixed, NonstaticClass, Panel){
+this.Mask = (function(){
+	function Mask(selector){};
+	Mask = new NonstaticClass(Mask, "Bao.UI.Fixed.Mask", Panel.prototype);
+
+	Mask.override({
+		fill : function(el){
+			///	<summary>
+			///	填充内容元素。
+			///	</summary>
+			///	<param name="el" type="element">内容元素。</param>
+			var articleEl = this.find(">article");
+
+			articleEl.innerHTML = "";
+			articleEl.children.append(el);
+		},
+		fillHtml : function(html){
+			///	<summary>
+			///	填充内容html。
+			///	</summary>
+			///	<param name="html" type="string">内容html。</param>
+			this.find(">article").innerHTML = html;
+		},
+		show : function(action){
+			///	<summary>
+			///	显示元素。
+			///	</summary>
+			///	<param name="action" type="string">遮罩的活动属性。</param>
+			this.set("action", action || "none", "attr");
+
+			return Panel.prototype.show.call(this);
+		}
+	});
+
+	return Mask.constructor;
+}());
+
 this.TitleBar = (function(){
 	function TitleBar(selector, history, toolsHtml){
 		///	<summary>

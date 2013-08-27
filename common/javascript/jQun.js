@@ -1,8 +1,9 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.5.0
- *  本次修改：Event.attachTo支持单个元素；开放RequestStorage类，并更名为Storage类，用于数据操作。
+ *  文档状态：1.0.5.1
+ *  本次修改：基类的assign方法修改，不支持未定义的值，目的是减少赋值的保护判断：
+ *			 当赋值的时候，如果值为undefined，则跳过，进行下个属性的赋值
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
  */
 
@@ -179,9 +180,9 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				///	</summary>
 				///	<param name="obj" type="object">需要添加或修改属性的对象。</param>
 				///	<param name="properties" type="object">需要添加或修改的属性集合。</param>
-				for(var name in properties){
-					obj[name] = properties[name];
-				}
+				forEach(properties, function(val, name){
+					obj[name] = val;
+				});
 
 				return obj;
 			},
@@ -211,7 +212,15 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				///	给该类的属性赋值。
 				///	</summary>
 				///	<param name="properties" type="object">包含一个或多个属性的键值对。</param>
-				return set(this, properties);
+				forEach(properties, function(val, name){
+					if(val === undefined){
+						return;
+					}
+
+					this[name] = val;
+				}, this);
+
+				return this;
 			},
 			base : function(args){
 				///	<summary>
