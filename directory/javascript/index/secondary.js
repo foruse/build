@@ -1,11 +1,11 @@
 ﻿(function(Secondary, NonstaticClass, PagePanel){
-this.AddProject = (function(Global, UserSelectionList){
+this.AddProject = (function(Global, UserManagementList){
 	function AddProject(selector, colorHtml){
 		var addProject = this;
 
 		this.assign({
 			colorHtml : colorHtml,
-			userSelectionList : new UserSelectionList("添加项目拍档", Global.mask)
+			userManagementList : new UserManagementList("添加项目拍档", Global.mask)
 		});
 
 		this.attach({
@@ -19,7 +19,7 @@ this.AddProject = (function(Global, UserSelectionList){
 			}
 		});
 
-		this.userSelectionList.appendTo(this.find(">header")[0]);
+		this.userManagementList.appendTo(this.find(">header")[0]);
 	};
 	AddProject = new NonstaticClass(AddProject, "Bao.Page.Index.Secondary.AddProject", PagePanel.prototype);
 
@@ -39,13 +39,13 @@ this.AddProject = (function(Global, UserSelectionList){
 
 	AddProject.properties({
 		colorHtml : undefined,
-		userSelectionList : undefined
+		userManagementList : undefined
 	});
 
 	return AddProject.constructor;
 }(
 	Bao.Page.Index.Global,
-	Bao.UI.Control.List.UserSelectionList
+	Bao.UI.Control.List.UserManagementList
 ));
 
 Secondary.members(this);

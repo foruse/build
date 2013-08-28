@@ -70,18 +70,41 @@ this.ProjectAnchorList = (function(AnchorList, levelHtml){
 
 this.UserList = (function(panelHtml, userListHtml){
 	function UserList(_avatarSize){
+		///	<summary>
+		///	用户列表。
+		///	</summary>
 		this.assign({
 			avatarSize : _avatarSize
 		});
 		
 		this.combine(panelHtml.create());
+		this.classList.add(_avatarSize + "Avatar");
 	};
 	UserList = new NonstaticClass(UserList, "Bao.UI.Control.UserList", Panel.prototype);
 
 	UserList.properties({
+		addUsers : function(users){
+			users = users.concat([]);
+
+			users.forEach(function(user, i){
+				if(this.find('figure[userid="' + user.id + '"]').length === 0)
+					return;
+
+				users.splice(i, 1);
+			}, this);
+
+			userListHtml.create({
+				users : users,
+				avatarSize : this.avatarSize
+			}).appendTo(this[0]);
+		},
 		avatarSize : "large",
-		render : function(users){
-			this.innerHTML = userListHtml.render({ users : users, avatarSize : this.avatarSize });
+		delUser : function(id){
+			this.find('>figure[userid="' + id + '"]').remove();
+		},
+		refresh : function(users){
+			this.innerHTML = "";
+			this.addUsers(users);
 
 			return this;
 		}
@@ -94,7 +117,7 @@ this.UserList = (function(panelHtml, userListHtml){
 	// userListHtml
 	new HTML([
 		'@for(users ->> u){',
-			'<figure id="{u.id}">',
+			'<figure userid="{u.id}">',
 				'<p class="{avatarSize}AvatarPanel">',
 					'<img src="{u.avatar}" />',
 				'</p>',
@@ -105,7 +128,7 @@ this.UserList = (function(panelHtml, userListHtml){
 ));
 
 this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
-	function UserIndexList(onletter){
+	function UserIndexList(){
 		///	<summary>
 		///	用户索引列表。
 		///	</summary>
@@ -136,15 +159,16 @@ this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
 	UserIndexList = new NonstaticClass(UserIndexList, "Bao.UI.Control.UserIndexList", Panel.prototype);
 
 	UserIndexList.properties({
-		refresh : function(data){
+		refresh : function(data, _avatarSize){
 			///	<summary>
 			///	渲染数据。
 			///	</summary>
 			/// <param name="data" type="*">用户数据</param>
+			/// <param name="_avatarSize" type="string">头像大小</param>
 			this.innerHTML = listHtml.render(data);
 
 			data.userListCollection.forEach(function(userList){
-				new UserList().render(userList.users).appendTo(
+				new UserList(_avatarSize).refresh(userList.users).appendTo(
 					this.find('li[letter="' + userList.firstLetter + '"] dd')[0]
 				);
 			}, this);
@@ -185,84 +209,176 @@ this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
 	].join(""))
 ));
 
-this.UserSelectionList = (function(UserList, UserIndexList, LoadingBar, CallServer, fillHtml){
-	function UserSelectionList(text, mask, _userData){
+this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, selectUsersHtml, clickButtonEvent){
+	function UserSelectionList(text){
 		///	<summary>
 		///	用户选择列表。
 		///	</summary>
-		/// <param name="mask" type="Bao.UI.Fixed.Mask">遮罩</param>
-		/// <param name="_userData" type="array">用户数据</param>
-		var userSectionList = this, loadingBar = new LoadingBar();
+		/// <param name="text" type="string">标题</param>
+		var loadingBar = new LoadingBar(), userIndexList = new UserIndexList();
 
-		this.assign({
-			text : text
+		this.combine(selectUsersHtml.create({ text : text }));
+
+		// 将loadingBar添加至userIndexList
+		loadingBar.appendTo(userIndexList[0]);
+		// 显示loadingBar
+		loadingBar.show();
+		// 将userIndexList添加至fillEl
+		userIndexList.appendTo(this.find(">article")[0]);
+		
+		userIndexList.attach({
+			userclick : function(e){
+				var el, targetEl = jQun(e.target);
+
+				el = targetEl.between(">ol figure>p", this);
+
+				if(el.length > 0){
+					el.classList.toggle("selected");
+				}
+			}
 		});
-
-		if(!_userData){
-			_userData = [];
-		}
-
-		this.classList.add("userSelectionList");
-
-		this.render(_userData.concat([
-			{ id : -1, avatar : "", name : "addUser" },
-			{ id : -1, avatar : "", name : "delUser" }
-		]));
 
 		this.attach({
 			userclick : function(e){
 				var targetEl = jQun(e.target);
 
-				if(targetEl.between('>figure[id="-1"]:nth-child(1)', this).length > 0){
-					var fillEl = fillHtml.create({ text : userSectionList.text }),
-						
-						loadingBar = new LoadingBar(), userIndexList = new UserIndexList();
+				if(targetEl.between(">*>button", this).length > 0){
+					var users = [];
 
-					// 将loadingBar添加至userIndexList
-					loadingBar.appendTo(userIndexList[0]);
-					// 显示loadingBar
-					loadingBar.show();
-					// 将userIndexList添加至fillEl
-					userIndexList.appendTo(fillEl.find(">dl>dd")[0]);
-					// 遮罩填充元素并显示
-					mask.fill(fillEl[0]);
-					mask.show("selectUser");
+					userIndexList.find(">ol figure>p.selected").forEach(function(element){
+						var parentEl = jQun(element).parent();
 
-					CallServer.open("getPartners", { groupId : -1 }, function(data){
-						loadingBar.hide();
-						userIndexList.refresh(data);
+						users.push({
+							id : parentEl.get("userid", "attr"),
+							avatar : parentEl.find("img").src,
+							name : parentEl.find(">figcaption").innerHTML,
+						});
 					});
+
+					clickButtonEvent.setEventAttrs({
+						users : users,
+						buttonType : targetEl.get("action", "attr")
+					});
+					clickButtonEvent.trigger(this);
 				}
 			}
 		});
+
+		CallServer.open("getPartners", { groupId : -1 }, function(data){
+			loadingBar.hide();
+			userIndexList.refresh(data, "normal");
+		});
 	};
-	UserSelectionList = new NonstaticClass(UserSelectionList, "Bao.UI.Control.List.UserSelectionList", UserList.prototype);
-
-	UserSelectionList.override({
-		avatarSize : "normal"
-	});
-
-	UserSelectionList.properties({
-		clearUsers : function(){
-		
-		},
-		text : ""
-	});
+	UserSelectionList = new NonstaticClass(UserSelectionList, null, Panel.prototype);
 	
 	return UserSelectionList.constructor;
 }(
-	this.UserList,
 	this.UserIndexList,
 	Bao.UI.Control.Wait.LoadingBar,
 	Bao.CallServer,
-	// fillHtml
+	// selectUsersHtml
 	new HTML([
-		'<section class="mask_userSelectionList">',
+		'<div class="userSelectionList">',
+			'<header>',
+				'<span>{text}</span>',
+				'<button action="cancel"></button>',
+			'</header>',
+			'<article></article>',
+			'<footer class="lightBgColor">',
+				'<button action="ok"></button>',
+			'</footer>',
+		'</div>'
+	].join("")),
+	// clickButtonEvent
+	new jQun.Event("clickbutton")
+));
+
+this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, listHtml){
+	function UserManagementList(text, mask, _userData){
+		///	<summary>
+		///	用户管理列表。
+		///	</summary>
+		/// <param name="mask" type="Bao.UI.Fixed.Mask">遮罩</param>
+		/// <param name="_userData" type="array">用户数据</param>
+		var uMLClassList, userManagementList = this, userList = new UserList("normal");
+
+		_userData = _userData ? _userData.concat([]) : [];
+
+		this.combine(listHtml.create());
+		userList.refresh(_userData);
+		userList.appendTo(this.find(">dl>dd")[0]);
+
+		uMLClassList = userManagementList.classList,
+
+		this.attach({
+			userclick : function(e){
+				var targetEl = jQun(e.target);
+
+				if(targetEl.between('dt > button:first-child', this).length > 0){
+					var userSelectionList = new UserSelectionList(text);
+
+					userSelectionList.attach({
+						clickbutton : function(e){
+							if(e.buttonType === "ok"){
+								userList.addUsers(e.users);
+							}
+							mask.hide();
+						}
+					});
+
+					mask.fill(userSelectionList[0]);
+					mask.show("selectUser");
+					return;
+				}
+
+				if(targetEl.between('dt > button:last-child', this).length > 0){
+					uMLClassList.toggle("readyToDel");
+					return;
+				}
+
+				var userEl = targetEl.between(".userList>figure", this);
+
+				if(userEl.length > 0){
+					if(!uMLClassList.contains("readyToDel"))
+						return;
+
+					userList.delUser(userEl.get("userid", "attr"));
+					uMLClassList.remove("readyToDel");
+					return;
+				}
+			}
+		});
+
+		new OverflowPanel(this[0]);
+	};
+	UserManagementList = new NonstaticClass(UserManagementList, "Bao.UI.Control.List.UserSelectionList", Panel.prototype);
+
+	UserManagementList.override({
+
+	});
+
+	UserManagementList.properties({
+		clearUsers : function(){
+		
+		}
+	});
+
+	return UserManagementList.constructor;
+}(
+	this.UserList,
+	this.UserSelectionList,
+	Bao.API.DOM.OverflowPanel,
+	// listHtml
+	new HTML([
+		'<div class="userManagementList">',
 			'<dl>',
-				'<dt>{text}</dt>',
+				'<dt>',
+					'<button action="add"></button>',
+					'<button action="del"></button>',
+				'</dt>',
 				'<dd></dd>',
 			'</dl>',
-		'</section>'
+		'</div>'
 	].join(""))
 ));
 

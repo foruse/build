@@ -1852,7 +1852,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 	}
 ));
 
-this.Event = (function(attach, define){
+this.Event = (function(HTMLElementList, define){
 	function Event(name, _init, _type){
 		///	<summary>
 		///	DOM事件类。
@@ -1889,21 +1889,26 @@ this.Event = (function(attach, define){
 			///	应该附加该事件的标签。
 			///	</summary>
 			///	<param name="target" type="string, element">标签名称。</param>
-			var name = this.name;
+			var name = this.name, attach = HTMLElementList.prototype.attach;
 
 			/* 以后用EventTarget优化此方法 */
 			forEach(
 				typeof target === "string" ?
-					target === "*" ? [Node.prototype, Window.prototype] : [document.createElement(target).constructor.prototype] :
+					target === "*" ? [Node.prototype, Window.prototype, HTMLElementList.prototype] : [document.createElement(target).constructor.prototype] :
 					[target],
 				function(tg){
-					define(tg, "on" + name, { set : this },	{ settable : true });
+					define(tg, "on" + name, this,	{ settable : true, gettable : true });
 				},
-				function(fn){
-					var obj = {};
+				{
+					get : function(){
+						return null;
+					},
+					set : function(fn){
+						var obj = {};
 
-					obj[name] = fn;
-					attach.call([this], obj);
+						obj[name] = fn;
+						attach.call([this], obj);
+					}
 				}
 			);
 
@@ -1930,7 +1935,7 @@ this.Event = (function(attach, define){
 
 	return Event.constructor;
 }(
-	this.HTMLElementList.prototype.attach,
+	this.HTMLElementList,
 	jQun.define
 ));
 

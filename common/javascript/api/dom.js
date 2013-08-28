@@ -1,5 +1,5 @@
 ﻿(function(DOM, NonstaticClass, StaticClass, Management, Event, windowEl){
-this.EventCollection = (function(Timer, IntervalTimer, childGestureConstructor){
+this.EventCollection = (function(Timer, IntervalTimer, isMobile, childGestureConstructor){
 	function UserGesture(name, _init){
 		///	<summary>
 		///	手势事件。
@@ -107,15 +107,25 @@ this.EventCollection = (function(Timer, IntervalTimer, childGestureConstructor){
 		userclick : new Event("userclick", function(){
 			var userClick = this, abs = Math.abs;
 
-			windowEl.attach({
-				fastgesture : function(e){
-					// 如果任何一方向上的偏移量大于10，就不算click
-					if(abs(e.gestureOffsetY) > 10 || abs(e.gestureOffsetX > 10))
-						return;
+			
+				alert(jQun.Browser.isMobile);
+		
 
-					userClick.trigger(e.target);
+			windowEl.attach(
+				isMobile ? {
+					click : function(e){
+						userClick.trigger(e.target);
+					}
+				} :{
+					fastgesture : function(e){
+						// 如果任何一方向上的偏移量大于10，就不算click
+						if(abs(e.gestureOffsetY) > 10 || abs(e.gestureOffsetX > 10))
+							return;
+
+						userClick.trigger(e.target);
+					}
 				}
-			});
+			);
 
 			this.attachTo("*");
 		}),
@@ -126,6 +136,8 @@ this.EventCollection = (function(Timer, IntervalTimer, childGestureConstructor){
 }(
 	Management.Timer,
 	Management.IntervalTimer,
+	// isMobile
+	jQun.Browser.isMobile,
 	// childGestureConstructor
 	function(event){
 		var gesture = this;

@@ -1,5 +1,4 @@
 ﻿(function(CallServer, Text, allFormatters){
-CallServer.beginTesting();
 CallServer.setResponseType("json");
 
 CallServer.save([

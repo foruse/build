@@ -61,11 +61,14 @@
 
 
 .userList figure {
-	width : 74px;
-	padding : 0 6px;
+	padding : 3px 6px;
 	padding-bottom : 22px;
 }
+.userList.normalAvatar figure {
+	padding : 3px 4px;
+}
 .userList figcaption {
+	height : 20px;
 	margin-top : 10px;
 	text-align : center;
 	text-overflow : ellipsis;
@@ -90,7 +93,7 @@
 	font-size : 14px;
 	display : block;
 	position : relative;
-	left : 7px;
+	left : 2px;
 	height : 2px;
 	background-image : -webkit-linear-gradient(top, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5) 50%);
 	background-clip : content-box;
@@ -116,35 +119,104 @@
 	font-weight : normal;
 }
 
-.userSelectionList figure {
-	width : 52px;
-	padding : 2px;
+.userManagementList {
+	overflow : hidden;
+	min-height : 74px;
 }
-.userSelectionList figure[id="-1"] > p {
+.userManagementList dt {
+	width : 112px;
+	position : relative;
+	z-index : 2;
+	margin-top : -54px;
+	top : 54px;
+	padding : 3px 4px;
+}
+.userManagementList dt > button {
+	width : 48px;
+	height : 48px;
+	border-radius : 52px;
 	border : 3px dashed #ffd040;
 	padding : 13px;
+	margin-right : 8px;
 	box-shadow : none;
 	background : url(../../../common/image/width24.png) 1px -149px no-repeat content-box content-box;
 }
-.userSelectionList figure[id="-1"]:nth-child(2) > p {
+.userManagementList dt > button:last-child {
 	background-position : 1px -169px;
 }
-.userSelectionList figure[id="-1"] img {
-	display : none;
+.userManagementList > dl > dd {
+	text-indent : 112px;
 }
-.userSelectionList figcaption {
+.userManagementList.readyToDel .userList {
+	-webkit-animation : readyToDel steps(28) 2s infinite;
+}
+@-webkit-keyframes readyToDel {
+	0% {
+		opacity : 1;
+	}
+	30% {
+		opacity : 0.2;
+	}
+	100% {
+		opacity : 1;
+	}
+}
+.userManagementList figcaption {
 	display : none;
 }
 
-.mask_userSelectionList > dl > dd {
-	position : absolute;
-	bottom : 0;
-	top : 55px;
-	left : 20px;
-	right : 20px;
+.userSelectionList > header , .userSelectionList .userIndexList aside {
+	color : #e26816;
 }
-.mask_userSelectionList .userIndexList aside {
+.userSelectionList > * > button {
+	width : 26px;
+	height : 26px;
+	border-radius : 26px;
+	border : 0 none;
+	background-color : #f1af0f;
+}
+.userSelectionList > header {
+	padding-left : 18px;
+	text-indent : 5px;
+	background : url(../../../common/image/width24.png) 0 -200px no-repeat;
+}
+.userSelectionList > header > button {
+	float : right;
+	position : relative;
+	top : -30px;
+	left : 22px;
+	background-image : url(../../../common/image/width24.png);
+	background-position : 6px -219px;
+}
+.userSelectionList > footer {
+	position : absolute;
+	left : 0;
+	bottom : 0;
+	height : 38px;
+	width : 100%;
+	text-align : center;
+}
+.userSelectionList > footer > button {
+	height : 48px;
+	width : 48px;
+	border : 12px solid #f1af0f;
+	border-radius : 48px;
+	margin-top : -15px;
+	background : #f1af0f url(../../../common/image/width24.png) 3px -247px no-repeat;
+}
+.userSelectionList > article {
+	position : absolute;
+	bottom : 38px;
+	top : 50px;
+	left : 15px;
+	right : 15px;
+	overflow : hidden;
+}
+.userSelectionList .userIndexList aside {
 	right : 25px;
 	top : 95px;
-	color : #e26816;
+}
+.userSelectionList .userIndexList p.selected {
+	border-color : #f1af0f;
+	box-shadow : 0 0 3px #f1af0f;
 }

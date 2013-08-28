@@ -21,6 +21,11 @@
 }
 #addProject > header {
 	height : auto;
+	padding : 0;
+	max-height : 200px;
+}
+#addProject > header > .userManagementList {
+	padding : 10px 5px;
 }
 
 #addProject textarea, #addProject input {
