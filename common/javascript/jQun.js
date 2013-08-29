@@ -1,10 +1,9 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.5.1
- *  本次修改：基类的assign方法修改，不支持未定义的值，目的是减少赋值的保护判断：
- *			 当赋值的时候，如果值为undefined，则跳过，进行下个属性的赋值
- *  开发浏览器信息：firefox 20.0 、 chrome 26.0 、 IE9等
+ *  文档状态：1.0.5.2
+ *  本次修改：Event.attachTo的参数为"*"的话，将给HTMLElmentList添加此事件；Browser修复手机chrome的信息判断。
+ *  开发浏览器信息：firefox 20.0 、 chrome 26.0
  */
 
 (function(Object, Array, Function){
@@ -336,7 +335,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				///	<summary>
 				///	获取父类。
 				///	</summary>
-				return Object.getPrototypeOf(this.constructor.prototype);
+				return Object.getPrototypeOf(this.ownClass());
 			},
 			properties : function(properties, _descriptor){
 				///	<summary>
@@ -463,19 +462,19 @@ this.Browser = (function(){
 		
 			userAgent = navigator.userAgent,
 
-			mobileVersionString = ".*Version\\/([\\d\\.]+).*(Mobile)";
+			mobileVersionString = ".*\\s(?:\\S)+\\/([\\d\\.]+)\\s(Mobile)";
 
 		[
-			/(MSIE) ([\d.]+)/,
-			/(Firefox)\/([\d.]+)/,
-			/(Opera).([\d.]+)/,
-			/(Chrome)\/([\d.]+)/,
-			/(AppleWebkit).*Version\/([\d\.]+).*Safari/,
 			new RegExp("(Android)" + mobileVersionString),
 			new RegExp("(Windows Phone)" + mobileVersionString),
 			new RegExp("(iPhone)" + mobileVersionString),
 			new RegExp("(iPad)" + mobileVersionString),
-			new RegExp("(iPod)" + mobileVersionString)
+			new RegExp("(iPod)" + mobileVersionString),
+			/(MSIE) ([\d\.]+)/,
+			/(Firefox)\/([\d\.]+)/,
+			/(Opera).([\d\.]+)/,
+			/(Chrome)\/([\d\.]+)/,
+			/(AppleWebkit).*Version\/([\d\.]+).*Safari/
 		].every(function(regx){
 			var info = userAgent.match(regx);
 
@@ -1586,7 +1585,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			}
 
 			if(_type === "attr"){
-				emptyAttrCollection.remove.call({sources : this}, name);
+				emptyAttrCollection.remove.call({ sources : this }, name);
 				return this;
 			}
 
@@ -1907,7 +1906,7 @@ this.Event = (function(HTMLElementList, define){
 						var obj = {};
 
 						obj[name] = fn;
-						attach.call([this], obj);
+						attach.call(this instanceof HTMLElementList ? this : [this], obj);
 					}
 				}
 			);

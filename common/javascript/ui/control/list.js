@@ -86,12 +86,15 @@ this.UserList = (function(panelHtml, userListHtml){
 		addUsers : function(users){
 			users = users.concat([]);
 
-			users.forEach(function(user, i){
-				if(this.find('figure[userid="' + user.id + '"]').length === 0)
-					return;
+			for(var i = 0;i < users.length;i++){
+				var user = users[i];
 
-				users.splice(i, 1);
-			}, this);
+				if(this.find('figure > p[userid="' + user.id + '"]').length === 0){
+					continue;
+				}
+
+				users.splice(i--, 1);
+			};
 
 			userListHtml.create({
 				users : users,
@@ -100,7 +103,7 @@ this.UserList = (function(panelHtml, userListHtml){
 		},
 		avatarSize : "large",
 		delUser : function(id){
-			this.find('>figure[userid="' + id + '"]').remove();
+			this.find('>figure > p[userid="' + id + '"]').parent().remove();
 		},
 		refresh : function(users){
 			this.innerHTML = "";
@@ -117,8 +120,8 @@ this.UserList = (function(panelHtml, userListHtml){
 	// userListHtml
 	new HTML([
 		'@for(users ->> u){',
-			'<figure userid="{u.id}">',
-				'<p class="{avatarSize}AvatarPanel">',
+			'<figure>',
+				'<p class="{avatarSize}AvatarPanel" userid="{u.id}">',
 					'<img src="{u.avatar}" />',
 				'</p>',
 				'<figcaption title="{u.name}">{u.name}</figcaption>',
@@ -246,10 +249,10 @@ this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, select
 					var users = [];
 
 					userIndexList.find(">ol figure>p.selected").forEach(function(element){
-						var parentEl = jQun(element).parent();
+						var el = jQun(element), parentEl = el.parent();
 
 						users.push({
-							id : parentEl.get("userid", "attr"),
+							id : el.get("userid", "attr"),
 							avatar : parentEl.find("img").src,
 							name : parentEl.find(">figcaption").innerHTML,
 						});
@@ -314,54 +317,56 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 			userclick : function(e){
 				var targetEl = jQun(e.target);
 
+				// 如果点击的是添加按钮
 				if(targetEl.between('dt > button:first-child', this).length > 0){
+					// 初始化用户选择列表
 					var userSelectionList = new UserSelectionList(text);
 
+					// 添加事件
 					userSelectionList.attach({
 						clickbutton : function(e){
 							if(e.buttonType === "ok"){
+								// 选择后，点击确认并添加用户
 								userList.addUsers(e.users);
 							}
+							// 隐藏遮罩
 							mask.hide();
 						}
 					});
 
+					// 填充遮罩内容
 					mask.fill(userSelectionList[0]);
+					// 显示遮罩
 					mask.show("selectUser");
 					return;
 				}
 
+				// 如果点的是删除按钮
 				if(targetEl.between('dt > button:last-child', this).length > 0){
 					uMLClassList.toggle("readyToDel");
 					return;
 				}
 
-				var userEl = targetEl.between(".userList>figure", this);
-
+				var userEl = targetEl.between(".userList>figure>p", this);
+				
+				// 如果点击的是人物头像
 				if(userEl.length > 0){
+					// 如果处于删除状态
 					if(!uMLClassList.contains("readyToDel"))
 						return;
 
+					// 删除用户
 					userList.delUser(userEl.get("userid", "attr"));
-					uMLClassList.remove("readyToDel");
-					return;
 				}
+
+				// 不管怎么样，只要点击的不是删除按钮，就要取消删除状态
+				uMLClassList.remove("readyToDel");
 			}
 		});
 
 		new OverflowPanel(this[0]);
 	};
 	UserManagementList = new NonstaticClass(UserManagementList, "Bao.UI.Control.List.UserSelectionList", Panel.prototype);
-
-	UserManagementList.override({
-
-	});
-
-	UserManagementList.properties({
-		clearUsers : function(){
-		
-		}
-	});
 
 	return UserManagementList.constructor;
 }(

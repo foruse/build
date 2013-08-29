@@ -62,6 +62,11 @@ this.TitleBar = (function(){
 					if(backUrl === "javascript:void(0);")
 						return;
 
+					if(backUrl === "-1"){
+						history.back();
+						return;
+					}
+
 					history.go(backUrl);
 				}
 			}
@@ -71,7 +76,7 @@ this.TitleBar = (function(){
 			redirect : function(){
 				titleBar.hide();
 			},
-			showpanel : function(e){
+			beforeshow : function(e){
 				var panel = e.currentPanel;
 
 				if(!panel.showTitleBar){
@@ -85,10 +90,6 @@ this.TitleBar = (function(){
 					titleBar.resetTitle(panel.title);
 				}
 
-				if(panel.backUrl){
-					titleBar.resetBackUrl(panel.backUrl);
-				}
-
 				titleBar.resetTools(panel.tools || []);
 			}
 		}, true);
@@ -96,14 +97,6 @@ this.TitleBar = (function(){
 	TitleBar = new NonstaticClass(TitleBar, "Bao.UI.Fixed.TitleBar", Panel.prototype);
 
 	TitleBar.properties({
-		backButtonEl : undefined,
-		resetBackUrl : function(backUrl){
-			///	<summary>
-			///	重新回退链接。
-			///	</summary>
-			///	<param name="backUrl" type="string">链接。</param>
-			this.backButtonEl.set("backurl", backUrl, "attr");
-		},
 		resetTitle : function(title){
 			///	<summary>
 			///	重新标题。
@@ -120,28 +113,7 @@ this.TitleBar = (function(){
 		},
 		toolsHtml : undefined
 	});
-	/*
-	TitleBar.override({
-		show : function(title, tools, hideBackButton, _redirect){
-			///	<summary>
-			///	显示标题栏。
-			///	</summary>
-			///	<param name="title" type="string">标题。</param>
-			///	<param name="tools" type="array">工具栏数据。</param>
-			///	<param name="hideBackButton" type="boolean">是否隐藏回退按钮。</param>
-			///	<param name="_redirect" type="string">重定向页面名称。</param>
-			this.resetTitle(title);
-			this.resetTools(tools);
-			this.backButtonEl[hideBackButton ? "hide" : "show"]();
 
-			if(!hideBackButton){
-				this.resetRedirect(_redirect);
-			}
-
-			return Panel.prototype.show.call(this);
-		}
-	});
-	*/
 	return TitleBar.constructor;
 }());
 

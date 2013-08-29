@@ -24,7 +24,7 @@
 	<div class="main">
 		<header id="titleBar" class="inlineBlock themeColor onlyBorderBottom whiteFont">
 			<nav>
-				<button></button>
+				<button backurl="-1"></button>
 			</nav>
 			<p>
 				<strong></strong>
@@ -161,6 +161,41 @@
 						</dd>
 						<dt></dt>
 					</dl>
+				</footer>
+			</article>
+			<article id="businessCard">
+				<section>
+					<dl desc="userinfo"></dl>
+					<script id="businessCard_html" type="text/html">
+						<dt class="inlineBlock">
+							<span class="largeAvatarPanel">
+								<img src="{avatar}" />
+							</span>
+							<strong>{name}</strong>
+							<small class="grayFont">{?~position}</small>
+						</dt>
+						<dd class="inlineBlock grayFont">
+							<ul>
+								<li info="company" title="{?~company}">{?~company}</li>
+								<li info="phoneNum">{?~phoneNum}</li>
+								<li info="email">{?~email}</li>
+								<li info="adress">{?~adress}</li>
+							</ul>
+							<aside>
+								<img src="{QRCode}" />
+							</aside>
+						</dd>
+					</script>
+					<p desc="authority">
+						<span>设置权限</span>
+						<button>
+							<small></small>
+						</button>
+					</p>
+				</section>
+				<footer class="lightBdColor">
+					<span>发送 To Do</span>
+					<button class="whiteFont">do</button>
 				</footer>
 			</article>
 		</div>

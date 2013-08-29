@@ -21,8 +21,7 @@
 	}
 }
 .calendar .inlineBlock > * {
-	width : 14%;
-	
+	width : 14.285%;
 }
 .calendar dt span {
 	height : 20px;
@@ -33,9 +32,11 @@
 	border-bottom : 0 none;
 	border-top : 0 none;
 }
+/*
 .calendar dt span[day="0"], .calendar ol li[day="0"], .calendar dt span[day="6"], .calendar ol li[day="6"] {
 	width : 15%;
 }
+*/
 .calendar dt span, .calendar ol li.focusedDate {
 	background-color : #6f6f6f;
 }

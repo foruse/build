@@ -7,6 +7,9 @@ this.Loader = (function(Storage, Index, HTML){
 		addProject : function(){
 			return new Index.Secondary.AddProject("#addProject", new HTML("addProject_color_html", true));
 		},
+		businessCard : function(){
+			return new Index.Secondary.BusinessCard("#businessCard", new HTML("businessCard_html", true));
+		},
 		load : function(name){
 			var pagePanel = this.pageStorage.get(name);
 
@@ -52,20 +55,14 @@ this.History = (function(List, Loader, redirectEvent){
 			///	<summary>
 			///	回到上一个记录。
 			///	</summary>
-			this.go(this.getNameByIndex(this.idx - 1));
-		},
-		forward : function(){
-			///	<summary>
-			///	跳到下一个记录。
-			///	</summary>
-			this.go(this.getNameByIndex(this.idx + 1));
+			this.go(this.getNameByIndex(this.length - 2));
 		},
 		getNameByIndex : function(idx){
 			///	<summary>
 			///	通过索引获取相对应历史记录名称。
 			///	</summary>
 			///	<param name="idx" type="number">对其添加或修改属性的对象。</param>
-			return idx < this.length ? this[idx].name : undefined;
+			return idx < this.length && idx > -1 ? this[idx] : undefined;
 		},
 		go : function(name){
 			///	<summary>
@@ -106,14 +103,9 @@ this.History = (function(List, Loader, redirectEvent){
 			}
 
 			this.push(name);
-
-			// 记录当前索引
-			this.idx = lastIdx + 1;
-
 			return panel;
 		},
-		homePage : "project",
-		idx : -1
+		homePage : "project"
 	});
 
 	return History.constructor;

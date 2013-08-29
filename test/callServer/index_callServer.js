@@ -22,10 +22,12 @@ this.CallServer = (function(CallServer, open, allHandlers){
 	});
 
 	CallServer.save([
-		["getPartnerGroups",			"1.htm",		"", true],
-		["getPartners",			new Text("2.htm?groupId={groupId}"),		"", true],
-		["getProjects",			"3.htm",		""],
-		["getSchedules",			"?last={last}&next={next}",		"", true]
+		["getUser", new Text("url?id={id}"), "", true],
+		["getPartnerGroups",			"url",		"", true],
+		["getPartners",			new Text("url?groupId={groupId}"),		"", true],
+		["getProjects",			"url",		""],
+		["getSchedules",			new Text("url?last={last}&next={next}"),		"", true],
+		["addProject", new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"]
 	], allHandlers);
 
 	return CallServer;
@@ -108,6 +110,11 @@ this.CallServer = (function(CallServer, open, allHandlers){
 			return {
 				schedules : data
 			};
+		},
+		getUser : function(data){
+			data = Index.Common.getUser();
+
+			return data;
 		}
 	}
 ));

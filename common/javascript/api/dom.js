@@ -107,25 +107,15 @@ this.EventCollection = (function(Timer, IntervalTimer, isMobile, childGestureCon
 		userclick : new Event("userclick", function(){
 			var userClick = this, abs = Math.abs;
 
-			
-				alert(jQun.Browser.isMobile);
-		
+			windowEl.attach({
+				fastgesture : function(e){
+					// 如果任何一方向上的偏移量大于10，就不算click
+					if(abs(e.gestureOffsetY) > 10 || abs(e.gestureOffsetX > 10))
+						return;
 
-			windowEl.attach(
-				isMobile ? {
-					click : function(e){
-						userClick.trigger(e.target);
-					}
-				} :{
-					fastgesture : function(e){
-						// 如果任何一方向上的偏移量大于10，就不算click
-						if(abs(e.gestureOffsetY) > 10 || abs(e.gestureOffsetX > 10))
-							return;
-
-						userClick.trigger(e.target);
-					}
+					userClick.trigger(e.target);
 				}
-			);
+			});
 
 			this.attachTo("*");
 		}),
@@ -169,13 +159,11 @@ this.Panel = (function(HTMLElementList){
 	jQun.HTMLElementList
 ));
 
-this.PagePanel = (function(Panel, showPanelEvent, hidePanelEvent){
+this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
 	function PagePanel(selector){};
 	PagePanel = new NonstaticClass(PagePanel, "Bao.API.DOM.PagePanel", Panel.prototype);
 
 	PagePanel.properties({
-		// 返回按钮的连接
-		backUrl : "",
 		// 是否隐藏返回按钮
 		hideBackButton : false,
 		// 该panel是否是无痕的
@@ -193,13 +181,13 @@ this.PagePanel = (function(Panel, showPanelEvent, hidePanelEvent){
 	PagePanel.override({
 		hide : function(){
 			this.parent().hide();
-			Panel.prototype.hide.apply(this, arguments);
-
-			hidePanelEvent.setEventAttrs({
+			
+			beforeHideEvent.setEventAttrs({
 				currentPanel : this
 			});
-			hidePanelEvent.trigger(this[0]);
+			beforeHideEvent.trigger(this[0]);
 
+			Panel.prototype.hide.apply(this, arguments);
 			return this;
 		},
 		show : function(){
@@ -209,13 +197,12 @@ this.PagePanel = (function(Panel, showPanelEvent, hidePanelEvent){
 				this.restore();
 			}
 
-			Panel.prototype.show.apply(this, arguments);
-
-			showPanelEvent.setEventAttrs({
+			beforeShowEvent.setEventAttrs({
 				currentPanel : this
 			});
-			showPanelEvent.trigger(this[0]);
-			
+			beforeShowEvent.trigger(this[0]);
+
+			Panel.prototype.show.apply(this, arguments);
 			return this;
 		}
 	});
@@ -223,12 +210,12 @@ this.PagePanel = (function(Panel, showPanelEvent, hidePanelEvent){
 	return PagePanel.constructor;
 }(
 	this.Panel,
-	// showPanelEvent
-	new Event("showpanel", function(){
+	// beforeShowEvent
+	new Event("beforeshow", function(){
 		this.attachTo("*");
 	}),
-	// hidePanelEvent
-	new Event("hidepanel", function(){
+	// beforeHideEvent
+	new Event("beforehide", function(){
 		this.attachTo("*");
 	})
 ));
@@ -351,6 +338,33 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 	}.bind(new Event("leaveborder"))
 ));
 
+this.Validation = (function(){
+	function Validation(validationEl, handler){
+		this.assign({
+			validationEl : validationEl,
+			handler : handler
+		});
+
+		validationEl.onuserclick = function(){
+			validationEl.classList.remove("validationError");
+		};
+	};
+	Validation = new NonstaticClass(Validation, "Bao.API.DOM.Validation");
+
+	Validation.properties({
+		handler : undefined,
+		validate : function(){
+			if(this.handler(this.validationEl))
+				return true;
+
+			this.validationEl.classList.add("validationError");
+			return false;
+		},
+		validationEl : undefined
+	});
+
+	return Validation.constructor;
+}());
 
 DOM.members(this);
 }.call(

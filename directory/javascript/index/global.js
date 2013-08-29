@@ -26,7 +26,7 @@ this.Global = (function(Mask, TitleBar, History, Scroll, HTML){
 			// 初始化滚动条
 			new Scroll();
 			// 跳转到指定页
-			history.go("addProject");
+			history.go("businessCard").fillUser(3);
 		};
 	};
 	Global = new StaticClass(Global, "Bao.Page.Index.Global", {
