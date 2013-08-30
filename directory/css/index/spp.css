@@ -173,6 +173,8 @@
 	position : absolute;
 	top : 38px;
 	bottom : 0;
+	left : 0;
+	right : 0;
 }
 #partner .group dt {
 	position : fixed;
@@ -199,6 +201,9 @@
 }
 #partner .group ul {
 	white-space : nowrap;
+}
+#partner .userIndexList aside {
+	bottom : 85px;
 }
 
 #tab_SPP {

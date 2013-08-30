@@ -102,6 +102,9 @@ this.UserList = (function(panelHtml, userListHtml){
 			}).appendTo(this[0]);
 		},
 		avatarSize : "large",
+		clearUsers : function(){
+			this.find(">figure").remove();
+		},
 		delUser : function(id){
 			this.find('>figure > p[userid="' + id + '"]').parent().remove();
 		},
@@ -308,6 +311,10 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 		/// <param name="_userData" type="array">用户数据</param>
 		var uMLClassList, userManagementList = this, userList = new UserList("normal");
 
+		this.assign({
+			userList : userList
+		});
+
 		_userData = _userData ? _userData.concat([]) : [];
 
 		this.combine(listHtml.create());
@@ -340,7 +347,7 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 					// 填充遮罩内容
 					mask.fill(userSelectionList[0]);
 					// 显示遮罩
-					mask.show("selectUser");
+					mask.show(text);
 					return;
 				}
 
@@ -370,6 +377,13 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 		new OverflowPanel(this[0]);
 	};
 	UserManagementList = new NonstaticClass(UserManagementList, "Bao.UI.Control.List.UserSelectionList", Panel.prototype);
+
+	UserManagementList.properties({
+		clearUsers : function(){
+			this.userList.clearUsers();
+		},
+		userList : undefined
+	});
 
 	return UserManagementList.constructor;
 }(

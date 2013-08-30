@@ -340,18 +340,23 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 
 this.Validation = (function(){
 	function Validation(validationEl, handler){
+		var validation = this;
+
 		this.assign({
 			validationEl : validationEl,
 			handler : handler
 		});
 
 		validationEl.onuserclick = function(){
-			validationEl.classList.remove("validationError");
+			validation.clearError();
 		};
 	};
 	Validation = new NonstaticClass(Validation, "Bao.API.DOM.Validation");
 
 	Validation.properties({
+		clearError : function(){
+			this.validationEl.classList.remove("validationError");
+		},
 		handler : undefined,
 		validate : function(){
 			if(this.handler(this.validationEl))

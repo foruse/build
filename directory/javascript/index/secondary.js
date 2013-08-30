@@ -3,11 +3,6 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 	function AddProject(selector, colorHtml){
 		var titleValidation, colorValidation, addProject = this;
 
-		this.assign({
-			colorHtml : colorHtml,
-			userManagementList : new UserManagementList("添加项目拍档", Global.mask)
-		});
-
 		// 标题验证
 		titleValidation = new Validation(
 			this.find('section[desc="title"]'),
@@ -21,6 +16,13 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 				return colorEl.find("button.selected").length !== 0;
 			}
 		);
+
+		this.assign({
+			colorHtml : colorHtml,
+			colorValidation : colorValidation,
+			titleValidation : titleValidation,
+			userManagementList : new UserManagementList("添加项目拍档", Global.mask)
+		});
 
 		this.attach({
 			userclick : function(e){
@@ -54,8 +56,14 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 		restore : function(){
 			// 还原标题
 			this.find(">section input").value = "";
+			// 清空已选择的用户
+			this.userManagementList.clearUsers();
 			// 还原颜色
 			this.find('>section[desc="color"] dd').innerHTML = this.colorHtml.render();
+			// 清空错误
+			this.colorValidation.clearError();
+			this.titleValidation.clearError();
+			// 清空文本框
 			this.find(">footer textarea").value = "";
 		},
 		title : "添加项目",
@@ -64,6 +72,8 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 
 	AddProject.properties({
 		colorHtml : undefined,
+		colorValidation : undefined,
+		titleValidation : undefined,
 		userManagementList : undefined
 	});
 
@@ -76,7 +86,7 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 
 this.BusinessCard = (function(Global, LoadingBar, CallServer, clickAvatarEvent){
 	function ClickUserAvatar(){
-		jQun(window).attach({
+		jQun(document.body).attach({
 			userclick : function(e){
 				var avatarPanel = jQun(e.target).between('[class*="AvatarPanel"]');
 

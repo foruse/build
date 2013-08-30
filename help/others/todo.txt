@@ -5,6 +5,7 @@
 	* navigate类优化：监听oncontinuousgesture或onfastgesture
 	* project页面，用projectAnchorList优化
 	* calendar的2个类使用继承。  Calendar类改名为StretchableCalendar，DateTable改名为Calendar
+	* history类按返回的时候，不要重新排序
 
 ★★★★
 

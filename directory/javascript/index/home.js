@@ -157,6 +157,11 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 	};
 	Schedule = new NonstaticClass(Schedule, null, PagePanel.prototype);
 
+	Schedule.override({
+		hideBackButton : true,
+		title : "MY CALENDAR 日程"
+	});
+
 	Schedule.properties({
 		add : function(data){
 			this.find("> header > dl").innerHTML = this.html.render(data);
@@ -354,6 +359,11 @@ this.Partner = (function(Navigator, UserIndexList, CallServer){
 		});
 	};
 	Partner = new NonstaticClass(Partner, null, PagePanel.prototype);
+
+	Partner.override({
+		hideBackButton : true,
+		title : "MY PARTNERS 拍档"
+	});
 
 	Partner.properties({
 		focus : function(groupId, _groupEl){

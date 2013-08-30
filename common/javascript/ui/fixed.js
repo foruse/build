@@ -43,10 +43,9 @@ this.TitleBar = (function(){
 		///	<param name="selector" type="string">标题栏元素选择器。</param>
 		///	<param name="history" type="Bao.API.Management.History">页面历史记录。</param>
 		///	<param name="toolsHtml" type="jQun.HTML">工具html模板。</param>
-		var titleBar = this;
+		var titleBar = this, backButtonEl = this.find(">nav>button");
 
 		this.assign({
-			backButtonEl : this.find(">nav>button"),
 			titleEl : this.find(">p>strong"),
 			toolsHtml : toolsHtml,
 			toolsPanel : this.find(">ul")
@@ -85,6 +84,8 @@ this.TitleBar = (function(){
 				}
 
 				titleBar.show();
+
+				backButtonEl[panel.hideBackButton ? "hide" : "show"]();
 
 				if(panel.title){
 					titleBar.resetTitle(panel.title);

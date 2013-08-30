@@ -79,6 +79,9 @@
 	max-width : 100%;
 	min-width : 100%;
 }
+#mask[action="添加项目拍档"] .userIndexList aside {
+	bottom : 110px;
+}
 
 #businessCard {
 	font-size : 15px;
