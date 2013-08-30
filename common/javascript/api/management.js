@@ -78,7 +78,7 @@ this.History = (function(List, Loader, redirectEvent){
 			// 如果是当前页，或者记录条数为0
 			if(lastIdx > -1){
 				if(idx === lastIdx){
-					return;
+					return Loader.pageStorage[this[idx]];
 				}
 				else {
 					// 隐藏上一个panel

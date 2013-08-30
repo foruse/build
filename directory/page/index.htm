@@ -47,7 +47,7 @@
 					</nav>
 					<script id="spp_scheduleSign_html" type="text/html">
 						@for(projects ->> pro){
-							<span style="background-color:{pro.color};" projectid="{pro.id}"></span>
+							<span class="projectColor_{pro.color}" projectid="{pro.id}"></span>
 						}
 					</script>
 				</section>
@@ -57,8 +57,8 @@
 				<script id="spp_project_html" type="text/html">
 					@for(projects ->> pro){
 						<li>
-							<figure class="themeBdColor" status="{pro.status}">
-								<figcaption class="themeBgColor whiteFont">
+							<figure class="lightBdColor" status="{pro.status}">
+								<figcaption class="projectColor_{pro.color} whiteFont">
 									<span>{pro.title}</span>
 									<strong class="inlineBlock">
 										@for(pro.level){
@@ -73,11 +73,11 @@
 										}
 									</dd>
 									<dd>
-										<hr />
+										<hr class="projectColor_{pro.color}" />
 									</dd>
 									<dt class="grayFont">
 										<span>{pro.lastMessage}</span>
-										<a class="themeBgColor whiteFont" unread="{pro.unread}">
+										<a class="projectColor_{pro.color} whiteFont" unread="{pro.unread}">
 											{pro.unread}
 										</a>
 									</dt>
@@ -118,8 +118,8 @@
 						{ tab : "project", text : "PROJECTS 项目" },
 						{ tab : "partner", text : "PARTNERS 拍档" }
 					] ->> t){
-						<li>
-							<button class="themeBdColor themeBgColor" tab="{t.tab}">
+						<li tab="{t.tab}">
+							<button>
 								<span class="themeBgColor" text="{t.text}"></span>
 							</button>
 						</li>

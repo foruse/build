@@ -78,7 +78,7 @@ this.UserList = (function(panelHtml, userListHtml){
 		});
 		
 		this.combine(panelHtml.create());
-		this.classList.add(_avatarSize + "Avatar");
+		this.classList.add(this.avatarSize + "Avatar");
 	};
 	UserList = new NonstaticClass(UserList, "Bao.UI.Control.UserList", Panel.prototype);
 
@@ -194,7 +194,7 @@ this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
 			'@for(userListCollection ->> userList){',
 				'<li letter="{userList.firstLetter}">',
 					'<dl>',
-						'<dt>',
+						'<dt class="lightBgColor">',
 							'<strong>{userList.firstLetter}</strong>',
 						'</dt>',
 						'<dd></dd>',
@@ -264,6 +264,9 @@ this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, select
 					});
 					clickButtonEvent.trigger(this);
 				}
+			},
+			clickavatar : function(e){
+				e.stopPropagation();
 			}
 		});
 
@@ -351,11 +354,11 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 				
 				// 如果点击的是人物头像
 				if(userEl.length > 0){
-					// 如果处于删除状态
+					// 如果不处于删除状态,就return
 					if(!uMLClassList.contains("readyToDel"))
 						return;
-
-					// 删除用户
+						
+					// 删除用户，此用户元素被删除，那么clickavatar也就不会冒泡了(因为元素被删除，没有父元素可以冒泡)
 					userList.delUser(userEl.get("userid", "attr"));
 				}
 

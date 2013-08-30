@@ -79,24 +79,23 @@
 	padding-top : 2px;
 }
 .userIndexList dt {
-	padding-top : 6px;
+	padding : 6px 0 15px 0;
 	height : 22px;
-	overflow : hidden;
+	margin : 0 20px;
+	background-clip : content-box;
 }
 .userIndexList strong {
-	padding : 0 25px 0 1em;
-	text-indent : -1em;
-	text-shadow : -2px 0 1px rgba(0, 0, 0, 0.4);
-	color : #fff;
-	line-height : 0;
-	vertical-align : top;
-	font-size : 14px;
 	display : block;
+	height : 18px;
+	width : 18px;
+	line-height : 18px;
+	border-radius : 18px;
 	position : relative;
-	left : 2px;
-	height : 2px;
-	background-image : -webkit-linear-gradient(top, rgba(0, 0, 0, 0.5), rgba(255, 255, 255, 0.5) 50%);
-	background-clip : content-box;
+	top : -8px;
+	left : -18px;
+	color : #fff;
+	background-color : #999;
+	text-align : center;
 }
 .userIndexList aside {
 	width : 11px;

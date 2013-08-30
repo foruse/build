@@ -83,9 +83,10 @@ this.SPP = (function(){
 					id : Number.id(),
 					level : Number.random(3),
 					title : String.random(),
-					color : "#" + Number.random(parseInt("ffffff", 16)).toString(16),
+					color : Number.random(5),
 					users : Common.getUsers(Number.random(20)),
 					lastMessage : String.random(),
+					status : 1,
 					unread : Number.random(2) > 1 ? 0 : Number.random()
 				});
 			}

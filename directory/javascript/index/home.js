@@ -256,11 +256,12 @@ this.Project = (function(){
 			var data = [], i = {
 				id : -1,
 				importantLevel : 0,
-				title : "",
+				title : "新建项目",
 				users : [],
 				lastMessage : "",
 				unread : 0,
-				status : _isUnopened ? -1 : 0
+				status : _isUnopened ? -1 : 0,
+				color : -1
 			};
 
 			jQun.forEach(_len == undefined ? this.batchLoad.getParam("pageSize") : _len, function(){
@@ -436,7 +437,8 @@ this.Tab = (function(focusTabEvent, blurTabEvent){
 					return;
 
 				tab.blur();
-				tab.focus(buttonEl.get("tab", "attr"));
+				tab.focus(buttonEl.parent().get("tab", "attr"));
+				Global.history.go(buttonEl.parent().get("tab", "attr"));
 			}
 		});
 	};
@@ -453,7 +455,6 @@ this.Tab = (function(focusTabEvent, blurTabEvent){
 				return;
 
 			focusedEl.classList.remove("focused");
-			blurTabEvent.trigger(focusedEl[0]);
 		},
 		btnEls : undefined,
 		focus : function(name){
@@ -464,14 +465,12 @@ this.Tab = (function(focusTabEvent, blurTabEvent){
 			var buttonEl = this.btnEls.between('[tab="' + name + '"]', this[0]);
 
 			buttonEl.classList.add("focused");
-			focusTabEvent.trigger(buttonEl[0]);
 		}
 	});
 
 	return Tab.constructor;
 }(
-	new jQun.Event("focustab"),
-	new jQun.Event("blurtab")
+	new jQun.Event("focustab")
 ));
 
 this.SPP = (function(Tab, HTML){
@@ -485,15 +484,7 @@ this.SPP = (function(Tab, HTML){
 			"#tab_SPP",
 			// itemHtml
 			new HTML("spp_item_html", true)
-		).attach({
-			focustab : function(e){
-				var targetEl = jQun(e.target),
-					
-					name = targetEl.get("tab", "attr");
-
-				Global.history.go(name);
-			}
-		});
+		);
 	};
 	SPP = new NonstaticClass(SPP, "Bao.Page.Index.SPP", Panel.prototype);
 
