@@ -243,7 +243,7 @@ this.Project = (function(){
 	Project.override({
 		hideBackButton : true,
 		title : "MY PROJECTS 项目",
-		tools : []
+		tools : [{ urlname : "systemOption", action : "set" }]
 	});
 
 	Project.properties({
@@ -297,7 +297,7 @@ this.Project = (function(){
 	return Project.constructor;
 }());
 
-this.Partner = (function(Navigator, UserIndexList, CallServer){
+this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServer){
 	function Partner(selector, groupingHtml){
 		var userIndexList, groupPanel,
 
@@ -330,7 +330,7 @@ this.Partner = (function(Navigator, UserIndexList, CallServer){
 				if(el.length > 0){
 					// 如果点击的是添加分组
 					if(el.get("action", "attr") === "addGroup"){
-						console.log(el);
+						new InputSelectionList("添加组拍档", Global.mask);
 						return;
 					}
 					
@@ -418,6 +418,7 @@ this.Partner = (function(Navigator, UserIndexList, CallServer){
 }(
 	Control.Drag.Navigator,
 	Control.List.UserIndexList,
+	Control.List.InputSelectionList,
 	Bao.CallServer
 ));
 

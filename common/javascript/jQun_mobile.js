@@ -31,15 +31,19 @@ TouchEvent = (function(List, Event, window, attrs){
 
 
 	function TouchEvent(name, replacement){
-		var touchEvent = this, event = this.source;
+		var touchEvent = this, touchList = touchEvent.touchList;
 			
-		event.changedTouches = event.touches = this.touchList;
-
 		window.addEventListener(replacement, function(e){
+			var touchEventArgs = {
+				changedTouches : touchList,
+				touches : touchList
+			};
+
 			attrs.forEach(function(attr){
-				event[attr] = e[attr];
+				touchEventArgs[attr] = e[attr];
 			});
 				
+			touchEvent.setEventAttrs(touchEventArgs);
 			touchEvent.trigger(e.target);
 		});
 

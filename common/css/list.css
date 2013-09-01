@@ -5,6 +5,9 @@
 	height : 45px;
 	padding : 8px 18px 0 18px;
 }
+.anchorList[descriptstatus="hide"] li {
+	padding-top : 12px;
+}
 .anchorList li:last-child {
 	border : none;
 }
@@ -17,7 +20,7 @@
 	position : absolute;
 }
 .anchorList aside {
-	max-width : 245px;
+	min-width : 245px;
 	height : 26px;
 	right : 7px;
 	left : 0;
@@ -29,6 +32,9 @@
 }
 .anchorList aside dd {
 	height : 10px;
+}
+.anchorList[descriptstatus="hide"] aside dd {
+	display : none;
 }
 .anchorList p {
 	width : 7px;
@@ -58,6 +64,7 @@
 .anchorList_level > li:first-child {
 	margin-left : 0;
 }
+
 
 
 .userList figure {

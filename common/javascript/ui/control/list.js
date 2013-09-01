@@ -1,10 +1,13 @@
 ﻿(function(List, NonstaticClass, Panel, HTML){
-this.AnchorList = (function(anchorListHtml){
+this.AnchorList = (function(anchorListHtml, _hasDescript){
 	function AnchorList(listData){
 		///	<summary>
 		///	连接列表。
 		///	</summary>
-		this.combine(anchorListHtml.create({ listData : listData }));
+		this.combine(anchorListHtml.create({
+			listData : listData,
+			descriptstatus : _hasDescript ? "show" : "hide"
+		}));
 	};
 	AnchorList = new NonstaticClass(AnchorList, "Bao.UI.Control.List.AnchorList", Panel.prototype);
 
@@ -12,7 +15,7 @@ this.AnchorList = (function(anchorListHtml){
 }(
 	// anchorListHtml
 	new HTML([
-		'<div class="anchorList">',
+		'<div class="anchorList" descriptstatus="{descriptstatus}">',
 			'<ul class="themeBdColor">',
 				'@for(listData ->> data){',
 					'<li key="{data.key}" class="lightBdColor onlyBorderBottom inlineBlock">',
@@ -43,6 +46,8 @@ this.ProjectAnchorList = (function(AnchorList, levelHtml){
 		///	项目连接列表。
 		///	</summary>
 		var anchorList = this;
+
+		this.set("descriptstatus", "show", "attr");
 
 		listData.forEach(function(project){
 			var descEl = anchorList.find('li[key="' + project.id + '"] dd');
@@ -216,11 +221,11 @@ this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
 ));
 
 this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, selectUsersHtml, clickButtonEvent){
-	function UserSelectionList(text){
+	function UserSelectionList(text, mask){
 		///	<summary>
 		///	用户选择列表。
 		///	</summary>
-		/// <param name="text" type="string">标题</param>
+		/// <param name="mask" type="Bao.UI.Fixed.Mask">遮罩</param>
 		var loadingBar = new LoadingBar(), userIndexList = new UserIndexList();
 
 		this.combine(selectUsersHtml.create({ text : text }));
@@ -257,7 +262,7 @@ this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, select
 						users.push({
 							id : el.get("userid", "attr"),
 							avatar : parentEl.find("img").src,
-							name : parentEl.find(">figcaption").innerHTML,
+							name : parentEl.find(">figcaption").innerHTML
 						});
 					});
 
@@ -266,12 +271,20 @@ this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, select
 						buttonType : targetEl.get("action", "attr")
 					});
 					clickButtonEvent.trigger(this);
+
+					// 隐藏遮罩
+					mask.hide();
 				}
 			},
 			clickavatar : function(e){
 				e.stopPropagation();
 			}
 		});
+
+		// 填充遮罩内容
+		mask.fillBody(this[0]);
+		// 显示遮罩
+		mask.show(text);
 
 		CallServer.open("getPartners", { groupId : -1 }, function(data){
 			loadingBar.hide();
@@ -302,12 +315,45 @@ this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, select
 	new jQun.Event("clickbutton")
 ));
 
+this.InputSelectionList = (function(UserSelectionList, inputHtml){
+	function InputSelectionList(text, mask, _placeholder){
+		var inputEl = inputHtml.create();
+
+		this.assign({
+			inputEl : inputEl
+		});
+
+		if(_placeholder){
+			inputEl.set("placeholder", _placeholder, "attr");
+		}
+
+		mask.fillHeader(inputEl[0]);
+
+		this.attach({
+			clickbutton : function(e){
+				e.inputText = inputEl.value;
+			}
+		}, true);
+	};
+	InputSelectionList = new NonstaticClass(InputSelectionList, "Bao.UI.Control.List.InputSelectionList", UserSelectionList.prototype);
+
+	InputSelectionList.properties({
+		inputEl : undefined
+	});
+
+	return InputSelectionList.constructor;
+}(
+	this.UserSelectionList,
+	// inputHtml
+	new HTML('<input type="text" placeholder="请输入名称" />')
+));
+
 this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, listHtml){
 	function UserManagementList(text, mask, _userData){
 		///	<summary>
 		///	用户管理列表。
 		///	</summary>
-		/// <param name="mask" type="Bao.UI.Fixed.Mask">遮罩</param>
+		/// <param name="text" type="string">标题</param>
 		/// <param name="_userData" type="array">用户数据</param>
 		var uMLClassList, userManagementList = this, userList = new UserList("normal");
 
@@ -325,39 +371,7 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 
 		this.attach({
 			userclick : function(e){
-				var targetEl = jQun(e.target);
-
-				// 如果点击的是添加按钮
-				if(targetEl.between('dt > button:first-child', this).length > 0){
-					// 初始化用户选择列表
-					var userSelectionList = new UserSelectionList(text);
-
-					// 添加事件
-					userSelectionList.attach({
-						clickbutton : function(e){
-							if(e.buttonType === "ok"){
-								// 选择后，点击确认并添加用户
-								userList.addUsers(e.users);
-							}
-							// 隐藏遮罩
-							mask.hide();
-						}
-					});
-
-					// 填充遮罩内容
-					mask.fill(userSelectionList[0]);
-					// 显示遮罩
-					mask.show(text);
-					return;
-				}
-
-				// 如果点的是删除按钮
-				if(targetEl.between('dt > button:last-child', this).length > 0){
-					uMLClassList.toggle("readyToDel");
-					return;
-				}
-
-				var userEl = targetEl.between(".userList>figure>p", this);
+				var targetEl = jQun(e.target), userEl = targetEl.between(".userList>figure>p", this);
 				
 				// 如果点击的是人物头像
 				if(userEl.length > 0){
@@ -371,6 +385,29 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 
 				// 不管怎么样，只要点击的不是删除按钮，就要取消删除状态
 				uMLClassList.remove("readyToDel");
+
+				// 如果点击的是添加按钮
+				if(targetEl.between('dt > button:first-child', this).length > 0){
+					// 初始化用户选择列表
+					var userSelectionList = new UserSelectionList(text, mask);
+
+					// 添加事件
+					userSelectionList.attach({
+						clickbutton : function(e){
+							if(e.buttonType === "ok"){
+								// 选择后，点击确认并添加用户
+								userList.addUsers(e.users);
+							}
+						}
+					});
+					return;
+				}
+
+				// 如果点的是删除按钮
+				if(targetEl.between('dt > button:last-child', this).length > 0){
+					uMLClassList.toggle("readyToDel");
+					return;
+				}
 			}
 		});
 

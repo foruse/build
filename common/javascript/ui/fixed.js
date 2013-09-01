@@ -4,22 +4,50 @@ this.Mask = (function(){
 	Mask = new NonstaticClass(Mask, "Bao.UI.Fixed.Mask", Panel.prototype);
 
 	Mask.override({
-		fill : function(el){
+		fill : function(position, content, _isHtml){
+			///	<summary>
+			///	填充区域元素。
+			///	</summary>
+			///	<param name="position" type="string">填充的区域。</param>
+			///	<param name="content" type="element">区域内容元素。</param>
+			///	<param name="_isHtml" type="boolean">是否是html。</param>
+			(
+				_isHtml ? new jQun.HTML(content).create() : jQun(content)
+			).appendTo(
+				this.find(">" + (position === "body" ? "article" : position))[0]
+			);
+		},
+		fillBody : function(content, _isHtml){
 			///	<summary>
 			///	填充内容元素。
 			///	</summary>
-			///	<param name="el" type="element">内容元素。</param>
-			var articleEl = this.find(">article");
-
-			articleEl.innerHTML = "";
-			articleEl.children.append(el);
+			///	<param name="content" type="element">内容元素。</param>
+			///	<param name="_isHtml" type="boolean">是否是html。</param>
+			this.fill("body", content, _isHtml);
 		},
-		fillHtml : function(html){
+		fillHeader : function(content, _isHtml){
 			///	<summary>
-			///	填充内容html。
+			///	填充头部元素。
 			///	</summary>
-			///	<param name="html" type="string">内容html。</param>
-			this.find(">article").innerHTML = html;
+			///	<param name="content" type="element">头部内容元素。</param>
+			///	<param name="_isHtml" type="boolean">是否是html。</param>
+			this.fill("header", content, _isHtml);
+		},
+		fillFooter : function(content, _isHtml){
+			///	<summary>
+			///	填充脚部元素。
+			///	</summary>
+			///	<param name="content" type="element">脚部内容元素。</param>
+			///	<param name="_isHtml" type="boolean">是否是html。</param>
+			this.fill("footer", content, _isHtml);
+		},
+		hide : function(){
+			// 清空所有内容
+			this.find(">header").innerHTML = "";
+			this.find(">article").innerHTML = "";
+			this.find(">footer").innerHTML = "";
+
+			return Panel.prototype.hide.call(this);
 		},
 		show : function(action){
 			///	<summary>
@@ -56,17 +84,17 @@ this.TitleBar = (function(){
 				var targetEl = jQun(e.target);
 
 				if(targetEl.between("button", this).length > 0){
-					var backUrl = targetEl.get("backurl", "attr");
+					var urlname = targetEl.get("urlname", "attr");
 
-					if(backUrl === "javascript:void(0);")
+					if(urlname === "javascript:void(0);")
 						return;
 
-					if(backUrl === "-1"){
+					if(urlname === "-1"){
 						history.back();
 						return;
 					}
 
-					history.go(backUrl);
+					history.go(urlname);
 				}
 			}
 		});

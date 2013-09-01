@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.5.2
- *  本次修改：Event.attachTo的参数为"*"的话，将给HTMLElmentList添加此事件；Browser修复手机chrome的信息判断。
+ *  文档状态：1.0.5.3
+ *  本次修改：Event类大改，由原来1次性永久性事件改为每次触发产生新的事件，但是类的实例仍不变（主要解决了事件冒泡被阻止一次后，事件就不再冒泡的问题）。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0
  */
 
@@ -1851,34 +1851,24 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 	}
 ));
 
-this.Event = (function(HTMLElementList, define){
-	function Event(name, _init, _type){
+this.Event = (function(HTMLElementList, window, define, set, toArray){
+	function Event(name, _init, _type, _initEventArgs){
 		///	<summary>
 		///	DOM事件类。
 		///	</summary>
 		///	<param name="name" type="string">事件名称。</param>
 		///	<param name="_init" type="function">事件初始化函数。</param>
 		///	<param name="_type" type="string">事件类型(MouseEvent、UIEvent、WheelEvent等)。</param>
-		var source;
-
-		if(!_type || !(_type in window)){
-			_type = this.type;
-		}
-
-		source = new window[_type](name);
-
 		this.assign({
+			initEventArgs : [name].concat(_initEventArgs ? toArray(arguments, 3) : [true, true]),
 			name : name,
-			source : source,
 			type : _type
 		});
-
-		source.initEvent(name, true, true);
 
 		if(typeof _init !== "function")
 			return;
 		
-		_init.call(this, source);
+		_init.call(this);
 	};
 	Event = new NonstaticClass(Event, "jQun.Event");
 
@@ -1913,13 +1903,16 @@ this.Event = (function(HTMLElementList, define){
 
 			return this;
 		},
+		eventAttrs : undefined,
+		initEventArgs : undefined,
 		name : "",
 		setEventAttrs : function(attrs){
 			///	<summary>
 			///	设置事件属性。
 			///	</summary>
 			///	<param name="attrs" type="object">属性键值对。</param>
-			return jQun.set(this.source, attrs);
+			this.eventAttrs = attrs;
+			return this;
 		},
 		source : undefined,
 		trigger : function(target){
@@ -1927,7 +1920,12 @@ this.Event = (function(HTMLElementList, define){
 			///	触发事件。
 			///	</summary>
 			///	<param name="target" type="element">触发该事件的元素。</param>
-			return target.dispatchEvent(this.source);
+			var type = this.type, event = new window[type](this.name);
+
+			event["init" + type].apply(event, this.initEventArgs);
+			set(event, this.eventAttrs);
+
+			return target.dispatchEvent(event);
 		},
 		type : "Event"
 	});
@@ -1935,7 +1933,10 @@ this.Event = (function(HTMLElementList, define){
 	return Event.constructor;
 }(
 	this.HTMLElementList,
-	jQun.define
+	window,
+	jQun.define,
+	jQun.set,
+	jQun.toArray
 ));
 
 this.HTML = (function(HTMLElementList, sRegx, fRegx, tReplace){

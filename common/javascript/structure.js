@@ -31,7 +31,7 @@ this.Bao = (function(Bao){
 				Global : null, // ../../directoy/javascript/index/global.js
 				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
 					AddProject : null,
-					SecondaryPage : null
+					SystemOption : null
 				})
 			})
 		}),

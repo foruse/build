@@ -36,7 +36,10 @@ this.Loader = (function(Storage, Index, HTML){
 			var sppPanel = this.pageStorage.get("spp");
 
 			return sppPanel ? sppPanel : new Index.Home.SPP("#SPP");
-		}
+		},
+		systemOption : function(){
+			return new Index.Secondary.SystemOption("#systemOption");
+		},
 	});
 
 	return Loader;

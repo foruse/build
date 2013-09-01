@@ -24,7 +24,7 @@
 	<div class="main">
 		<header id="titleBar" class="inlineBlock themeColor onlyBorderBottom whiteFont">
 			<nav>
-				<button backurl="-1"></button>
+				<button urlname="-1"></button>
 			</nav>
 			<p>
 				<strong></strong>
@@ -33,7 +33,7 @@
 			<script id="title_tools_html" type="text/html">
 				@for(tools ->> t){
 					<li>
-						<button backurl="{t.backUrl}" action="{t.action}"></button>
+						<button urlname="{t.urlname}" action="{t.action}"></button>
 					</li>
 				}
 			</script>
@@ -198,10 +198,18 @@
 					<button class="whiteFont">do</button>
 				</footer>
 			</article>
+			<article id="systemOption">
+				<section></section>
+				<footer>
+					<button class="whiteFont">登出</button>
+				</footer>
+			</article>
 		</div>
 	</div>
 	<div id="mask" action="none">
+		<header></header>
 		<article></article>
+		<footer></footer>
 	</div>
 	<script src="../../common/javascript/jQun.js" type="text/javascript"></script>
 	<script src="../../common/javascript/jQun_mobile.js" type="text/javascript"></script>

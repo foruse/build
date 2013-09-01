@@ -178,3 +178,21 @@
 	border : 0 none;
 	background-color : #ce312d;
 }
+
+#systemOption {
+	padding : 10px 15px;
+}
+#systemOption > footer {
+	text-align : center;
+	margin-top : 35px;
+}
+#systemOption > footer > button {
+	width : 72px;
+	height : 72px;
+	border-radius : 72px;
+	border : 5px solid #cf312e;
+	padding : 3px;
+	background-color : #cf312e;
+	background-clip : content-box;
+	font-size : 20px;
+}
