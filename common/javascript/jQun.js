@@ -829,7 +829,7 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 					var data = cache.get(url);
 
 					if(data){
-						complete(data, true);
+						complete(data, true, 200);
 						return;
 					}
 				}
@@ -840,7 +840,7 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 					if(this.readyState < 4)
 						return;
 
-					var responseData = this.status === 200 ? this.responseText : "";
+					var status = this.status, responseData = status === 200 ? this.responseText : "";
 
 					if(isJSON){
 						responseData = JSON.parse(responseData);
@@ -854,7 +854,7 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 						cache.set(url, responseData);
 					}
 
-					complete(responseData, false);
+					complete(responseData, false, status);
 				};
 			}
 

@@ -95,6 +95,9 @@ h6 {
 .grayFont {
 	color : #666;
 }
+.placeHolderFont {
+	color : #a9a9a9;
+}
 
 .onlyBorderBottom {
 	border-top : 0 none;

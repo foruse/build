@@ -26,7 +26,7 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 			colorHtml : colorHtml,
 			colorValidation : colorValidation,
 			titleValidation : titleValidation,
-			userManagementList : new UserManagementList("添加项目拍档", Global.mask)
+			userManagementList : new UserManagementList("添加项目拍档")
 		});
 
 		this.attach({
@@ -84,7 +84,7 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 
 	return AddProject.constructor;
 }(
-	Bao.Page.Index.Global,
+	Bao.Global,
 	Bao.API.DOM.Validation,
 	Bao.UI.Control.List.UserManagementList
 ));
@@ -121,7 +121,6 @@ this.BusinessCard = (function(Global, LoadingBar, CallServer, clickAvatarEvent){
 		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="userInfoHtml" type="jQun.HTML">用户信息模板</param>
 		this.assign({
-			loadingBar : new LoadingBar(),
 			userInfoHtml : userInfoHtml
 		});
 
@@ -151,13 +150,12 @@ this.BusinessCard = (function(Global, LoadingBar, CallServer, clickAvatarEvent){
 				businessCard.find(">section>dl").innerHTML = businessCard.userInfoHtml.render(data);	
 			});
 		},
-		loadingBar : undefined,
 		userInfoHtml : undefined
 	});
 
 	return BusinessCard.constructor;
 }(
-	Bao.Page.Index.Global,
+	Bao.Global,
 	Bao.UI.Control.Wait.LoadingBar,
 	Bao.CallServer,
 	// clickAvatarEvent
@@ -181,7 +179,7 @@ this.SystemOption = (function(AnchorList, anchorData){
 	Bao.UI.Control.List.AnchorList,
 	// anchorData
 	[
-		{ key : "searchAll", title : "搜索全部" },
+		{ key : "globalSearch", title : "搜索全部" },
 		{ key : "account", title : "我的账户" },
 		{ key : "accountConnection", title : "连接账户" },
 		{ key : "qrCode", title : "制作二维码" },

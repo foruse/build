@@ -23,6 +23,7 @@ this.Common = Common = (function(){
 				pinyin : firstLetter.match(/[A-Za-z]/) ? firstLetter : isNaN(firstLetter - 0) ? "z" : "a", // 这里只返回拼音首字母
 				avatar : "../../test/image/avatar/" + Number.random(16) + ".jpg",
 				company : String.random(10),
+				companyAdress : String.random(30),
 				position : String.random(4),
 				phoneNum : Number.random(14000000000),
 				email : String.random(8) + "@BaoPiQi.com",
@@ -42,6 +43,13 @@ this.Common = Common = (function(){
 			}
 
 			return users;
+		},
+		myInformation : function(){
+			var data = this.getUser();
+
+			data.password = "123456";
+
+			return data;
 		}
 	});
 

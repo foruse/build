@@ -1,5 +1,5 @@
-﻿(function(Index, StaticClass){
-this.Global = (function(Mask, TitleBar, History, Scroll, HTML){
+﻿(function(Bao, StaticClass){
+this.Global = (function(Fixed, Management, Drag, HTML){
 	function Global(){
 		///	<summary>
 		///	全局类，用于存储页面中的一些全局属性。
@@ -10,13 +10,13 @@ this.Global = (function(Mask, TitleBar, History, Scroll, HTML){
 			//jQun("body").set("zoom", window.screen.width / 640, "css");
 			
 			// 初始化历史记录
-			var history = new History();
+			var history = new Management.History();
 
 			Global.assign({
 				history :　history,
-				mask : new Mask("#mask"),
+				mask : new Fixed.Mask("#mask"),
 				// 初始化标题栏
-				titleBar : new TitleBar(
+				titleBar : new Fixed.TitleBar(
 					"#titleBar",
 					history,
 					new HTML("title_tools_html", true)
@@ -24,28 +24,27 @@ this.Global = (function(Mask, TitleBar, History, Scroll, HTML){
 			});
 
 			// 初始化滚动条
-			new Scroll();
+			new Drag.Scroll();
 			// 跳转到指定页
-			history.go("project");
+			history.go("account");
 		};
 	};
-	Global = new StaticClass(Global, "Bao.Page.Index.Global", {
+	Global = new StaticClass(Global, "Bao.Global", {
 		history : undefined,
 		titleBar : undefined
 	});
 
 	return Global;
 }(
-	Bao.UI.Fixed.Mask,
-	Bao.UI.Fixed.TitleBar,
-	Bao.API.Management.History,
-	Bao.UI.Control.Drag.Scroll,
+	Bao.UI.Fixed,
+	Bao.API.Management,
+	Bao.UI.Control.Drag,
 	jQun.HTML
 ));
 
-Index.members(this);
+Bao.members(this);
 }.call(
 	{},
-	Bao.Page.Index,
+	Bao,
 	jQun.StaticClass
 ));

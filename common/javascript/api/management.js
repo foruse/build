@@ -4,6 +4,9 @@ this.Loader = (function(Storage, Index, HTML){
 	Loader = new StaticClass(Loader);
 
 	Loader.properties({
+		account : function(){
+			return new Index.Deep.Account("#account", new HTML("account_html", true));
+		},
 		addProject : function(){
 			return new Index.Secondary.AddProject("#addProject", new HTML("addProject_color_html", true));
 		},

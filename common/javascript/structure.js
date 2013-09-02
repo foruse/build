@@ -18,9 +18,13 @@ this.Bao = (function(Bao){
 				Timer : null
 			})
 		}),
-		CallServer : null,
+		CallServer : null, // callServer.js
+		Global : null, // global.js
 		Page : new Namespace().members({
-			Index : new Namespace().members({ // ../../directoy/javascript/index
+			Index : new Namespace().members({ // ../../directoy/javascript/index\
+				Deep : new Namespace({ // ../../directoy/javascript/index/deep.js
+					Account : null
+				}),
 				Home : new Namespace({ // ../../directoy/javascript/index/home.js
 					Partner : null,
 					Project : null,
@@ -28,7 +32,6 @@ this.Bao = (function(Bao){
 					Schedule : null,
 					Tab : null
 				}),
-				Global : null, // ../../directoy/javascript/index/global.js
 				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
 					AddProject : null,
 					SystemOption : null

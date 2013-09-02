@@ -193,10 +193,7 @@ this.Project = (function(){
 		/// <param name="html" type="jQun.HTML">项目html模板</param>
 		var project = this,
 
-			loadingBar = new LoadingBar(),
-
 			batchLoad = new BatchLoad("getProjects", function(data){
-				loadingBar.hide();
 				project.add(data);
 
 				if(!this.isEqual("pageIndex", "pageMax"))
@@ -210,7 +207,6 @@ this.Project = (function(){
 		
 		this.assign({
 			html : html,
-			loadingBar : loadingBar,
 			batchLoad : batchLoad
 		});
 
@@ -234,7 +230,6 @@ this.Project = (function(){
 			}
 		});
 
-		loadingBar.appendTo(this[0]);
 		new OverflowPanel(this.find(">ul"));
 		this.load();
 	};
@@ -287,10 +282,8 @@ this.Project = (function(){
 				return;
 			}
 
-			this.loadingBar.show();
 			batchLoad.callServer();
 		},
-		loadingBar : undefined,
 		batchLoad : undefined
 	});
 
@@ -303,8 +296,6 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 
 			partner = this, panelStyle = this.style,
 
-			loadingBar = new LoadingBar(),
-
 			navigator = new Navigator();
 
 
@@ -312,12 +303,9 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 		userIndexList = new UserIndexList();
 
 		this.assign({
-			loadingBar : loadingBar,
 			userIndexList : userIndexList
 		});
-
-		// 添加loadingBar
-		loadingBar.appendTo(this[0]);		
+	
 		// 添加navigator
 		navigator.appendTo(this.find(">ul>li:first-child")[0]);
 
@@ -330,7 +318,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 				if(el.length > 0){
 					// 如果点击的是添加分组
 					if(el.get("action", "attr") === "addGroup"){
-						new InputSelectionList("添加组拍档", Global.mask);
+						new InputSelectionList("添加组拍档");
 						return;
 					}
 					
@@ -341,7 +329,6 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 		});
 
 		userIndexList.appendTo(this.find(">ul>li:last-child")[0]);
-		loadingBar.show();
 
 		// 获取分组数据
 		CallServer.open("getPartnerGroups", null, function(data){
@@ -386,7 +373,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 				return;	
 			}
 
-			var userIndexList = this.userIndexList, loadingBar = this.loadingBar;
+			var userIndexList = this.userIndexList;
 
 			// 聚焦当前分组
 			this.find('.group button.focused').classList.remove("focused");
@@ -394,11 +381,9 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 			this.set("top", 0, "css");
 
 			userIndexList.hide();
-			loadingBar.show();
 
 			// 还没当前分组的数据，那么就去取数据，再进行加载
 			CallServer.open("getPartners", { groupId : groupId }, function(data){
-				loadingBar.hide();
 				// 渲染数据
 				userIndexList.refresh(data);
 				userIndexList.show();
@@ -410,7 +395,6 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 				partner.focus(groupId, _groupEl);
 			});
 		},
-		loadingBar : undefined,
 		userIndexList : undefined
 	});
 
@@ -516,5 +500,5 @@ Home.members(this);
 	Bao.UI.Control,
 	Bao.UI.Control.Wait.LoadingBar,
 	Bao.API.Data.BatchLoad,
-	Bao.Page.Index.Global
+	Bao.Global
 ));

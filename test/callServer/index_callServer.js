@@ -1,20 +1,31 @@
 ﻿(function(Bao, JSON, Text, Index){
-this.CallServer = (function(CallServer, open, allHandlers){
+this.CallServer = (function(CallServer, Wait, open, allHandlers){
 	CallServer.setResponseType("json");
 	// 开始测试
-	CallServer.beginTesting();
+	//CallServer.beginTesting();
 
 	// 重写open方法
 	CallServer.override({
-		open : function(name, params, _complete){
-			open.call(CallServer, name, params, function(data, isCache){
+		open : function(name, params, _complete, _isUpload){
+			var LoadingBar = Wait.LoadingBar;
+
+			LoadingBar.show(_isUpload ? "正在上传数据.." : null);
+
+			open.call(CallServer, name, params, function(data, isCache, status){
+				if(status !== 200){
+					LoadingBar.error((_isUpload ? "上传" : "加载") + "数据失败..");
+					return;
+				}
+
 				if(isCache){
+					LoadingBar.hide();
 					_complete(data);
 					return;
 				}
 
 				// 测试延迟设置
 				setTimeout(function(){
+					LoadingBar.hide();
 					_complete(data);
 				}, 1000);
 			});
@@ -27,12 +38,14 @@ this.CallServer = (function(CallServer, open, allHandlers){
 		["getPartners",			new Text("url?groupId={groupId}"),		"", true],
 		["getProjects",			"url",		""],
 		["getSchedules",			new Text("url?last={last}&next={next}"),		"", true],
-		["addProject", new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"]
+		["addProject", new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
+		["myInformation", "url", "", true]
 	], allHandlers);
 
 	return CallServer;
 }(
 	jQun.Ajax,
+	Bao.UI.Control.Wait,
 	jQun.Ajax.open,
 	// allHandlers
 	{
@@ -113,6 +126,11 @@ this.CallServer = (function(CallServer, open, allHandlers){
 		},
 		getUser : function(data){
 			data = Index.Common.getUser();
+
+			return data;
+		},
+		myInformation : function(data){
+			data = Index.Common.myInformation();
 
 			return data;
 		}

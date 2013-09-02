@@ -1,18 +1,16 @@
-﻿(function(Wait, NonstaticClass, Panel, HTML){
-this.LoadingBar = (function(Timer, html){
-	function LoadingBar(_timeout, _errorText){
+﻿(function(Wait, NonstaticClass, StaticClass, Panel, HTML){
+this.LoadingBar = (function(Global, Timer, panelEl){
+	function LoadingBar(){
 		///	<summary>
 		///	加载类。
 		///	</summary>
-		this.assign({
-			errorText : _errorText ? _errorText : this.errorText,
-			timer : new Timer(_timeout || 30000)
-		});
-
-		this.combine(html.create());
-		this.hide();
+		jQun(window).attach({
+			"beforehide" : function(){
+				Global.mask.hide();
+			}
+		}, true);
 	};
-	LoadingBar = new NonstaticClass(LoadingBar, "Bao.UI.Others.Wait.LoadingBar", Panel.prototype);
+	LoadingBar = new StaticClass(LoadingBar, "Bao.UI.Others.Wait.LoadingBar");
 
 	LoadingBar.properties({
 		clearText : function(){
@@ -21,6 +19,7 @@ this.LoadingBar = (function(Timer, html){
 			///	</summary>
 			this.text("");
 		},
+		defaultText : "正在加载数据..",
 		error : function(str){
 			///	<summary>
 			///	显示加载错误信息。
@@ -28,7 +27,12 @@ this.LoadingBar = (function(Timer, html){
 			/// <param name="str" type="string">错误信息文本。</param>
 			this.text(str, "error");
 		},
-		errorText : "加载数据超时，请重新加载！",
+		errorText : "数据加载超时..",
+		hide : function(){
+			this.isLoading = false;
+			this.clearText();
+			Global.mask.hide();
+		},
 		nomore : false,
 		text : function(str, _type){
 			///	<summary>
@@ -36,10 +40,24 @@ this.LoadingBar = (function(Timer, html){
 			///	</summary>
 			/// <param name="str" type="string">信息文本。</param>
 			/// <param name="_type" type="string">信息类型。</param>
-			this.find(">span").innerHTML = str;
-			this.set("type", _type || "normal", "attr");
+			panelEl.find("dd").innerHTML = str;
+			panelEl.set("type", _type || "normal", "attr");
+			this.timer.stop();
 		},
-		timer : undefined,
+		show : function(_text, _errorText){
+			var mask = Global.mask;
+
+			this.isLoading = true;
+			this.text(typeof _text === "string" ? _text : this.defaultText, "loading");
+			
+			mask.fillBody(panelEl[0]);
+			mask.show("loadingBar");
+
+			this.timer.start(function(){
+				this.error(this.errorText);
+			}.bind(this));
+		},
+		timer : new Timer(3000),
 		warn : function(str){
 			///	<summary>
 			///	警告信息。
@@ -49,33 +67,21 @@ this.LoadingBar = (function(Timer, html){
 		}
 	});
 
-	LoadingBar.override({
-		hide : function(){
-			this.isLoading = false;
-			this.clearText();
-			this.parentClass().hide.call(this);
-			this.timer.stop();
-		},
-		show : function(){
-			this.isLoading = true;
-			this.text("", "loading");
-			this.parentClass().show.call(this);
-			
-			this.timer.start(function(){
-				this.error(this.errorText);
-			}.bind(this));
-		}
-	});
-
-	return LoadingBar.constructor;
+	return LoadingBar;
 }(
+	Bao.Global,
 	Bao.API.Management.Timer,
-	// html
+	// panelEl
 	new HTML([
 		'<div class="loadingBar" type="normal">',
-			'<span></span>',
+			'<dl>',
+				'<dt>',
+					'<button></button>',
+				'</dt>',
+				'<dd class="whiteFont">ss</dd>',
+			'</dl>',
 		'</div>'
-	].join(""))
+	].join("")).create()
 ));
 
 Wait.members(this);
@@ -83,6 +89,7 @@ Wait.members(this);
 	{},
 	Bao.UI.Control.Wait,
 	jQun.NonstaticClass,
+	jQun.StaticClass,
 	Bao.API.DOM.Panel,
 	jQun.HTML
 ));

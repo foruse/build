@@ -220,20 +220,18 @@ this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
 	].join(""))
 ));
 
-this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, selectUsersHtml, clickButtonEvent){
-	function UserSelectionList(text, mask){
+this.UserSelectionList = (function(UserIndexList, CallServer, Global, selectUsersHtml, clickButtonEvent){
+	function UserSelectionList(text){
 		///	<summary>
 		///	用户选择列表。
 		///	</summary>
 		/// <param name="mask" type="Bao.UI.Fixed.Mask">遮罩</param>
-		var loadingBar = new LoadingBar(), userIndexList = new UserIndexList();
+		var userSelectionList = this, mask = Global.mask,
+		
+			userIndexList = new UserIndexList();
 
 		this.combine(selectUsersHtml.create({ text : text }));
 
-		// 将loadingBar添加至userIndexList
-		loadingBar.appendTo(userIndexList[0]);
-		// 显示loadingBar
-		loadingBar.show();
 		// 将userIndexList添加至fillEl
 		userIndexList.appendTo(this.find(">article")[0]);
 		
@@ -281,14 +279,12 @@ this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, select
 			}
 		});
 
-		// 填充遮罩内容
-		mask.fillBody(this[0]);
-		// 显示遮罩
-		mask.show(text);
-
 		CallServer.open("getPartners", { groupId : -1 }, function(data){
-			loadingBar.hide();
 			userIndexList.refresh(data, "normal");
+			// 填充遮罩内容
+			mask.fillBody(userSelectionList[0]);
+			// 显示遮罩
+			mask.show(text);
 		});
 	};
 	UserSelectionList = new NonstaticClass(UserSelectionList, null, Panel.prototype);
@@ -296,8 +292,8 @@ this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, select
 	return UserSelectionList.constructor;
 }(
 	this.UserIndexList,
-	Bao.UI.Control.Wait.LoadingBar,
 	Bao.CallServer,
+	Bao.Global,
 	// selectUsersHtml
 	new HTML([
 		'<div class="userSelectionList">',
@@ -315,8 +311,8 @@ this.UserSelectionList = (function(UserIndexList, LoadingBar, CallServer, select
 	new jQun.Event("clickbutton")
 ));
 
-this.InputSelectionList = (function(UserSelectionList, inputHtml){
-	function InputSelectionList(text, mask, _placeholder){
+this.InputSelectionList = (function(UserSelectionList, Global, inputHtml){
+	function InputSelectionList(text, _placeholder){
 		var inputEl = inputHtml.create();
 
 		this.assign({
@@ -327,7 +323,7 @@ this.InputSelectionList = (function(UserSelectionList, inputHtml){
 			inputEl.set("placeholder", _placeholder, "attr");
 		}
 
-		mask.fillHeader(inputEl[0]);
+		Global.mask.fillHeader(inputEl[0]);
 
 		this.attach({
 			clickbutton : function(e){
@@ -344,12 +340,13 @@ this.InputSelectionList = (function(UserSelectionList, inputHtml){
 	return InputSelectionList.constructor;
 }(
 	this.UserSelectionList,
+	Bao.Global,
 	// inputHtml
 	new HTML('<input type="text" placeholder="请输入名称" />')
 ));
 
 this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, listHtml){
-	function UserManagementList(text, mask, _userData){
+	function UserManagementList(text, _userData){
 		///	<summary>
 		///	用户管理列表。
 		///	</summary>
@@ -389,7 +386,7 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 				// 如果点击的是添加按钮
 				if(targetEl.between('dt > button:first-child', this).length > 0){
 					// 初始化用户选择列表
-					var userSelectionList = new UserSelectionList(text, mask);
+					var userSelectionList = new UserSelectionList(text);
 
 					// 添加事件
 					userSelectionList.attach({
