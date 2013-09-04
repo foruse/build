@@ -26,31 +26,26 @@
 	position : relative;
 	z-index : 3;
 }
-#titleBar > * {
-	margin : 5px 0;
-	height : 18px;
-}
 #titleBar button {
 	border : 0 none;
 	display : block;
 }
-#titleBar > nav {
-	padding : 2px 0;
-}
 #titleBar > nav > button {
 	width : 24px;
-	height : 14px;
-	background : url(../../../common/image/width12.png) no-repeat 8px -105px;
+	height : 28px;
+	padding : 7px 0;
+	background : url(../../../common/image/width12.png) no-repeat 8px -105px content-box content-box;
 }
 #titleBar > p {
-	text-indent : 8px;
+	text-indent : 5px;
+	height : 100%;
+	padding : 5px 0;
 }
 #titleBar strong {
 	line-height : 20px;
 }
 #titleBar > ul {
 	float : right;
-	margin : 0;
 	height : auto;
 }
 #titleBar > ul button {
@@ -58,6 +53,10 @@
 	width : 28px;
 	border : 0 none;
 	background-color : transparent;
+}
+#titleBar button[action~="submit"] {
+	background-color : #ffc000;
+	background : #ffc000 url(../../../common/image/width24.png) no-repeat 7px -118px;
 }
 
 #mask {
@@ -135,17 +134,20 @@
 
 .validationError {
 	-webkit-animation : validationError steps(28) 2s 2;
-	border : 1px solid #f50;
-	box-shadow : inset 0 0 2px #f50;
+	box-shadow : inset 0 0 5px #f00 !important;
 }
 @-webkit-keyframes validationError {
 	0% {
 		opacity : 1;
 	}
 	30% {
-		opacity : 0.2;
+		opacity : 0.3;
 	}
 	100% {
 		opacity : 1;
 	}
+}
+
+#mask .userIndexList aside {
+	bottom : 110px;
 }

@@ -18,15 +18,17 @@
 
 
 .navigator {
-	height : 38px;
+	height : 44px;
 	overflow : hidden;
+	background-color : #f7f7f7;
 }
 .navigator > nav {
 	height : 28px;
 	position : relative;
 }
 .navigator > aside {
-	height : 10px;
+	height : 16px;
+	padding : 3px 0;
 	text-align : center;
 }
 .navigator > aside > ol, .navigator > aside li {
@@ -46,4 +48,7 @@
 	border-radius : 5px;
 	background-color : #c9c9c9;
 	border : 0 none;
+}
+.navigator > aside button.focused {
+	background-color : #000;
 }

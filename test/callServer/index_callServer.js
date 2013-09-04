@@ -2,7 +2,7 @@
 this.CallServer = (function(CallServer, Wait, open, allHandlers){
 	CallServer.setResponseType("json");
 	// 开始测试
-	//CallServer.beginTesting();
+	CallServer.beginTesting();
 
 	// 重写open方法
 	CallServer.override({
@@ -11,12 +11,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			LoadingBar.show(_isUpload ? "正在上传数据.." : null);
 
-			open.call(CallServer, name, params, function(data, isCache, status){
-				if(status !== 200){
-					LoadingBar.error((_isUpload ? "上传" : "加载") + "数据失败..");
-					return;
-				}
-
+			open.call(CallServer, name, params, function(data, isCache, isSuccess){
 				if(isCache){
 					LoadingBar.hide();
 					_complete(data);
@@ -25,6 +20,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 				// 测试延迟设置
 				setTimeout(function(){
+					if(!isSuccess){
+						LoadingBar.error((_isUpload ? "上传" : "加载") + "数据失败..");
+						return;
+					}
+
 					LoadingBar.hide();
 					_complete(data);
 				}, 1000);
@@ -39,7 +39,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getProjects",			"url",		""],
 		["getSchedules",			new Text("url?last={last}&next={next}"),		"", true],
 		["addProject", new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
-		["myInformation", "url", "", true]
+		["myInformation", "url", "", true],
 	], allHandlers);
 
 	return CallServer;

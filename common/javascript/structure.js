@@ -9,7 +9,9 @@ this.Bao = (function(Bao){
 			DOM : new Namespace().members({ // api/dom.js
 				EventCollection : null,
 				PagePanel : null,
-				Panel : null
+				Panel : null,
+				Validation : null,
+				ValidationList : null
 			}),
 			Management : new Namespace().members({ // api/management.js
 				History : null,

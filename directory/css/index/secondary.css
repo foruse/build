@@ -1,9 +1,4 @@
-﻿#titleBar button[action="submit"] {
-	background-color : #ffc000;
-	background : #ffc000 url(../../../common/image/width24.png) no-repeat 7px -118px;
-}
-
-#addProject {
+﻿#addProject {
 	font-size : 14px;
 	padding : 10px;
 }
@@ -77,9 +72,6 @@
 	min-height : 105px;
 	max-width : 100%;
 	min-width : 100%;
-}
-#mask[action="添加项目拍档"] .userIndexList aside {
-	bottom : 110px;
 }
 
 #businessCard {

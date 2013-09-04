@@ -215,6 +215,9 @@ this.Project = (function(){
 		batchLoad.setParam("pageMax", -1);
 
 		this.attach({
+			beforeshow : function(){
+				project.load();
+			},
 			leaveborder : function(e){
 				if(e.direction !== "bottom")
 					return;
@@ -231,7 +234,6 @@ this.Project = (function(){
 		});
 
 		new OverflowPanel(this.find(">ul"));
-		this.load();
 	};
 	Project = new NonstaticClass(Project, null, PagePanel.prototype);
 
@@ -290,8 +292,43 @@ this.Project = (function(){
 	return Project.constructor;
 }());
 
-this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServer){
+this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validation, CallServer){
+	function SelectorList(text, _placeholder){
+		///	<summary>
+		///	选择列表。
+		///	</summary>
+		/// <param name="text" type="string">标题文字</param>
+		/// <param name="_placeholder" type="string">输入框默认文字</param>
+		var validation = new Validation(this.find(">header>input"), function(textEl, Validation){
+			return Validation.result(textEl.value, "notEmpty");
+		});
+
+		this.attach({
+			clickbutton : function(e){
+				if(e.buttonType === "cancel")
+					return;
+
+				var inputText = e.inputText;
+
+				if(!validation.validate()){
+					e.stopPropagation();
+					return;
+				}
+				
+				CallServer.open("createGroup", {}, function(){
+				
+				});
+			}
+		}, true);
+	};
+	SelectorList = new NonstaticClass(SelectorList, null, InputSelectionList.prototype);
+
 	function Partner(selector, groupingHtml){
+		///	<summary>
+		///	拍档。
+		///	</summary>
+		/// <param name="selector" type="string">元素选择器</param>
+		/// <param name="groupingHtml" type="jQun.HTML">分组模板</param>
 		var userIndexList, groupPanel,
 
 			partner = this, panelStyle = this.style,
@@ -318,32 +355,33 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 				if(el.length > 0){
 					// 如果点击的是添加分组
 					if(el.get("action", "attr") === "addGroup"){
-						new InputSelectionList("添加组拍档");
+						new SelectorList.constructor("添加组拍档", "输入组名称");
 						return;
 					}
 					
 					// 否则点击的是分组按钮
 					partner.focus(el.get("groupId", "attr"), el);
 				}
+			},
+			beforeshow : function(){
+				// 获取分组数据
+				CallServer.open("getPartnerGroups", null, function(data){
+					var groups = data.groups, len = groups.length;
+				
+					// 添加分组区域
+					navigator.content(groupingHtml.render(data));
+					navigator.tab(Math.ceil(len / 3));
+					navigator.focusTab(0);
+
+					if(len === 0)
+						return;
+
+					partner.focus(groups[0].id);
+				});
 			}
 		});
 
 		userIndexList.appendTo(this.find(">ul>li:last-child")[0]);
-
-		// 获取分组数据
-		CallServer.open("getPartnerGroups", null, function(data){
-			var groups = data.groups, len = groups.length;
-				
-			// 添加分组区域
-			navigator.content(groupingHtml.render(data));
-			navigator.tab(Math.ceil(len / 3));
-			navigator.focusTab(0);
-
-			if(len === 0)
-				return;
-
-			partner.focus(groups[0].id);
-		});
 	};
 	Partner = new NonstaticClass(Partner, null, PagePanel.prototype);
 
@@ -403,6 +441,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, CallServe
 	Control.Drag.Navigator,
 	Control.List.UserIndexList,
 	Control.List.InputSelectionList,
+	Bao.API.DOM.Validation,
 	Bao.CallServer
 ));
 

@@ -1,4 +1,4 @@
-﻿(function(Secondary, NonstaticClass, StaticClass, PagePanel){
+﻿(function(Secondary, NonstaticClass, StaticClass, PagePanel,  CallServer){
 this.AddProject = (function(Global, Validation, UserManagementList){
 	function AddProject(selector, colorHtml){
 		///	<summary>
@@ -46,6 +46,23 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 					if(!colorValidation.validate())
 						return;
 
+					var a = {
+						title : addProject.find('>section[desc="title"]>input').value,
+						color : addProject.find('>section[desc="color"] button.selected').get("colormark", "attr"),
+						desc : addProject.find('>footer textarea').value,
+						users : addProject.userManagementList.getAllUsers()
+					};
+
+					console.log(a);
+
+					CallServer.open("addProject", {
+						title : addProject.find('>section[desc="title"]>input').value,
+						colormark : addProject.find('>section[desc="color"] button.selected').get("colormark", "attr"),
+						desc : addProject.find('>footer textarea').value,
+						users : addProject.userManagementList.getAllUsers()
+					}, function(){
+						
+					});
 					// todo : 添加数据
 					Global.history.go("project");
 				};
@@ -89,7 +106,7 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 	Bao.UI.Control.List.UserManagementList
 ));
 
-this.BusinessCard = (function(Global, LoadingBar, CallServer, clickAvatarEvent){
+this.BusinessCard = (function(Global, LoadingBar, clickAvatarEvent){
 	function ClickUserAvatar(){
 		///	<summary>
 		///	点击用户头像。
@@ -157,7 +174,6 @@ this.BusinessCard = (function(Global, LoadingBar, CallServer, clickAvatarEvent){
 }(
 	Bao.Global,
 	Bao.UI.Control.Wait.LoadingBar,
-	Bao.CallServer,
 	// clickAvatarEvent
 	new jQun.Event("clickavatar", function(){
 		this.attachTo("*");
@@ -194,5 +210,6 @@ Secondary.members(this);
 	Bao.Page.Index.Secondary,
 	jQun.NonstaticClass,
 	jQun.StaticClass,
-	Bao.API.DOM.PagePanel
+	Bao.API.DOM.PagePanel,
+	Bao.CallServer
 ));

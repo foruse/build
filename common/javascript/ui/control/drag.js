@@ -126,10 +126,10 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 			///	设置选项卡。
 			///	</summary>
 			/// <param name="len" type="number">选项卡的个数</param>
-			var tabItemsEl = tabItemsHtml.create({ length : len });
-
-			this.buttonEls = tabItemsEl.find(">button");
-			tabItemsEl.appendTo(this.tabEl[0]);
+			var tabEl = this.tabEl;
+			
+			tabEl.innerHTML = tabItemsHtml.render({ length : len });
+			this.buttonEls = tabEl.find("button");
 		},
 		tabEl : undefined,
 		timer : undefined
@@ -139,7 +139,7 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 }(
 	// panelHtml
 	new HTML([
-		'<div class="navigator">',
+		'<div class="navigator onlyBorderBottom lightBdColor">',
 			'<nav></nav>',
 			'<aside>',
 				'<ol class="inlineBlock"></ol>',

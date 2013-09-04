@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.5.3
- *  本次修改：Event类大改，由原来1次性永久性事件改为每次触发产生新的事件，但是类的实例仍不变（主要解决了事件冒泡被阻止一次后，事件就不再冒泡的问题）。
+ *  文档状态：1.0.5.5
+ *  本次修改：NodeList.attach增加参数：支持addEventListener的所有参数;优化RequestConnection的传参。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0
  */
 
@@ -698,6 +698,17 @@ this.Text = (function(tRegx){
 				}
 			);
 		},
+		toUrlParams : function(params){
+			///	<summary>
+			///	 返回一个替换数据后的连接字符串。
+			///	</summary>
+			///	<param name="params" type="object">需要替换的数据或者自行替换的处理函数。</param>
+			var encode = encodeURIComponent;
+
+			return this.replace(function(p){
+				return encode(p);
+			});
+		},
 		text : ""
 	});
 
@@ -705,6 +716,38 @@ this.Text = (function(tRegx){
 }(
 	// tRegx => 查找参数
 	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g
+));
+
+this.Validation = (function(RegExp, regExpString){
+	function Validation(){
+		///	<summary>
+		///	验证。
+		///	</summary>
+	};
+	Validation = new StaticClass(Validation, "jQun.Validation");
+
+	Validation.properties({
+		match : function(str, type, _regxAttrs){
+			return str.match(new RegExp(regExpString[type], _regxAttrs));
+		},
+		result : function(str, type){
+			return !!this.match.apply(this, arguments);
+		}
+	});
+
+	return Validation;
+}(
+	RegExp,
+	// regExpString
+	{
+		chinese : "[\\u4e00-\\u9fa5]",
+		email : "(\\w+(?:[-+.]\\w+)*)@(\\w+(?:[-.]\\w+)*)\\.(\\w+(?:[-.]\\w+)*)",
+		empty : "^$",
+		notEmpty : "[\\s\\S]",
+		userInfo : "^\\w{6,16}$",
+		telephone : "^(\\d{3}|\\d{4})?-(\\d{7,8}|\\d{11})$",
+		webUrl : "http:\\/\\/([\\w-]+)\\.+([\\w-]+)(?:\\/([\\w- .\\/?%&=]*))?"
+	}
 ));
 
 this.Cache = (function(JSON, sessionStorage){
@@ -768,7 +811,7 @@ this.Cache = (function(JSON, sessionStorage){
 	sessionStorage
 ));
 
-this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
+this.RequestConnection = (function(Text, Cache, JSON, toUpperCase, getEncodedParams){
 	function RequestConnection(name, url, type, _handler, _cacheable){
 		///	<summary>
 		///	ajax请求连接。
@@ -821,7 +864,7 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 				request = new XMLHttpRequest();
 
 			if(url instanceof Text){
-				url = url.replace(params);
+				url = url.toUrlParams(params);
 			}
 
 			if(typeof complete === "function"){
@@ -840,21 +883,23 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 					if(this.readyState < 4)
 						return;
 
-					var status = this.status, responseData = status === 200 ? this.responseText : "";
+					var isSuccess = this.status === 200, responseData = isSuccess ? this.responseText : "";
 
-					if(isJSON){
-						responseData = JSON.parse(responseData);
+					if(isSuccess){
+						if(isJSON){
+							responseData = JSON.parse(responseData);
+						}
+
+						if(typeof handler === "function"){
+							responseData = handler(responseData, params);
+						}
+
+						if(cache){
+							cache.set(url, responseData);
+						}
 					}
 
-					if(typeof handler === "function"){
-						responseData = handler(responseData);
-					}
-
-					if(cache){
-						cache.set(url, responseData);
-					}
-
-					complete(responseData, false, status);
+					complete(responseData, false, isSuccess);
 				};
 			}
 
@@ -877,7 +922,7 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 				this.RequestHeader.addTo(request);
 			}
 
-			request.send(isPost ? getSendString(params) : null);
+			request.send(isPost ? getEncodedParams(params) : null);
 			return request;
 		}
 	});
@@ -888,7 +933,7 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 	this.Cache,
 	this.JSON,
 	String.prototype.toUpperCase,
-	// getSendString
+	// getEncodedParams
 	function(params){
 		///	<summary>
 		///	获取post方法的参数字符串。
@@ -897,9 +942,9 @@ this.RequestConnection = (function(Text, Cache, JSON, toUpperCase){
 		var arr = [];
 
 		forEach(params, function(value, name){
-			arr.push(name + "=" + value);
+			arr.push(this(name) + "=" + this(value));
 			arr.push("&");
-		});
+		}, encodeURIComponent);
 		arr.splice(-1);
 
 		return arr.join("");
@@ -1371,7 +1416,7 @@ this.ClassListCollection = (function(){
 	return ClassListCollection.constructor;
 }());
 
-this.NodeList = (function(AttributeCollection){
+this.NodeList = (function(AttributeCollection, toArray){
 	function NodeList(){
 		///	<summary>
 		///	节点列表类。
@@ -1420,15 +1465,19 @@ this.NodeList = (function(AttributeCollection){
 			this.insertTo(parentNode);
 			return this;
 		},
-		attach : function(events, _capture){
+		attach : function(events, _capture, _priority, _useWeakReference){
 			///	<summary>
 			///	向集合中所有元素注册事件侦听器。
 			///	</summary>
 			///	<param name="events" type="object">事件侦听器键值对。</param>
 			///	<param name="_capture" type="boolean">侦听器是否运行于捕获阶段。</param>
+			///	<param name="_priority" type="number">优先级，数字越大，优先级越高。</param>
+			///	<param name="_useWeakReference" type="boolean">是否是属于强引用。</param>
+			var otherArgs = toArray(arguments, 1);
+
 			this.forEach(function(node){
 				forEach(events, function(fn, type){
-					node.addEventListener(type, fn, _capture);
+					node.addEventListener.apply(node, [type, fn].concat(otherArgs));
 				});
 			});
 			return this;
@@ -1482,7 +1531,8 @@ this.NodeList = (function(AttributeCollection){
 
 	return NodeList.constructor;
 }(
-	this.AttributeCollection
+	this.AttributeCollection,
+	jQun.toArray
 ));
 
 this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, window, selectorReplaceRegx){

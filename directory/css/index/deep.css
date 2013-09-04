@@ -4,6 +4,7 @@
 #account > * {
 	border-radius : 5px;
 	margin-bottom : 5px;
+	background-color : #fff;
 }
 #account dl {
 	height : 45px;
@@ -24,16 +25,22 @@
 	right : 5px;
 	top : 0;
 }
-#account li:last-child > dl {
+#account li:last-child > dl, #account > footer dl:last-child {
 	border : 0 none;
 }
 #account input {
 	height : 100%;
 	width : 100%;
 	border : 0 none;
-	background-color : transparent;
 	overflow : hidden;
 	text-overflow : ellipsis;
+	background-color : transparent;
+}
+#account input:not([readonly]) {
+	color : inherit;
+}
+#account input[readonly] {
+	background-color : transparent;
 }
 #account > header > figure {
 	position : relative;
@@ -65,4 +72,22 @@
 }
 #account > section > ul {
 	border-radius : 5px;
+}
+#account dl[desc="pwd"] {
+	border : 0 none;
+}
+#account dl[desc="editPwd"], #account dl[desc="rePwd"], #account.editable dl[desc="pwd"] {
+	display : none;
+}
+#account.editable dl[desc="editPwd"], #account.editable dl[desc="rePwd"] {
+	display : block;
+}
+#titleBar button[action="editAccount"] {
+	border : 1px solid #39a85a;
+	border-width : 6px 5px;
+	background : #39a85a url(../../../common/image/width24.png) 1px -425px no-repeat;
+	background-clip : content-box;
+}
+#titleBar button[action="submit account"] {
+	background-color : #ce312d;
 }

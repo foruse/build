@@ -222,6 +222,11 @@ this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
 
 this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder){
 	function OverflowPanel(selector, _disableScrollBar){
+		///	<summary>
+		///	溢出区域。
+		///	</summary>
+		///	<param name="selector" type="string">元素选择器。</param>
+		///	<param name="_disableScrollBar" type="boolean">是否显示滚动条。</param>
 		var overflowPanel = this,
 		
 			isLeaveborder = false,
@@ -338,8 +343,13 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 	}.bind(new Event("leaveborder"))
 ));
 
-this.Validation = (function(){
+this.Validation = (function(ValidationBase){
 	function Validation(validationEl, handler){
+		///	<summary>
+		///	验证元素。
+		///	</summary>
+		///	<param name="validationEl" type="jQun.HTMLElementList">对应的元素。</param>
+		///	<param name="handler" type="function">验证函数，需要返回true或false。</param>
 		var validation = this;
 
 		this.assign({
@@ -355,11 +365,17 @@ this.Validation = (function(){
 
 	Validation.properties({
 		clearError : function(){
+			///	<summary>
+			///	清除错误。
+			///	</summary>
 			this.validationEl.classList.remove("validationError");
 		},
 		handler : undefined,
 		validate : function(){
-			if(this.handler(this.validationEl))
+			///	<summary>
+			///	进行验证。
+			///	</summary>
+			if(this.handler(this.validationEl, ValidationBase))
 				return true;
 
 			this.validationEl.classList.add("validationError");
@@ -369,7 +385,36 @@ this.Validation = (function(){
 	});
 
 	return Validation.constructor;
-}());
+}(
+	jQun.Validation
+));
+
+this.ValidationList = (function(List, Validation){
+	function ValidationList(){ };
+	ValidationList = new NonstaticClass(ValidationList, "Bao.API.DOM.ValidationList", List.prototype);
+
+	ValidationList.properties({
+		addValidation : function(validationEl, handler){
+			///	<summary>
+			///	添加验证。
+			///	</summary>
+			this.push(new Validation(validationEl, handler));
+		},
+		validate : function(){
+			///	<summary>
+			///	进行验证。
+			///	</summary>
+			return this.every(function(validation){
+				return validation.validate();
+			});
+		}
+	});
+
+	return ValidationList.constructor;
+}(
+	jQun.List,
+	this.Validation
+));
 
 DOM.members(this);
 }.call(

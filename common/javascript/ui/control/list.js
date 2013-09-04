@@ -1,6 +1,6 @@
 ﻿(function(List, NonstaticClass, Panel, HTML){
-this.AnchorList = (function(anchorListHtml, _hasDescript){
-	function AnchorList(listData){
+this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
+	function AnchorList(listData, _hasDescript){
 		///	<summary>
 		///	连接列表。
 		///	</summary>
@@ -8,11 +8,29 @@ this.AnchorList = (function(anchorListHtml, _hasDescript){
 			listData : listData,
 			descriptstatus : _hasDescript ? "show" : "hide"
 		}));
+
+		this.attach({
+			userclick : function(e){
+				var anchorEl = jQun(e.target).between(">ul>li", this);
+
+				if(anchorEl.length === 0)
+					return;
+
+				clickAnchorEvent.setEventAttrs({
+					anchor : anchorEl.get("key", "attr")
+				});
+				clickAnchorEvent.trigger(this);
+			},
+			clickanchor : function(e){
+				Global.history.go(e.anchor);
+			}
+		});
 	};
 	AnchorList = new NonstaticClass(AnchorList, "Bao.UI.Control.List.AnchorList", Panel.prototype);
 
 	return AnchorList.constructor;
 }(
+	Bao.Global,
 	// anchorListHtml
 	new HTML([
 		'<div class="anchorList" descriptstatus="{descriptstatus}">',
@@ -37,7 +55,9 @@ this.AnchorList = (function(anchorListHtml, _hasDescript){
 				'}',
 			'</ul>',
 		'</div>'
-	].join(""))
+	].join("")),
+	// clickAnchorEvent
+	new jQun.Event("clickanchor")
 ));
 
 this.ProjectAnchorList = (function(AnchorList, levelHtml){
@@ -113,6 +133,15 @@ this.UserList = (function(panelHtml, userListHtml){
 		delUser : function(id){
 			this.find('>figure > p[userid="' + id + '"]').parent().remove();
 		},
+		getAllUsers : function(){
+			var users = [];
+
+			this.find(">figure>p").forEach(function(p){
+				users.push(jQun(p).get("userid", "attr"));
+			});
+
+			return users;
+		},
 		refresh : function(users){
 			this.innerHTML = "";
 			this.addUsers(users);
@@ -177,6 +206,7 @@ this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
 			/// <param name="data" type="*">用户数据</param>
 			/// <param name="_avatarSize" type="string">头像大小</param>
 			this.innerHTML = listHtml.render(data);
+			this.set("top", "0", "css");
 
 			data.userListCollection.forEach(function(userList){
 				new UserList(_avatarSize).refresh(userList.users).appendTo(
@@ -202,7 +232,7 @@ this.UserIndexList = (function(OverflowPanel, UserList, panelHtml, listHtml){
 			'@for(userListCollection ->> userList){',
 				'<li letter="{userList.firstLetter}">',
 					'<dl>',
-						'<dt class="lightBgColor">',
+						'<dt>',
 							'<strong>{userList.firstLetter}</strong>',
 						'</dt>',
 						'<dd></dd>',
@@ -268,14 +298,15 @@ this.UserSelectionList = (function(UserIndexList, CallServer, Global, selectUser
 						users : users,
 						buttonType : targetEl.get("action", "attr")
 					});
-					clickButtonEvent.trigger(this);
-
-					// 隐藏遮罩
-					mask.hide();
+					clickButtonEvent.trigger(targetEl[0]);
 				}
 			},
 			clickavatar : function(e){
 				e.stopPropagation();
+			},
+			clickbutton : function(e){
+				// 隐藏遮罩
+				mask.hide();
 			}
 		});
 
@@ -302,7 +333,7 @@ this.UserSelectionList = (function(UserIndexList, CallServer, Global, selectUser
 				'<button action="cancel"></button>',
 			'</header>',
 			'<article></article>',
-			'<footer class="lightBgColor">',
+			'<footer>',
 				'<button action="ok"></button>',
 			'</footer>',
 		'</div>'
@@ -319,11 +350,12 @@ this.InputSelectionList = (function(UserSelectionList, Global, inputHtml){
 			inputEl : inputEl
 		});
 
+		this.classList.add("inputSelectionList");
+		inputEl.insertTo(this.find(">header")[0], 0);
+
 		if(_placeholder){
 			inputEl.set("placeholder", _placeholder, "attr");
 		}
-
-		Global.mask.fillHeader(inputEl[0]);
 
 		this.attach({
 			clickbutton : function(e){
@@ -415,6 +447,9 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 	UserManagementList.properties({
 		clearUsers : function(){
 			this.userList.clearUsers();
+		},
+		getAllUsers : function(){
+			return this.userList.getAllUsers();
 		},
 		userList : undefined
 	});

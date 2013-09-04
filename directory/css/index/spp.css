@@ -175,46 +175,93 @@
 #partner > ul > li:last-child {
 	z-index : 0;
 	position : absolute;
-	top : 38px;
+	top : 50px;
 	bottom : 0;
 	left : 0;
 	right : 0;
 }
-#partner .group dt {
-	position : fixed;
-	background-color : #fff;
+#partner .navigator {
+	border-color : #00b0d6;
 }
-#partner .group dd {
-	margin-left : 90px;
+#partner .navigator > aside button.focused {
+	background-color : #00b0d6;
+}
+#partner .group {
+	padding : 5px 0;
+	height : 30px;
+}
+#partner .group > dt {
+	position : fixed;
+	padding : 0 5px;
+	background-color : #f7f7f7;
+}
+#partner .group > dd {
+	margin-left : 129px;
+	padding : 1px 0;
 }
 #partner .group button {
-	width : 36px;
-	height : 16px;
+	width : auto;
+	height : 18px;
+	padding : 0 5px;
 	background-color : transparent;
 	border-radius : 3px;
+	margin-right : 14px;
 }
 #partner .group button[groupid] {
 	border : 0 none;
 }
+#partner .group button[groupid="-1"] {
+	margin : 1px 0;
+}
 #partner .group button[action="addGroup"] {
-	width : 53px;
-	height : 18px;
+	width : 58px;
+	height : 20px;
+	border : 1px solid #00b0d6;
+	color : #00b0d6;
+	padding : 3px 0px;
+	line-height : 0;
+	text-indent : 15px;
+	white-space : nowrap;
+	background : url(../../../common/image/width12.png) 3px -150px no-repeat content-box content-box;
 }
 #partner .group button.focused {
-	background-color : #ff0;
+	background-color : #00b0d6;
+	color : #fff;
 }
 #partner .group ul {
 	white-space : nowrap;
 }
 #partner .userIndexList aside {
-	bottom : 85px;
+	bottom : 70px;
 }
+#mask[action="添加组拍档"] header > span {
+	text-align : center;
+	padding-left : 0;
+	background-image : none;
+}
+#mask[action="添加组拍档"] > article, #mask[action="添加组拍档"] footer > button,
+#mask[action="添加组拍档"] header > input, #mask[action="添加组拍档"] .userIndexList p.selected {
+	border-color : #00b0d6;
+}
+#mask[action="添加组拍档"] header > button, #mask[action="添加组拍档"] footer > button {
+	background-color : #00b0d6;
+}
+#mask[action="添加组拍档"] header, #mask[action="添加组拍档"] .userIndexList aside {
+	color : #00b0d6;
+}
+#mask[action="添加组拍档"] header > input {
+	padding-left : 24px;
+	background : url(../../../common/image/width24.png) 5px -442px no-repeat;
+}
+
 
 #tab_SPP {
 	display : block;
 	top : auto;
-	bottom : 5px;
-	height : 50px !important;
+	bottom : 0;
+	padding-bottom : 5px;
+	height : 60px !important;
+	background-image : -webkit-linear-gradient(top, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 30%, rgba(255, 255, 255, 0.8));
 }
 #tab_SPP > ul {
 	width : 192px;

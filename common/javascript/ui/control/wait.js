@@ -4,9 +4,11 @@ this.LoadingBar = (function(Global, Timer, panelEl){
 		///	<summary>
 		///	加载类。
 		///	</summary>
+		var LoadingBar = this;
+
 		jQun(window).attach({
-			"beforehide" : function(){
-				Global.mask.hide();
+			"beforehide" : function(e){
+				LoadingBar.hide();
 			}
 		}, true);
 	};
@@ -57,7 +59,7 @@ this.LoadingBar = (function(Global, Timer, panelEl){
 				this.error(this.errorText);
 			}.bind(this));
 		},
-		timer : new Timer(3000),
+		timer : new Timer(20000),
 		warn : function(str){
 			///	<summary>
 			///	警告信息。

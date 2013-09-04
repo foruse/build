@@ -5,6 +5,7 @@
 	box-sizing : border-box;
 	-webkit-user-select : none;
 	list-style : none none outside;
+	vertical-align : middle;
 }
 
 body {
@@ -26,6 +27,9 @@ button, input, textarea {
 
 textarea, input {
 	-webkit-user-select : auto;
+}
+textarea[readonly], input[readonly] {
+	-webkit-user-select : none;
 }
 
 script {

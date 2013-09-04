@@ -90,6 +90,7 @@
 	height : 22px;
 	margin : 0 24px;
 	background-clip : content-box;
+	background-color : #ddd;
 }
 .userIndexList strong {
 	display : block;
@@ -101,7 +102,7 @@
 	top : -8px;
 	left : -18px;
 	color : #fff;
-	background-color : #5e5e5e;
+	background-color : #ccc;
 	text-align : center;
 	font-family : Helvetica;
 }
@@ -184,9 +185,10 @@
 	border : 0 none;
 	background-color : #f1af0f;
 }
-.userSelectionList > header {
-	padding-left : 18px;
+.userSelectionList > header > span {
+	display : block;
 	height : 18px;
+	padding-left : 18px;
 	line-height : 18px;
 	text-indent : 5px;
 	background : url(../../../common/image/width24.png) 0 -200px no-repeat;
@@ -194,10 +196,28 @@
 .userSelectionList > header > button {
 	float : right;
 	position : relative;
-	top : -30px;
+	top : -48px;
 	left : 22px;
 	background-image : url(../../../common/image/width24.png);
 	background-position : 6px -219px;
+}
+.userSelectionList > article {
+	position : absolute;
+	bottom : 0;
+	top : 50px;
+	left : 10px;
+	right : 10px;
+	overflow : hidden;
+	box-sizing : content-box;
+	padding-bottom : 38px;
+}
+.userSelectionList .userIndexList aside {
+	right : 25px;
+	top : 95px;
+}
+.userSelectionList .userIndexList p.selected {
+	border-color : #f1af0f;
+	box-shadow : 0 0 3px #f1af0f;
 }
 .userSelectionList > footer {
 	position : absolute;
@@ -206,6 +226,7 @@
 	height : 38px;
 	width : 100%;
 	text-align : center;
+	background-color : rgba(0, 0, 0, 0.3);
 }
 .userSelectionList > footer > button {
 	height : 48px;
@@ -215,19 +236,21 @@
 	margin-top : -15px;
 	background : #f1af0f url(../../../common/image/width24.png) 3px -247px no-repeat;
 }
-.userSelectionList > article {
-	position : absolute;
-	bottom : 38px;
-	top : 50px;
-	left : 10px;
-	right : 10px;
-	overflow : hidden;
+
+.inputSelectionList > header > input {
+	height : 35px;
+	margin-bottom : 12px;
+	width : 100%;
+	border-radius : 5px;
+	border : 2px solid #f1af0f;
+	text-indent : 5px;
 }
-.userSelectionList .userIndexList aside {
-	right : 25px;
+.inputSelectionList > header > button {
+	top : -95px;
+}
+.inputSelectionList > article {
 	top : 95px;
 }
-.userSelectionList .userIndexList p.selected {
-	border-color : #f1af0f;
-	box-shadow : 0 0 3px #f1af0f;
+.inputSelectionList .userIndexList aside {
+	top : 140px;
 }

@@ -95,7 +95,7 @@
 				<script id="spp_partnerGroups_html" type="text/html">
 					<dl class="group inlineBlock">
 						<dt>
-							<button class="themeBdColor" action="addGroup">添加组</button>
+							<button action="addGroup">添加组</button>
 							<button groupid="-1">全部</button>
 						</dt>
 						<dd>
@@ -148,8 +148,8 @@
 							"projectColor_blue",
 							"projectColor_BR",
 							"projectColor_purple"
-						] ->> color){
-							<button class="{color}"></button>
+						] ->> color, idx){
+							<button class="{color}" colormark="{idx}"></button>
 						}
 					</script>
 				</section>
@@ -216,68 +216,54 @@
 							</p>
 						</aside>
 						<ul>
-							<li>
-								<dl class="lightBdColor onlyBorderBottom">
-									<dt class="placeHolderFont">姓名：</dt>
-									<dd>
-										<input type="text" value="{?~name}" readonly />
-									</dd>
-								</dl>
-							</li>
-							<li>
-								<dl class="lightBdColor onlyBorderBottom">
-									<dt class="placeHolderFont">公司：</dt>
-									<dd>
-										<input type="text" value="{?~company}" readonly />
-									</dd>
-								</dl>
-							</li>
+							@for([
+								{ key : "姓名", value : name, desc : "name", vtype : "notEmpty" },
+								{ key : "公司", value : company, desc : "company" }
+							] ->> item){
+								<li>
+									<dl class="lightBdColor onlyBorderBottom" desc="{item.desc}">
+										<dt class="placeHolderFont">{item.key}：</dt>
+										<dd>
+											<input class="placeHolderFont" type="text" value="{item.value}" vtype="{item.vtype}" readonly />
+										</dd>
+									</dl>
+								</li>
+							}
 						</ul>
 					</figure>
 				</header>
 				<section>
 					<ul class="themeBdColor">
-						<li>
-							<dl class="lightBdColor onlyBorderBottom">
-								<dt class="placeHolderFont">职位：</dt>
-								<dd>
-									<input type="text" value="{?~position}" readonly />
-								</dd>
-							</dl>
-						</li>
-						<li>
-							<dl class="lightBdColor onlyBorderBottom">
-								<dt class="placeHolderFont">联系电话：</dt>
-								<dd>
-									<input type="text" value="{?~phoneNum}" readonly />
-								</dd>
-							</dl>
-						</li>
-						<li>
-							<dl class="lightBdColor onlyBorderBottom">
-								<dt class="placeHolderFont">邮箱：</dt>
-								<dd>
-									<input type="text" value="{?~email}" readonly />
-								</dd>
-							</dl>
-						</li>
-						<li>
-							<dl class="lightBdColor onlyBorderBottom">
-								<dt class="placeHolderFont">公司地址：</dt>
-								<dd>
-									<input type="text" value="{?~companyAdress}" readonly />
-								</dd>
-							</dl>
-						</li>
+						@for([
+							{ key : "职位", value : position, desc : "position" },
+							{ key : "联系电话", value : phoneNum, desc : "phoneNum" },
+							{ key : "邮箱", value : email, desc : "email" },
+							{ key : "公司地址", value : companyAdress, desc : "companyAdress" }
+						] ->> item){
+							<li>
+								<dl class="lightBdColor onlyBorderBottom" desc="{item.desc}">
+									<dt class="placeHolderFont">{item.key}：</dt>
+									<dd>
+										<input class="placeHolderFont" type="text" value="{item.value}" vtype="{item.vtype}" readonly />
+									</dd>
+								</dl>
+							</li>
+						}
 					</ul>
 				</section>
 				<footer class="themeBdColor">
-					<dl>
-						<dt class="placeHolderFont">密码：</dt>
-						<dd>
-							<input type="password" value="{?~password}" readonly />
-						</dd>
-					</dl>
+					@for([
+						{ key : "密码", value : password, desc : "pwd" },
+						{ key : "修改密码", value : "", desc : "editPwd", vtype : "userInfo" },
+						{ key : "确认密码", value : "", desc : "rePwd", vtype : "rePwd" }
+					] ->> item){
+						<dl class="lightBdColor onlyBorderBottom" desc="{item.desc}">
+							<dt class="placeHolderFont">{item.key}：</dt>
+							<dd>
+								<input class="placeHolderFont" maxlength="16" type="password" value="{item.value}" vtype="{item.vtype}" readonly />
+							</dd>
+						</dl>
+					}
 				</footer>
 			</script>
 		</div>
