@@ -118,3 +118,13 @@ h6 {
 	display : inline-block;
 	vertical-align : top;
 }
+
+.smallRadius {
+	border-radius : 3px;
+}
+.normalRadius {
+	border-radius : 5px;
+}
+.largeRadius {
+	border-radius : 10px;
+}

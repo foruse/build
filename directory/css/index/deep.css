@@ -2,7 +2,6 @@
 	padding : 10px;
 }
 #account > * {
-	border-radius : 5px;
 	margin-bottom : 5px;
 	background-color : #fff;
 }
@@ -69,9 +68,6 @@
 }
 #account > header dd {
 	left : 60px;
-}
-#account > section > ul {
-	border-radius : 5px;
 }
 #account dl[desc="pwd"] {
 	border : 0 none;

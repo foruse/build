@@ -3,7 +3,6 @@
 	height : 110px;
 	overflow : hidden;
 	position : relative;
-	border-radius : 3px;
 	box-sizing : content-box;
 }
 .calendar.stretch {

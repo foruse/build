@@ -341,7 +341,7 @@ this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
 	DateTable,
 	// calendarHtml
 	new HTML([
-		'<div class="calendar lightBdColor">',
+		'<div class="calendar lightBdColor smallRadius">',
 			'<dl>',
 				'<dt class="inlineBlock whiteFont">',
 					'@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title, day){',

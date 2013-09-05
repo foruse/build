@@ -6,9 +6,6 @@
 	overflow : hidden;
 	display : none;
 }
-.scroll, .scroll > button {
-	border-radius : 5px;
-}
 .scroll > button {
 	background-color : rgba(200, 50, 50, 0.7);
 	width : 100%;
@@ -45,7 +42,6 @@
 	display : block;
 	width : 5px;
 	height : 5px;
-	border-radius : 5px;
 	background-color : #c9c9c9;
 	border : 0 none;
 }

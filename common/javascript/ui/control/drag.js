@@ -7,6 +7,10 @@ this.Scroll = (function(html){
 		var scroll = this, timer = new IntervalTimer(70);
 
 		this.combine(html.create()).appendTo(document.body);
+
+		this.assign({
+			buttonStyle : this.find(">button").style
+		});
 	};
 	Scroll = new NonstaticClass(Scroll, "jQun.Scroll", Panel.prototype);
 
@@ -22,8 +26,13 @@ this.Scroll = (function(html){
 	});
 
 	Scroll.properties({
+		buttonStyle : undefined,
 		reposition : function(overflowPanel){
-			var rect = overflowPanel.parent()[0].getBoundingClientRect();
+			var buttonStyle = this.buttonStyle,
+			
+				rect = overflowPanel.parent()[0].getBoundingClientRect(),
+
+				height = overflowPanel.height();
 				
 			jQun.forEach(rect, function(value, name){
 				if(name === "width")
@@ -40,7 +49,8 @@ this.Scroll = (function(html){
 				this[name] = value + "px";
 			}, this.style);
 
-			this.find(">button").height((rect.height * 100 / overflowPanel.height()) + "%");
+			buttonStyle.height = (rect.height * 100 / height) + "%";
+			buttonStyle.top = (overflowPanel.get("top", "css").toString().split("px").join("") - 0 || 0) / height * -100 + "%";
 		}
 	});
 
@@ -48,8 +58,8 @@ this.Scroll = (function(html){
 }(
 	// html
 	new HTML([
-		'<aside class="scroll">',
-			'<button></button>',
+		'<aside class="scroll normalRadius">',
+			'<button class="normalRadius"></button>',
 		'</aside>'
 	].join(""))
 ));
@@ -160,7 +170,7 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 	new HTML([
 		'@for(length ->> idx){',
 			 '<li>',
-				'<button idx="{idx}"></button>',
+				'<button class="normalRadius" idx="{idx}"></button>',
 			 '</li>',
 		'}'
 	].join(""))

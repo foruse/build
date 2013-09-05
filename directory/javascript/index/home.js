@@ -177,7 +177,7 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 	new jQun.HTML([
 		'<li time="{dateData.time}" projectslength="{dateData.projects.length}">',
 			'<dt class="whiteFont">',
-				'<span class="lightBgColor">{dateData.localeDateString}</span>',
+				'<span class="lightBgColor smallRadius">{dateData.localeDateString}</span>',
 			'</dt>',
 			'<dd></dd>',
 		'</li>'

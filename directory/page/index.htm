@@ -57,7 +57,7 @@
 				<script id="spp_project_html" type="text/html">
 					@for(projects ->> pro){
 						<li>
-							<figure class="lightBdColor" status="{pro.status}">
+							<figure class="lightBdColor normalRadius" status="{pro.status}">
 								<figcaption class="projectColor_{pro.color} whiteFont">
 									<span>{pro.title}</span>
 									<strong class="inlineBlock">
@@ -95,14 +95,14 @@
 				<script id="spp_partnerGroups_html" type="text/html">
 					<dl class="group inlineBlock">
 						<dt>
-							<button action="addGroup">添加组</button>
-							<button groupid="-1">全部</button>
+							<button class="smallRadius" action="addGroup">添加组</button>
+							<button class="smallRadius" groupid="-1">全部</button>
 						</dt>
 						<dd>
 							<ul class="inlineBlock">
 								@for(groups ->> gp){
 									<li>
-										<button groupid="{gp.id}">{gp.name}</button>
+										<button class="smallRadius" groupid="{gp.id}">{gp.name}</button>
 									</li>
 								}
 							</ul>
@@ -129,12 +129,12 @@
 		</div>
 		<div class="secondary">
 			<article id="addProject">
-				<header class="lightBdColor"></header>
-				<section class="lightBdColor" desc="title">
+				<header class="lightBdColor normalRadius"></header>
+				<section class="lightBdColor normalRadius" desc="title">
 					<!--Add project name-->
 					<input type="text" placeholder="添加项目标题"/>
 				</section>
-				<section class="lightBdColor" desc="color">
+				<section class="lightBdColor normalRadius" desc="color">
 					<dl class="inlineBlock">
 						<!--Project Color-->
 						<dt class="placeHolderFont">标注颜色</dt>
@@ -153,7 +153,7 @@
 						}
 					</script>
 				</section>
-				<footer class="lightBdColor">
+				<footer class="lightBdColor normalRadius">
 					<dl>
 						<dd>
 							<!--Project Description-->
@@ -164,7 +164,7 @@
 				</footer>
 			</article>
 			<article id="businessCard">
-				<section>
+				<section class="normalRadius">
 					<dl desc="userinfo"></dl>
 					<script id="businessCard_html" type="text/html">
 						<dt class="inlineBlock">
@@ -193,7 +193,7 @@
 						</button>
 					</p>
 				</section>
-				<footer class="lightBdColor">
+				<footer class="lightBdColor normalRadius">
 					<span>发送 To Do</span>
 					<button class="whiteFont">do</button>
 				</footer>
@@ -208,7 +208,7 @@
 		<div class="deep">
 			<article id="account"></article>
 			<script id="account_html" type="text/html">
-				<header class="themeBdColor">
+				<header class="themeBdColor normalRadius">
 					<figure class="inlineBlock">
 						<aside class="lightBdColor">
 							<p class="largeAvatarPanel">
@@ -232,8 +232,8 @@
 						</ul>
 					</figure>
 				</header>
-				<section>
-					<ul class="themeBdColor">
+				<section class="normalRadius">
+					<ul class="themeBdColor normalRadius">
 						@for([
 							{ key : "职位", value : position, desc : "position" },
 							{ key : "联系电话", value : phoneNum, desc : "phoneNum" },
@@ -251,7 +251,7 @@
 						}
 					</ul>
 				</section>
-				<footer class="themeBdColor">
+				<footer class="themeBdColor normalRadius">
 					@for([
 						{ key : "密码", value : password, desc : "pwd" },
 						{ key : "修改密码", value : "", desc : "editPwd", vtype : "userInfo" },
@@ -270,7 +270,7 @@
 	</div>
 	<div id="mask" action="none">
 		<header></header>
-		<article></article>
+		<article class="normalRadius"></article>
 		<footer></footer>
 	</div>
 	<script src="../../common/javascript/jQun.js" type="text/javascript"></script>

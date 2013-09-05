@@ -34,7 +34,7 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 	// anchorListHtml
 	new HTML([
 		'<div class="anchorList" descriptstatus="{descriptstatus}">',
-			'<ul class="themeBdColor">',
+			'<ul class="themeBdColor normalRadius">',
 				'@for(listData ->> data){',
 					'<li key="{data.key}" class="lightBdColor onlyBorderBottom inlineBlock">',
 						'<nav>',
@@ -374,7 +374,7 @@ this.InputSelectionList = (function(UserSelectionList, Global, inputHtml){
 	this.UserSelectionList,
 	Bao.Global,
 	// inputHtml
-	new HTML('<input type="text" placeholder="请输入名称" />')
+	new HTML('<input class="normalRadius" type="text" placeholder="请输入名称" />')
 ));
 
 this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, listHtml){

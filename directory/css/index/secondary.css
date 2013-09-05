@@ -5,7 +5,6 @@
 #addProject > * {
 	height : 45px;
 	line-height : 25px;
-	border-radius : 5px;
 	margin-top : 5px;
 	padding : 10px;
 	overflow : hidden;
@@ -83,7 +82,6 @@
 }
 #businessCard > section > *, #businessCard > footer {
 	background-color : #fff;
-	border-radius : 5px;
 	padding : 10px 15px;
 }
 #businessCard dl[desc="userinfo"] {
