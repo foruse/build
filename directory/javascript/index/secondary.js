@@ -53,18 +53,15 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 						users : addProject.userManagementList.getAllUsers()
 					};
 
-					console.log(a);
-
 					CallServer.open("addProject", {
 						title : addProject.find('>section[desc="title"]>input').value,
 						colormark : addProject.find('>section[desc="color"] button.selected').get("colormark", "attr"),
 						desc : addProject.find('>footer textarea').value,
 						users : addProject.userManagementList.getAllUsers()
-					}, function(){
-						
-					});
-					// todo : 添加数据
-					Global.history.go("project");
+					}, function(data){
+						// todo : 添加数据
+						Global.history.go("project");
+					}, true);
 				};
 			}
 		});

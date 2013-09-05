@@ -281,9 +281,15 @@
 #tab_SPP li[tab="project"] {
 	border-color : #f1af0f;
 }
+#tab_SPP li[tab="project"].focused {
+	background-color : #f1af0f;
+}
 #tab_SPP li[tab="partner"] {
 	border-color : #00b0d6;
 	margin-right : 0;
+}
+#tab_SPP li[tab="partner"].focused {
+	background-color : #00b0d6;
 }
 #tab_SPP button {
 	width : 100%;
@@ -296,8 +302,14 @@
 #tab_SPP li[tab="project"] > button {
 	background-position : 3px -25px;
 }
+#tab_SPP li[tab="project"].focused > button {
+	background-position : 3px -325px;
+}
 #tab_SPP li[tab="partner"] > button {
 	background-position : 0 -50px;
+}
+#tab_SPP li[tab="partner"].focused > button {
+	background-position : 0 -350px;
 }
 #tab_SPP li[tab="project"] > button {
 	background-position : 3px -25px;

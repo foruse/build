@@ -61,16 +61,16 @@ this.History = (function(List, Loader, redirectEvent){
 			///	<summary>
 			///	回到上一个记录。
 			///	</summary>
-			this.go(this.getNameByIndex(this.length - 2));
+			this.go(this[this.length - 1].opener, true);
 		},
 		getNameByIndex : function(idx){
 			///	<summary>
 			///	通过索引获取相对应历史记录名称。
 			///	</summary>
 			///	<param name="idx" type="number">对其添加或修改属性的对象。</param>
-			return idx < this.length && idx > -1 ? this[idx] : undefined;
+			return idx < this.length && idx > -1 ? this[idx].self : undefined;
 		},
-		go : function(name){
+		go : function(name, _isBack){
 			///	<summary>
 			///	跳转到指定名称的页面。
 			///	</summary>
@@ -84,23 +84,23 @@ this.History = (function(List, Loader, redirectEvent){
 			// 如果是当前页，或者记录条数为0
 			if(lastIdx > -1){
 				if(idx === lastIdx){
-					return Loader.pageStorage[this[idx]];
+					return Loader.pageStorage[this[idx].self];
 				}
 				else {
 					// 隐藏上一个panel
-					Loader.pageStorage[this[lastIdx]].hide();
+					Loader.pageStorage[this.getNameByIndex(lastIdx)].hide();
 				}
 			}
 
-			var panel;
+			var panel, old;
 
 			redirectEvent.trigger(window);
 
 			if(idx > -1){
-				panel = Loader.pageStorage[this[idx]];
+				panel = Loader.pageStorage[this[idx].self];
 				// 显示当前的panel
 				panel.show();
-				this.splice(idx, 1);
+				old = this.splice(idx, 1);
 			}
 			else {
 				// 加载、初始化新panel信息
@@ -108,7 +108,7 @@ this.History = (function(List, Loader, redirectEvent){
 				panel.show();
 			}
 
-			this.push(name);
+			this.push({ self : name, opener : _isBack ? old : this.getNameByIndex(lastIdx) });
 			return panel;
 		},
 		homePage : "project"

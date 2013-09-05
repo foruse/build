@@ -513,12 +513,19 @@ this.SPP = (function(Tab, HTML){
 		///	日程、项目、拍档页。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素</param>
-		new Tab(
+		var tab = new Tab(
 			// selector
 			"#tab_SPP",
 			// itemHtml
 			new HTML("spp_item_html", true)
 		);
+
+		this.attach({
+			beforeshow : function(e){
+				tab.blur();
+				tab.focus(e.currentPanel.id);
+			}
+		});
 	};
 	SPP = new NonstaticClass(SPP, "Bao.Page.Index.SPP", Panel.prototype);
 

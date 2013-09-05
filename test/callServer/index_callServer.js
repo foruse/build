@@ -33,13 +33,13 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 	});
 
 	CallServer.save([
-		["getUser", new Text("url?id={id}"), "", true],
-		["getPartnerGroups",			"url",		"", true],
-		["getPartners",			new Text("url?groupId={groupId}"),		"", true],
-		["getProjects",			"url",		""],
-		["getSchedules",			new Text("url?last={last}&next={next}"),		"", true],
-		["addProject", new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
-		["myInformation", "url", "", true],
+		["getUser",				new Text("url?id={id}"),					"", true],
+		["getPartnerGroups",			"url",								"", true],
+		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
+		["getProjects",			"url",										""],
+		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
+		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
+		["myInformation",		"url",										"", true]
 	], allHandlers);
 
 	return CallServer;
@@ -133,6 +133,9 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			data = Index.Common.myInformation();
 
 			return data;
+		},
+		addProject : function(data){
+			return { id : Bao.Test.DummyData.Generate.Number.random(6) };
 		}
 	}
 ));
