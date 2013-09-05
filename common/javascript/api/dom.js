@@ -220,7 +220,7 @@ this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
 	})
 ));
 
-this.OverflowPanel = (function(Panel, IntervalTimer, Global, getTop, setTop, leaveborder){
+this.OverflowPanel = (function(Panel, IntervalTimer, Drag, leaveborder){
 	function OverflowPanel(selector, _disableScrollBar){
 		///	<summary>
 		///	溢出区域。
@@ -233,8 +233,13 @@ this.OverflowPanel = (function(Panel, IntervalTimer, Global, getTop, setTop, lea
 		
 			panelStyle = this.style,
 			
-			timer = new IntervalTimer(70);
+			timer = new IntervalTimer(40);
 
+		this.assign({
+			panelStyle : panelStyle
+		});
+
+		this.set("overflow", "", "attr");
 		panelStyle.position = "relative";
 
 		this.attach({
@@ -242,7 +247,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, Global, getTop, setTop, lea
 				timer.stop();
 			},
 			continuousgesture : function(e){
-				var top = getTop(panelStyle) + e.gestureOffsetY;
+				var top = overflowPanel.getTop() + e.gestureOffsetY;
 
 				if(e.isLastOfGestureType){
 					isLeaveborder = false;
@@ -253,7 +258,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, Global, getTop, setTop, lea
 					});
 				}
 
-				setTop(panelStyle, top);
+				overflowPanel.setTop(top);
 			},
 			fastgesture : function(e){
 				if(isLeaveborder)
@@ -266,37 +271,40 @@ this.OverflowPanel = (function(Panel, IntervalTimer, Global, getTop, setTop, lea
 				if(abs(y) < 10)
 					return;
 
-				var parentHeight = overflowPanel.parent().height();
+				var ts = 24, parentHeight = overflowPanel.parent().height();
 
 				// 快速滑动事件
 				timer.start(function(i){
-					var top = getTop(panelStyle) + (isNaN(i) ? n : y * (1 - i++ / 15));
+					var top = overflowPanel.getTop() + (isNaN(i) ? n : y * (1 - i++ / ts));
 
 					leaveborder(overflowPanel, parentHeight, top, function(t, type){
 						top = t;
 						timer.stop();
 					});
 
-					setTop(panelStyle, top);
-				}, abs(y) > parentHeight / 2 * 0.6 ? undefined : 15);
+					overflowPanel.setTop(top);
+				}, abs(y) > parentHeight / 2 * 0.6 ? undefined : ts);
 			}
 		});
 	};
 	OverflowPanel = new NonstaticClass(OverflowPanel, "Bao.API.DOM.OverflowPanel", Panel.prototype);
 
+	OverflowPanel.properties({
+		getTop : function(){
+			return this.panelStyle.top.toString().split("px").join("") - 0 || 0;
+		},
+		panelStyle : undefined,
+		setTop : function(top){
+			this.panelStyle.top = Math.round(top) + "px";
+			Drag.Scroll.reposition(this);
+		}
+	});
+
 	return OverflowPanel.constructor;
 }(
 	this.Panel,
 	Management.IntervalTimer,
-	Bao.Global,
-	// getTop
-	function(panelStyle){
-		return panelStyle.top.toString().split("px").join("") - 0 || 0;
-	},
-	// setTop
-	function(panelStyle, top){
-		panelStyle.top = Math.round(top) + "px";
-	},
+	Bao.UI.Control.Drag,
 	// leaveborder
 	function(overflowPanel, parentHeight, top, fn){
 		// top等于0，说明处于恰好状态，就可以return了

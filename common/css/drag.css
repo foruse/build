@@ -1,13 +1,12 @@
 ﻿.scroll {
-	width : 5px;
-	background-color : rgba(50, 50, 50, 0.3);
+	width : 8px;
 	position : absolute;
-	z-index : 2;
+	z-index : 5;
 	overflow : hidden;
 	display : none;
 }
 .scroll > button {
-	background-color : rgba(200, 50, 50, 0.7);
+	background-color : rgba(50, 50, 50, 0.4);
 	width : 100%;
 	border : 0 none;
 	position : relative;

@@ -1,70 +1,110 @@
-﻿(function(Drag, NonstaticClass, Panel, HTML, Timer, IntervalTimer){
-this.Scroll = (function(html){
+﻿(function(Drag, NonstaticClass, StaticClass, Panel, HTML, IntervalTimer){
+this.Scroll = (function(scrollPanel, body){
 	function Scroll(){
 		///	<summary>
 		///	滚动条。
 		///	</summary>
-		var scroll = this, timer = new IntervalTimer(70);
-
-		this.combine(html.create()).appendTo(document.body);
+		var Scroll = this;
 
 		this.assign({
-			buttonStyle : this.find(">button").style
+			buttonStyle : scrollPanel.find(">button").style,
+			timer : new IntervalTimer(500)
+		});
+
+		jQun(window).attach({
+			beforehide : function(){
+				Scroll.hidePanel();
+			}
 		});
 	};
-	Scroll = new NonstaticClass(Scroll, "jQun.Scroll", Panel.prototype);
-
-	Scroll.override({
-		show : function(overflowPanel){
-			///	<summary>
-			///	显示滚动条。
-			///	</summary>
-			/// <param name="overflowPanel" type="Bao.API.DOM.Panel">溢出的元素</param>
-			this.reposition(overflowPanel);
-			Panel.prototype.show.call(this);
-		}
+	Scroll = new StaticClass(Scroll, "jQun.Scroll", {
+		buttonStyle : undefined,
+		timer : undefined
 	});
 
 	Scroll.properties({
-		buttonStyle : undefined,
+		hidePanel : function(){
+			///	<summary>
+			///	隐藏滚动条。
+			///	</summary>
+			if(!this.isShow)
+				return;
+
+			this.timer.stop();
+			this.panel.hide();
+			this.panel.remove();
+			this.isShow = false;
+		},
+		isShow : false,
+		panel : scrollPanel,
+		panelStyle : scrollPanel.style,
 		reposition : function(overflowPanel){
+			///	<summary>
+			///	重新定位。
+			///	</summary>
+			///	<param name="overflowPanel" type="Bao.API.DOM.OverflowPanel">溢出的元素。</param>
 			var buttonStyle = this.buttonStyle,
 			
-				rect = overflowPanel.parent()[0].getBoundingClientRect(),
+				parentEl = overflowPanel.parent(),
+
+				rect = parentEl[0].getBoundingClientRect(),
+
+				parentHeight = parentEl.height(),
 
 				height = overflowPanel.height();
 				
-			jQun.forEach(rect, function(value, name){
-				if(name === "width")
-					return;
-
-				if(name === "left"){
-					value += rect.width - 5;
-				}
-
-				if(name === "top"){
-					value = value + 5;
-				}
-					
+			jQun.forEach({
+				top : rect.top + 5,
+				left : rect.left + rect.width - 10,
+				height : parentHeight - 10
+			}, function(value, name){
 				this[name] = value + "px";
-			}, this.style);
+			}, this.panelStyle);
 
-			buttonStyle.height = (rect.height * 100 / height) + "%";
-			buttonStyle.top = (overflowPanel.get("top", "css").toString().split("px").join("") - 0 || 0) / height * -100 + "%";
-		}
+			// 取父容器的content的高度要使用 height 方法
+			buttonStyle.height = (parentHeight * 100 / height) + "%";
+			buttonStyle.top = overflowPanel.getTop() * -100 / height + "%";
+			
+			if(this.times > 0){
+				this.times--;
+			}
+			this.showPanel();
+		},
+		showPanel : function(){
+			///	<summary>
+			///	显示滚动条。
+			///	</summary>
+			if(this.isShow)
+				return;
+
+			var Scroll = this;
+
+			this.isShow = true;
+			this.panel.appendTo(body);
+			this.panel.show();
+
+			this.timer.start(function(){
+				if(Scroll.times++ < 2)
+					return;
+			
+				Scroll.hidePanel();
+			});
+		},
+		times : 0
 	});
 
-	return Scroll.constructor;
+	return Scroll;
 }(
-	// html
+	// scrollPanel
 	new HTML([
 		'<aside class="scroll normalRadius">',
 			'<button class="normalRadius"></button>',
 		'</aside>'
-	].join(""))
+	].join("")).create(),
+	document.body
 ));
 
-this.Navigator = (function(panelHtml, tabItemsHtml){
+this.Navigator = (function(Timer, panelHtml, tabItemsHtml){
 	function Navigator(){
 		///	<summary>
 		///	导航。
@@ -157,6 +197,7 @@ this.Navigator = (function(panelHtml, tabItemsHtml){
 
 	return Navigator.constructor;
 }(
+	Bao.API.Management.Timer,
 	// panelHtml
 	new HTML([
 		'<div class="navigator onlyBorderBottom lightBdColor">',
@@ -181,8 +222,8 @@ Drag.members(this);
 	{},
 	Bao.UI.Control.Drag,
 	jQun.NonstaticClass,
+	jQun.StaticClass,
 	Bao.API.DOM.Panel,
 	jQun.HTML,
-	Bao.API.Management.Timer,
 	Bao.API.Management.IntervalTimer
 ));

@@ -1,5 +1,5 @@
 ﻿(function(Bao, StaticClass){
-this.Global = (function(Fixed, Management, Drag, HTML){
+this.Global = (function(Fixed, Management, HTML){
 	function Global(){
 		///	<summary>
 		///	全局类，用于存储页面中的一些全局属性。
@@ -23,8 +23,6 @@ this.Global = (function(Fixed, Management, Drag, HTML){
 				)
 			});
 
-			// 初始化滚动条
-			window.xx = new Drag.Scroll();
 			// 跳转到指定页
 			history.go("project");
 		};
@@ -38,7 +36,6 @@ this.Global = (function(Fixed, Management, Drag, HTML){
 }(
 	Bao.UI.Fixed,
 	Bao.API.Management,
-	Bao.UI.Control.Drag,
 	jQun.HTML
 ));
 
