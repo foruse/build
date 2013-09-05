@@ -675,8 +675,6 @@ this.Text = (function(tRegx){
 			///	返回一个替换数据后的字符串。
 			///	</summary>
 			///	<param name="replacement" type="object, function">需要替换的数据或者自行替换的处理函数。</param>
-			var isFunction = typeof replacement === "function";
-
 			return this.text.replace(
 				tRegx,
 				typeof replacement === "function" ? replacement : function(str, modifier, word){
@@ -684,13 +682,7 @@ this.Text = (function(tRegx){
 						return "{" + word + "}";
 					}
 
-					if(isFunction){
-						var r = replacement(word, str);
-					
-						if(r !== undefined){
-							return r;
-						}
-					} else if(word in replacement){
+					if(word in replacement){
 						return replacement[word];
 					}
 
@@ -705,8 +697,8 @@ this.Text = (function(tRegx){
 			///	<param name="params" type="object">需要替换的数据或者自行替换的处理函数。</param>
 			var encode = encodeURIComponent;
 
-			return this.replace(function(p){
-				return encode(p);
+			return this.replace(function(str, modifier, word){
+				return encode(params[word]);
 			});
 		},
 		text : ""

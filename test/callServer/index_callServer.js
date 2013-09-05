@@ -36,7 +36,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getUser",				new Text("url?id={id}"),					"", true],
 		["getPartnerGroups",			"url",								"", true],
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
-		["getProjects",			"url",										""],
+		["getProjects",			"url",										"", true],
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
 		["myInformation",		"url",										"", true]

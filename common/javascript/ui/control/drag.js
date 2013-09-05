@@ -11,12 +11,19 @@ this.Scroll = (function(html){
 	Scroll = new NonstaticClass(Scroll, "jQun.Scroll", Panel.prototype);
 
 	Scroll.override({
-		show : function(overflowEl){
+		show : function(overflowPanel){
 			///	<summary>
 			///	显示滚动条。
 			///	</summary>
-			/// <param name="overflowEl" type="jQun.Panel">溢出的元素</param>
-			var style = this.style, rect = overflowEl.parent()[0].getBoundingClientRect();
+			/// <param name="overflowPanel" type="Bao.API.DOM.Panel">溢出的元素</param>
+			this.reposition(overflowPanel);
+			Panel.prototype.show.call(this);
+		}
+	});
+
+	Scroll.properties({
+		reposition : function(overflowPanel){
+			var rect = overflowPanel.parent()[0].getBoundingClientRect();
 				
 			jQun.forEach(rect, function(value, name){
 				if(name === "width")
@@ -26,11 +33,14 @@ this.Scroll = (function(html){
 					value += rect.width - 5;
 				}
 
-				style[name] = value + "px";
-			});
+				if(name === "top"){
+					value = value + 5;
+				}
+					
+				this[name] = value + "px";
+			}, this.style);
 
-			this.find(">button").height((rect.height * 100 / overflowEl.height()) + "%");
-			Panel.prototype.show.call(this);
+			this.find(">button").height((rect.height * 100 / overflowPanel.height()) + "%");
 		}
 	});
 

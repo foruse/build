@@ -220,7 +220,7 @@ this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
 	})
 ));
 
-this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder){
+this.OverflowPanel = (function(Panel, IntervalTimer, Global, getTop, setTop, leaveborder){
 	function OverflowPanel(selector, _disableScrollBar){
 		///	<summary>
 		///	溢出区域。
@@ -234,10 +234,6 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 			panelStyle = this.style,
 			
 			timer = new IntervalTimer(70);
-
-		this.assign({
-			disableScrollBar : _disableScrollBar === true
-		});
 
 		panelStyle.position = "relative";
 
@@ -288,14 +284,11 @@ this.OverflowPanel = (function(Panel, IntervalTimer, getTop, setTop, leaveborder
 	};
 	OverflowPanel = new NonstaticClass(OverflowPanel, "Bao.API.DOM.OverflowPanel", Panel.prototype);
 
-	OverflowPanel.properties({
-		disableScrollBar : false
-	});
-
 	return OverflowPanel.constructor;
 }(
 	this.Panel,
 	Management.IntervalTimer,
+	Bao.Global,
 	// getTop
 	function(panelStyle){
 		return panelStyle.top.toString().split("px").join("") - 0 || 0;

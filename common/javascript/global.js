@@ -24,7 +24,7 @@ this.Global = (function(Fixed, Management, Drag, HTML){
 			});
 
 			// 初始化滚动条
-			new Drag.Scroll();
+			window.xx = new Drag.Scroll();
 			// 跳转到指定页
 			history.go("project");
 		};
