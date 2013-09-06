@@ -31,7 +31,7 @@ this.Scroll = (function(scrollPanel, body){
 				return;
 
 			this.timer.stop();
-			this.panel.hide();
+			this.panel.hidden = true;
 			this.panel.remove();
 			this.isShow = false;
 		},
@@ -81,7 +81,7 @@ this.Scroll = (function(scrollPanel, body){
 
 			this.isShow = true;
 			this.panel.appendTo(body);
-			this.panel.show();
+			this.panel.hidden = false;
 
 			this.timer.start(function(){
 				if(Scroll.times++ < 2)
@@ -97,7 +97,7 @@ this.Scroll = (function(scrollPanel, body){
 }(
 	// scrollPanel
 	new HTML([
-		'<aside class="scroll normalRadius">',
+		'<aside class="scroll normalRadius" hidden>',
 			'<button class="normalRadius"></button>',
 		'</aside>'
 	].join("")).create(),

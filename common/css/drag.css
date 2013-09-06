@@ -3,7 +3,18 @@
 	position : absolute;
 	z-index : 5;
 	overflow : hidden;
-	display : none;
+}
+.scroll:not([hidden]) {
+	display : block;
+	-webkit-animation : showScroll steps(14) 500ms 1;
+}
+@-webkit-keyframes showScroll {
+	from {
+		opacity : 0;
+	}
+	to {
+		opacity : 1;
+	}
 }
 .scroll > button {
 	background-color : rgba(50, 50, 50, 0.4);

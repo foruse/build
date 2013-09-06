@@ -1527,7 +1527,7 @@ this.NodeList = (function(AttributeCollection, toArray){
 	jQun.toArray
 ));
 
-this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, window, selectorReplaceRegx){
+this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, window, selectorRegx){
 	function ElementList(_selector, _parent){
 		///	<summary>
 		///	通过指定选择器筛选元素。
@@ -1544,21 +1544,24 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 		if(typeof _selector === "string"){
 			var elements, doc = window.document;
 
-			_selector = _selector.replace(selectorReplaceRegx, function(word){
-				return '[' + (word.charAt(0) === "#" ? "id" : "class~") + '="' + word.substring(1) + '"]';
-			});
-			_parent = _parent || doc;
+			if(!_parent){
+				_parent = doc;
+			}
 
+			_selector = _selector.replace(selectorRegx, function(str, modifier, val){
+				return '[' + (modifier === "#" ? "id" : "class~") + '="' + val + '"]';
+			});
+			
 			try{
 				elements = _parent.querySelectorAll(_selector);
 			} catch(e){
 				if(_parent === doc){
-					console.error(e.message);
+					console.error('document不支持选择器："' + _selector + '"');
 					return;
 				}
 
 				_parent.setAttribute("__selector__", "__jQun__");
-				elements = (_parent.parentElement || _parent)["querySelectorAll"]('[__selector__="__jQun__"]' + _selector);
+				elements = _parent.querySelectorAll('[__selector__="__jQun__"]' + _selector);
 				_parent.removeAttribute("__selector__");
 			}
 
@@ -1761,8 +1764,8 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 	this.ChildrenCollection,
 	this.ClassListCollection,
 	window,
-	// selectorReplaceRegx
-	/[\#\.]\d[^\:\#\.\,\+\~\[\>]*/g
+	// selectorRegx
+	/([\#\.])([^\s\:\#\.\,\+\~\[\>]+)/g
 ));
 
 this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty){

@@ -24,6 +24,8 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 				var editButtonEl = titleBar.find('button[action="editAccount"]');
 
 				editButtonEl.onuserclick = function(){
+					var footerEl = account.find(">footer");
+
 					// 如果点击了编辑按钮
 					if(editButtonEl.get("action", "attr") === "editAccount"){
 						// 所有input变为可以输入
@@ -32,7 +34,7 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 						editButtonEl.set("action", "submit account", "attr");
 						// 修改标题栏的标题
 						titleBar.resetTitle("修改账户");
-						accountClassList.add("editable");
+						footerEl.show();
 						return;
 					}
 
@@ -44,8 +46,24 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 					account.find("input").set("readonly", "", "attr");
 					// 修改标题栏的标题
 					titleBar.resetTitle("我的账户");
-					accountClassList.remove("editable");
+					footerEl.hide();
 				};
+			},
+			userclick : function(e){
+				var targetEl = jQun(e.target);
+
+				if(targetEl.between(">footer button", this).length > 0){
+					var footerClassList = account.find(">footer").classList;
+
+					if(footerClassList.contains("editable")){
+						targetEl.innerHTML = "修改密码";
+						footerClassList.remove("editable");
+						return;
+					}
+
+					targetEl.innerHTML = "取消修改";
+					footerClassList.add("editable");
+				}
 			}
 		});
 
@@ -88,6 +106,34 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 	Bao.Global,
 	Bao.API.DOM.ValidationList
 ));
+
+this.QRCode = (function(){
+	function QRCode(selector, contentHtml){
+		var qrCode = this;
+
+		CallServer.open("myInformation", null, function(data){
+			qrCode.innerHTML = contentHtml.render(data);
+		});
+	};
+	QRCode = new NonstaticClass(QRCode, "Bao.Page.Index.Deep.QRCode", PagePanel.prototype);
+
+	QRCode.override({
+		title : "我的二维码"
+	});
+
+	return QRCode.constructor;
+}());
+
+this.AboutBaoPiQi = (function(){
+	function AboutBaoPiQi(selector){ };
+	AboutBaoPiQi = new NonstaticClass(AboutBaoPiQi, "Bao.Page.Index.Deep.AboutBaoPiQi", PagePanel.prototype);
+
+	AboutBaoPiQi.override({
+		title : "关于暴脾气"
+	});
+
+	return AboutBaoPiQi.constructor;
+}());
 
 Deep.members(this);
 }.call(

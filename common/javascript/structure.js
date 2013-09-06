@@ -25,7 +25,9 @@ this.Bao = (function(Bao){
 		Page : new Namespace().members({
 			Index : new Namespace().members({ // ../../directoy/javascript/index\
 				Deep : new Namespace({ // ../../directoy/javascript/index/deep.js
-					Account : null
+					AboutBaoPiQi : null,
+					Account : null,
+					QRCode : null
 				}),
 				Home : new Namespace({ // ../../directoy/javascript/index/home.js
 					Partner : null,

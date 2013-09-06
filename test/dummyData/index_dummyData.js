@@ -45,11 +45,7 @@ this.Common = Common = (function(){
 			return users;
 		},
 		myInformation : function(){
-			var data = this.getUser();
-
-			data.password = "123456";
-
-			return data;
+			return this.getUser();
 		}
 	});
 

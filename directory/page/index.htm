@@ -251,20 +251,68 @@
 						}
 					</ul>
 				</section>
-				<footer class="themeBdColor normalRadius">
-					@for([
-						{ key : "密码", value : password, desc : "pwd" },
-						{ key : "修改密码", value : "", desc : "editPwd", vtype : "userInfo" },
-						{ key : "确认密码", value : "", desc : "rePwd", vtype : "rePwd" }
-					] ->> item){
-						<dl class="lightBdColor onlyBorderBottom" desc="{item.desc}">
-							<dt class="placeHolderFont">{item.key}：</dt>
-							<dd>
-								<input class="placeHolderFont" maxlength="16" type="password" value="{item.value}" vtype="{item.vtype}" readonly />
-							</dd>
-						</dl>
-					}
+				<footer>
+					<nav>
+						<button>修改密码</button>
+					</nav>
+					<ul class="themeBdColor normalRadius">
+						@for([
+							{ key : "当前密码", desc : "pwd" },
+							{ key : "修改密码",  desc : "editPwd", vtype : "userInfo" },
+							{ key : "确认密码", desc : "rePwd", vtype : "rePwd" }
+						] ->> item){
+							<li>
+								<dl class="lightBdColor onlyBorderBottom" desc="{item.desc}">
+									<dt class="placeHolderFont">{item.key}：</dt>
+									<dd>
+										<input class="placeHolderFont" maxlength="16" type="password" vtype="{item.vtype}" readonly />
+									</dd>
+								</dl>
+							</li>
+						}
+					</ul>
 				</footer>
+			</script>
+			<article id="aboutBaoPiQi">
+				<header>
+					<figure>
+						<p class="largeRadius">
+							<img src="../../../common/image/icon.png" />
+						</p>
+						<figcaption>暴脾气 0.1</figcaption>
+					</figure>
+				</header>
+				<section class="normalRadius lightBdColor whiteFont">
+					<button>
+						<a href="javascript:void(0);">去评分</a>
+					</button>
+					<button>
+						<a href="javascript:void(0);">发邮件反馈</a>
+					</button>
+				</section>
+				<footer>
+					<nav>
+						<a href="javascript:void(0);">使用条款和隐私政策</a>
+						<br />
+						<a href="javascript:void(0);">北京视宽加速科技信息有限公司</a>
+						<br />
+						<span>Copyright 2013-2015 vision2.All Rright Reserved.</span>
+					</nav>
+				</footer>
+			</article>
+			<article id="QRCode"></article>
+			<script id="QRCode_html" type="text/html">
+				<header>
+					<figure class="inlineBlock">
+						<p class="largeAvatarPanel">
+							<img src="{avatar}" />
+						</p>
+						<figcaption class="whiteFont normalRadius">{name}</figcaption>
+					</figure>
+				</header>
+				<section class="largeRadius">
+					<img src="{QRCode}" />
+				</section>
 			</script>
 		</div>
 	</div>

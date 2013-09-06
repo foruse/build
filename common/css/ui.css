@@ -114,12 +114,13 @@
 	height : 62px;
 	border-radius : 62px;
 	overflow : hidden;
-	border : 2px solid rgba(255, 255, 255, 0.5);
-	box-shadow : 0 0 1px #111;
+	border : 1px solid #a1a1a1;
 }
 .largeAvatarPanel > img {
-	width : 58px;
-	height : 58px;
+	width : 60px;
+	height : 60px;
+	border-radius : 60px;
+	border : 2px solid #fff;
 }
 .normalAvatarPanel {
 	width : 48px;
@@ -127,8 +128,10 @@
 	border-radius : 48px;
 }
 .normalAvatarPanel > img {
-	width : 44px;
-	height : 44px;
+	width : 46px;
+	height : 46px;
+	border-radius : 46px;
+	border : 2px solid #fff;
 }
 
 .validationError {

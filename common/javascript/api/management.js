@@ -4,6 +4,9 @@ this.Loader = (function(Storage, Index, HTML){
 	Loader = new StaticClass(Loader);
 
 	Loader.properties({
+		aboutBaoPiQi : function(){
+			return new Index.Deep.AboutBaoPiQi("#aboutBaoPiQi");
+		},
 		account : function(){
 			return new Index.Deep.Account("#account", new HTML("account_html", true));
 		},
@@ -30,6 +33,9 @@ this.Loader = (function(Storage, Index, HTML){
 		project : function(){
 			this.load("spp");
 			return new Index.Home.Project("#project", new HTML("spp_project_html", true));
+		},
+		qrCode : function(){
+			return new Index.Deep.QRCode("#QRCode", new HTML("QRCode_html", true));
 		},
 		schedule : function(){
 			this.load("spp");

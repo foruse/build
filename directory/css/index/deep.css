@@ -24,7 +24,7 @@
 	right : 5px;
 	top : 0;
 }
-#account li:last-child > dl, #account > footer dl:last-child {
+#account li:last-child > dl {
 	border : 0 none;
 }
 #account input {
@@ -69,14 +69,8 @@
 #account > header dd {
 	left : 60px;
 }
-#account dl[desc="pwd"] {
-	border : 0 none;
-}
-#account dl[desc="editPwd"], #account dl[desc="rePwd"], #account.editable dl[desc="pwd"] {
+#account > footer, #account > footer > ul {
 	display : none;
-}
-#account.editable dl[desc="editPwd"], #account.editable dl[desc="rePwd"] {
-	display : block;
 }
 #titleBar button[action="editAccount"] {
 	border : 1px solid #39a85a;
@@ -86,4 +80,117 @@
 }
 #titleBar button[action="submit account"] {
 	background-color : #ce312d;
+}
+
+#aboutBaoPiQi, #QRCode {
+	top : 45%;
+}
+#aboutBaoPiQi {
+	height : 395px;
+	margin-top : -160px;
+}
+#aboutBaoPiQi > * {
+	margin : 0 auto;
+}
+#aboutBaoPiQi > header {
+	height : 140px;
+	width : 105px;
+}
+#aboutBaoPiQi > header p {
+	width : 105px;
+	height : 105px;
+	margin : 0 auto;
+	overflow : hidden;
+}
+#aboutBaoPiQi > header img {
+	width : 100%;
+	height : 100%;
+}
+#aboutBaoPiQi > header figcaption {
+	margin-top : 20px;
+	height : 15px;
+	font-size : 15px;
+	line-height : 1em;
+	color : #ab2424;
+	text-align : center;
+}
+#aboutBaoPiQi > section {
+	background-color : #f1f1f1;
+	width : 165px;
+	height : 120px;
+	margin-top : 15px;
+	padding : 15px;
+}
+#aboutBaoPiQi > section * {
+	display : block;
+}
+#aboutBaoPiQi > section > button {
+	width : 100%;
+	height : 38px;
+	line-height : 38px;
+	border : 0 none;
+	background-color : #ce312d;
+	border-radius : inherit;
+}
+#aboutBaoPiQi > section > button:last-child {
+	margin-top : 14px;
+}
+#aboutBaoPiQi > section a {
+	width : 100%;
+	height : 100%;
+}
+#aboutBaoPiQi > footer {
+	margin-top : 45px;
+	text-align : center;
+}
+#aboutBaoPiQi nav > * {
+	display : inline-block;
+}
+#aboutBaoPiQi > footer a:first-child {
+	color : #ab2424;
+	margin-bottom : 20px;
+}
+
+#QRCode {
+	height : 265px;
+	margin-top : -132px;
+}
+#QRCode > * {
+	margin : 0 auto;
+}
+#QRCode > header {
+	width : 210px;
+}
+#QRCode > header > figure {
+	height : 30px;
+	line-height : 30px;
+	width : 100%;
+}
+#QRCode > header .largeAvatarPanel {
+	border-color : #bf2525;
+	position : relative;
+	top : -16px;
+	z-index : 2;
+}
+#QRCode > header figcaption {
+	width : 152px;
+	height : 100%;
+	background-color : #ce312d;
+	font-size : 15px;
+	margin-left : -5px;
+	text-indent : 25px;
+	border-top-left-radius : 0;
+	border-bottom-left-radius : 0;
+}
+#QRCode > section {
+	width : 250px;
+	height : 240px;
+	padding : 25px 30px;
+	border : 1px solid #ce312d;
+	margin-top : -5px;
+	background-color : #fff;
+}
+#QRCode > section > img {
+	width : 100%;
+	height : 100%;
 }

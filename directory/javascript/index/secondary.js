@@ -195,9 +195,9 @@ this.SystemOption = (function(AnchorList, anchorData){
 		{ key : "globalSearch", title : "搜索全部" },
 		{ key : "account", title : "我的账户" },
 		{ key : "accountConnection", title : "连接账户" },
-		{ key : "qrCode", title : "制作二维码" },
+		{ key : "qrCode", title : "我的二维码" },
 		{ key : "file", title : "查看归档" },
-		{ key : "microV", title : "关于小V" }
+		{ key : "aboutBaoPiQi", title : "关于暴脾气" }
 	]
 ));
 
