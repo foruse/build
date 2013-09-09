@@ -90,7 +90,6 @@ this.SPP = (function(){
 					color : Number.random(5),
 					users : Common.getUsers(Number.random(20)),
 					lastMessage : String.random(),
-					status : 1,
 					unread : Number.random(2) > 1 ? 0 : Number.random()
 				});
 			}

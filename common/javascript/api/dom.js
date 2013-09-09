@@ -190,10 +190,10 @@ this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
 			Panel.prototype.hide.apply(this, arguments);
 			return this;
 		},
-		show : function(){
+		show : function(_display, isBack){
 			this.parent().show();
 
-			if(this.isNoTraces){
+			if(this.isNoTraces && !isBack){
 				this.restore();
 			}
 

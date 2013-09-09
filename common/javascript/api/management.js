@@ -105,8 +105,9 @@ this.History = (function(List, Loader, redirectEvent){
 			if(idx > -1){
 				panel = Loader.pageStorage[this[idx].self];
 				// 显示当前的panel
-				panel.show();
+				panel.show(null, _isBack);
 				old = this.splice(idx, 1);
+				lastIdx = lastIdx - 1;
 			}
 			else {
 				// 加载、初始化新panel信息
@@ -114,10 +115,27 @@ this.History = (function(List, Loader, redirectEvent){
 				panel.show();
 			}
 
-			this.push({ self : name, opener : _isBack ? old : this.getNameByIndex(lastIdx) });
+			this.push({ self : name, opener : _isBack ? old.name : this.getNameByIndex(lastIdx) });
 			return panel;
 		},
 		homePage : "project"
+	});
+
+	History.override({
+		indexOf : function(name){
+			var idx = -1;
+
+			this.every(function(item, i){
+				if(item.self === name){
+					idx = i;
+					return false;
+				}
+				
+				return true;
+			});
+
+			return idx;
+		}
 	});
 
 	return History.constructor;

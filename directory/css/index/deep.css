@@ -72,6 +72,37 @@
 #account > footer, #account > footer > ul {
 	display : none;
 }
+#account > footer > nav {
+	height : 24px;
+	box-sizing : content-box;
+}
+#account > footer:not(.editable) > nav {
+	border : 0 none;
+}
+#account > footer.editable > nav {
+	border-bottom-left-radius : 0;
+	border-bottom-right-radius : 0;
+}
+#account > footer button {
+	width : 100%;
+	height : 100%;
+	background-color : transparent;
+	border : 0 none;
+}
+#account > footer.editable > ul {
+	display : block;
+	border-top-left-radius : 0;
+	overflow : hidden;
+	-webkit-animation : editPassword steps(14) 500ms 1;
+}
+@-webkit-keyframes editPassword {
+	from {
+		height : 0;
+	}
+	to {
+		height : 137px;
+	}
+}
 #titleBar button[action="editAccount"] {
 	border : 1px solid #39a85a;
 	border-width : 6px 5px;

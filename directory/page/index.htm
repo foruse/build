@@ -143,10 +143,10 @@
 					<script id="addProject_color_html" type="text/html">
 						@for([
 							"projectColor_orange",
-							"projectColor_BY",
-							"projectColor_BG",
+							"projectColor_tan",
+							"projectColor_cyan",
 							"projectColor_blue",
-							"projectColor_BR",
+							"projectColor_henna",
 							"projectColor_purple"
 						] ->> color, idx){
 							<button class="{color}" colormark="{idx}"></button>
@@ -251,13 +251,13 @@
 						}
 					</ul>
 				</section>
-				<footer>
-					<nav>
-						<button>修改密码</button>
+				<footer  class="themeBdColor normalRadius">
+					<nav class="themeBdColor onlyBorderBottom lightBgColor whiteFont">
+						<button class="">修改密码</button>
 					</nav>
-					<ul class="themeBdColor normalRadius">
+					<ul>
 						@for([
-							{ key : "当前密码", desc : "pwd" },
+							{ key : "当前密码", desc : "pwd", vtype : "userInfo" },
 							{ key : "修改密码",  desc : "editPwd", vtype : "userInfo" },
 							{ key : "确认密码", desc : "rePwd", vtype : "rePwd" }
 						] ->> item){

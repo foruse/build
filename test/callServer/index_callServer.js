@@ -102,6 +102,10 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 				emptyFolders : 3
 			};
 
+			data.projects.forEach(function(pro){
+				pro.status = 1;
+			});
+
 			return data;
 		},
 		getSchedules : function(data){
