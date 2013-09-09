@@ -139,7 +139,9 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			return data;
 		},
 		addProject : function(data){
-			return { id : Bao.Test.DummyData.Generate.Number.random(6) };
+			data = { id : Bao.Test.DummyData.Generate.Number.random(6) };
+			
+			return data;
 		}
 	}
 ));
