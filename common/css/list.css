@@ -18,7 +18,7 @@
 }
 .anchorList aside {
 	min-width : 245px;
-	height : 26px;
+	height : 100%;
 	right : 7px;
 	left : 0;
 	top : 0;
@@ -31,12 +31,20 @@
 	vertical-align : top;
 }
 .anchorList aside dd {
-	height : 10px;
+	height : 16px;
 }
 .anchorList[descriptstatus="hide"] aside dd {
 	display : none;
 }
-.anchorList p {
+.anchorList aside small {
+	float : right;
+	height : 20px;
+	line-height : 20px;
+}
+.anchorList aside small:empty {
+	display : none;
+}
+.anchorList nav > p {
 	width : 5px;
 	height : 13px;
 	right : 0;
@@ -65,6 +73,34 @@
 	margin-left : 0;
 }
 
+
+.userAnchorList li {
+	padding : 0;
+	height : 55px;
+	padding : 3px 16px 3px 10px;
+}
+.userAnchorList .normalAvatarPanel {
+	border : 0 none;
+}
+.userAnchorList .normalAvatarPanel > img {
+	border : 0 none;
+	width : 48px;
+	height : 48px;
+	border-radius : 48px;
+}
+.userAnchorList aside > dl {
+	position : absolute;
+	left : 64px;
+	right : 0;
+	height : 100%;
+	padding : 4px 0;
+}
+.userAnchorList dl > dd {
+	margin-top : 4px;
+}
+.userAnchorList nav > p {
+	top : 17px;
+}
 
 
 .userList figure {
@@ -174,6 +210,12 @@
 .userManagementList figcaption {
 	display : none;
 }
+
+
+.projectAnchorList aside dd {
+	height : 10px;
+}
+
 
 .userSelectionList > header , .userSelectionList .userIndexList aside {
 	color : #e26816;

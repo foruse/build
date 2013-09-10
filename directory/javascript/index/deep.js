@@ -1,14 +1,21 @@
 ﻿(function(Deep, NonstaticClass, StaticClass, PagePanel, CallServer){
-this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forEach){
-	function GlobalSearchHeader(selector, globalSearch){
+this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forEach, config){
+	function GlobalSearch(selector, groupHtml){
 		///	<summary>
-		///	搜索顶条栏。
+		///	全局搜索。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
-		/// <param name="globalSearch" type="Bao.Page.Index.Deep.GlobalSearch">全局搜索类的实例</param>
-		var textEl = this.find("input");
+		/// <param name="groupHtml" type="jQun.HTML">分组的html模板</param>
+		var globalSearch = this,
+			
+			groupPanel = new OverflowPanel(this.find(".globalSearch_content>ul")[0]);
 
-		this.attach({
+		this.assign({
+			groupHtml : groupHtml,
+			groupPanel : groupPanel
+		});
+
+		this.find(">header").attach({
 			userclick : function(e){
 				var targetEl = jQun(e.target);
 
@@ -27,24 +34,24 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 				}
 			}
 		});
-	};
-	GlobalSearchHeader = new NonstaticClass(GlobalSearchHeader, null, Panel.prototype);
 
+		groupPanel.attach({
+			clickanchor : function(e){
+				var group = jQun(e.target).between(">li>dl", this).get("group", "attr");
 
-	function GlobalSearch(selector, groupHtml){
-		///	<summary>
-		///	全局搜索。
-		///	</summary>
-		/// <param name="selector" type="string">对应的元素选择器</param>
-		/// <param name="groupHtml" type="jQun.HTML">分组的html模板</param>
-		var groupPanel = new OverflowPanel(this.find(".globalSearch_content>ul")[0]);
+				e.stopPropagation();
 
-		this.assign({
-			groupHtml : groupHtml,
-			groupPanel : groupPanel
-		});
+				if(!group){
+					return;
+				}
 
-		new GlobalSearchHeader.constructor(this.find(">header")[0], this);
+				var cfg = config[group];
+
+				Global.history.go(cfg.panel)[cfg.method](e.anchor);
+			}
+		}, true);
+
+		this.search("ss");
 	};
 	GlobalSearch = new NonstaticClass(GlobalSearch, "Bao.Page.Index.Deep.GlobalSearch", PagePanel.prototype);
 
@@ -79,10 +86,10 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 						return;
 					}
 
-					var groupEl = groupPanel.find('dl[group="' + name + '"]');
+					var groupContentEl = groupPanel.find('dl[group="' + name + '"]>dd');
 
-					new UserAnchorList(listData, true).appendTo(groupEl[0]);
-					groupEl.parent().show();
+					new UserAnchorList(listData).appendTo(groupContentEl[0]);
+					groupContentEl.parent().parent().show();
 				});
 			});
 		}
@@ -94,7 +101,26 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 	Bao.API.DOM.Panel,
 	Bao.UI.Control.List.UserAnchorList,
 	Bao.Global,
-	jQun.forEach
+	jQun.forEach,
+	// config
+	{
+		projects : {
+			panel : "",
+			method : ""
+		},
+		partners : {
+			panel : "businessCard",
+			method : "fillUser"
+		},
+		todo : {
+			panel : "",
+			method : ""
+		},
+		comments : {
+			panel : "",
+			method : ""
+		}
+	}
 ));
 
 this.Account = (function(LoadingBar, Global, ValidationList){

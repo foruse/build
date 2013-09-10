@@ -10,6 +10,7 @@
 }
 .globalSearch_header {
 	height : 44px;
+	width : 100%;
 	border : 8px solid transparent;
 	position : relative;
 }
@@ -53,7 +54,13 @@
 	line-height : 15px;
 	text-indent : 5px;
 }
-.globalSearch_content .anchorList > ul {
+.globalSearch_content .userAnchorList dl > dt {
+	height : 20px;
+}
+.globalSearch_content .userAnchorList {
+	background-color : #fff;
+}
+.globalSearch_content .userAnchorList > ul {
 	border : 0 none;
 }
 .globalSearch_content > ul > li:not(:last-child) {
@@ -62,6 +69,10 @@
 .globalSearch_content > ul > li {
 	display : none;
 }
+#globalSearch .userAnchorList dt {
+	text-indent : 0;
+}
+
 
 #account {
 	padding : 10px;

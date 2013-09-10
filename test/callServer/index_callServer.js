@@ -145,14 +145,41 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			return data;
 		},
 		globalSearch : function(data){
-			var result = [], random = Bao.Test.DummyData.Generate.Number.random;
+			var random = Bao.Test.DummyData.Generate.Number.random,
 
-			data = {
-				projects : Index.SPP.getProjects(random(10)),
-				todo : [],
-				comments : [],
-				partners : Index.Common.getUsers(random(10))
-			};
+				projects = Index.SPP.getProjects(random(10)),
+
+				partners = Index.Common.getUsers(random(10)),
+
+				dt = {
+					projects : [],
+					todo : [],
+					comments : [],
+					partners : []
+				};
+
+			projects.forEach(function(pro){
+				var creator = pro.creator, time = new Date(pro.creationTime);
+
+				this.push({
+					key : pro.id,
+					title : creator.name,
+					desc : pro.title,
+					time : [time.getDate(), time.getMonth() + 1, time.getFullYear().toString().substring(2)].join("/"),
+					avatar : creator.avatar
+				});
+			}, dt.projects);
+
+			partners.forEach(function(user){
+				this.push({
+					key : user.id,
+					title : user.name,
+					avatar : user.avatar,
+					desc : user.position
+				});
+			}, dt.partners);
+
+			data = dt;
 
 			return data;
 		}

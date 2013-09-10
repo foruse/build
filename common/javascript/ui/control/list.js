@@ -60,15 +60,30 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 	new jQun.Event("clickanchor")
 ));
 
-this.UserAnchorList = (function(AnchorList){
+this.UserAnchorList = (function(AnchorList, forEach, avatarHtml){
 	function UserAnchorList(listData){
-		
+		this.classList.add("userAnchorList");
+		this.set("descriptstatus", "show", "attr");
+
+		forEach(listData, function(dt){
+			var asideEl = this.find('li[key="' + dt.key + '"] aside');
+
+			asideEl.classList.add("inlineBlock");
+			avatarHtml.create(dt).insertTo(asideEl[0], 0);
+		}, this);
 	};
 	UserAnchorList = new NonstaticClass(UserAnchorList, "Bao.UI.Control.List.UserAnchorList", AnchorList.prototype);
 
 	return UserAnchorList.constructor;
 }(
-	this.AnchorList
+	this.AnchorList,
+	jQun.forEach,
+	// avatarHtml
+	new HTML([
+		'<p class="normalAvatarPanel">',
+			'<img src="{avatar}" />',
+		'</p>'
+	].join(""))
 ));
 
 this.ProjectAnchorList = (function(AnchorList, levelHtml){
@@ -78,6 +93,7 @@ this.ProjectAnchorList = (function(AnchorList, levelHtml){
 		///	</summary>
 		var anchorList = this;
 
+		this.classList.add("projectAnchorList");
 		this.set("descriptstatus", "show", "attr");
 
 		listData.forEach(function(project){

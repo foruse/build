@@ -133,6 +133,11 @@
 	border-radius : 46px;
 	border : 2px solid #fff;
 }
+.smallAvatarPanel > img {
+	width : 16px;
+	height : 16px;
+	border-radius : 16px;
+}
 
 .validationError {
 	-webkit-animation : validationError steps(28) 2s 2;
