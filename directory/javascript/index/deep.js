@@ -1,6 +1,109 @@
 ﻿(function(Deep, NonstaticClass, StaticClass, PagePanel, CallServer){
+this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forEach){
+	function GlobalSearchHeader(selector, globalSearch){
+		///	<summary>
+		///	搜索顶条栏。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
+		/// <param name="globalSearch" type="Bao.Page.Index.Deep.GlobalSearch">全局搜索类的实例</param>
+		var textEl = this.find("input");
+
+		this.attach({
+			userclick : function(e){
+				var targetEl = jQun(e.target);
+
+				if(targetEl.between(">aside>button", this).length > 0){
+					var val = textEl.value;
+
+					if(val === "")
+						return;
+
+					globalSearch.search(val);
+					return;
+				}
+
+				if(targetEl.between(">nav>button", this).length > 0){
+					Global.history.go("systemOption", true);
+				}
+			}
+		});
+	};
+	GlobalSearchHeader = new NonstaticClass(GlobalSearchHeader, null, Panel.prototype);
+
+
+	function GlobalSearch(selector, groupHtml){
+		///	<summary>
+		///	全局搜索。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
+		/// <param name="groupHtml" type="jQun.HTML">分组的html模板</param>
+		var groupPanel = new OverflowPanel(this.find(".globalSearch_content>ul")[0]);
+
+		this.assign({
+			groupHtml : groupHtml,
+			groupPanel : groupPanel
+		});
+
+		new GlobalSearchHeader.constructor(this.find(">header")[0], this);
+	};
+	GlobalSearch = new NonstaticClass(GlobalSearch, "Bao.Page.Index.Deep.GlobalSearch", PagePanel.prototype);
+
+	GlobalSearch.override({
+		showTitleBar : false
+	});
+
+	GlobalSearch.properties({
+		groupHtml : undefined,
+		groupPanel : undefined,
+		search : function(text){
+			///	<summary>
+			///	搜索。
+			///	</summary>
+			/// <param name="text" type="string">需要搜索的文本值</param>
+			if(text === "")
+				return;
+
+			var globalSearch = this;
+
+			CallServer.open("globalSearch", { search : text }, function(data){
+				var groupPanel = globalSearch.groupPanel;
+
+				// 将top设置为0
+				groupPanel.setTop(0);
+				// 重新渲染分组
+				groupPanel.innerHTML = globalSearch.groupHtml.render();
+
+				// 数据渲染
+				forEach(data, function(listData, name){
+					if(listData.length === 0){
+						return;
+					}
+
+					var groupEl = groupPanel.find('dl[group="' + name + '"]');
+
+					new UserAnchorList(listData, true).appendTo(groupEl[0]);
+					groupEl.parent().show();
+				});
+			});
+		}
+	});
+
+	return GlobalSearch.constructor;
+}(
+	Bao.API.DOM.OverflowPanel,
+	Bao.API.DOM.Panel,
+	Bao.UI.Control.List.UserAnchorList,
+	Bao.Global,
+	jQun.forEach
+));
+
 this.Account = (function(LoadingBar, Global, ValidationList){
 	function Account(selector, contentHtml){
+		///	<summary>
+		///	我的账户。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
+		/// <param name="contentHtml" type="jQun.HTML">内容的html模板</param>
 		var account = this, accountClassList = account.classList,
 
 			validationList = new ValidationList(),
@@ -109,6 +212,11 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 
 this.QRCode = (function(){
 	function QRCode(selector, contentHtml){
+		///	<summary>
+		///	我的二维码。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
+		/// <param name="contentHtml" type="jQun.HTML">内容的html模板</param>
 		var qrCode = this;
 
 		CallServer.open("myInformation", null, function(data){
@@ -125,7 +233,12 @@ this.QRCode = (function(){
 }());
 
 this.AboutBaoPiQi = (function(){
-	function AboutBaoPiQi(selector){ };
+	function AboutBaoPiQi(selector){
+		///	<summary>
+		///	关于暴脾气。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
+	};
 	AboutBaoPiQi = new NonstaticClass(AboutBaoPiQi, "Bao.Page.Index.Deep.AboutBaoPiQi", PagePanel.prototype);
 
 	AboutBaoPiQi.override({

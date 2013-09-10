@@ -60,6 +60,17 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 	new jQun.Event("clickanchor")
 ));
 
+this.UserAnchorList = (function(AnchorList){
+	function UserAnchorList(listData){
+		
+	};
+	UserAnchorList = new NonstaticClass(UserAnchorList, "Bao.UI.Control.List.UserAnchorList", AnchorList.prototype);
+
+	return UserAnchorList.constructor;
+}(
+	this.AnchorList
+));
+
 this.ProjectAnchorList = (function(AnchorList, levelHtml){
 	function ProjectAnchorList(listData){
 		///	<summary>

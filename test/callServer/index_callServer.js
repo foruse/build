@@ -39,7 +39,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getProjects",			"url",										"", true],
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
-		["myInformation",		"url",										"", true]
+		["myInformation",		"url",										"", true],
+		["globalSearch",		new Text("url?search={search}"),				"", true]
 	], allHandlers);
 
 	return CallServer;
@@ -141,6 +142,18 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		addProject : function(data){
 			data = { id : Bao.Test.DummyData.Generate.Number.random(6) };
 			
+			return data;
+		},
+		globalSearch : function(data){
+			var result = [], random = Bao.Test.DummyData.Generate.Number.random;
+
+			data = {
+				projects : Index.SPP.getProjects(random(10)),
+				todo : [],
+				comments : [],
+				partners : Index.Common.getUsers(random(10))
+			};
+
 			return data;
 		}
 	}

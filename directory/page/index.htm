@@ -206,6 +206,35 @@
 			</article>
 		</div>
 		<div class="deep">
+			<article id="globalSearch">
+				<header class="globalSearch_header inlineBlock themeBgColor">
+					<nav>
+						<button></button>
+					</nav>
+					<aside class="smallRadius">
+						<input type="text" placeholder="搜索关键字" />
+						<button></button>
+					</aside>
+				</header>
+				<section class="globalSearch_content">
+					<ul></ul>
+				</section>
+				<script id="globalSearch_group_html" type="text/html">
+					@for([
+						{ title : "项目", group : "projects", color : 0 },
+						{ title : "ToDo", group : "todo", color : 1 },
+						{ title : "评论", group : "comments", color : 2 },
+						{ title : "拍档", group : "partners", color : 3 }
+					] ->> item){
+						<li class="lightBdColor onlyBorderBottom">
+							<dl group="{item.group}">
+								<dt class="projectColor_{item.color} whiteFont">{item.title}</dt>
+								<dd></dd>
+							</dl>
+						</li>
+					}
+				</script>
+			</article>
 			<article id="account"></article>
 			<script id="account_html" type="text/html">
 				<header class="themeBdColor normalRadius">

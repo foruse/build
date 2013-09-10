@@ -16,6 +16,9 @@ this.Loader = (function(Storage, Index, HTML){
 		businessCard : function(){
 			return new Index.Secondary.BusinessCard("#businessCard", new HTML("businessCard_html", true));
 		},
+		globalSearch : function(){
+			return new Index.Deep.GlobalSearch("#globalSearch", new HTML("globalSearch_group_html", true));
+		},
 		load : function(name){
 			var pagePanel = this.pageStorage.get(name);
 
@@ -115,7 +118,10 @@ this.History = (function(List, Loader, redirectEvent){
 				panel.show();
 			}
 
-			this.push({ self : name, opener : _isBack ? old.name : this.getNameByIndex(lastIdx) });
+			this.push({
+				self : name,
+				opener : _isBack ? (old ? old.name : null) : this.getNameByIndex(lastIdx)
+			});
 			return panel;
 		},
 		homePage : "project"
