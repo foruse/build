@@ -49,6 +49,9 @@ this.Loader = (function(Storage, Index, HTML){
 
 			return sppPanel ? sppPanel : new Index.Home.SPP("#SPP");
 		},
+		singleProject : function(){
+			return new Index.Secondary.SingleProject("#singleProject", new HTML("singleProject_info_html", true));
+		},
 		systemOption : function(){
 			return new Index.Secondary.SystemOption("#systemOption");
 		},

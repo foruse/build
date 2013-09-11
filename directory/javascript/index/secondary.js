@@ -201,6 +201,25 @@ this.SystemOption = (function(AnchorList, anchorData){
 	]
 ));
 
+this.SingleProject = (function(){
+	function SingleProject(selector){};
+	SingleProject = new NonstaticClass(SingleProject, "Bao.Page.Index.Secondary.SingleProject", PagePanel.prototype);
+
+	SingleProject.override({
+		title : "单个项目"
+	});
+
+	SingleProject.properties({
+		fill : function(id){
+			CallServer.open("getProject", { id : id }, function(){
+			
+			});
+		}
+	});
+
+	return SingleProject.constructor;
+}());
+
 Secondary.members(this);
 }.call(
 	{},

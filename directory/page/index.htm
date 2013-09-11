@@ -204,6 +204,38 @@
 					<button class="whiteFont">登出</button>
 				</footer>
 			</article>
+			<article id="singleProject">
+				<header>
+					<ul class="inlineBlock">
+						<li>讨论</li>
+						<li>
+							To Do
+							<span></span>
+						</li>
+						<li>工作集</li>
+					</ul>
+					<dl></dl>
+					<script id="singleProject_info_html" type="text/html">
+						<dt>{title}</dt>
+						<dd>
+							<figure>
+								<p>
+									<img />
+									<span>{creator.name}</span>
+								</p>
+								<figcaption>{desc}</figcaption>
+								<p class="smallAvatarPanel">
+									<span>参与人：</span>
+									@for(members ->> m){
+										<img src="{m.avatar}" title="{m.name}" />
+									}
+								</p>
+							</figure>
+						</dd>
+					</script>
+				</header>
+				<section></section>
+			</article>
 		</div>
 		<div class="deep">
 			<article id="globalSearch">

@@ -157,7 +157,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 					comments : [],
 					partners : []
 				};
-
+				/*
 			projects.forEach(function(pro){
 				var creator = pro.creator, time = new Date(pro.creationTime);
 
@@ -169,7 +169,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 					avatar : creator.avatar
 				});
 			}, dt.projects);
-
+			*/
 			partners.forEach(function(user){
 				this.push({
 					key : user.id,
