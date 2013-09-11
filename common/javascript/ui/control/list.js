@@ -1,12 +1,14 @@
 ﻿(function(List, NonstaticClass, Panel, HTML){
 this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
-	function AnchorList(listData, _hasDescript){
+	function AnchorList(listData, _hasDescription){
 		///	<summary>
 		///	连接列表。
 		///	</summary>
+		/// <param name="listData" type="array">列表数据</param>
+		/// <param name="_hasDescription" type="boolean">是否应该有描述</param>
 		this.combine(anchorListHtml.create({
 			listData : listData,
-			descriptstatus : _hasDescript ? "show" : "hide"
+			descriptstatus : _hasDescription ? "show" : "hide"
 		}));
 
 		this.attach({
@@ -60,8 +62,19 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 	new jQun.Event("clickanchor")
 ));
 
+this.ChatList = (function(){
+	function ChatList(){};
+	ChatList = new NonstaticClass(ChatList, "Bao.UI.Control.List.ChatList", Panel.prototype);
+
+	return ChatList.constructor;
+}());
+
 this.UserAnchorList = (function(AnchorList, forEach, avatarHtml){
 	function UserAnchorList(listData){
+		///	<summary>
+		///	用户连接列表。
+		///	</summary>
+		/// <param name="listData" type="array">列表数据</param>
 		this.classList.add("userAnchorList");
 		this.set("descriptstatus", "show", "attr");
 

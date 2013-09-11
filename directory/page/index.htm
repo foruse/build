@@ -67,9 +67,11 @@
 									</strong>
 								</figcaption>
 								<dl>
-									<dd class="inlineBlock smallAvatarPanel">
+									<dd class="inlineBlock">
 										@for(pro.users ->> user){
-											<img src="{user.avatar}" />
+											<a class="smallAvatarPanel" href="javascript:void(0);" userid="{user.id}">
+												<img src="{user.avatar}" />
+											</a>
 										}
 									</dd>
 									<dd>
@@ -218,19 +220,30 @@
 					<script id="singleProject_info_html" type="text/html">
 						<dt class="whiteFont projectColor_{color} largeRadius">{title}</dt>
 						<dd class="lightBdColor projectColor_{color} largeRadius">
-							<figure>
-								<p class="smallAvatarPanel inlineBlock">
+							<figure class="inlineBlock">
+								<a class="smallAvatarPanel" userid="{creator.id}" href="javascript:void(0);">
 									<img src="{creator.avatar}" />
-									<span>{creator.name}</span>
-								</p>
-								<figcaption>{desc}</figcaption>
-								<p class="smallAvatarPanel inlineBlock">
-									<span>参与人：</span>
+								</a>
+								<figcaption class="grayFont">{creator.name}</figcaption>
+							</figure>
+							<p>{desc}</p>
+							<nav class="inlineBlock">
+								<span>参与人：</span>
+								<p class="inlineBlock">
 									@for(users ->> u){
-										<img src="{u.avatar}" title="{u.name}" />
+										<a class="smallAvatarPanel" userid="{u.id}" href="javascript:void(0);">
+											<img src="{u.avatar}" title="{u.name}" />
+										</a>
 									}
 								</p>
-							</figure>
+							</nav>
+							<aside class="lightBdColor inlineBlock">
+								@for(attachments ->> a){
+									<a href="javascript:void(0);">
+										<img />
+									</a>
+								}
+							</aside>
 						</dd>
 					</script>
 				</header>

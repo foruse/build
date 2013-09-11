@@ -185,7 +185,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			return data;
 		},
 		getSingleProject : function(data){
-			data = Index.SPP.getSingleProjects();
+			data = Index.SPP.getSingleProject();
 
 			return data;
 		}

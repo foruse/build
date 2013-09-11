@@ -85,7 +85,9 @@ this.SPP = (function(){
 				lastMessage : String.random(),
 				creator : Common.getUser(),
 				creationTime : new Date().getTime(),
-				unread : Number.random(2) > 1 ? 0 : Number.random()
+				unread : Number.random(2) > 1 ? 0 : Number.random(),
+				desc : String.random(1000),
+				attachments : []
 			};
 		},
 		getProjects : function(_len){

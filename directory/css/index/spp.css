@@ -69,13 +69,16 @@
 }
 #project figure {
 	overflow : hidden;
+	
 }
 #project figure[status="0"] figcaption {
 	background-color : #bbb;
 }
 #project figure[status="-1"] {
+	height : 37px;
+	box-sizing : content-box;
 	opacity : 0.5;
-	padding : 28px 0;
+	padding : 29px 0;
 	background : url(../../../common/image/width24.png) no-repeat center -275px content-box content-box;
 }
 #project figure[status="-1"] > * {
@@ -128,7 +131,7 @@
 	margin : 3px;
 	padding : 0;
 }
-#project img {
+#project dd > a {
 	margin : 2px;
 }
 #project hr {

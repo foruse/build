@@ -34,7 +34,8 @@ with(this){
 		creator : DS_user,
 		creationTime : new Date().getTime(), // number : the milliseconds since 1970/01/01
 		lastMessage : "oh, thanks!", // string
-		unread : 66 // number : the max is 99
+		unread : 66, // number : the max is 99
+		desc : "abc" // string : description of the project
 	};
 }
 window.index_dataStructure = this;

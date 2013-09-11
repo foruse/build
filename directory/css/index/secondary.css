@@ -238,8 +238,44 @@
 }
 .singleProject_info > dd {
 	background-color : transparent;
-	height : 145px;
 	border-top-left-radius : 0;
 	border-top-right-radius : 0;
 	padding : 5px 10px;
+}
+.singleProject_info figure {
+	height : 20px;
+	line-height : 20px;
+}
+.singleProject_info figcaption {
+	margin-left : 5px;
+}
+.singleProject_info dd > p {
+	margin-top : 8px;
+	height : 56px;
+	white-space : normal;
+	word-break : break-all;
+	line-height : 14px;
+	overflow : hidden;
+}
+.singleProject_info nav {
+	line-height : 20px;
+	margin-top : 15px;
+	white-space : nowrap;
+}
+.singleProject_info nav > span {
+	width : 48px;
+}
+.singleProject_info nav > p {
+	width : 100%;
+	padding-left : 48px;
+	position : relative;
+	left : -48px;
+}
+.singleProject_info nav a {
+	margin : 0 3px 3px 0;
+}
+.singleProject_info aside {
+	height : 50px;
+	margin-top : 10px;
+	display : none;
 }
