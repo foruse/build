@@ -201,8 +201,15 @@ this.SystemOption = (function(AnchorList, anchorData){
 	]
 ));
 
-this.SingleProject = (function(){
-	function SingleProject(selector){};
+this.SingleProject = (function(Global){
+	function SingleProject(selector, infoHtml){
+		this.assign({
+			infoHtml : infoHtml
+		});
+
+		this.fill(1);
+		console.log(this);
+	};
 	SingleProject = new NonstaticClass(SingleProject, "Bao.Page.Index.Secondary.SingleProject", PagePanel.prototype);
 
 	SingleProject.override({
@@ -211,14 +218,20 @@ this.SingleProject = (function(){
 
 	SingleProject.properties({
 		fill : function(id){
-			CallServer.open("getProject", { id : id }, function(){
-			
+			var singleProject = this;
+
+			CallServer.open("getSingleProject", { id : id }, function(project){
+				Global.titleBar.resetTitle(project.title);
+				singleProject.find(">header>dl").innerHTML = singleProject.infoHtml.render(project);
 			});
-		}
+		},
+		infoHtml : undefined
 	});
 
 	return SingleProject.constructor;
-}());
+}(
+	Bao.Global
+));
 
 Secondary.members(this);
 }.call(

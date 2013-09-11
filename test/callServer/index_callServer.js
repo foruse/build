@@ -40,7 +40,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
 		["myInformation",		"url",										"", true],
-		["globalSearch",		new Text("url?search={search}"),				"", true]
+		["globalSearch",		new Text("url?search={search}"),				"", true],
+		["getSingleProject",		new Text("url?id={id}"),				"", true]
 	], allHandlers);
 
 	return CallServer;
@@ -180,6 +181,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			}, dt.partners);
 
 			data = dt;
+
+			return data;
+		},
+		getSingleProject : function(data){
+			data = Index.SPP.getSingleProjects();
 
 			return data;
 		}

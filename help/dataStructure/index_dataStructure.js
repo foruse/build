@@ -32,7 +32,6 @@ with(this){
 		color : 1, // number : from 0 to 5(0 : orange, 1 : tan, 2 : cyan, 3 : blue, 4 : henna, 5 : purple)
 		users : DS_users,
 		creator : DS_user,
-		members : DS_users,
 		creationTime : new Date().getTime(), // number : the milliseconds since 1970/01/01
 		lastMessage : "oh, thanks!", // string
 		unread : 66 // number : the max is 99

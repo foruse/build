@@ -68,7 +68,6 @@
 	left : 1px;
 }
 #project figure {
-	height : 95px;
 	overflow : hidden;
 }
 #project figure[status="0"] figcaption {
@@ -86,27 +85,28 @@
 	background-position : 0 -15px;
 }
 #project figcaption {
-	height : 30px;
-	padding : 5px 5px 0 5px;
-	line-height : 12px;
-	text-indent : 5px;
+	height : 22px;
+	line-height : 22px;
 	color : #fff;
+	position : relative;
+}
+#project figcaption > * {
+	position : absolute;
+	height : 100%;
 }
 #project figcaption > span {
 	display : block;
-	height : 14px;
+	right : 33px;
+	left : 0;
+	text-indent : 10px;
 }
 #project strong {
 	display : block;
-	height : 10px;
+	right : 5px;
+	padding : 6px 0;
 	width : 33px;
-	padding-top : 1px;
-	margin-left : 5px;
-	position : relative;
-	top : -1px;
 	text-indent : 0;
-	background : url(../../../common/image/width12.png) 0 -29px;
-	background-origin : content-box;
+	background : url(../../../common/image/width12.png) 0 -29px content-box content-box;
 }
 #project strong > span {
 	height : 9px;
@@ -122,17 +122,14 @@
 	padding : 0 10px;
 }
 #project dd:first-of-type {
-	height : 30px;
+	height : 48px;
 	margin : 0;
 	overflow : hidden;
-	margin : 8px;
+	margin : 3px;
 	padding : 0;
 }
 #project img {
-	width : 13px;
-	height : 13px;
-	border-radius : 13px;
-	margin : 0 0 4px 2px;
+	margin : 2px;
 }
 #project hr {
 	width : 100%;

@@ -6,7 +6,7 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="groupHtml" type="jQun.HTML">分组的html模板</param>
-		var globalSearch = this,
+		var globalSearch = this, textEl = this.find(">header input"),
 			
 			groupPanel = new OverflowPanel(this.find(".globalSearch_content>ul")[0]);
 
@@ -50,8 +50,6 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 				Global.history.go(cfg.panel)[cfg.method](e.anchor);
 			}
 		}, true);
-
-		this.search("ss");
 	};
 	GlobalSearch = new NonstaticClass(GlobalSearch, "Bao.Page.Index.Deep.GlobalSearch", PagePanel.prototype);
 

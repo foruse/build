@@ -67,7 +67,7 @@
 									</strong>
 								</figcaption>
 								<dl>
-									<dd class="inlineBlock">
+									<dd class="inlineBlock smallAvatarPanel">
 										@for(pro.users ->> user){
 											<img src="{user.avatar}" />
 										}
@@ -206,28 +206,28 @@
 			</article>
 			<article id="singleProject">
 				<header>
-					<ul class="inlineBlock">
-						<li>讨论</li>
-						<li>
+					<ul class="singleProject_tab inlineBlock smallRadius lightBdColor">
+						<li class="lightBdColor whiteFont focused">讨论</li>
+						<li class="lightBdColor whiteFont">
 							To Do
-							<span></span>
+							<span class="whiteFont">3</span>
 						</li>
-						<li>工作集</li>
+						<li class="lightBdColor whiteFont">工作集</li>
 					</ul>
-					<dl></dl>
+					<dl class="singleProject_info"></dl>
 					<script id="singleProject_info_html" type="text/html">
-						<dt>{title}</dt>
-						<dd>
+						<dt class="whiteFont projectColor_{color} largeRadius">{title}</dt>
+						<dd class="lightBdColor projectColor_{color} largeRadius">
 							<figure>
-								<p>
-									<img />
+								<p class="smallAvatarPanel inlineBlock">
+									<img src="{creator.avatar}" />
 									<span>{creator.name}</span>
 								</p>
 								<figcaption>{desc}</figcaption>
-								<p class="smallAvatarPanel">
+								<p class="smallAvatarPanel inlineBlock">
 									<span>参与人：</span>
-									@for(members ->> m){
-										<img src="{m.avatar}" title="{m.name}" />
+									@for(users ->> u){
+										<img src="{u.avatar}" title="{u.name}" />
 									}
 								</p>
 							</figure>

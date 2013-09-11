@@ -75,25 +75,28 @@ this.SPP = (function(){
 				letter : ["a", "b", "c"]
 			};
 		},
+		getSingleProject : function(){
+			return {
+				id : Number.id(),
+				level : Number.random(3),
+				title : String.random(),
+				color : Number.random(5),
+				users : Common.getUsers(Number.random(20)),
+				lastMessage : String.random(),
+				creator : Common.getUser(),
+				creationTime : new Date().getTime(),
+				unread : Number.random(2) > 1 ? 0 : Number.random()
+			};
+		},
 		getProjects : function(_len){
 			var projects = [];
 
-			if(_len == undefined){
+			if(!_len){
 				_len = Number.random(30);
 			}
 
 			for(var i = 0;i < _len;i++){
-				projects.push({
-					id : Number.id(),
-					level : Number.random(3),
-					title : String.random(),
-					color : Number.random(5),
-					users : Common.getUsers(Number.random(20)),
-					lastMessage : String.random(),
-					creator : Common.getUser(),
-					creationTime : new Date().getTime(),
-					unread : Number.random(2) > 1 ? 0 : Number.random()
-				});
+				projects.push(this.getSingleProject());
 			}
 
 			return projects;
