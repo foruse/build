@@ -1,0 +1,7 @@
+﻿#guidance_header {
+	display : block;
+}
+#guidance_header li {
+	width : 14.285%;
+	height : 5px;
+}

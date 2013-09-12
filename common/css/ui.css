@@ -108,6 +108,10 @@
 	background-color : #867bc8;
 	border-color : #867bc8 !important;
 }
+.projectColor_gray, .projectColor_6 {
+	background-color : #6f6f6f;
+	border-color : #6f6f6f !important;
+}
 
 .largeAvatarPanel, .normalAvatarPanel {
 	width : 62px;

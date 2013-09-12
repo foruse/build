@@ -236,7 +236,8 @@
 	background-image : none;
 }
 #mask[action="添加组拍档"] > article, #mask[action="添加组拍档"] footer > button,
-#mask[action="添加组拍档"] header > input, #mask[action="添加组拍档"] .userIndexList p.selected {
+#mask[action="添加组拍档"] header > input, #mask[action="添加组拍档"] .userIndexList p.selected,
+#mask[action="添加组拍档"] .userIndexList p.selected > img {
 	border-color : #00b0d6;
 }
 #mask[action="添加组拍档"] header > button, #mask[action="添加组拍档"] footer > button {

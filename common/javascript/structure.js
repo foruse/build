@@ -29,12 +29,15 @@ this.Bao = (function(Bao){
 					Account : null,
 					QRCode : null
 				}),
-				Home : new Namespace({ // ../../directoy/javascript/index/home.js
+				SPP : new Namespace({ // ../../directoy/javascript/index/home.js
 					Partner : null,
 					Project : null,
-					SPP : null,
 					Schedule : null,
+					Self : null,
 					Tab : null
+				}),
+				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
+					Login : null
 				}),
 				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
 					AddProject : null,

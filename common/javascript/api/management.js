@@ -19,6 +19,9 @@ this.Loader = (function(Storage, Index, HTML){
 		globalSearch : function(){
 			return new Index.Deep.GlobalSearch("#globalSearch", new HTML("globalSearch_group_html", true));
 		},
+		guidance : function(){
+			return new Index.Guidance.Self("#guidance");
+		},
 		load : function(name){
 			var pagePanel = this.pageStorage.get(name);
 
@@ -28,26 +31,30 @@ this.Loader = (function(Storage, Index, HTML){
 
 			return pagePanel;
 		},
+		login : function(){
+			this.load("guidance");
+			return new Index.Guidance.Login("#login");
+		},
 		pageStorage : new Storage(),
 		partner : function(){
 			this.load("spp");
-			return new Index.Home.Partner("#partner", new HTML("spp_partnerGroups_html", true));
+			return new Index.SPP.Partner("#partner", new HTML("spp_partnerGroups_html", true));
 		},
 		project : function(){
 			this.load("spp");
-			return new Index.Home.Project("#project", new HTML("spp_project_html", true));
+			return new Index.SPP.Project("#project", new HTML("spp_project_html", true));
 		},
 		qrCode : function(){
 			return new Index.Deep.QRCode("#QRCode", new HTML("QRCode_html", true));
 		},
 		schedule : function(){
 			this.load("spp");
-			return new Index.Home.Schedule("#schedule", new HTML("spp_scheduleSign_html", true));
+			return new Index.SPP.Schedule("#schedule", new HTML("spp_scheduleSign_html", true));
 		},
 		spp : function(){
 			var sppPanel = this.pageStorage.get("spp");
 
-			return sppPanel ? sppPanel : new Index.Home.SPP("#SPP");
+			return sppPanel ? sppPanel : new Index.SPP.Self("#SPP");
 		},
 		singleProject : function(){
 			return new Index.Secondary.SingleProject("#singleProject", new HTML("singleProject_info_html", true));

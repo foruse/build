@@ -260,9 +260,8 @@
 	right : 30px;
 	top : 95px;
 }
-.userSelectionList .userIndexList p.selected {
+.userSelectionList .userIndexList p.selected, .userSelectionList .userIndexList p.selected > img {
 	border-color : #f1af0f;
-	box-shadow : 0 0 3px #f1af0f;
 }
 .userSelectionList > footer {
 	position : absolute;
