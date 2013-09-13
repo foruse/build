@@ -41,7 +41,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
 		["myInformation",		"url",										"", true],
 		["globalSearch",		new Text("url?search={search}"),				"", true],
-		["getSingleProject",		new Text("url?id={id}"),				"", true]
+		["getSingleProject",		new Text("url?id={id}"),				"", true],
+		["getLoginInfo",		"url",										""]
 	], allHandlers);
 
 	return CallServer;
@@ -186,6 +187,14 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		},
 		getSingleProject : function(data){
 			data = Index.SPP.getSingleProject();
+
+			return data;
+		},
+		getLoginInfo : function(){
+			data = {
+				count : Bao.Test.DummyData.Generate.Number.random(9999999),
+				validationImage : "javascript:void(0);"
+			};
 
 			return data;
 		}

@@ -446,15 +446,13 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 ));
 
 this.Tab = (function(focusTabEvent, blurTabEvent){
-	function Tab(selector, itemHtml){
+	function Tab(selector){
 		///	<summary>
 		///	SPP脚部选项卡。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="itemHtml" type="jQun.HTML">选项卡html模板</param>
 		var btnEls, btnClassList, tab = this;
-
-		this.find("ul").innerHTML = itemHtml.render();
 
 		this.assign({
 			btnEls : this.find("button")
@@ -513,12 +511,7 @@ this.Self = (function(Tab, HTML){
 		///	日程、项目、拍档页。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素</param>
-		var tab = new Tab(
-			// selector
-			"#tab_SPP",
-			// itemHtml
-			new HTML("spp_item_html", true)
-		);
+		var tab = new Tab("#tab_SPP");
 
 		this.attach({
 			beforeshow : function(e){

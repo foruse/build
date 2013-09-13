@@ -40,15 +40,47 @@
 		</header>
 		<div id="guidance">
 			<header id="guidance_header">
-				<ul class="inlineBlock"></ul>
-				<script id="guidance_header_html" type="text/html">
-					@for(7 ->> i){
-						<li class="projectColor_{i}"></li>
-					}
+				<script statichtml type="text/html">
+					<ul class="inlineBlock">
+						@for(7 ->> i){
+							<li class="projectColor_{i}"></li>
+						}
+					</ul>
 				</script>
 			</header>
 			<article id="login">
-				
+				<header>
+					<p>你好！</p>
+					已经有
+					<br />
+					<span></span>人
+					<br />
+					使用暴脾气工作，
+					<br />
+					现在，
+					<br />
+					该你了！
+				</header>
+				<section>
+					<script statichtml type="text/html">
+						<ul>
+							@for([
+								{ placeholder : "姓名", vtype : "userInfo", desc : "name", type : "text" },
+								{ placeholder : "邮箱", vtype : "email", desc : "email", type : "text" },
+								{ placeholder : "密码", vtype : "userInfo", desc : "pwd", type : "password" },
+								{ placeholder : "确认密码", vtype : "userInfo", desc : "repwd", type : "password" }
+							] ->> item){
+								<li>
+									<input class="lightBdColor smallRadius" type="{item.type}" vtype="{item.vtype}" placeholder="{item.placeholder}" desc="{item.desc}" />
+								</li>
+							}
+						</ul>
+					</script>
+					<p class="whiteFont">
+						<button class="normalRadius">登录</button>
+						<button class="normalRadius">立即注册</button>
+					</p>
+				</section>
 			</article>
 			<footer></footer>
 		</div>
@@ -127,19 +159,20 @@
 				</script>
 			</article>
 			<footer id="tab_SPP">
-				<ul class="inlineBlock"></ul>
-				<script id="spp_item_html" type="text/html">
-					@for([
-						{ tab : "schedule", text : "Schedule 日程" },
-						{ tab : "project", text : "PROJECTS 项目" },
-						{ tab : "partner", text : "PARTNERS 拍档" }
-					] ->> t){
-						<li tab="{t.tab}">
-							<button>
-								<span class="themeBgColor" text="{t.text}"></span>
-							</button>
-						</li>
-					}
+				<script statichtml type="text/html">
+					<ul class="inlineBlock">
+						@for([
+							{ tab : "schedule", text : "Schedule 日程" },
+							{ tab : "project", text : "PROJECTS 项目" },
+							{ tab : "partner", text : "PARTNERS 拍档" }
+						] ->> t){
+							<li tab="{t.tab}">
+								<button>
+									<span class="themeBgColor" text="{t.text}"></span>
+								</button>
+							</li>
+						}
+					</ul>
 				</script>
 			</footer>
 		</div>

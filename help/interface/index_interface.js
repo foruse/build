@@ -71,7 +71,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 					title : "", // string
 					color : 0, // number : from 0 to 5
 					desc : "" // string : descript
-					users : "1,2,3,4,5" // string : "id,id,id,id", read https://github.com/VisionSquared/baopiqi-cordova/issues/1
+					users : "1,2,3,4,5" // string : "id,id,id,id"
 				},
 				return : 1 // number : return an id of the project
 			}
@@ -83,7 +83,17 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				return : DS_user
 			}
 		*/
-		["myInformation",		"url",										"", true]
+		["myInformation",		"url",										"", true],
+		/*
+			{
+				params : null,
+				return : {
+					count : 123456, // number : get the count of all users which they are used the app
+					validationImage : "javascript:void(0);" // string : url of validation image
+				}
+			}
+		*/
+		["getLoginInfo",		"url"]
 	]);
 }
 }(

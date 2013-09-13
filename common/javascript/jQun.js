@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.5.5
- *  本次修改：NodeList.attach增加参数：支持addEventListener的所有参数;优化RequestConnection的传参。
+ *  文档状态：1.0.5.6
+ *  本次修改：增加StaticHTML类，用于静态模板。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0
  */
 
@@ -710,7 +710,7 @@ this.Text = (function(tRegx){
 	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g
 ));
 
-this.Validation = (function(RegExp, regExpString){
+this.Validation = (function(RegExp, regExpStrings){
 	function Validation(){
 		///	<summary>
 		///	验证。
@@ -718,9 +718,13 @@ this.Validation = (function(RegExp, regExpString){
 	};
 	Validation = new StaticClass(Validation, "jQun.Validation");
 
+	forEach(regExpStrings, function(str, name){
+		Validation[name.toUpperCase()] = name;
+	});
+
 	Validation.properties({
 		match : function(str, type, _regxAttrs){
-			return str.match(new RegExp(regExpString[type], _regxAttrs));
+			return str.match(new RegExp(regExpStrings[type], _regxAttrs));
 		},
 		result : function(str, type){
 			return !!this.match.apply(this, arguments);
@@ -730,7 +734,7 @@ this.Validation = (function(RegExp, regExpString){
 	return Validation;
 }(
 	RegExp,
-	// regExpString
+	// regExpStrings
 	{
 		chinese : "[\\u4e00-\\u9fa5]",
 		email : "(\\w+(?:[-+.]\\w+)*)@(\\w+(?:[-.]\\w+)*)\\.(\\w+(?:[-.]\\w+)*)",
@@ -1453,7 +1457,7 @@ this.NodeList = (function(AttributeCollection, toArray){
 			///	<summary>
 			///	将集合中所有节点添加至指定的父节点。
 			///	</summary>
-			///	<param name="parentNode" type="object">指定的父节点。</param>
+			///	<param name="parentNode" type="node">指定的父节点。</param>
 			this.insertTo(parentNode);
 			return this;
 		},
@@ -1476,7 +1480,7 @@ this.NodeList = (function(AttributeCollection, toArray){
 		},
 		detach : function(events){
 			///	<summary>
-			///	移除集合中所有元素的事件侦听器。
+			///	移除集合中所有节点的事件侦听器。
 			///	</summary>
 			///	<param name="events" type="object">事件侦听器键值对。</param>
 			this.forEach(function(node){
@@ -1488,35 +1492,56 @@ this.NodeList = (function(AttributeCollection, toArray){
 		},
 		hasChild : function(childNode){
 			///	<summary>
-			///	判断指定节点是否是该集合中某个元素的后代节点。
+			///	判断指定节点是否是该集合中某个节点的后代节点。
 			///	</summary>
-			///	<param name="childNode" type="DOM">指定的节点。</param>
+			///	<param name="childNode" type="node">指定的节点。</param>
 			return !this.every(function(node){
 				return !node.contains(childNode);
 			});
+		},
+		insertBefore : function(targetNode){
+			///	<summary>
+			///	将集合中所有节点插入至指定的节点之前。
+			///	</summary>
+			///	<param name="targetNode" type="node">指定节点。</param>
+			this.forEach(function(node){
+				this.insertBefore(node, targetNode);
+			}, targetNode.parentNode);
+
+			return this;
 		},
 		insertTo : function(parentNode, _idx){
 			///	<summary>
 			///	将集合中所有节点插入至指定索引的节点之前。
 			///	</summary>
-			///	<param name="parentNode" type="object">指定的父节点。</param>
+			///	<param name="parentNode" type="node">指定的父节点。</param>
 			///	<param name="_idx" type="number">指定节点的索引值。</param>
-			var existingNode, children = parentNode.children;
-
-			existingNode = children[_idx === undefined ? children.length : _idx];
+			if(_idx !== undefined){
+				return this.insertBefore(parentNode.childNodes[_idx]);
+			}
 
 			this.forEach(function(node){
-				parentNode[existingNode ? "insertBefore" : "appendChild"](node, existingNode);
+				parentNode.appendChild(node);
 			});
 			return this;
 		},
 		remove : function(){
 			///	<summary>
-			///	将集合中的元素从其父元素内移除。
+			///	将集合中的节点从其父节点内移除。
 			///	</summary>
 			this.forEach(function(node){
 				node.parentNode.removeChild(node);
 			});
+			return this;
+		},
+		replace : function(targetNode){
+			///	<summary>
+			///	将集合中所有节点去替换指定的节点。
+			///	</summary>
+			///	<param name="targetNode" type="node">指定的节点。</param>
+			this.insertBefore(targetNode);
+			this.remove.call([targetNode]);
+
 			return this;
 		}
 	});
@@ -2065,7 +2090,7 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, tReplace){
 			///	将模板转化为html元素。
 			///	</summary>
 			///	<param name="data" type="object, array">需要渲染的数据。</param>
-			var htmlElementList = jQun(""), parent = document.createElement("div");
+			var htmlElementList = new HTMLElementList(""), parent = document.createElement("div");
 
 			parent.innerHTML = this.render(_data);
 			htmlElementList.combine(parent.childNodes);
@@ -2093,6 +2118,44 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, tReplace){
 	/@for\s*\(([\s\S]+?)(?:\s*->>\s*([\s\S]+?))*?\)\s*\{/g,
 	// tReplace
 	this.Text.prototype.replace
+));
+
+this.StaticHTML = (function(HTML, HTMLElementList){
+	function StaticHTML(){
+		///	<summary>
+		///	静态html模板。
+		///	</summary>
+		var docEl = new HTMLElementList(document);
+
+		docEl.attach({
+			DOMContentLoaded : function(){
+				new HTMLElementList(document.scripts).attributes.forEach(function(attr, i, attrs){
+					if(!attr.statichtml)
+						return;
+					
+					var type = attr.type;
+
+					if(!type)
+						return;
+
+					if(type.value !== "text/html")
+						return;
+
+					new HTML(
+						attrs.sources[i].innerHTML
+					).create().replace(attrs.sources[i]);
+				});
+
+				docEl.detach({ DOMContentLoaded : arguments.callee });
+			}
+		});
+	};
+	StaticHTML = new StaticClass(StaticHTML, "jQun.StaticHTML");
+
+	return StaticHTML;
+}(
+	this.HTML,
+	this.HTMLElementList
 ));
 
 with(jQun){

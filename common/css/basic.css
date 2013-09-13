@@ -42,6 +42,9 @@ script {
 	color : inherit;
 }
 
+a {
+	-webkit-user-drag : none;	
+}
 a:visited {
 	color : inherit;
 }
