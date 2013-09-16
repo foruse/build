@@ -19,6 +19,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 	*/
 
 	CallServer.save([
+		
 		/*
 			{
 				params : {
@@ -28,6 +29,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			};
 		*/
 		["getUser",				new Text("url?id={id}"),					"", true],
+		
 		/*
 			{
 				params : null,
@@ -39,6 +41,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			}
 		*/
 		["getPartnerGroups",			"url",								"", true],
+		
 		/*
 			{
 				params : {
@@ -48,6 +51,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			}
 		*/
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
+		
 		/*
 			{
 				params : null,
@@ -61,10 +65,12 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			}
 		*/
 		["getProjects",			"url",										"", true],
+		
 		/*
 			undefined
 		*/
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
+		
 		/*
 			{
 				params : {
@@ -77,6 +83,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			}
 		*/
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
+		
 		/*
 			{
 				params : null,
@@ -84,6 +91,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			}
 		*/
 		["myInformation",		"url",										"", true],
+		
 		/*
 			{
 				params : null,
@@ -93,7 +101,46 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				}
 			}
 		*/
-		["getLoginInfo",		"url"]
+		["getLoginInfo",		"url"],
+		
+		/*
+			{
+				params : {
+					name : "name", // string : name
+					pwd : "password", // string : password
+					email : "what@vision2.com", // string : email
+					validation : "1234" // string
+				},
+				return : {
+					error : {
+						type : "name", // string : "name", "pwd", "email" or "validation"
+						idx : 0, // number : "name" -> 0, "email" -> 1, "pwd" -> 2, "validation" -> 4
+						desc : "The name already exist." // string : description of the error
+					},
+					status : -1 // number : -1 -> error, 0 -> ok; if status is 0 and the error will be undefined, or you can only return an attribute.
+				}
+			}
+		*/
+		["register",			new Text("url?name={name}&pwd={password}&email={email}"),	""],
+
+		/*
+			{
+				params : {
+					pwd : "password", // string : password
+					email : "what@vision2.com", // string : email
+					validation : "1234" // string
+				},
+				return : {
+					error : {
+						type : "email", // string : "pwd", "email" or "validation"
+						idx : 1, // number : "email" -> 1, "pwd" -> 2, "validation" -> 4
+						desc : "The email is not exist." // string : description of the error
+					},
+					status : -1 // number : -1 -> error, 0 -> ok; if status is 0 and the error will be undefined, or you can only return an attribute.
+				}
+			}
+		*/
+		["login",				new Text("url?email={email}&pwd={pwd}"),	""]
 	]);
 }
 }(

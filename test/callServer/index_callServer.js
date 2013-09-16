@@ -42,7 +42,9 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["myInformation",		"url",										"", true],
 		["globalSearch",		new Text("url?search={search}"),				"", true],
 		["getSingleProject",		new Text("url?id={id}"),				"", true],
-		["getLoginInfo",		"url",										""]
+		["getLoginInfo",		"url",										""],
+		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""],
+		["login",				new Text("url?email={email}&pwd={pwd}"),	""]
 	], allHandlers);
 
 	return CallServer;

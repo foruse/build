@@ -372,14 +372,19 @@ this.Validation = (function(ValidationBase){
 			this.validationEl.classList.remove("validationError");
 		},
 		handler : undefined,
+		showError : function(){
+			this.validationEl.classList.add("validationError");
+		},
 		validate : function(){
 			///	<summary>
 			///	进行验证。
 			///	</summary>
-			if(this.handler(this.validationEl, ValidationBase))
+			if(this.handler(this.validationEl, ValidationBase)){
+				this.clearError();
 				return true;
+			}
 
-			this.validationEl.classList.add("validationError");
+			this.showError();
 			return false;
 		},
 		validationEl : undefined
