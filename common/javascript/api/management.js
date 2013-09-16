@@ -11,10 +11,14 @@ this.Loader = (function(Storage, Index, HTML){
 			return new Index.Deep.Account("#account", new HTML("account_html", true));
 		},
 		addProject : function(){
-			return new Index.Secondary.AddProject("#addProject", new HTML("addProject_color_html", true));
+			return new Index.Secondary.AddProject("#addProject");
 		},
 		businessCard : function(){
 			return new Index.Secondary.BusinessCard("#businessCard", new HTML("businessCard_html", true));
+		},
+		createFirstProject : function(){
+			this.load("guidance");
+			return new Index.Guidance.CreateFirstProject("#createFirstProject");
 		},
 		globalSearch : function(){
 			return new Index.Deep.GlobalSearch("#globalSearch", new HTML("globalSearch_group_html", true));

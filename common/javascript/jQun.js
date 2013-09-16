@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.5.6
- *  本次修改：增加StaticHTML类，用于静态模板。
+ *  文档状态：1.0.5.7
+ *  本次修改：优化NodeList.prototype.attach，为jQun(e.target)提供简便方式；优化StaticHTML，type格式必须为"text/staticHtml"。
  *  开发浏览器信息：firefox 20.0 、 chrome 26.0
  */
 
@@ -1469,13 +1469,21 @@ this.NodeList = (function(AttributeCollection, toArray){
 			///	<param name="_capture" type="boolean">侦听器是否运行于捕获阶段。</param>
 			///	<param name="_priority" type="number">优先级，数字越大，优先级越高。</param>
 			///	<param name="_useWeakReference" type="boolean">是否是属于强引用。</param>
-			var otherArgs = toArray(arguments, 1);
+			var nodeList = this, otherArgs = toArray(arguments, 1);
+			
+			forEach(events, function(fn, type){
+				var eventArgs = [
+						type,
+						fn.length === 2 ? function(e){
+							fn.call(this, e, nodeList.createList(e.target));
+						} : fn
+					].concat(otherArgs);
 
-			this.forEach(function(node){
-				forEach(events, function(fn, type){
-					node.addEventListener.apply(node, [type, fn].concat(otherArgs));
+				nodeList.forEach(function(node){
+					node.addEventListener.apply(node, eventArgs);
 				});
 			});
+
 			return this;
 		},
 		detach : function(events){
@@ -2130,15 +2138,12 @@ this.StaticHTML = (function(HTML, HTMLElementList){
 		docEl.attach({
 			DOMContentLoaded : function(){
 				new HTMLElementList(document.scripts).attributes.forEach(function(attr, i, attrs){
-					if(!attr.statichtml)
-						return;
-					
 					var type = attr.type;
 
 					if(!type)
 						return;
 
-					if(type.value !== "text/html")
+					if(type.value !== "text/static-html")
 						return;
 
 					new HTML(

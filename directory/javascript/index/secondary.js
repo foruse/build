@@ -1,11 +1,10 @@
 ﻿(function(Secondary, NonstaticClass, StaticClass, PagePanel,  CallServer){
 this.AddProject = (function(Global, Validation, UserManagementList){
-	function AddProject(selector, colorHtml){
+	function AddProject(selector){
 		///	<summary>
 		///	添加项目。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
-		/// <param name="colorHtml" type="jQun.HTML">颜色模板</param>
 		var titleValidation, colorValidation, addProject = this;
 
 		// 标题验证
@@ -23,7 +22,6 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 		);
 
 		this.assign({
-			colorHtml : colorHtml,
 			colorValidation : colorValidation,
 			titleValidation : titleValidation,
 			userManagementList : new UserManagementList("添加项目拍档")
@@ -46,20 +44,12 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 					if(!colorValidation.validate())
 						return;
 
-					var a = {
-						title : addProject.find('>section[desc="title"]>input').value,
-						color : addProject.find('>section[desc="color"] button.selected').get("colormark", "attr"),
-						desc : addProject.find('>footer textarea').value,
-						users : addProject.userManagementList.getAllUsers()
-					};
-
 					CallServer.open("addProject", {
 						title : addProject.find('>section[desc="title"]>input').value,
 						colormark : addProject.find('>section[desc="color"] button.selected').get("colormark", "attr"),
 						desc : addProject.find('>footer textarea').value,
 						users : addProject.userManagementList.getAllUsers()
 					}, function(data){
-						// todo : 添加数据
 						Global.history.go("project");
 					}, true);
 				};
@@ -78,7 +68,7 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 			// 清空已选择的用户
 			this.userManagementList.clearUsers();
 			// 还原颜色
-			this.find('>section[desc="color"] dd').innerHTML = this.colorHtml.render();
+			this.find('>section[desc="color"] dd .selected').classList.remove("selected");
 			// 清空错误
 			this.colorValidation.clearError();
 			this.titleValidation.clearError();
@@ -90,7 +80,6 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 	});
 
 	AddProject.properties({
-		colorHtml : undefined,
 		colorValidation : undefined,
 		titleValidation : undefined,
 		userManagementList : undefined

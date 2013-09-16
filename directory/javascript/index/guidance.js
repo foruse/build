@@ -1,6 +1,10 @@
-﻿(function(Guidance, NonstaticClass, Panel, PagePanel, CallServer, Event){
-this.LoginInfoManagement = (function(ValidationList, loginEvent, registerEvent){
+﻿(function(Guidance, NonstaticClass, Panel, PagePanel, CallServer, Event, ValidationList, Global){
+this.LoginInfoManagement = (function(loginEvent, registerEvent){
 	function LoginInfoManagement(selector){
+		///	<summary>
+		///	登录信息管理。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
 		var infoManagement = this, validationList = new ValidationList();
 
 		this.assign({
@@ -74,14 +78,24 @@ this.LoginInfoManagement = (function(ValidationList, loginEvent, registerEvent){
 		loginBtn : undefined,
 		registerBtn : undefined,
 		showInfoErrorByIndex : function(i){
+			///	<summary>
+			///	通过input的索引显示信息错误。
+			///	</summary>
+			/// <param name="i" type="number">错误信息的input索引</param>
 			this.validationList[i].showError();
 		},
 		showLogin : function(){
+			///	<summary>
+			///	显示登陆。
+			///	</summary>
 			this.classList.remove("register");
 			this.loginBtn.innerHTML = "登录";
 			this.registerBtn.innerHTML = "注册账号";
 		},
 		showRegister : function(){
+			///	<summary>
+			///	显示注册。
+			///	</summary>
 			this.classList.add("register");
 			this.loginBtn.innerHTML = "返回登录";
 			this.registerBtn.innerHTML = "立即注册";
@@ -91,15 +105,19 @@ this.LoginInfoManagement = (function(ValidationList, loginEvent, registerEvent){
 
 	return LoginInfoManagement.constructor;
 }(
-	Bao.API.DOM.ValidationList,
 	// loginEvent
 	new Event("login"),
 	// registerEvent
 	new Event("register")
 ));
 
-this.Login = (function(OverflowPanel, LoginInfoManagement, Global){
+this.Login = (function(OverflowPanel, LoginInfoManagement){
 	function Login(selector){
+		///	<summary>
+		///	登陆页。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
+
 		var login = this,
 			
 			// 初始化登录信息管理
@@ -120,23 +138,28 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, Global){
 
 		new OverflowPanel(this[0]);
 		this.getInfo();
-
-		loginInfoManagement.showRegister();
-		this.register("1","2","3");
 	};
 	Login = new NonstaticClass(Login, "Bao.Page.Index.Guidance.Login", PagePanel.prototype);
 
 	Login.properties({
 		getInfo : function(){
+			///	<summary>
+			///	获取登录信息。
+			///	</summary>
 			var login = this;
 
 			CallServer.open("getLoginInfo", null, function(data){
 				login.find(">header>span").innerHTML = data.count.toLocaleString();
 			});
 		},
-		login : function(name, pwd){
+		login : function(email, pwd){
+			///	<summary>
+			///	登录。
+			///	</summary>
+			/// <param name="email" type="string">用户邮箱</param>
+			/// <param name="pwd" type="string">用户密码</param>
 			CallServer.open("login", {
-				name : name,
+				email : email,
 				pwd : pwd
 			}, function(data){
 				// 如果后台验证有错误
@@ -150,6 +173,12 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, Global){
 		},
 		loginInfoManagement : undefined,
 		register : function(email, name, pwd){
+			///	<summary>
+			///	注册。
+			///	</summary>
+			/// <param name="email" type="string">用户邮箱</param>
+			/// <param name="name" type="string">用户姓名</param>
+			/// <param name="pwd" type="string">用户密码</param>
 			var loginInfoManagement = this.loginInfoManagement;
 			
 			CallServer.open("register", {
@@ -175,14 +204,71 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, Global){
 	return Login.constructor;
 }(
 	Bao.API.DOM.OverflowPanel,
-	this.LoginInfoManagement,
-	Bao.Global
+	this.LoginInfoManagement
 ));
 
-this.Self = (function(){
-	function Self(){
+this.CreateFirstProject = (function(){
+	function CreateFirstProject(selector){
+		///	<summary>
+		///	创建第一个项目页。
+		///	</summary>
+		/// <param name="selector" type="string">对应元素选择器</param>
+		var createFirstProject = this,
 		
+			validationList = new ValidationList(),
+			
+			namePanel = this.find("section input").parent(),
+
+			colorPanel = this.find("section aside").parent();
+
+		// 添加验证：标题
+		validationList.addValidation(namePanel, function(namePanel, Validation){
+			return Validation.result(namePanel.find("input").value, "notEmpty");
+		});
+
+		// 添加验证：颜色
+		validationList.addValidation(colorPanel, function(colorPanel, Validation){
+			return colorPanel.find("button.selected").length > 0;
+		});
+
+		this.attach({
+			userclick : function(e, targetEl){
+				// 如果点击的是颜色按钮
+				if(targetEl.between("aside>button:not(.selected)", this).length > 0){
+					createFirstProject.find("aside>button.selected").classList.remove("selected");
+					targetEl.classList.add("selected");
+					return;
+				}
+
+				// 如果点击的是提交按钮
+				if(targetEl.between("footer>button", this).length > 0){
+					// 如果验证不通过，则return
+					if(!validationList.validate())
+						return;
+
+					CallServer.open("addProject", {
+						title : namePanel.find("input").value,
+						color : createFirstProject.find("aside>button.selected").get("colormark", "attr"),
+						desc : createFirstProject.find("li:last-child>textarea").innerHTML,
+						user : []
+					}, function(data){
+						Global.history.go("invitation");
+					});
+				}
+			}
+		});
 	};
+	CreateFirstProject = new NonstaticClass(CreateFirstProject, "Bao.Page.Index.Guidance.CreateFirstProject", PagePanel.prototype);
+
+	CreateFirstProject.override({
+		showTitleBar : false
+	});
+
+	return CreateFirstProject.constructor;
+}());
+
+this.Self = (function(){
+	function Self(){ };
 	Self = new NonstaticClass(Self, "Bao.Page.Index.Guidance.Self", Panel.prototype);
 
 	return Self.constructor;
@@ -196,5 +282,7 @@ Guidance.members(this);
 	Bao.API.DOM.Panel,
 	Bao.API.DOM.PagePanel,
 	Bao.CallServer,
-	jQun.Event
+	jQun.Event,
+	Bao.API.DOM.ValidationList,
+	Bao.Global
 ));

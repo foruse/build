@@ -40,7 +40,7 @@
 		</header>
 		<div id="guidance">
 			<header id="guidance_header">
-				<script statichtml type="text/html">
+				<script type="text/static-html">
 					<ul class="inlineBlock">
 						@for(7 ->> i){
 							<li class="projectColor_{i}"></li>
@@ -62,7 +62,7 @@
 					该你了！
 				</header>
 				<section>
-					<script statichtml type="text/html">
+					<script type="text/static-html">
 						<ul>
 							@for([
 								{ placeholder : "姓名", vtype : "notEmpty", desc : "name", type : "text" },
@@ -81,6 +81,33 @@
 						<button class="normalRadius">注册账号</button>
 					</p>
 				</section>
+			</article>
+			<article id="createFirstProject">
+				<header>创建一个新项目</header>
+				<section>
+					<ul>
+						<li class="lightBdColor smallRadius">
+							<input placeholder="添加项目标题" />
+						</li>
+						<li class="lightBdColor smallRadius inlineBlock">
+							<span class="placeHolderFont">标注颜色</span>
+							<aside>
+								<script type="text/static-html">
+									@for(6 ->> i){
+										<button class="projectColor_{i}" colormark="{i}"></button>
+									}
+								</script>
+							</aside>
+						</li>
+						<li class="lightBdColor smallRadius">
+							<textarea placeholder="添加项目内容"></textarea>
+							<p></p>
+						</li>
+					</ul>
+				</section>
+				<footer>
+					<button class="whiteFont normalRadius">创建</button>
+				</footer>
 			</article>
 			<footer></footer>
 		</div>
@@ -159,7 +186,7 @@
 				</script>
 			</article>
 			<footer id="tab_SPP">
-				<script statichtml type="text/html">
+				<script type="text/static-html">
 					<ul class="inlineBlock">
 						@for([
 							{ tab : "schedule", text : "Schedule 日程" },
@@ -187,20 +214,21 @@
 					<dl class="inlineBlock">
 						<!--Project Color-->
 						<dt class="placeHolderFont">标注颜色</dt>
-						<dd></dd>
+						<dd>
+							<script type="text/static-html">
+								@for([
+									"projectColor_orange",
+									"projectColor_tan",
+									"projectColor_cyan",
+									"projectColor_blue",
+									"projectColor_henna",
+									"projectColor_purple"
+								] ->> color, idx){
+									<button class="{color}" colormark="{idx}"></button>
+								}
+							</script>
+						</dd>
 					</dl>
-					<script id="addProject_color_html" type="text/html">
-						@for([
-							"projectColor_orange",
-							"projectColor_tan",
-							"projectColor_cyan",
-							"projectColor_blue",
-							"projectColor_henna",
-							"projectColor_purple"
-						] ->> color, idx){
-							<button class="{color}" colormark="{idx}"></button>
-						}
-					</script>
 				</section>
 				<footer class="lightBdColor normalRadius">
 					<dl>

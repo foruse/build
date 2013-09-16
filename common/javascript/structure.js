@@ -37,7 +37,9 @@ this.Bao = (function(Bao){
 					Tab : null
 				}),
 				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
-					Login : null
+					CreateFirstProject : null,
+					Login : null,
+					LoginInfoManagement : null
 				}),
 				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
 					AddProject : null,

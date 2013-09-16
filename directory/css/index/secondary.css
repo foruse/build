@@ -3,12 +3,7 @@
 	padding : 10px;
 }
 #addProject > * {
-	height : 45px;
-	line-height : 25px;
 	margin-top : 5px;
-	padding : 10px;
-	overflow : hidden;
-	background-color : #fff;
 }
 #addProject > *:first-child {
 	margin-top : 0;
@@ -40,28 +35,6 @@
 #addProject > section dd {
 	width : 75%;
 	text-align : center;
-}
-#addProject > section button {
-	width : 22px;
-	height : 22px;
-	border : 0 none;
-	border-radius : 22px;
-	margin-right : 10px;
-}
-#addProject > section button:last-child {
-	margin-right : 0;
-}
-#addProject > section button.selected {
-	width : 30px;
-	height : 30px;
-	padding : 3px;
-	border-radius : 30px;
-	background-clip : content-box;
-	border : 1px solid;
-	margin : -4px 6px -4px -4px;
-}
-#addProject > section button.selected:last-child {
-	margin-right : -4px;
 }
 #addProject > footer {
 	height : auto;
