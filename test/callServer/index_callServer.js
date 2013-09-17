@@ -200,6 +200,14 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			};
 
 			return data;
+		},
+		login : function(data){
+			data = {
+				user : Index.Common.getUser(),
+				status : 0
+			};
+
+			return data;
 		}
 	}
 ));

@@ -28,6 +28,7 @@ this.Common = Common = (function(){
 				phoneNum : Number.random(14000000000),
 				email : String.random(8) + "@BaoPiQi.com",
 				adress : String.random(30),
+				isNewUser : false,
 				QRCode : "../../test/image/avatar/" + Number.random(16) + ".jpg"
 			};
 		},

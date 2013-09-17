@@ -11,6 +11,7 @@ with(this){
 		phoneNum : "010-12345678", // string
 		email : "mj@BaoPiQi.com", // string
 		adress : "beijing", // string : home adress
+		isNewUser : false, // boolean : if the user is first login, return true, else return false
 		QRCode : "../../image/qrcode" // string
 	};
 

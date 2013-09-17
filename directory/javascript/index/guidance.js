@@ -168,7 +168,7 @@ this.Login = (function(OverflowPanel, LoginInfoManagement){
 					return;
 				}
 
-				Global.history.go("createFirstProject");
+				Global.history.go(data.user.isNewUser ? "createFirstProject" : "project");
 			});
 		},
 		loginInfoManagement : undefined,
