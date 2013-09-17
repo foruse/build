@@ -38,6 +38,7 @@ this.Bao = (function(Bao){
 				}),
 				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
 					CreateFirstProject : null,
+					Invitation : null,
 					Login : null,
 					LoginInfoManagement : null
 				}),

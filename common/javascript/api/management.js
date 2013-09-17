@@ -26,6 +26,10 @@ this.Loader = (function(Storage, Index, HTML){
 		guidance : function(){
 			return new Index.Guidance.Self("#guidance");
 		},
+		invitation : function(){
+			this.load("guidance");
+			return new Index.Guidance.Invitation("#invitation", new HTML("invitation_html", true));
+		},
 		load : function(name){
 			var pagePanel = this.pageStorage.get(name);
 

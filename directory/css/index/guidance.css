@@ -4,7 +4,8 @@
 	top : 0;
 }
 #guidance > article {
-	top : 5px;	
+	top : 5px;
+	height : 100%;
 }
 
 #guidance_header {
@@ -71,14 +72,14 @@
 }
 
 
-#createFirstProject {
+#createFirstProject, #invitation {
 	padding : 15px 10px;
 }
-#createFirstProject > header {
+#createFirstProject > header, #invitation > header {
 	text-align : center;
 	margin-bottom : 10px;
 }
-#createFirstProject > section {
+#createFirstProject > section, #invitation > section {
 	margin-bottom : 20px;
 }
 #createFirstProject > section li {
@@ -108,12 +109,26 @@
 	right : 0;
 	text-align : center;
 }
-#createFirstProject > footer {
+#createFirstProject > footer, #invitation > footer {
 	text-align : center;
 }
-#createFirstProject > footer > button {
+#createFirstProject > footer > button, #invitation > footer > button {
 	width : 100px;
 	height : 28px;
 	border : 0 none;
 	background-color : #c2c2c2;
+}
+
+#invitation > section li {
+	height : 35px;
+	margin-bottom : 10px;
+	padding : 0 25px 0 40px;
+}
+#invitation > section li:last-child {
+	margin-bottom : 0;
+}
+#invitation > section input {
+	height : 100%;
+	width : 100%;
+	padding : 10px;
 }

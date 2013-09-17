@@ -140,7 +140,17 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				}
 			}
 		*/
-		["login",				new Text("url?email={email}&pwd={pwd}"),	""]
+		["login",				new Text("url?email={email}&pwd={pwd}"),	""],
+
+		/*
+			{
+				params : {
+					emails : "a@vision2.com,b@vision2.com,c@vision2.com"
+				},
+				return : null
+			}
+		*/
+		["invitation",		new Text("url?emails={emails}"),				""]
 	]);
 }
 }(

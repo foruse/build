@@ -42,6 +42,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getSingleProject",		new Text("url?id={id}"),				"", true],
 		["getUser",				new Text("url?id={id}"),					"", true],
 		["globalSearch",		new Text("url?search={search}"),				"", true],
+		["invitation",		new Text("url?emails={emails}"),				""],
 		["login",				new Text("url?email={email}&pwd={pwd}"),	""],
 		["myInformation",		"url",										"", true],
 		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""]

@@ -29,14 +29,19 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 	});
 
 	CallServer.save([
-		["getUser",				new Text("url?id={id}"),					"", true],
-		["getPartnerGroups",	"url",										"", true],
+		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
+		["getLoginInfo",		"url",										""],
+		["getPartnerGroups",			"url",								"", true],
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
 		["getProjects",			"url",										"", true],
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
-		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
+		["getSingleProject",		new Text("url?id={id}"),				"", true],
+		["getUser",				new Text("url?id={id}"),					"", true],
+		["globalSearch",		new Text("url?search={search}"),				"", true],
+		["invitation",			new Text("url?emails={emails}"),				""],
+		["login",				new Text("url?email={email}&pwd={pwd}"),	""],
 		["myInformation",		"url",										"", true],
-		["getLoginInfo",		"url"]
+		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""]
 	], allHandlers);
 
 	return CallServer;

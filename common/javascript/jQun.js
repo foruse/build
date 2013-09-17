@@ -1,9 +1,9 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.5.7
- *  本次修改：优化NodeList.prototype.attach，为jQun(e.target)提供简便方式；优化StaticHTML，type格式必须为"text/staticHtml"。
- *  开发浏览器信息：firefox 20.0 、 chrome 26.0
+ *  文档状态：1.0.5.8
+ *  本次修改：HTMLElementList.prototype添加：getAttribute、getCSSPropertyValue、setAttribute、setCSSPropertyValue
+ *  开发浏览器信息：firefox 20.0+ 、 chrome 26.0+
  */
 
 (function(Object, Array, Function){
@@ -1679,12 +1679,26 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			///	<param name="name" type="string">属性名。</param>
 			///	<param name="_type" type="string">需要获取的属性种类。</param>
 			if(_type === "css")
-				return getComputedStyle(this[0])[name];
+				return this.getCSSPropertyValue(name);
 
 			if(_type === "attr")
-				return emptyAttrCollection.get.call({ sources : this }, name);
+				return this.getAttribute(name);
 
 			return this[0][name];
+		},
+		getAttribute : function(name){
+			///	<summary>
+			///	获取集合中第一个元素的特性属性。
+			///	</summary>
+			///	<param name="name" type="string">属性名。</param>
+			return emptyAttrCollection.get.call({ sources : this }, name);
+		},
+		getCSSPropertyValue : function(name){
+			///	<summary>
+			///	获取集合中第一个元素的css属性。
+			///	</summary>
+			///	<param name="name" type="string">属性名。</param>
+			return window.getComputedStyle(this[0])[name];
 		},
 		find : function(_selector){
 			///	<summary>
@@ -1727,19 +1741,32 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 			///	<param name="value" type="*">属性值。</param>
 			///	<param name="_type" type="string">需要设置的属性种类。</param>
 			if(_type){
-				if(_type === "css"){
-					this.forEach(function(element){
-						element.style[name] = value;
-					});
-					return this;
-				}
-
-				emptyAttrCollection.set.call({ sources : this }, name, value);
+				this[_type === "css" ? "setCSSPropertyValue" : "setAttribute"](name, value);
 				return this;
 			}
 
 			this.forEach(function(element){
 				element[name] = value;
+			});
+			return this;
+		},
+		setAttribute : function(name, value){
+			///	<summary>
+			///	设置集合中每一个元素的特性属性。
+			///	</summary>
+			///	<param name="name" type="string">属性名。</param>
+			///	<param name="value" type="string">属性值。</param>
+			emptyAttrCollection.set.call({ sources : this }, name, value);
+			return this;
+		},
+		setCSSPropertyValue : function(name, value){
+			///	<summary>
+			///	设置集合中每一个元素的css属性。
+			///	</summary>
+			///	<param name="name" type="string">属性名。</param>
+			///	<param name="value" type="string">属性值。</param>
+			this.forEach(function(element){
+				element.style[name] = value;
 			});
 			return this;
 		},

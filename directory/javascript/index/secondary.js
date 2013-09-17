@@ -173,7 +173,7 @@ this.SystemOption = (function(AnchorList, anchorData){
 	SystemOption = new NonstaticClass(SystemOption, "Bao.Page.Index.Secondary.SystemOption", PagePanel.prototype);
 
 	SystemOption.override({
-		title : "设置"
+		title : "系统项"
 	});
 
 	return SystemOption.constructor;

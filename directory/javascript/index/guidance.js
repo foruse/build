@@ -267,6 +267,122 @@ this.CreateFirstProject = (function(){
 	return CreateFirstProject.constructor;
 }());
 
+this.Invitation = (function(Validation, OverflowPanel){
+	function InputValidationList(inputs){
+		///	<summary>
+		///	所有email输入验证。
+		///	</summary>
+		/// <param name="inputs" type="array">所有的input</param>
+		inputs.forEach(function(input){
+			this.addValidation(input);
+		}, this);
+	};
+	InputValidationList = new NonstaticClass(InputValidationList, null, ValidationList.prototype);
+
+	InputValidationList.override({
+		addValidation : function(input){
+			///	<summary>
+			///	添加验证。
+			///	</summary>
+			/// <param name="inputs" type="element">input</param>
+			ValidationList.prototype.addValidation.call(this, jQun(input), function(inputEl, Validation){
+				var value = inputEl.value;
+
+				if(Validation.result(value, "empty")){
+					return true;
+				}
+
+				return Validation.result(value, "email");
+			});
+		}
+	});
+
+	InputValidationList.properties({
+		getEmptyLength : function(){
+			///	<summary>
+			///	获取空文本的input数量。
+			///	</summary>
+			var length = this.length;
+			
+			this.forEach(function(validation){
+				if(!Validation.result(validation.validationEl.value, "empty"))
+					length--;
+			});
+
+			return length;
+		}
+	});
+
+
+	function Invitation(selector, textHtml){
+		///	<summary>
+		///	邀请团队页面。
+		///	</summary>
+		/// <param name="selector" type="string">对应元素选择器</param>
+		/// <param name="textHtml" type="jQun.HTML">文本模板</param>
+		var inputEls, inputValidationList, ulEl = this.find(">section>ul");
+
+		ulEl.innerHTML = textHtml.render({ length : 5 });
+
+		inputEls = this.find(">section li>input");
+		inputValidationList = new InputValidationList.constructor(inputEls);
+
+		this.attach({
+			userclick : function(e, targetEl){
+				// 如果点击的是 文本框
+				if(inputEls.contains(e.target)){
+					// 如果未输入的文本框的数量小于2
+					if(inputValidationList.getEmptyLength() < 2){
+						// 创建新的文本区域
+						var el = textHtml.create({ length : 1 }), newInput = el.find(">input")[0];
+
+						el.appendTo(ulEl[0]);
+						inputEls.push(newInput);
+						inputValidationList.addValidation(newInput);
+					}
+					return;
+				}
+
+				// 如果点击的 邀请 按钮
+				if(targetEl.between(">footer>button", this).length > 0){
+					if(!inputValidationList.validate())
+						return;
+
+					var emails = [];
+
+					inputEls.forEach(function(input){
+						var value = input.value;
+
+						if(!value)
+							return;
+
+						emails.push(value);
+					});
+
+					if(emails.length === 0)
+						return;
+
+					CallServer.open("invitation", emails, function(data){
+						Global.history.go("project");
+					}, true);
+				}
+			}
+		});
+
+		new OverflowPanel(this[0]);
+	};
+	Invitation = new NonstaticClass(Invitation, "Bao.Page.Index.Guidance.Invitation", PagePanel.prototype);
+
+	Invitation.override({
+		showTitleBar : false
+	});
+
+	return Invitation.constructor;
+}(
+	jQun.Validation,
+	Bao.API.DOM.OverflowPanel
+));
+
 this.Self = (function(){
 	function Self(){ };
 	Self = new NonstaticClass(Self, "Bao.Page.Index.Guidance.Self", Panel.prototype);
