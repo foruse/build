@@ -24,7 +24,7 @@ this.Global = (function(Fixed, Management, HTML){
 			});
 
 			// 跳转到指定页
-			history.go("invitation");
+			history.go("login");
 		};
 	};
 	Global = new StaticClass(Global, "Bao.Global", {

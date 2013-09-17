@@ -383,12 +383,110 @@ this.Invitation = (function(Validation, OverflowPanel){
 	Bao.API.DOM.OverflowPanel
 ));
 
-this.Self = (function(){
-	function Self(){ };
+this.Footer = (function(){
+	function Footer(selector){
+		///	<summary>
+		///	导航页面底部跳转按钮。
+		///	</summary>
+		/// <param name="selector" type="string">对应元素选择器</param>
+		var footer = this;
+
+		this.attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between(">button", this).length > 0){
+					// 如果点击的是 上一页 按钮
+					if(targetEl.getAttribute("desc") === "prev"){
+						Global.history.back();
+						return;
+					}
+
+					// 否则是点击的下一页按钮
+					Global.history.go(footer.next);
+					return;
+				}
+			}
+		});
+	};
+	Footer = new NonstaticClass(Footer, "Bao.Page.Index.Guidance.Footer", Panel.prototype);
+
+	Footer.properties({
+		hideNext : function(){
+			///	<summary>
+			///	隐藏下一步按钮。
+			///	</summary>
+			this.find('>button[desc="next"]').hide();
+		},
+		hidePrev : function(){
+			///	<summary>
+			///	隐藏上一步按钮。
+			///	</summary>
+			this.find('>button[desc="prev"]').hide();
+		},
+		next : "project",
+		setNext : function(next){
+			///	<summary>
+			///	设置下一步跳转页。
+			///	</summary>
+			/// <param name="next" type="string">跳转页</param>
+			this.next = next;
+		},
+		showNext : function(){
+			///	<summary>
+			///	显示下一步按钮。
+			///	</summary>
+			this.find('>button[desc="next"]').show("inline-block");
+		},
+		showPrev : function(){
+			///	<summary>
+			///	显示上一步按钮。
+			///	</summary>
+			this.find('>button[desc="prev"]').show("inline-block");
+		}
+	});
+
+	return Footer.constructor;
+}());
+
+this.Self = (function(Login, CreateFirstProject, Invitation, Footer){
+	function Self(selector){
+		///	<summary>
+		///	导航页自身类。
+		///	</summary>
+		/// <param name="selector" type="string">对应元素选择器</param>
+		var footer = new Footer("#guidance_footer");
+
+		this.attach({
+			beforeshow : function(e){
+				switch(e.currentPanel.ownClass().constructor){
+					case Login :
+						footer.hidePrev();
+						footer.hideNext();
+						break;
+
+					case CreateFirstProject :
+						footer.hidePrev();
+						footer.showNext();
+						footer.setNext("invitation");
+						break;
+
+					case Invitation :
+						footer.showPrev();
+						footer.showNext();
+						footer.setNext("project");
+						break;
+				}
+			}
+		});
+	};
 	Self = new NonstaticClass(Self, "Bao.Page.Index.Guidance.Self", Panel.prototype);
 
 	return Self.constructor;
-}());
+}(
+	this.Login,
+	this.CreateFirstProject,
+	this.Invitation,
+	this.Footer
+));
 
 Guidance.members(this);
 }.call(

@@ -8,11 +8,13 @@
 	height : 100%;
 }
 
-#guidance_header {
+.guidance_header {
 	display : block;
 	bottom : auto;
+	position : relative;
+	z-index : 2;
 }
-#guidance_header li {
+.guidance_header li {
 	width : 14.285%;
 	height : 5px;
 }
@@ -122,7 +124,8 @@
 #invitation > section li {
 	height : 35px;
 	margin-bottom : 10px;
-	padding : 0 25px 0 40px;
+	padding : 0 20px 0 40px;
+	background : url(../../../common/image/width24.png) 10px -496px no-repeat;
 }
 #invitation > section li:last-child {
 	margin-bottom : 0;
@@ -131,4 +134,33 @@
 	height : 100%;
 	width : 100%;
 	padding : 10px;
+}
+#invitation > section input:focus {
+	border : 1px solid #6f6966;
+}
+
+#guidance_footer {
+	position : fixed !important;
+	left : 20px;
+	right : 20px;
+	width : auto !important;
+	top : auto !important;
+	bottom : 50px !important;
+	display : block !important;
+}
+#guidance_footer > button {
+	height : 38px;
+	width : 38px;
+	border-radius : 38px;
+	padding : 2px 0;
+	border-width : 7px;
+	background-image : url(../../../common/image/width24.png);
+	background-position : 0 -550px;
+	background-repeat : no-repeat;
+	background-origin : content-box;
+	
+}
+#guidance_footer > button[desc="next"] {
+	float : right;
+	-webkit-transform : rotate(180deg);
 }
