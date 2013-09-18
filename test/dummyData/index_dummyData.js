@@ -77,6 +77,17 @@ this.SPP = (function(){
 			};
 		},
 		getSingleProject : function(){
+			var attachments = [];
+
+			jQun.forEach(Number.random(30), function(){
+				var type = this[Number.random(2)];
+
+				attachments.push({
+					type : type,
+					src : type === "voice" ? "javascript:void(0);" : "../../test/image/avatar/" + Number.random(16) + ".jpg"
+				});
+			}, ["image", "voice", "map"]);
+
 			return {
 				id : Number.id(),
 				level : Number.random(3),
@@ -88,7 +99,7 @@ this.SPP = (function(){
 				creationTime : new Date().getTime(),
 				unread : Number.random(2) > 1 ? 0 : Number.random(),
 				desc : String.random(1000),
-				attachments : []
+				attachments : attachments
 			};
 		},
 		getProjects : function(_len){

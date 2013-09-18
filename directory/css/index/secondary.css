@@ -161,6 +161,7 @@
 
 #singleProject {
 	padding : 5px 10px;
+	min-height : 100%;
 }
 .singleProject_tab {
 	background-color : #fff;
@@ -248,7 +249,36 @@
 	margin : 0 3px 3px 0;
 }
 .singleProject_info aside {
-	height : 50px;
+	text-align : right;
 	margin-top : 10px;
+}
+.singleProject_info aside > ul {
+	padding : 5px;
+	display : inline-block;
+}
+.singleProject_info aside li {
+	margin : 2px;
+}
+.singleProject_info li > a {
+	width : 36px;
+	height : 36px;
+	display : inline-block;
+	overflow : hidden;
+}
+.singleProject_info li:not([attachmenttype="voice"]) > a {
+	border : 0 none;
+}
+.singleProject_info li[attachmenttype="voice"] > a {
+	background : url(../../../common/image/width24.png) 0 -575px no-repeat content-box content-box;
+	padding : 4px 4px 4px 6px;
+}
+.singleProject_info li[attachmenttype="voice"] img {
 	display : none;
+}
+.singleProject_info aside img {
+	width : 100%;
+	height : 100%;
+}
+#singleProject > section {
+	margin-top : 10px;
 }

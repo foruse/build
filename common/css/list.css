@@ -297,3 +297,56 @@
 .inputSelectionList .userIndexList aside {
 	top : 140px;
 }
+
+.chatList {
+	
+}
+.chatList_footer {
+	position : fixed;
+	left : 0;
+	bottom : 0;
+	width : 100%;
+	height : 42px;
+	padding : 5px 8px 7px 8px;
+	background-color : #564d48;
+}
+.chatList_footer * {
+	height : 100%;
+	border : 0 none;
+}
+.chatList_footer button {
+	width : 30px;
+	background : transparent url(../../../common/image/width24.png) no-repeat content-box content-box;
+}
+.chatList_footer > button {
+	padding : 7px 5px;
+	background-position : 0 -600px;
+}
+.chatList_footer > p {
+	height : 30px;
+	position : absolute;
+	left : 48px;
+	right : 75px;
+}
+.chatList_footer > p > * {
+	width : 100%;
+}
+.chatList_footer > p > button {
+	display : none;
+	background-image : none;
+}
+.chatList_footer > p > input {
+	padding : 5px;
+}
+.chatList_footer > aside {
+	float : right;
+}
+.chatList_footer > aside > button {
+	padding : 5px;
+}
+.chatList_footer > aside > button:first-child {
+	background-position : 0 -625px;
+}
+.chatList_footer > aside > button:last-child {
+	background-position : 0 -650px;
+}

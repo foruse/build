@@ -190,14 +190,18 @@ this.SystemOption = (function(AnchorList, anchorData){
 	]
 ));
 
-this.SingleProject = (function(Global){
+this.SingleProject = (function(OverflowPanel, ChatList, Global){
 	function SingleProject(selector, infoHtml){
+		var chatList = new ChatList();
+
 		this.assign({
 			infoHtml : infoHtml
 		});
 
+		chatList.appendTo(this.find(">section")[0]);
+
+		new OverflowPanel(this[0]);
 		this.fill(1);
-		console.log(this);
 	};
 	SingleProject = new NonstaticClass(SingleProject, "Bao.Page.Index.Secondary.SingleProject", PagePanel.prototype);
 
@@ -219,6 +223,8 @@ this.SingleProject = (function(Global){
 
 	return SingleProject.constructor;
 }(
+	Bao.API.DOM.OverflowPanel,
+	Bao.UI.Control.List.ChatList,
 	Bao.Global
 ));
 

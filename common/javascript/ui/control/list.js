@@ -62,12 +62,40 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 	new jQun.Event("clickanchor")
 ));
 
-this.ChatList = (function(){
-	function ChatList(){};
+this.ChatList = (function(listPanelHtml){
+	function ChatInput(selector){
+	
+	};
+	ChatInput = new NonstaticClass(ChatInput, null, Panel.protoype);
+
+	function ChatList(){
+		this.combine(listPanelHtml.create());
+		new ChatInput.constructor(this.find(">footer")[0]);
+	};
 	ChatList = new NonstaticClass(ChatList, "Bao.UI.Control.List.ChatList", Panel.prototype);
 
 	return ChatList.constructor;
-}());
+}(
+	// listPanelHtml
+	new HTML([
+		'<div class="chatList">',
+			'<article>',
+				'<ol class="chatList_content"></ol>',
+			'</article>',
+			'<footer class="chatList_footer inlineBlock">',
+				'<button></button>',
+				'<p>',
+					'<button class="smallRadius">按住说话</button>',
+					'<input class="smallRadius" type="text" placeholder="想说点什么呢.." />',
+				'</p>',
+				'<aside>',
+					'<button></button>',
+					'<button></button>',
+				'</aside>',
+			'</footer>',
+		'</div>'
+	].join(""))
+));
 
 this.UserAnchorList = (function(AnchorList, forEach, avatarHtml){
 	function UserAnchorList(listData){
