@@ -62,31 +62,222 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 	new jQun.Event("clickanchor")
 ));
 
-this.ChatList = (function(listPanelHtml){
+this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 	function ChatInput(selector){
-	
+		///	<summary>
+		///	聊天输入。
+		///	</summary>
+		/// <param name="selector" type="string">对应元素选择器</param>
+		var chatInput = this, inputClassList = chatInput.classList;
+
+		this.attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between(">button", this).length > 0){
+					// 移除或添加voice
+					inputClassList.toggle("voice");
+
+					// 如果有voice类，说明是语音输入状态
+					if(inputClassList.contains("voice")){
+						
+						return;
+					}
+					return;
+				}
+			}
+		});
 	};
-	ChatInput = new NonstaticClass(ChatInput, null, Panel.protoype);
+	ChatInput = new NonstaticClass(ChatInput, null, Panel.prototype);
+
+	
+	function Attachment(id, _src){
+		///	<summary>
+		///	附件。
+		///	</summary>
+		/// <param name="id" type="string">附件id</param>
+		/// <param name="_src" type="string">附件src</param>
+		this.assign({
+			id : id,
+			src : _src
+		});
+	};
+	Attachment = new NonstaticClass(Attachment);
+
+	Attachment.properties({
+		id : -1,
+		src : "javascript:void(0);"
+	});
+
+
+	function Message(poster, time, _type, _text, _attachment){
+		///	<summary>
+		///	单个信息。
+		///	</summary>
+		/// <param name="poster" type="object">发送者</param>
+		/// <param name="time" type="string">发送时间</param>
+		/// <param name="_type" type="string">信息种类</param>
+		/// <param name="_text" type="string">信息文本</param>
+		/// <param name="_attachment" type="object">附件信息</param>
+		this.assign({
+			attachment : _attachment ? new Attachment.constructor(_attachment.id, _attachment.src) : undefined,
+			poster : poster,
+			text : _text,
+			time : time,
+			type : _type
+		});
+
+		this.combine(messageHtml.create(this));
+	};
+	Message = new NonstaticClass(Message, null, Panel.prototype);
+
+	Message.properties({
+		// 附件信息
+		attachment : new Attachment.constructor(),
+		// 发送人id
+		poster : -1,
+		// 信息文本
+		text : "",
+		// 信息发送时间
+		time : 0,
+		// 信息种类
+		type : "text"
+	});
+
+
+	function MessageList(){
+		///	<summary>
+		///	信息列表。
+		///	</summary>
+	};
+	MessageList = new NonstaticClass(MessageList, null, List.prototype);
+
+	MessageList.override({
+		push : function(poster, time, _type, _text, _attachment){
+			///	<summary>
+			///	添加信息。
+			///	</summary>
+			/// <param name="poster" type="object">发送者</param>
+			/// <param name="time" type="string">发送时间</param>
+			/// <param name="_type" type="string">信息种类</param>
+			/// <param name="_text" type="string">信息文本</param>
+			/// <param name="_attachment" type="object">附件信息</param>
+			var message = new Message.constructor(poster, time, _type, _text, _attachment);
+
+			List.prototype.push.call(this, message);
+			return message;
+		}
+	});
+
+
+	function MessageGroup(firstMessage){
+		///	<summary>
+		///	信息分组区域。
+		///	</summary>
+		this.combine(messageGroupHtml.create(firstMessage));
+
+		this.assign({
+			messageList : new MessageList.constructor()
+		});
+
+		this.appendMessage(firstMessage);
+	};
+	MessageGroup = new NonstaticClass(MessageGroup, null, Panel.prototype);
+
+	MessageGroup.properties({
+		appendMessage : function(msg){
+			///	<summary>
+			///	向信息分组添加信息。
+			///	</summary>
+			/// <param name="msg" type="object">信息数据</param>
+			var msg = this.messageList.push(msg.poster, msg.time, msg.type, msg.text, msg.attachment);
+
+			msg.appendTo(this.find(">dd>ol")[0]);
+		},
+		messageList : undefined
+	});
+
+
+	function ChatListContent(selector){
+		///	<summary>
+		///	聊天列表内容区域。
+		///	</summary>
+		/// <param name="selector" type="string, element">对应元素选择器</param>
+	};
+	ChatListContent = new NonstaticClass(ChatListContent, null, Panel.prototype);
+
+	ChatListContent.properties({
+		appendMessageToGroup : function(msg){
+			///	<summary>
+			///	添加信息。
+			///	</summary>
+			/// <param name="msg" type="object">信息数据</param>
+			var messageGroup = this.messageGroup;
+
+			// 如果 messageGroup 存在
+			if(messageGroup){
+				var messageList = messageGroup.messageList, i = messageList.length - 1;
+
+				// 如果 i > -1，说明消息总数大于0
+				if(i > -1){
+					// 如果 最后一条信息的时间 与 当前信息的时间 相差5分钟
+					if(messageList[i].time - msg.time > 300000){
+						this.appendMessageGroup(msg);
+						return;
+					}
+				}
+			}
+			else {
+				this.appendMessageGroup(msg);
+				return;
+			}
+
+			// 添加消息
+			messageGroup.appendMessage(msg);
+		},
+		appendMessageGroup : function(firstMessage){
+			///	<summary>
+			///	添加信息分组。
+			///	</summary>
+			var messageGroup = new MessageGroup.constructor(firstMessage);
+
+			messageGroup.appendTo(this[0]);
+			this.messageGroup = messageGroup;
+
+			return messageGroup;
+		},
+		messageGroup : undefined
+	});
+
 
 	function ChatList(){
+		///	<summary>
+		///	聊天列表。
+		///	</summary>
 		this.combine(listPanelHtml.create());
+
+		this.assign({
+			chatListContent : new ChatListContent.constructor(this.find(">article")[0])
+		});
+
 		new ChatInput.constructor(this.find(">footer")[0]);
 	};
 	ChatList = new NonstaticClass(ChatList, "Bao.UI.Control.List.ChatList", Panel.prototype);
 
+	ChatList.properties({
+		chatListContent : undefined
+	});
+
 	return ChatList.constructor;
 }(
+	jQun.List,
 	// listPanelHtml
 	new HTML([
 		'<div class="chatList">',
-			'<article>',
-				'<ol class="chatList_content"></ol>',
-			'</article>',
+			'<article class="chatList_content"></article>',
 			'<footer class="chatList_footer inlineBlock">',
 				'<button></button>',
 				'<p>',
 					'<button class="smallRadius">按住说话</button>',
-					'<input class="smallRadius" type="text" placeholder="想说点什么呢.." />',
+					'<input class="smallRadius" type="text" placeholder="输入文字.." />',
 				'</p>',
 				'<aside>',
 					'<button></button>',
@@ -94,6 +285,38 @@ this.ChatList = (function(listPanelHtml){
 				'</aside>',
 			'</footer>',
 		'</div>'
+	].join("")),
+	// messageGroupHtml
+	new HTML([
+		'<dl>',
+			'<dt>{time}</dt>',
+			'<dd>',
+				'<ol></ol>',
+			'</dd>',
+		'</dl>'
+	].join("")),
+	// messageHtml
+	new HTML([
+		'<li action="{action}" postby="{postby}">',
+			'<aside>',
+				'<p class="normalAvatarPanel" userid="{poster.id}">',
+					'<img src="{poster.avatar}" />',
+				'</p>',
+			'</aside>',
+			'<figure>',
+				'<figcaption>',
+					'<span>{text}</span>',
+					'<a voiceid="{attachment.id}">',
+						'<button></button>',
+					'</a>',
+					'<img src="{attachment.src}" />',
+				'</figcaption>',
+				'<nav>',
+					'<aside></aside>',
+					'<button>do</button>',
+				'</nav>',
+			'</figure>',
+		'</li>'
 	].join(""))
 ));
 

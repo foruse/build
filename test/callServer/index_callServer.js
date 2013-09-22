@@ -35,14 +35,14 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 	CallServer.save([
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
 		["getLoginInfo",		"url",										""],
-		["getPartnerGroups",			"url",								"", true],
+		["getPartnerGroups",	"url",										"", true],
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
 		["getProjects",			"url",										"", true],
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
-		["getSingleProject",		new Text("url?id={id}"),				"", true],
+		["getSingleProject",	new Text("url?id={id}"),					"", true],
 		["getUser",				new Text("url?id={id}"),					"", true],
-		["globalSearch",		new Text("url?search={search}"),				"", true],
-		["invitation",		new Text("url?emails={emails}"),				""],
+		["globalSearch",		new Text("url?search={search}"),			"", true],
+		["invitation",			new Text("url?emails={emails}"),			""],
 		["login",				new Text("url?email={email}&pwd={pwd}"),	""],
 		["myInformation",		"url",										"", true],
 		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""]
@@ -189,7 +189,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			return data;
 		},
 		getSingleProject : function(data){
-			data = Index.SPP.getSingleProject();
+			data = Index.Secondary.getSingleProject();
 
 			return data;
 		},

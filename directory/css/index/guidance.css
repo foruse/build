@@ -9,7 +9,7 @@
 }
 
 .guidance_header {
-	display : block;
+	display : block !important;
 	bottom : auto;
 	position : relative;
 	z-index : 2;

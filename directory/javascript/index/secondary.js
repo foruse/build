@@ -195,6 +195,7 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 		var chatList = new ChatList();
 
 		this.assign({
+			chatList : chatList,
 			infoHtml : infoHtml
 		});
 
@@ -210,12 +211,17 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 	});
 
 	SingleProject.properties({
+		chatList : undefined,
 		fill : function(id){
-			var singleProject = this;
+			var singleProject = this, chatList = this.chatList;
 
 			CallServer.open("getSingleProject", { id : id }, function(project){
 				Global.titleBar.resetTitle(project.title);
 				singleProject.find(">header>dl").innerHTML = singleProject.infoHtml.render(project);
+
+				project.messages.forEach(function(msg){
+					chatList.chatListContent.appendMessageToGroup(msg);
+				});
 			});
 		},
 		infoHtml : undefined

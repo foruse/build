@@ -107,15 +107,20 @@ this.EventCollection = (function(Timer, IntervalTimer, isMobile, childGestureCon
 		userclick : new Event("userclick", function(){
 			var userClick = this, abs = Math.abs;
 
-			windowEl.attach({
-				fastgesture : function(e){
-					// 如果任何一方向上的偏移量大于10，就不算click
-					if(abs(e.gestureOffsetY) > 10 || abs(e.gestureOffsetX > 10))
-						return;
+			windowEl.attach(isMobile ? {
+					click : function(e){
+						userClick.trigger(e.target);
+					}
+				} : {
+					fastgesture : function(e){
+						// 如果任何一方向上的偏移量大于10，就不算click
+						if(abs(e.gestureOffsetY) > 10 || abs(e.gestureOffsetX > 10))
+							return;
 
-					userClick.trigger(e.target);
+						userClick.trigger(e.target);
+					}
 				}
-			});
+			);
 
 			this.attachTo("*");
 		}),

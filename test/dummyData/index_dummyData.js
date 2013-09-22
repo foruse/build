@@ -14,6 +14,15 @@ this.Common = Common = (function(){
 	Common = new StaticClass(null, "Bao.Test.DummyData.Common");
 
 	Common.properties({
+		getAttachment : function(){
+			var type = ["image", "voice", "map"][Number.random(2)];
+
+			return {
+				id : Number.id(),
+				type : type,
+				src : type === "voice" ? "javascript:void(0);" : "../../test/image/avatar/" + Number.random(16) + ".jpg"
+			};
+		},
 		getUser : function(){
 			var name = String.random(5), firstLetter = name.substring(0, 1);
 
@@ -53,9 +62,60 @@ this.Common = Common = (function(){
 	return Common;
 }());
 
-this.SPP = (function(){
+this.Secondary = (function(){
+	function Secondary(){};
+	Secondary = new StaticClass(null, "Bao.Test.DummyData.Secondary");
+
+	Secondary.properties({
+		getMessages : function(){
+			var msgs = [];
+
+			jQun.forEach(Number.random(15), function(){
+				var poster = Common.getUser();
+
+				poster.isSelf = Number.random(20) > 10;
+
+				msgs.push({
+					id : Number.id(),
+					text : String.random(),
+					poster : poster,
+					attachment : Common.getAttachment(),
+					time : Number.random(900000)
+				});
+			});
+
+			return msgs;
+		},
+		getSingleProject : function(){
+			var attachments = [];
+
+			jQun.forEach(Number.random(30), function(){
+				attachments.push(Common.getAttachment());
+			});
+
+			return {
+				id : Number.id(),
+				level : Number.random(3),
+				title : String.random(),
+				color : Number.random(5),
+				users : Common.getUsers(Number.random(20)),
+				lastMessage : String.random(),
+				messages : this.getMessages(),
+				creator : Common.getUser(),
+				creationTime : new Date().getTime(),
+				unread : Number.random(2) > 1 ? 0 : Number.random(),
+				desc : String.random(1000),
+				attachments : attachments
+			};
+		}
+	})
+
+	return Secondary;
+}());
+
+this.SPP = (function(Secondary){
 	function SPP(){};
-	SPP = new StaticClass(null, "Bao.Test.DummyData.Test");
+	SPP = new StaticClass(null, "Bao.Test.DummyData.SPP");
 
 	SPP.properties({
 		getPartnerGroups : function(){
@@ -76,32 +136,6 @@ this.SPP = (function(){
 				letter : ["a", "b", "c"]
 			};
 		},
-		getSingleProject : function(){
-			var attachments = [];
-
-			jQun.forEach(Number.random(30), function(){
-				var type = this[Number.random(2)];
-
-				attachments.push({
-					type : type,
-					src : type === "voice" ? "javascript:void(0);" : "../../test/image/avatar/" + Number.random(16) + ".jpg"
-				});
-			}, ["image", "voice", "map"]);
-
-			return {
-				id : Number.id(),
-				level : Number.random(3),
-				title : String.random(),
-				color : Number.random(5),
-				users : Common.getUsers(Number.random(20)),
-				lastMessage : String.random(),
-				creator : Common.getUser(),
-				creationTime : new Date().getTime(),
-				unread : Number.random(2) > 1 ? 0 : Number.random(),
-				desc : String.random(1000),
-				attachments : attachments
-			};
-		},
 		getProjects : function(_len){
 			var projects = [];
 
@@ -110,7 +144,7 @@ this.SPP = (function(){
 			}
 
 			for(var i = 0;i < _len;i++){
-				projects.push(this.getSingleProject());
+				projects.push(Secondary.getSingleProject());
 			}
 
 			return projects;
@@ -138,7 +172,9 @@ this.SPP = (function(){
 	});
 
 	return SPP;
-}());
+}(
+	this.Secondary
+));
 
 Index.members(this);
 }.call(
