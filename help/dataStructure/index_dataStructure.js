@@ -21,6 +21,22 @@ with(this){
 		DS_user
 	];
 
+	this.DS_attachment = {
+		id : 1, // number
+		type : "map", // string : "map", "voice" or "image"
+		src : "src.png" // string
+	};
+
+	this.DS_message = {
+		id : 1, // number
+		text : "abc", // string
+		poster : DS_user,
+		attachment : DS_attachment,
+		time : new Date().getTime(), // number : the milliseconds since 1970/01/01
+		type : "text" // string : "text", "voice" or "image", there are three types of message
+	};
+
+
 	this.DS_group = {
 		id : 1, // number
 		name : "group's name" // string
@@ -34,7 +50,11 @@ with(this){
 		users : DS_users,
 		creator : DS_user,
 		creationTime : new Date().getTime(), // number : the milliseconds since 1970/01/01
-		lastMessage : "oh, thanks!", // string
+		messages : [
+			DS_message,
+			// ...
+			DS_message
+		],
 		unread : 66, // number : the max is 99
 		desc : "abc" // string : description of the project
 	};

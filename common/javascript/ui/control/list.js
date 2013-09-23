@@ -132,8 +132,8 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 	Message.properties({
 		// 附件信息
 		attachment : new Attachment.constructor(),
-		// 发送人id
-		poster : -1,
+		// 发送人
+		poster : undefined,
 		// 信息文本
 		text : "",
 		// 信息发送时间
@@ -289,7 +289,7 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 	// messageGroupHtml
 	new HTML([
 		'<dl>',
-			'<dt>{time}</dt>',
+			'<dt>{localTime}</dt>',
 			'<dd>',
 				'<ol></ol>',
 			'</dd>',
@@ -297,7 +297,7 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 	].join("")),
 	// messageHtml
 	new HTML([
-		'<li action="{action}" postby="{postby}">',
+		'<li action="{type}" isloginuser="{poster.isLoginUser}">',
 			'<aside>',
 				'<p class="normalAvatarPanel" userid="{poster.id}">',
 					'<img src="{poster.avatar}" />',

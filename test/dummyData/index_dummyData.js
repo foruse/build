@@ -68,21 +68,25 @@ this.Secondary = (function(){
 
 	Secondary.properties({
 		getMessages : function(){
-			var msgs = [];
+			var msgs = [], date = new Date();
+
+			date.setDate(date.getDate() - 2);
 
 			jQun.forEach(Number.random(15), function(){
-				var poster = Common.getUser();
+				var loginUser = Bao.Global.loginUser, poster = Number.random(20) > 10 ? Common.getUser() : loginUser;
 
-				poster.isSelf = Number.random(20) > 10;
+				date = new Date(date.getTime() + Number.random(86400000 / 2));
 
 				msgs.push({
 					id : Number.id(),
 					text : String.random(),
 					poster : poster,
 					attachment : Common.getAttachment(),
-					time : Number.random(900000)
+					time : date.getTime(),
+					type : this[Number.random(2)]
 				});
-			});
+
+			}, ["text", "voice", "image"]);
 
 			return msgs;
 		},

@@ -111,7 +111,7 @@ this.LoginInfoManagement = (function(loginEvent, registerEvent){
 	new Event("register")
 ));
 
-this.Login = (function(OverflowPanel, LoginInfoManagement){
+this.Login = (function(OverflowPanel, LoginInfoManagement, loginEvent){
 	function Login(selector){
 		///	<summary>
 		///	登陆页。
@@ -152,12 +152,13 @@ this.Login = (function(OverflowPanel, LoginInfoManagement){
 				login.find(">header>span").innerHTML = data.count.toLocaleString();
 			});
 		},
-		login : function(email, pwd){
+		login : function(email, pwd, _page){
 			///	<summary>
 			///	登录。
 			///	</summary>
 			/// <param name="email" type="string">用户邮箱</param>
 			/// <param name="pwd" type="string">用户密码</param>
+			/// <param name="_page" type="string">登录之后需要跳转的页面</param>
 			CallServer.open("login", {
 				email : email,
 				pwd : pwd
@@ -168,7 +169,16 @@ this.Login = (function(OverflowPanel, LoginInfoManagement){
 					return;
 				}
 
-				Global.history.go(data.user.isNewUser ? "createFirstProject" : "project");
+				var user = data.user;
+
+				if(!_page){
+					_page = user.isNewUser ? "createFirstProject" : "project";
+				}
+
+				loginEvent.setEventAttrs({ loginUser : user });
+				loginEvent.trigger(window);
+
+				Global.history.go(_page);
 			});
 		},
 		loginInfoManagement : undefined,
@@ -204,7 +214,9 @@ this.Login = (function(OverflowPanel, LoginInfoManagement){
 	return Login.constructor;
 }(
 	Bao.API.DOM.OverflowPanel,
-	this.LoginInfoManagement
+	this.LoginInfoManagement,
+	// loginEvent
+	new Event("login")
 ));
 
 this.CreateFirstProject = (function(){
