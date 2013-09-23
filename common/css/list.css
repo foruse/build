@@ -301,6 +301,73 @@
 .chatList {
 	
 }
+.chatList_content li[isloginuser="true"] {
+	text-align : right;
+}
+.chatList_content li[isloginuser="true"] > aside {
+	float : right;
+}
+.chatList_content li[isloginuser="true"] figure {
+	padding : 0 15px 0 0;
+}
+.chatList_content li[isloginuser="true"] .message_bg {
+	right : 15px;
+	left : 0;
+	opacity : 0.5;
+}
+.chatList_content li[isloginuser="true"] .message_bg > span {
+	border-left : 12px solid transparent;
+	border-right : 0 none;
+	left : auto;
+	right : -12px;
+}
+.chatList_content > dl {
+	text-align : center;
+	margin-top : 45px;
+}
+.chatList_content > dl > dt {
+	display : inline-block;
+	padding : 0 5px;
+}
+.chatList_content > dl > dd {
+	text-align : left;
+	margin-top : 10px;
+}
+.chatList_message figure {
+	padding-left : 15px;
+	position : relative;
+	min-width : 125px;
+}
+.chatList_message figcaption {
+	min-height : 38px;
+	padding : 10px 15px;
+	border-bottom : 1px solid rgba(255, 255, 255, 0.7);
+}
+.chatList_message:not([action="text"]) figcaption > span,
+.chatList_message:not([action="voice"]) figcaption > a,
+.chatList_message:not([action="image"]) figcaption > img {
+	display : none;
+}
+.chatList_message .message_bg {
+	position : absolute;
+	top : 0;
+	bottom : 0;
+	left : 15px;
+	right : 0;
+	z-index : -1;
+}
+.chatList_message .message_bg > span {
+	width : 0;
+	height : 0;
+	display : block;
+	background-color : inherit;
+	border-right : 12px solid transparent;
+	border-bottom : 5px solid #f7f7f7;
+	border-top : 5px solid #f7f7f7;
+	position : absolute;
+	top : 15px;
+	left : -12px;
+}
 .chatList_footer {
 	position : fixed;
 	left : 0;

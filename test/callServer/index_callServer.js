@@ -27,7 +27,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 					LoadingBar.hide();
 					_complete(data);
-				}, 1000);
+				}, 0);
 			});
 		}
 	});
@@ -193,7 +193,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			var loginUserId = Bao.Global.loginUser.id,
 			
-				messages = data.messages, len = messages.length;
+				messages = data.messages, len = messages.length, singleNumRegx = /^(\d)$/;
 
 			messages.forEach(function(msg){
 				var poster = msg.poster, dt = new Date(msg.time),
@@ -218,7 +218,15 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 				}
 				
 				// 注意，这里是中文版本，不能用Date.prototype.toLocaleTimeString()，因为很多手机都是英文版本的。
-				msg.localTime = desc + " " + (hours < 12 ? "上午" : "下午") + " " + hours + " : " + dt.getSeconds();
+				msg.localTime = [
+					desc,
+					hours < 12 ? "上午" : "下午",
+					// 如果是1位数，转化为2位数
+					hours.toString().replace(singleNumRegx, "0$1"),
+					":",
+					// 如果是1位数，转化为2位数
+					dt.getSeconds().toString().replace(singleNumRegx, "0$1")
+				].join(" ");
 
 				poster.isLoginUser = poster.id === loginUserId;
 			}, new Date(new Date().setHours(0, 0, 0, 0)));

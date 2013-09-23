@@ -219,7 +219,7 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 				// 如果 i > -1，说明消息总数大于0
 				if(i > -1){
 					// 如果 最后一条信息的时间 与 当前信息的时间 相差5分钟
-					if(messageList[i].time - msg.time > 300000){
+					if(msg.time - messageList[i].time > 300000){
 						this.appendMessageGroup(msg);
 						return;
 					}
@@ -289,7 +289,7 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 	// messageGroupHtml
 	new HTML([
 		'<dl>',
-			'<dt>{localTime}</dt>',
+			'<dt class="smallRadius lightBgColor whiteFont">{localTime}</dt>',
 			'<dd>',
 				'<ol></ol>',
 			'</dd>',
@@ -297,7 +297,7 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 	].join("")),
 	// messageHtml
 	new HTML([
-		'<li action="{type}" isloginuser="{poster.isLoginUser}">',
+		'<li class="chatList_message inlineBlock" action="{type}" isloginuser="{poster.isLoginUser}">',
 			'<aside>',
 				'<p class="normalAvatarPanel" userid="{poster.id}">',
 					'<img src="{poster.avatar}" />',
@@ -315,6 +315,9 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 					'<aside></aside>',
 					'<button>do</button>',
 				'</nav>',
+				'<p class="message_bg normalRadius projectColor_0">',
+					'<span></span>',
+				'</p>',
 			'</figure>',
 		'</li>'
 	].join(""))

@@ -10,8 +10,8 @@
 
 .guidance_header {
 	display : block !important;
-	bottom : auto;
-	position : relative;
+	bottom : auto !important;
+	position : relative !important;
 	z-index : 2;
 }
 .guidance_header li {
