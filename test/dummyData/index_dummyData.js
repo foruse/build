@@ -82,6 +82,7 @@ this.Secondary = (function(){
 					text : String.random(),
 					poster : poster,
 					attachment : Common.getAttachment(),
+					praise : Common.getUsers(Number.random(20)),
 					time : date.getTime(),
 					type : this[Number.random(2)]
 				});

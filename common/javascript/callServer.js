@@ -119,7 +119,9 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		getSingleProject : function(data){
 			var loginUserId = Bao.Global.loginUser.id,
 			
-				messages = data.messages, len = messages.length, singleNumRegx = /^(\d)$/;
+				messages = data.messages, len = messages.length,
+				
+				color = data.color, singleNumRegx = /^(\d)$/;
 
 			messages.forEach(function(msg){
 				var poster = msg.poster, dt = new Date(msg.time),
@@ -154,6 +156,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 					dt.getSeconds().toString().replace(singleNumRegx, "0$1")
 				].join(" ");
 
+				msg.color = color;
 				poster.isLoginUser = poster.id === loginUserId;
 			}, new Date(new Date().setHours(0, 0, 0, 0)));
 

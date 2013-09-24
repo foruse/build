@@ -313,7 +313,7 @@
 .chatList_content li[isloginuser="true"] .message_bg {
 	right : 15px;
 	left : 0;
-	opacity : 0.5;
+	opacity : 0.3;
 }
 .chatList_content li[isloginuser="true"] .message_bg > span {
 	border-left : 12px solid transparent;
@@ -337,11 +337,35 @@
 	padding-left : 15px;
 	position : relative;
 	min-width : 125px;
+	max-width : 80%;
+	text-align : left;
 }
 .chatList_message figcaption {
 	min-height : 38px;
-	padding : 10px 15px;
-	border-bottom : 1px solid rgba(255, 255, 255, 0.7);
+	padding : 8px 10px;
+}
+.chatList_message figcaption > span {
+	word-break : break-word;
+}
+.chatList_message figcaption > a {
+	height : 2px;
+	width : 100%;
+	display : inline-block;
+	background-color : rgba(0, 0, 0, 0.3);
+	border-color : #fff;
+}
+.chatList_message figcaption > img {
+	max-width : 100%;
+	margin : 0 auto;
+}
+.chatList_message figcaption button {
+	height : 22px;
+	width : 22px;
+	border-radius : 22px;
+	border : 0 none;
+	background : url(../../../common/image/width24.png) 0 -725px no-repeat;
+	position : relative;
+	top : -10px;
 }
 .chatList_message:not([action="text"]) figcaption > span,
 .chatList_message:not([action="voice"]) figcaption > a,
@@ -355,6 +379,7 @@
 	left : 15px;
 	right : 0;
 	z-index : -1;
+	opacity : 0.6;
 }
 .chatList_message .message_bg > span {
 	width : 0;
@@ -367,6 +392,77 @@
 	position : absolute;
 	top : 15px;
 	left : -12px;
+}
+.chatList_message nav {
+	border-top : 1px solid rgba(255, 255, 255, 0.7);
+	position : relative;
+}
+.chatList_message nav > button {
+	width : 60px;
+	background-color : transparent;
+	border : 0 none;
+	border-right : 1px solid rgba(255, 255, 255, 0.7);
+	height : 26px;
+	position : absolute;
+	top : 0;
+	left : 0;
+}
+.chatList_message.morePraised nav > button {
+	display : none;
+}
+.chatList_message.morePraised .chatList_praise {
+	text-indent : 16px;
+}
+.chatList_message.morePraised .chatList_praise > p {
+	text-indent : 52px;
+	height : auto;
+}
+.chatList_message.morePraised .chatList_praise > sub {
+	-webkit-transform : rotate(180deg);
+}
+.chatList_praise {
+	min-height : 26px;
+	text-indent : 68px;
+	line-height : 26px;
+	width : 100%;
+}
+.chatList_praise > button {
+	height : 26px;
+	width : 34px;
+	text-align : center;
+	text-indent : 16px;
+	line-height : 14px;
+	padding : 6px 2px;
+	border : 0 none;
+	background : url(../../../common/image/width24.png) 0 -750px no-repeat content-box content-box;
+}
+.chatList_praise > p {
+	display : block;
+	min-height : 26px;
+	height : 26px;
+	margin-top : -26px;
+	text-indent : 104px;
+	padding : 0 5px;
+	overflow : hidden;
+}
+.chatList_praise > sub {
+	width : 5px;
+	height : 9px;
+	display : block;
+	position : absolute;
+	background : url(../../../common/image/width12.png) 0 -165px no-repeat;
+	bottom : 2px;
+	right : 3px;
+}
+.chatList_praise > sub > button {
+	display : block;
+	background-color : transparent;
+	border : 0 none;
+	width : 100%;
+	height : 100%;
+}
+.chatList_praise > p > a {
+	margin : 3px;
 }
 .chatList_footer {
 	position : fixed;

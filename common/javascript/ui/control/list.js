@@ -62,7 +62,7 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 	new jQun.Event("clickanchor")
 ));
 
-this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
+this.ChatList = (function(Global, List, listPanelHtml, messageGroupHtml, messageHtml, praiseHtml){
 	function ChatInput(selector){
 		///	<summary>
 		///	聊天输入。
@@ -108,32 +108,64 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 	});
 
 
-	function Message(poster, time, _type, _text, _attachment){
+	function Message(msg){
 		///	<summary>
 		///	单个信息。
 		///	</summary>
-		/// <param name="poster" type="object">发送者</param>
-		/// <param name="time" type="string">发送时间</param>
-		/// <param name="_type" type="string">信息种类</param>
-		/// <param name="_text" type="string">信息文本</param>
-		/// <param name="_attachment" type="object">附件信息</param>
+		/// <param name="msg" type="object">信息数据</param>
+		var message = this, attachment = msg.attachment;
+
 		this.assign({
-			attachment : _attachment ? new Attachment.constructor(_attachment.id, _attachment.src) : undefined,
-			poster : poster,
-			text : _text,
-			time : time,
-			type : _type
+			attachment : attachment ? new Attachment.constructor(attachment.id, attachment.src) : undefined,
+			color : msg.color,
+			praise : msg.praise,
+			poster : msg.poster,
+			text : msg.text,
+			time : msg.time,
+			type : msg.type
 		});
 
-		this.combine(messageHtml.create(this));
+		this.combine(messageHtml.create(msg));
+		
+		this.attach({
+			userclick : function(e, targetEl){
+				// 判断点击的是否是 赞 按钮
+				if(targetEl.between(".chatList_praise>button", this).length > 0){
+					message.addPraise(Global.loginUser);
+					return;
+				}
+				
+				// 判断点击的是否是 do 按钮
+				if(targetEl.between(".chatList_message nav>button", this).length > 0){
+					alert("you clicked todo button");
+					return;
+				}
+
+				// 判断点击的是否是 展开赞 按钮
+				if(targetEl.between(".chatList_praise>sub>button", this).length > 0){
+					message.classList.toggle("morePraised");
+					return;
+				}
+			}
+		});
 	};
 	Message = new NonstaticClass(Message, null, Panel.prototype);
 
 	Message.properties({
+		addPraise : function(userData){
+			var praisePanel = this.find(".chatList_praise"), praiseEl = praisePanel.find(">button");
+
+			praiseEl.innerHTML = praiseEl.innerHTML - 0 + 1;
+			praiseHtml.create(userData).appendTo(praisePanel.find(">p")[0]);
+		},
 		// 附件信息
 		attachment : new Attachment.constructor(),
+		// 颜色
+		color : 0,
 		// 发送人
 		poster : undefined,
+		// 称赞的人
+		praise : [],
 		// 信息文本
 		text : "",
 		// 信息发送时间
@@ -151,16 +183,12 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 	MessageList = new NonstaticClass(MessageList, null, List.prototype);
 
 	MessageList.override({
-		push : function(poster, time, _type, _text, _attachment){
+		push : function(msg){
 			///	<summary>
 			///	添加信息。
 			///	</summary>
-			/// <param name="poster" type="object">发送者</param>
-			/// <param name="time" type="string">发送时间</param>
-			/// <param name="_type" type="string">信息种类</param>
-			/// <param name="_text" type="string">信息文本</param>
-			/// <param name="_attachment" type="object">附件信息</param>
-			var message = new Message.constructor(poster, time, _type, _text, _attachment);
+			/// <param name="msg" type="object">信息数据</param>
+			var message = new Message.constructor(msg);
 
 			List.prototype.push.call(this, message);
 			return message;
@@ -172,6 +200,7 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 		///	<summary>
 		///	信息分组区域。
 		///	</summary>
+		/// <param name="firstMessage" type="object">信息数据</param>
 		this.combine(messageGroupHtml.create(firstMessage));
 
 		this.assign({
@@ -188,7 +217,7 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 			///	向信息分组添加信息。
 			///	</summary>
 			/// <param name="msg" type="object">信息数据</param>
-			var msg = this.messageList.push(msg.poster, msg.time, msg.type, msg.text, msg.attachment);
+			var msg = this.messageList.push(msg);
 
 			msg.appendTo(this.find(">dd>ol")[0]);
 		},
@@ -268,6 +297,7 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 
 	return ChatList.constructor;
 }(
+	Bao.Global,
 	jQun.List,
 	// listPanelHtml
 	new HTML([
@@ -311,15 +341,33 @@ this.ChatList = (function(List, listPanelHtml, messageGroupHtml, messageHtml){
 					'</a>',
 					'<img src="{attachment.src}" />',
 				'</figcaption>',
-				'<nav>',
-					'<aside></aside>',
+				'<nav class="whiteFont inlineBlock">',
 					'<button>do</button>',
+					'<aside class="chatList_praise">',
+						'<button>{praise.length}</button>',
+						'<p class="inlineBlock">',
+							'@for(praise ->> p){',
+								'<a class="smallAvatarPanel " title="{p.name}" userid="{p.id}">',
+									'<img src="{p.avatar}" />',
+								'</a>',
+							'}',
+						'</p>',
+						'<sub>',
+							'<button></button>',
+						'</sub>',
+					'</aside>',
 				'</nav>',
-				'<p class="message_bg normalRadius projectColor_0">',
+				'<p class="message_bg normalRadius projectColor_{color}">',
 					'<span></span>',
 				'</p>',
 			'</figure>',
 		'</li>'
+	].join("")),
+	// praiseHtml
+	new HTML([
+		'<a class="smallAvatarPanel " title="{name}" userid="{id}">',
+			'<img src="{avatar}" />',
+		'</a>'
 	].join(""))
 ));
 
