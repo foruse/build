@@ -11,9 +11,11 @@ this.Loader = (function(Storage, Index, HTML){
 			return new Index.Deep.Account("#account", new HTML("account_html", true));
 		},
 		addProject : function(){
+			this.load("secondary");
 			return new Index.Secondary.AddProject("#addProject");
 		},
 		businessCard : function(){
+			this.load("secondary");
 			return new Index.Secondary.BusinessCard("#businessCard", new HTML("businessCard_html", true));
 		},
 		createFirstProject : function(){
@@ -55,19 +57,22 @@ this.Loader = (function(Storage, Index, HTML){
 		qrCode : function(){
 			return new Index.Deep.QRCode("#QRCode", new HTML("QRCode_html", true));
 		},
+		secondary : function(){
+			return new Index.Secondary.Self("#secondary");
+		},
 		schedule : function(){
 			this.load("spp");
 			return new Index.SPP.Schedule("#schedule", new HTML("spp_scheduleSign_html", true));
 		},
 		spp : function(){
-			var sppPanel = this.pageStorage.get("spp");
-
-			return sppPanel ? sppPanel : new Index.SPP.Self("#SPP");
+			return new Index.SPP.Self("#SPP");
 		},
 		singleProject : function(){
+			this.load("secondary");
 			return new Index.Secondary.SingleProject("#singleProject", new HTML("singleProject_info_html", true));
 		},
 		systemOption : function(){
+			this.load("secondary");
 			return new Index.Secondary.SystemOption("#systemOption");
 		},
 	});

@@ -198,7 +198,8 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 
 		this.assign({
 			chatList : chatList,
-			infoHtml : infoHtml
+			infoHtml : infoHtml,
+			overflowPanel : overflowPanel
 		});
 
 		chatList.appendTo(this.find(">section")[0]);
@@ -221,6 +222,7 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 			var singleProject = this, chatListContent = this.chatList.chatListContent;
 
 			this.id = id;
+			this.overflowPanel.setTop(0);
 			chatListContent.clearAllMessages();
 
 			CallServer.open("getSingleProject", { id : id }, function(project){
@@ -238,7 +240,8 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 			});
 		},
 		id : -1,
-		infoHtml : undefined
+		infoHtml : undefined,
+		overflowPanel : undefined
 	});
 
 	return SingleProject.constructor;
@@ -246,6 +249,24 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 	Bao.API.DOM.OverflowPanel,
 	Bao.UI.Control.Chat.ChatList,
 	Bao.Global
+));
+
+this.Self = (function(Panel, SingleProject){
+	function Self(selector){
+		var self = this;
+
+		this.attach({
+			beforeshow : function(e){
+				self.setCSSPropertyValue("bottom", e.currentPanel instanceof SingleProject ? "42px" : 0);
+			}
+		});
+	};
+	Self = new NonstaticClass(Self, "Bao.Page.Secondary.Self", Panel.prototype);
+
+	return Self.constructor;
+}(
+	Bao.API.DOM.Panel,
+	this.SingleProject
 ));
 
 Secondary.members(this);

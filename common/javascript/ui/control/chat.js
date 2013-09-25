@@ -385,14 +385,17 @@ this.ChatListContent = (function(MessageGroup){
 	this.MessageGroup
 ));
 
-this.ChatInput = (function(messageCompletedEvent){
+this.ChatInput = (function(messageCompletedEvent, reader){
 	function ChatInput(selector){
 		///	<summary>
 		///	聊天输入。
 		///	</summary>
 		/// <param name="selector" type="string">对应元素选择器</param>
-		var chatInput = this, inputClassList = chatInput.classList;
+		var chatInput = this, imagePath = "",
+		
+			inputClassList = chatInput.classList;
 
+		// 点击事件
 		this.attach({
 			userclick : function(e, targetEl){
 				if(targetEl.between(">button", this).length > 0){
@@ -409,6 +412,7 @@ this.ChatInput = (function(messageCompletedEvent){
 			}
 		});
 
+		// 文本框事件
 		this.find(">p>input").attach({
 			keyup : function(e){
 				if(e.keyCode === 13){
@@ -419,20 +423,59 @@ this.ChatInput = (function(messageCompletedEvent){
 							type : "text"
 						}
 					});
-					messageCompletedEvent.trigger(this);
+					messageCompletedEvent.trigger(chatInput[0]);
 					
 					this.value = "";
 					return;
 				}
 			}
 		});
+
+		// 选择文件事件
+		this.find(">aside input").attach({
+			change : function(){
+				var file = this.files[0];
+
+				if(!file){
+					return;
+				}
+
+				if(!file.type.match(/^image\//)){
+					alert("请选择图像文件！");
+					this.value = "";
+					return;
+				}
+
+				imagePath = this.value;
+				reader.readAsDataURL(file);
+				this.value = "";
+			}
+		});
+
+		// 选择文件
+		reader.onload = function(e){
+			messageCompletedEvent.setEventAttrs({
+				message : {
+					attachment : {
+						src : this.result,
+						path : imagePath
+					},
+					text : "",
+					time : new Date().getTime(),
+					type : "image"
+				}
+			});
+			messageCompletedEvent.trigger(chatInput[0]);
+		};
 	};
 	ChatInput = new NonstaticClass(ChatInput, "Bao.UI.Control.Chat.ChatInput", Panel.prototype);
 
 	return ChatInput.constructor;
 }(
 	// messageCompletedEvent
-	new jQun.Event("messagecompleted")
+	new jQun.Event("messagecompleted"),
+	// reader
+	new FileReader()
 ));
 
 this.ChatList = (function(ChatInput, ChatListContent, listPanelHtml){
@@ -488,7 +531,9 @@ this.ChatList = (function(ChatInput, ChatListContent, listPanelHtml){
 				'</p>',
 				'<aside>',
 					'<button></button>',
-					'<button></button>',
+					'<button>',
+						'<input type="file" accept="image/*" />',
+					'</button>',
 				'</aside>',
 			'</footer>',
 		'</div>'

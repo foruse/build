@@ -233,6 +233,13 @@
 }
 .chatList_footer > aside > button:last-child {
 	background-position : 0 -650px;
+	overflow : hidden;
+}
+.chatList_footer > aside input {
+	width : 30px;
+	height : 30px;
+	margin : -5px;
+	opacity : 0;
 }
 
 #mask[action="imageBox"] > article {
