@@ -1525,7 +1525,13 @@ this.NodeList = (function(AttributeCollection, toArray){
 			///	<param name="parentNode" type="node">指定的父节点。</param>
 			///	<param name="_idx" type="number">指定节点的索引值。</param>
 			if(_idx !== undefined){
-				return this.insertBefore(parentNode.childNodes[_idx]);
+				var childNodes = parentNode.childNodes;
+
+				if(childNodes.length === 0){
+					return this.appendTo(parentNode);
+				}
+
+				return this.insertBefore(childNodes[_idx]);
 			}
 
 			this.forEach(function(node){

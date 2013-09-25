@@ -225,7 +225,7 @@ this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
 	})
 ));
 
-this.OverflowPanel = (function(Panel, IntervalTimer, Drag, leaveborder){
+this.OverflowPanel = (function(Panel, IntervalTimer, setTopEvent, leaveborder){
 	function OverflowPanel(selector, _disableScrollBar){
 		///	<summary>
 		///	溢出区域。
@@ -301,7 +301,11 @@ this.OverflowPanel = (function(Panel, IntervalTimer, Drag, leaveborder){
 		panelStyle : undefined,
 		setTop : function(top){
 			this.panelStyle.top = Math.round(top) + "px";
-			Drag.Scroll.reposition(this);
+
+			setTopEvent.setEventAttrs({
+				overflowPanel : this
+			});
+			setTopEvent.trigger(this[0]);
 		}
 	});
 
@@ -309,7 +313,8 @@ this.OverflowPanel = (function(Panel, IntervalTimer, Drag, leaveborder){
 }(
 	this.Panel,
 	Management.IntervalTimer,
-	Bao.UI.Control.Drag,
+	// setTopEvent
+	new Event("settop"),
 	// leaveborder
 	function(overflowPanel, parentHeight, top, fn){
 		// top等于0，说明处于恰好状态，就可以return了

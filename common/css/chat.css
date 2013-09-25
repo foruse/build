@@ -1,5 +1,5 @@
-﻿.chatList {
-	
+﻿.chatList_content li {
+	margin-top : 10px;
 }
 .chatList_content li[ispostbyself="true"] {
 	text-align : right;
@@ -233,4 +233,8 @@
 }
 .chatList_footer > aside > button:last-child {
 	background-position : 0 -650px;
+}
+
+#mask[action="imageBox"] > article {
+	
 }

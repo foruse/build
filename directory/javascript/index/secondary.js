@@ -192,7 +192,9 @@ this.SystemOption = (function(AnchorList, anchorData){
 
 this.SingleProject = (function(OverflowPanel, ChatList, Global){
 	function SingleProject(selector, infoHtml){
-		var chatList = new ChatList();
+		var singleProject = this,
+			
+			chatList = new ChatList(), overflowPanel = new OverflowPanel(this[0]);
 
 		this.assign({
 			chatList : chatList,
@@ -201,8 +203,11 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 
 		chatList.appendTo(this.find(">section")[0]);
 
-		new OverflowPanel(this[0]);
-		this.fill(1);
+		chatList.attach({
+			messageappended : function(e){
+				overflowPanel.setTop(singleProject.parent().height() - singleProject.height());
+			}
+		});
 	};
 	SingleProject = new NonstaticClass(SingleProject, "Bao.Page.Index.Secondary.SingleProject", PagePanel.prototype);
 
@@ -213,17 +218,26 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 	SingleProject.properties({
 		chatList : undefined,
 		fill : function(id){
-			var singleProject = this, chatList = this.chatList;
+			var singleProject = this, chatListContent = this.chatList.chatListContent;
+
+			this.id = id;
+			chatListContent.clearAllMessages();
 
 			CallServer.open("getSingleProject", { id : id }, function(project){
+				// 重置颜色
+				chatListContent.resetColor(project.color);
+				// 重置标题
 				Global.titleBar.resetTitle(project.title);
+				// 项目信息
 				singleProject.find(">header>dl").innerHTML = singleProject.infoHtml.render(project);
 
+				// 添加聊天信息
 				project.messages.forEach(function(msg){
-					chatList.chatListContent.appendMessageToGroup(msg);
+					chatListContent.appendMessageToGroup(msg);
 				});
 			});
 		},
+		id : -1,
 		infoHtml : undefined
 	});
 

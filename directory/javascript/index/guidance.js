@@ -152,13 +152,12 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, loginEvent){
 				login.find(">header>span").innerHTML = data.count.toLocaleString();
 			});
 		},
-		login : function(email, pwd, _page){
+		login : function(email, pwd){
 			///	<summary>
 			///	登录。
 			///	</summary>
 			/// <param name="email" type="string">用户邮箱</param>
 			/// <param name="pwd" type="string">用户密码</param>
-			/// <param name="_page" type="string">登录之后需要跳转的页面</param>
 			CallServer.open("login", {
 				email : email,
 				pwd : pwd
@@ -171,14 +170,10 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, loginEvent){
 
 				var user = data.user;
 
-				if(!_page){
-					_page = user.isNewUser ? "createFirstProject" : "project";
-				}
+				Global.history.go(user.isNewUser ? "createFirstProject" : "project");
 
 				loginEvent.setEventAttrs({ loginUser : user });
 				loginEvent.trigger(window);
-
-				Global.history.go(_page);
 			});
 		},
 		loginInfoManagement : undefined,

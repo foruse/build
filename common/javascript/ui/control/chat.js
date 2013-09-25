@@ -1,4 +1,4 @@
-﻿(function(Chat, NonstaticClass, Panel, HTML, Global){
+﻿(function(Chat, NonstaticClass, Panel, HTML, Global, set){
 this.Attachment = (function(){
 	function Attachment(id, _src){
 		///	<summary>
@@ -11,7 +11,7 @@ this.Attachment = (function(){
 			src : _src
 		});
 	};
-	Attachment = new NonstaticClass(Attachment);
+	Attachment = new NonstaticClass(Attachment, "Bao.UI.Control.Chat.Attachment");
 
 	Attachment.properties({
 		id : -1,
@@ -21,7 +21,44 @@ this.Attachment = (function(){
 	return Attachment.constructor;
 }());
 
-this.Message = (function(Attachment, CallServer, messageHtml, praiseHtml){
+this.ImageBox = (function(imageBoxHtml){
+	function ImageBox(src){
+		var mask = Global.mask;
+
+		this.combine(imageBoxHtml.create({
+			src : src
+		}));
+
+		this.attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between(">aside>button", this).length > 0){
+					mask.hide();
+					return;
+				}
+			}
+		});
+
+		mask.fillBody(this[0]);
+		mask.show("imageBox");
+	};
+	ImageBox = new NonstaticClass(ImageBox, "Bao.UI.Control.Chat.Attachment", Panel.prototype);
+
+	return ImageBox.constructor;
+}(
+	// imageBoxHtml
+	new HTML([
+		'<div class="imageBox">',
+			'<aside>',
+				'<button>关闭</button>',
+			'</aside>',
+			'<p>',
+				'<img src="{src}" />',
+			'</p>',
+		'</div>'
+	].join(""))
+));
+
+this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHtml){
 	function Message(msg){
 		///	<summary>
 		///	单个信息。
@@ -42,8 +79,22 @@ this.Message = (function(Attachment, CallServer, messageHtml, praiseHtml){
 			type : msg.type
 		});
 
-		this.combine(messageHtml.create(msg));
+		this.combine(messageHtml.create(this));
 		
+		this.find(">figure>figcaption").attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between(">img", this).length > 0){
+					new ImageBox(targetEl.src)[0];
+					return;
+				}
+
+				if(targetEl.between(">a>button", this).length > 0){
+					alert("voice");
+					return;
+				}
+			}
+		});
+
 		this.find(">figure>nav").attach({
 			userclick : function(e, targetEl){
 				// 判断点击的是否是 赞 按钮
@@ -66,7 +117,7 @@ this.Message = (function(Attachment, CallServer, messageHtml, praiseHtml){
 			}
 		});
 	};
-	Message = new NonstaticClass(Message, null, Panel.prototype);
+	Message = new NonstaticClass(Message, "Bao.UI.Control.Chat.Message", Panel.prototype);
 
 	Message.properties({
 		addPraise : function(userData){
@@ -86,7 +137,7 @@ this.Message = (function(Attachment, CallServer, messageHtml, praiseHtml){
 			}, true);
 		},
 		// 附件信息
-		attachment : new Attachment.constructor(),
+		attachment : new Attachment(),
 		// 颜色
 		color : 0,
 		// id
@@ -111,6 +162,7 @@ this.Message = (function(Attachment, CallServer, messageHtml, praiseHtml){
 }(
 	this.Attachment,
 	Bao.CallServer,
+	this.ImageBox,
 	// messageHtml
 	new HTML([
 		'<li class="chatList_message inlineBlock" action="{type}" ispostbyself="{poster.isLoginUser}" ispraisedbyself="{isPraisedBySelf}">',
@@ -125,7 +177,7 @@ this.Message = (function(Attachment, CallServer, messageHtml, praiseHtml){
 					'<a voiceid="{attachment.id}">',
 						'<button></button>',
 					'</a>',
-					'<img src="{attachment.src}" />',
+					'<img src="{?~ attachment.src}" />',
 				'</figcaption>',
 				'<nav class="whiteFont inlineBlock">',
 					'<button>do</button>',
@@ -163,7 +215,7 @@ this.MessageList = (function(List, Message){
 		///	信息列表。
 		///	</summary>
 	};
-	MessageList = new NonstaticClass(MessageList, null, List.prototype);
+	MessageList = new NonstaticClass(MessageList, "Bao.UI.Control.Chat.MessageList", List.prototype);
 
 	MessageList.override({
 		push : function(msg){
@@ -184,31 +236,64 @@ this.MessageList = (function(List, Message){
 	this.Message
 ));
 
-this.MessageGroup = (function(MessageList, messageGroupHtml){
-	function MessageGroup(firstMessage){
+this.MessageGroup = (function(MessageList, messageAppendedEvent, singleNumRegx, messageGroupHtml){
+	function MessageGroup(time){
 		///	<summary>
 		///	信息分组区域。
 		///	</summary>
-		/// <param name="firstMessage" type="object">信息数据</param>
-		this.combine(messageGroupHtml.create(firstMessage));
+		var dt = new Date(time),
+
+			desc = "今天", t = this - dt, hours = dt.getHours();
+				
+		switch(true){
+			case t < 0 :
+				break;
+
+			case t < 86400000 :
+				desc = "昨天";
+				break;
+
+			case t < 86400000 * 2 :
+				desc = "前天";
+				break;
+
+			default :
+				desc = dt.getFullYear() + "年" + (dt.getMonth() + 1) + "月" + dt.getDate() + "日";
+				break;
+		}
+
+		this.combine(
+			messageGroupHtml.create({
+				// 注意，这里是中文版本，不能用Date.prototype.toLocaleTimeString()，因为很多手机都是英文版本的。
+				localTime : [
+					desc,
+					hours < 12 ? "上午" : "下午",
+					// 如果是1位数，转化为2位数
+					hours.toString().replace(singleNumRegx, "0$1"),
+					":",
+					// 如果是1位数，转化为2位数
+					dt.getMinutes().toString().replace(singleNumRegx, "0$1")
+				].join(" ")
+			})
+		);
 
 		this.assign({
 			messageList : new MessageList()
 		});
-
-		this.appendMessage(firstMessage);
 	};
-	MessageGroup = new NonstaticClass(MessageGroup, null, Panel.prototype);
+	MessageGroup = new NonstaticClass(MessageGroup, "Bao.UI.Control.Chat.MessageGroup", Panel.prototype);
 
 	MessageGroup.properties({
-		appendMessage : function(msg){
+		appendMessage : function(message){
 			///	<summary>
 			///	向信息分组添加信息。
 			///	</summary>
-			/// <param name="msg" type="object">信息数据</param>
-			var msg = this.messageList.push(msg);
+			/// <param name="message" type="object">信息数据</param>
+			var msg = this.messageList.push(message);
 
 			msg.appendTo(this.find(">dd>ol")[0]);
+			messageAppendedEvent.trigger(this[0]);
+			return msg;
 		},
 		messageList : undefined
 	});
@@ -216,6 +301,10 @@ this.MessageGroup = (function(MessageList, messageGroupHtml){
 	return MessageGroup.constructor;
 }(
 	this.MessageList,
+	// messageAppendedEvent
+	new jQun.Event("messageappended"),
+	// singleNumRegx
+	/^(\d)$/,
 	// messageGroupHtml
 	new HTML([
 		'<dl>',
@@ -234,7 +323,7 @@ this.ChatListContent = (function(MessageGroup){
 		///	</summary>
 		/// <param name="selector" type="string, element">对应元素选择器</param>
 	};
-	ChatListContent = new NonstaticClass(ChatListContent, null, Panel.prototype);
+	ChatListContent = new NonstaticClass(ChatListContent, "Bao.UI.Control.Chat.ChatListContent", Panel.prototype);
 
 	ChatListContent.properties({
 		appendMessageToGroup : function(msg){
@@ -243,6 +332,10 @@ this.ChatListContent = (function(MessageGroup){
 			///	</summary>
 			/// <param name="msg" type="object">信息数据</param>
 			var messageGroup = this.messageGroup;
+
+			msg = set({
+				color : this.color
+			}, msg);
 
 			// 如果 messageGroup 存在
 			if(messageGroup){
@@ -263,20 +356,28 @@ this.ChatListContent = (function(MessageGroup){
 			}
 
 			// 添加消息
-			messageGroup.appendMessage(msg);
+			return messageGroup.appendMessage(msg);
 		},
-		appendMessageGroup : function(firstMessage){
+		appendMessageGroup : function(message){
 			///	<summary>
 			///	添加信息分组。
 			///	</summary>
-			var messageGroup = new MessageGroup(firstMessage);
+			var messageGroup = new MessageGroup(message.time);
 
 			messageGroup.appendTo(this[0]);
-			this.messageGroup = messageGroup;
+			messageGroup.appendMessage(message);
 
+			this.messageGroup = messageGroup;
 			return messageGroup;
 		},
-		messageGroup : undefined
+		clearAllMessages : function(){
+			this.innerHTML = "";
+		},
+		color : 0,
+		messageGroup : undefined,
+		resetColor : function(color){
+			this.color = color;
+		}
 	});
 
 	return ChatListContent.constructor;
@@ -284,7 +385,7 @@ this.ChatListContent = (function(MessageGroup){
 	this.MessageGroup
 ));
 
-this.ChatInput = (function(){
+this.ChatInput = (function(messageCompletedEvent){
 	function ChatInput(selector){
 		///	<summary>
 		///	聊天输入。
@@ -307,28 +408,65 @@ this.ChatInput = (function(){
 				}
 			}
 		});
+
+		this.find(">p>input").attach({
+			keyup : function(e){
+				if(e.keyCode === 13){
+					messageCompletedEvent.setEventAttrs({
+						message : {
+							text : this.value,
+							time : new Date().getTime(),
+							type : "text"
+						}
+					});
+					messageCompletedEvent.trigger(this);
+					
+					this.value = "";
+					return;
+				}
+			}
+		});
 	};
-	ChatInput = new NonstaticClass(ChatInput, null, Panel.prototype);
+	ChatInput = new NonstaticClass(ChatInput, "Bao.UI.Control.Chat.ChatInput", Panel.prototype);
 
 	return ChatInput.constructor;
-}());
+}(
+	// messageCompletedEvent
+	new jQun.Event("messagecompleted")
+));
 
 this.ChatList = (function(ChatInput, ChatListContent, listPanelHtml){
 	function ChatList(){
 		///	<summary>
 		///	聊天列表。
 		///	</summary>
-		this.combine(listPanelHtml.create({
-			isLeader : Global.loginUser.isLeader
-		}));
+		var chatInput, chatListContent, chatList = this;
+		
+		this.combine(listPanelHtml.create({ isLeader : Global.loginUser.isLeader }));
 
+		chatListContent = new ChatListContent(this.find(">article")[0]);
+		chatInput = new ChatInput(this.find(">footer")[0]);
+		
 		this.assign({
-			chatListContent : new ChatListContent(this.find(">article")[0])
+			chatListContent : chatListContent
 		});
+		
+		chatInput.attach({
+			messagecompleted : function(e){
+				var message = set({}, e.message), poster = set({}, Global.loginUser);
 
-		new ChatInput(this.find(">footer")[0]);
+				poster.isLoginUser = true;
+
+				set(message, {
+					isPraiseBySelf : false,
+					poster : poster
+				});
+
+				chatListContent.appendMessageToGroup(message);
+			}
+		});
 	};
-	ChatList = new NonstaticClass(ChatList, "Bao.UI.Control.List.ChatList", Panel.prototype);
+	ChatList = new NonstaticClass(ChatList, "Bao.UI.Control.Chat.ChatList", Panel.prototype);
 
 	ChatList.properties({
 		chatListContent : undefined
@@ -364,5 +502,6 @@ Chat.members(this);
 	jQun.NonstaticClass,
 	Bao.API.DOM.Panel,
 	jQun.HTML,
-	Bao.Global
+	Bao.Global,
+	jQun.set
 ));

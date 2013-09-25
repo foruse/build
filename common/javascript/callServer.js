@@ -119,44 +119,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		getSingleProject : function(data){
 			var loginUserId = Bao.Global.loginUser.id,
 			
-				messages = data.messages, len = messages.length,
-				
-				color = data.color, singleNumRegx = /^(\d)$/;
+				messages = data.messages, len = messages.length;
 
 			messages.forEach(function(msg){
-				var poster = msg.poster, dt = new Date(msg.time),
+				var poster = msg.poster;
 
-					desc = "今天", t = this - dt, hours = dt.getHours();
-				
-				switch(true){
-					case t < 0 :
-						break;
-
-					case t < 86400000 :
-						desc = "昨天";
-						break;
-
-					case t < 86400000 * 2 :
-						desc = "前天";
-						break;
-
-					default :
-						desc = dt.getFullYear() + "年" + (dt.getMonth() + 1) + "月" + dt.getDate() + "日";
-						break;
-				}
-				
-				// 注意，这里是中文版本，不能用Date.prototype.toLocaleTimeString()，因为很多手机都是英文版本的。
-				msg.localTime = [
-					desc,
-					hours < 12 ? "上午" : "下午",
-					// 如果是1位数，转化为2位数
-					hours.toString().replace(singleNumRegx, "0$1"),
-					":",
-					// 如果是1位数，转化为2位数
-					dt.getSeconds().toString().replace(singleNumRegx, "0$1")
-				].join(" ");
-
-				msg.color = color;
 				poster.isLoginUser = poster.id === loginUserId;
 			}, new Date(new Date().setHours(0, 0, 0, 0)));
 
