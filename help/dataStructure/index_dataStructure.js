@@ -12,6 +12,7 @@ with(this){
 		email : "mj@BaoPiQi.com", // string
 		adress : "beijing", // string : home adress
 		isNewUser : false, // boolean : if the user is first login, return true, else return false
+		isLeader : false, // boolean : if the user has authority to create project, return true, else return false
 		QRCode : "../../image/qrcode" // string
 	};
 
@@ -32,6 +33,7 @@ with(this){
 		text : "abc", // string
 		poster : DS_user,
 		attachment : DS_attachment,
+		praise : DS_users, // array : who has praised the message.
 		time : new Date().getTime(), // number : the milliseconds since 1970/01/01
 		type : "text" // string : "text", "voice" or "image", there are three types of message
 	};

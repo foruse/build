@@ -10,6 +10,7 @@
 	* 将所有类的onxx属性替换成事件监听(UserIndexList, spp, spp.tab)
 	* navigate类优化：监听oncontinuousgesture或onfastgesture,并优化切换标签的算法
 	* CallServer加载失败的处理
+	* 把UserSelectionList里引用的CallServer去掉，改成事件，从而从外部引用CallServer
 
 ★★★
 	* 考虑是否所有的页面都要滚动

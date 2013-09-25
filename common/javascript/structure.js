@@ -65,6 +65,15 @@ this.Bao = (function(Bao){
 		}),
 		UI : new Namespace().members({
 			Control : new Namespace().members({ // ui/control
+				Chat : new Namespace().members({ // ui/control/chat.js
+					Attachment : null,
+					ChatInput : null,
+					ChatList : null,
+					ChatListContent : null,
+					Message : null,
+					MessageGroup : null,
+					MessageList : null
+				}),
 				Drag : new Namespace().members({ // ui/control/drag.js
 					Navigator : null,
 					Scroll : null

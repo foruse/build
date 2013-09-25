@@ -230,7 +230,7 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 	return SingleProject.constructor;
 }(
 	Bao.API.DOM.OverflowPanel,
-	Bao.UI.Control.List.ChatList,
+	Bao.UI.Control.Chat.ChatList,
 	Bao.Global
 ));
 

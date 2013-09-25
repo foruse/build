@@ -27,7 +27,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 					LoadingBar.hide();
 					_complete(data);
-				}, 0);
+				}, 500);
 			});
 		}
 	});
@@ -45,6 +45,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["invitation",			new Text("url?emails={emails}"),			""],
 		["login",				new Text("url?email={email}&pwd={pwd}"),	""],
 		["myInformation",		"url",										"", true],
+		["praise",				new Text("url?messageId={messageId}"),		""],
 		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""]
 	], allHandlers);
 
@@ -229,6 +230,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 					// 如果是1位数，转化为2位数
 					dt.getSeconds().toString().replace(singleNumRegx, "0$1")
 				].join(" ");
+
+				// 是否被自己赞过
+				msg.isPraisedBySelf = !msg.praise.every(function(user){
+					return user.id !== loginUserId;
+				});
 
 				msg.color = color;
 				poster.isLoginUser = poster.id === loginUserId;
