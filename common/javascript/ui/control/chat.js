@@ -23,6 +23,10 @@ this.Attachment = (function(){
 
 this.ImageBox = (function(imageBoxHtml){
 	function ImageBox(src){
+		///	<summary>
+		///	图片框，用于放大显示图片。
+		///	</summary>
+		/// <param name="src" type="string">图片路径</param>
 		var mask = Global.mask;
 
 		this.combine(imageBoxHtml.create({
@@ -121,6 +125,10 @@ this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHt
 
 	Message.properties({
 		addPraise : function(userData){
+			///	<summary>
+			///	添加赞。
+			///	</summary>
+			/// <param name="userData" type="object">称赞用户的数据</param>
 			if(this.isPraiseBySelf)
 				return;
 

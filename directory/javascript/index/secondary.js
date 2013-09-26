@@ -168,6 +168,10 @@ this.BusinessCard = (function(Global, LoadingBar, clickAvatarEvent){
 
 this.SystemOption = (function(AnchorList, anchorData){
 	function SystemOption(selector){
+		///	<summary>
+		///	系统项。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
 		new AnchorList(anchorData).appendTo(this.find(">section")[0]);
 	};
 	SystemOption = new NonstaticClass(SystemOption, "Bao.Page.Index.Secondary.SystemOption", PagePanel.prototype);
@@ -192,6 +196,11 @@ this.SystemOption = (function(AnchorList, anchorData){
 
 this.SingleProject = (function(OverflowPanel, ChatList, Global){
 	function SingleProject(selector, infoHtml){
+		///	<summary>
+		///	单个项目。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
+		/// <param name="infoHtml" type="jQun.HTML">信息模板</param>
 		var singleProject = this,
 			
 			chatList = new ChatList(), overflowPanel = new OverflowPanel(this[0]);
@@ -206,7 +215,13 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 
 		chatList.attach({
 			messageappended : function(e){
-				overflowPanel.setTop(singleProject.parent().height() - singleProject.height());
+				var top = singleProject.parent().height() - singleProject.height();
+
+				if(top > 0){
+					top = 0;
+				}
+
+				overflowPanel.setTop(top);
 			}
 		});
 	};
@@ -219,6 +234,10 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 	SingleProject.properties({
 		chatList : undefined,
 		fill : function(id){
+			///	<summary>
+			///	填充项目。
+			///	</summary>
+			/// <param name="id" type="number">项目id</param>
 			var singleProject = this, chatListContent = this.chatList.chatListContent;
 
 			this.id = id;
@@ -229,7 +248,7 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 				// 重置颜色
 				chatListContent.resetColor(project.color);
 				// 重置标题
-				Global.titleBar.resetTitle(project.title);
+				Global.titleBar.resetTitle("单个项目 - " + project.title);
 				// 项目信息
 				singleProject.find(">header>dl").innerHTML = singleProject.infoHtml.render(project);
 
@@ -253,6 +272,10 @@ this.SingleProject = (function(OverflowPanel, ChatList, Global){
 
 this.Self = (function(Panel, SingleProject){
 	function Self(selector){
+		///	<summary>
+		///	二级页面。
+		///	</summary>
+		/// <param name="selector" type="string">对应的元素选择器</param>
 		var self = this;
 
 		this.attach({

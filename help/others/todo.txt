@@ -3,6 +3,7 @@
 	* 修改账号增加数据提交的判断
 	* 优化callServer，对存数据的时候，也需要缓存
 	* 转义任何可输入的文本
+	* 聊天区域，当图像加载完成时候，高度会有所改变，所以要重新确认可视区域。
 
 ★★★★
 	* img元素未加载完成前先隐藏
@@ -10,7 +11,6 @@
 	* 将所有类的onxx属性替换成事件监听(UserIndexList, spp, spp.tab)
 	* navigate类优化：监听oncontinuousgesture或onfastgesture,并优化切换标签的算法
 	* CallServer加载失败的处理
-	* 把UserSelectionList里引用的CallServer去掉，改成事件，从而从外部引用CallServer
 
 ★★★
 	* 考虑是否所有的页面都要滚动

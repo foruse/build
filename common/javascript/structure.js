@@ -71,6 +71,7 @@ this.Bao = (function(Bao){
 					ChatInput : null,
 					ChatList : null,
 					ChatListContent : null,
+					ImageBox : null,
 					Message : null,
 					MessageGroup : null,
 					MessageList : null
