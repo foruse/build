@@ -295,6 +295,15 @@ this.OverflowPanel = (function(Panel, IntervalTimer, setTopEvent, leaveborder){
 	OverflowPanel = new NonstaticClass(OverflowPanel, "Bao.API.DOM.OverflowPanel", Panel.prototype);
 
 	OverflowPanel.properties({
+		bottom : function(){
+			var top = this.parent().height() - this.height();
+
+			if(top > 0){
+				top = 0;
+			}
+
+			this.setTop(top);
+		},
 		getTop : function(){
 			return this.panelStyle.top.toString().split("px").join("") - 0 || 0;
 		},

@@ -23,18 +23,11 @@ this.Bao = (function(Bao){
 		CallServer : null, // callServer.js
 		Global : null, // global.js
 		Page : new Namespace().members({
-			Index : new Namespace().members({ // ../../directoy/javascript/index\
+			Index : new Namespace().members({ // ../../directoy/javascript/index
 				Deep : new Namespace({ // ../../directoy/javascript/index/deep.js
 					AboutBaoPiQi : null,
 					Account : null,
 					QRCode : null
-				}),
-				SPP : new Namespace({ // ../../directoy/javascript/index/home.js
-					Partner : null,
-					Project : null,
-					Schedule : null,
-					Self : null,
-					Tab : null
 				}),
 				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
 					CreateFirstProject : null,
@@ -43,12 +36,24 @@ this.Bao = (function(Bao){
 					Login : null,
 					LoginInfoManagement : null
 				}),
+				SPP : new Namespace({ // ../../directoy/javascript/index/home.js
+					Partner : null,
+					Project : null,
+					Schedule : null,
+					Self : null,
+					Tab : null
+				}),
 				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
 					AddProject : null,
 					BusinessCard : null,
-					Self : null,
 					SingleProject : null,
 					SystemOption : null
+				}),
+				SingleProject : new Namespace({ // ../../directoy/javascript/index/singleProject.js
+					Discussion : null,
+					Header : null,
+					Self : null,
+					ToDoList : null
 				})
 			})
 		}),

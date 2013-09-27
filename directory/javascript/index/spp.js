@@ -224,11 +224,17 @@ this.Project = (function(){
 
 				project.load();
 			},
-			userclick : function(e){
-				var targetEl = jQun(e.target);
-
+			userclick : function(e, targetEl){
 				if(targetEl.between('figure[status="0"]', this).length > 0){
 					Global.history.go("addProject");
+					return;
+				}
+
+				var el = targetEl.between('figure[status="1"]', this);
+
+				if(el.length > 0){
+					Global.history.go("discussion").fill(el.parent().getAttribute("projectid"));
+					return;
 				}
 			}
 		});

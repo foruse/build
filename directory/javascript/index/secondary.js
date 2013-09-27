@@ -1,4 +1,4 @@
-﻿(function(Secondary, NonstaticClass, StaticClass, PagePanel,  CallServer){
+﻿(function(Secondary, NonstaticClass, StaticClass, PagePanel, CallServer){
 this.AddProject = (function(Global, Validation, UserManagementList){
 	function AddProject(selector){
 		///	<summary>
@@ -192,104 +192,6 @@ this.SystemOption = (function(AnchorList, anchorData){
 		{ key : "file", title : "查看归档" },
 		{ key : "aboutBaoPiQi", title : "关于暴脾气" }
 	]
-));
-
-this.SingleProject = (function(OverflowPanel, ChatList, Global){
-	function SingleProject(selector, infoHtml){
-		///	<summary>
-		///	单个项目。
-		///	</summary>
-		/// <param name="selector" type="string">对应的元素选择器</param>
-		/// <param name="infoHtml" type="jQun.HTML">信息模板</param>
-		var singleProject = this,
-			
-			chatList = new ChatList(), overflowPanel = new OverflowPanel(this[0]);
-
-		this.assign({
-			chatList : chatList,
-			infoHtml : infoHtml,
-			overflowPanel : overflowPanel
-		});
-
-		chatList.appendTo(this.find(">section")[0]);
-
-		chatList.attach({
-			messageappended : function(e){
-				var top = singleProject.parent().height() - singleProject.height();
-
-				if(top > 0){
-					top = 0;
-				}
-
-				overflowPanel.setTop(top);
-			}
-		});
-	};
-	SingleProject = new NonstaticClass(SingleProject, "Bao.Page.Index.Secondary.SingleProject", PagePanel.prototype);
-
-	SingleProject.override({
-		title : "单个项目"
-	});
-
-	SingleProject.properties({
-		chatList : undefined,
-		fill : function(id){
-			///	<summary>
-			///	填充项目。
-			///	</summary>
-			/// <param name="id" type="number">项目id</param>
-			var singleProject = this, chatListContent = this.chatList.chatListContent;
-
-			this.id = id;
-			this.overflowPanel.setTop(0);
-			chatListContent.clearAllMessages();
-
-			CallServer.open("getSingleProject", { id : id }, function(project){
-				// 重置颜色
-				chatListContent.resetColor(project.color);
-				// 重置标题
-				Global.titleBar.resetTitle("单个项目 - " + project.title);
-				// 项目信息
-				singleProject.find(">header>dl").innerHTML = singleProject.infoHtml.render(project);
-
-				// 添加聊天信息
-				project.messages.forEach(function(msg){
-					chatListContent.appendMessageToGroup(msg);
-				});
-			});
-		},
-		id : -1,
-		infoHtml : undefined,
-		overflowPanel : undefined
-	});
-
-	return SingleProject.constructor;
-}(
-	Bao.API.DOM.OverflowPanel,
-	Bao.UI.Control.Chat.ChatList,
-	Bao.Global
-));
-
-this.Self = (function(Panel, SingleProject){
-	function Self(selector){
-		///	<summary>
-		///	二级页面。
-		///	</summary>
-		/// <param name="selector" type="string">对应的元素选择器</param>
-		var self = this;
-
-		this.attach({
-			beforeshow : function(e){
-				self.setCSSPropertyValue("bottom", e.currentPanel instanceof SingleProject ? "42px" : 0);
-			}
-		});
-	};
-	Self = new NonstaticClass(Self, "Bao.Page.Secondary.Self", Panel.prototype);
-
-	return Self.constructor;
-}(
-	Bao.API.DOM.Panel,
-	this.SingleProject
 ));
 
 Secondary.members(this);

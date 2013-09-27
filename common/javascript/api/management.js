@@ -11,16 +11,18 @@ this.Loader = (function(Storage, Index, HTML){
 			return new Index.Deep.Account("#account", new HTML("account_html", true));
 		},
 		addProject : function(){
-			this.load("secondary");
 			return new Index.Secondary.AddProject("#addProject");
 		},
 		businessCard : function(){
-			this.load("secondary");
 			return new Index.Secondary.BusinessCard("#businessCard", new HTML("businessCard_html", true));
 		},
 		createFirstProject : function(){
 			this.load("guidance");
 			return new Index.Guidance.CreateFirstProject("#createFirstProject");
+		},
+		discussion : function(){
+			this.load("singleProject");
+			return new Index.SingleProject.Discussion("#discussion", new HTML("discussion_info_html", true));
 		},
 		globalSearch : function(){
 			return new Index.Deep.GlobalSearch("#globalSearch", new HTML("globalSearch_group_html", true));
@@ -57,9 +59,6 @@ this.Loader = (function(Storage, Index, HTML){
 		qrCode : function(){
 			return new Index.Deep.QRCode("#QRCode", new HTML("QRCode_html", true));
 		},
-		secondary : function(){
-			return new Index.Secondary.Self("#secondary");
-		},
 		schedule : function(){
 			this.load("spp");
 			return new Index.SPP.Schedule("#schedule", new HTML("spp_scheduleSign_html", true));
@@ -68,13 +67,15 @@ this.Loader = (function(Storage, Index, HTML){
 			return new Index.SPP.Self("#SPP");
 		},
 		singleProject : function(){
-			this.load("secondary");
-			return new Index.Secondary.SingleProject("#singleProject", new HTML("singleProject_info_html", true));
+			return new Index.SingleProject.Self("#secondary");
 		},
 		systemOption : function(){
-			this.load("secondary");
 			return new Index.Secondary.SystemOption("#systemOption");
 		},
+		toDoList : function(){
+			this.load("singleProject");
+			return new Index.SingleProject.Discussion("#toDoList");
+		}
 	});
 
 	return Loader;

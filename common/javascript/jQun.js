@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.5.8
- *  本次修改：HTMLElementList.prototype添加：getAttribute、getCSSPropertyValue、setAttribute、setCSSPropertyValue
+ *  文档状态：1.0.5.9
+ *  本次修改：ElementList增加removeAttribute方法
  *  开发浏览器信息：firefox 20.0+ 、 chrome 26.0+
  */
 
@@ -89,21 +89,15 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				return obj;
 			},
 			every : every,
-			except : function(args, properties){
+			except : function(obj, properties){
 				///	<summary>
-				///	返回一个不包含所有指定属性名称的合并对象。
+				///	返回一个不包含所有指定属性名称的对象。
 				///	</summary>
-				///	<param name="args" type="object">用于合并的对象集合。</param>
+				///	<param name="obj" type="object">需要排除属性的对象。</param>
 				///	<param name="properties" type="array">需要排除的属性名称数组。</param>
-				var result = {};
+				var result = set({}, obj);
 
-				forEach(toArray(arguments, 0, -1), function(obj){
-					for(var name in obj){
-						result[name] = obj[name];
-					}
-				});
-
-				forEach(arguments[arguments.length - 1], function(name){
+				forEach(properties, function(name){
 					delete result[name];
 				});
 				return result;
@@ -1737,6 +1731,14 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 				list.push(parent);
 			});
 			return list;
+		},
+		removeAttribute : function(name){
+			///	<summary>
+			///	根据指定名称，移除集合中每一个元素的特性属性。
+			///	</summary>
+			///	<param name="name" type="string">属性名。</param>
+			emptyAttrCollection.remove.call({ sources : this }, name);
+			return this;
 		},
 		selector : "",
 		set : function(name, value, _type){

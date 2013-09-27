@@ -1,25 +1,52 @@
-﻿(function(Bao, JSON, Text, Index){
-this.CallServer = (function(CallServer, Wait, open, allHandlers){
-	CallServer.setResponseType("json");
+﻿(function(Bao, StaticClass, Text, Index){
+this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
+	function Models(){};
+	Models = new StaticClass(Models);
 
-	// 重写open方法
-	CallServer.override({
+	Models.properties({
+		addProject : function(params){
+			Mdls.Project.create({
+				project : jQun.except(params, ["users"]),
+				project_partners : params.users
+			});
+		},
+		// getLoginInfo : function(){},
+		getPartnerGroups : function(_params, complete){
+			Mdls.Partner_Groups.read(complete);
+		},
+		getPartners : function(params, complete){
+			Mdls.Partner_Groups.get_group_users(params.groupId, complete);
+		},
+		// getSchedules : function(){ }
+		getSingleProject : function(params, complete){
+			Mlds.Project.read(params.id, complete);
+		},
+		getUser : function(params, complete){
+			Mlds.Partner.read(params.id, complete);
+		},
+		// globalSearch : function(){ }
+		// invitation : function(){ }
+		// login : function(){	}
+		myInformation : function(_params, complete){
+			Mlds.User.read(complete);
+		},
+		// praise : function(){ }
+		// register : function(){ }
+	});
+
+
+	function CallServer(){};
+	CallServer = new StaticClass(CallServer, "Bao.CallServer");
+
+	CallServer.properties({
 		open : function(name, params, _complete, _isUpload){
 			var LoadingBar = Wait.LoadingBar;
 
 			LoadingBar.show(_isUpload ? "正在上传数据.." : null);
 
-			open.call(CallServer, name, params, function(data, isCache, isSuccess){
-				if(isCache){
-					LoadingBar.hide();
-					_complete(data);
-					return;
-				}
-
-				
-				if(!isSuccess){
-					LoadingBar.error((_isUpload ? "上传" : "加载") + "数据失败..");
-					return;
+			Models[name](params, function(data){
+				if(name in allHandlers){
+					data = allHandlers[name](data);
 				}
 
 				LoadingBar.hide();
@@ -28,27 +55,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		}
 	});
 
-	CallServer.save([
-		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
-		["getLoginInfo",		"url",										""],
-		["getPartnerGroups",			"url",								"", true],
-		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
-		["getProjects",			"url",										"", true],
-		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
-		["getSingleProject",		new Text("url?id={id}"),				"", true],
-		["getUser",				new Text("url?id={id}"),					"", true],
-		["globalSearch",		new Text("url?search={search}"),				"", true],
-		["invitation",			new Text("url?emails={emails}"),				""],
-		["login",				new Text("url?email={email}&pwd={pwd}"),	""],
-		["myInformation",		"url",										"", true],
-		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""]
-	], allHandlers);
-
 	return CallServer;
 }(
-	jQun.Ajax,
+	Models,
 	Bao.UI.Control.Wait,
-	jQun.Ajax.open,
+	jQun.Stroage,
 	// allHandlers
 	{
 		getPartnerGroups : function(data){
@@ -138,7 +149,7 @@ Bao.members(this);
 }.call(
 	{},
 	Bao,
-	jQun.JSON,
+	jQun.StaticClass,
 	jQun.Text,
 	// 以下为测试用的类
 	Bao.Test.DummyData.Index

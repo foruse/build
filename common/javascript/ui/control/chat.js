@@ -62,22 +62,19 @@ this.ImageBox = (function(imageBoxHtml){
 	].join(""))
 ));
 
-this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHtml){
+this.Message = (function(Attachment, ImageBox, clickPraiseEvent, forEach, messageHtml, praiseHtml){
 	function Message(msg){
 		///	<summary>
 		///	单个信息。
 		///	</summary>
 		/// <param name="msg" type="object">信息数据</param>
-		var message = this, attachment = msg.attachment, poster = msg.poster;
+		var message = this, attachment = msg.attachment;
 
 		this.assign({
 			attachment : attachment ? new Attachment(attachment.id, attachment.src) : undefined,
 			color : msg.color,
 			id : msg.id,
-			isPostBySelf : poster.isLoginUser,
-			isPraiseBySelf : msg.isPraiseBySelf,
-			praise : msg.praise,
-			poster : poster,
+			poster : msg.poster,
 			text : msg.text,
 			time : msg.time,
 			type : msg.type
@@ -85,6 +82,12 @@ this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHt
 
 		this.combine(messageHtml.create(this));
 		
+		// 添加赞
+		forEach(msg.praise, function(userData){
+			this.addPraise(userData);
+		}, this);
+
+		// 点击信息内容区域
 		this.find(">figure>figcaption").attach({
 			userclick : function(e, targetEl){
 				if(targetEl.between(">img", this).length > 0){
@@ -99,11 +102,21 @@ this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHt
 			}
 		});
 
+		// 点击附属功能区域
 		this.find(">figure>nav").attach({
 			userclick : function(e, targetEl){
 				// 判断点击的是否是 赞 按钮
 				if(targetEl.between(".chatList_praise>button", this).length > 0){
-					message.addPraise(Global.loginUser);
+					var loginUser = Global.loginUser, userId = loginUser.id;
+
+					if(message.isPraisedBy(userId))
+						return;
+					
+					clickPraiseEvent.setEventAttrs({
+						action : "add",
+						message : message
+					});
+					clickPraiseEvent.trigger(targetEl[0]);
 					return;
 				}
 				
@@ -129,20 +142,20 @@ this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHt
 			///	添加赞。
 			///	</summary>
 			/// <param name="userData" type="object">称赞用户的数据</param>
-			if(this.isPraiseBySelf)
+			var userId = userData.id;
+
+			if(this.isPraisedBy(userId))
 				return;
 
-			var message = this;
+			var praisePanel = this.find(".chatList_praise"), praiseEl = praisePanel.find(">button");
 
-			CallServer.open("praise", { messageId : this.id }, function(){
-				var praisePanel = message.find(".chatList_praise"), praiseEl = praisePanel.find(">button");
+			praiseEl.innerHTML = praiseEl.innerHTML - 0 + 1;
+			praiseHtml.create(userData).insertTo(praisePanel.find(">p")[0], 0);
 
-				praiseEl.innerHTML = praiseEl.innerHTML - 0 + 1;
-				praiseHtml.create(userData).insertTo(praisePanel.find(">p")[0], 0);
-
-				message.isPraiseBySelf = true;
-				message.setAttribute("ispraisedbyself", "true");
-			}, true);
+			if(userId !== Global.loginUser.id)
+				return;
+			
+			this.setAttribute("praisedbyself", "");
 		},
 		// 附件信息
 		attachment : new Attachment(),
@@ -152,12 +165,33 @@ this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHt
 		id : -1,
 		// 是否发自自己
 		isPostBySelf : false,
-		// 是否被自己赞过
-		isPraiseBySelf : false,
+		isPraisedBy : function(id){
+			///	<summary>
+			///	是否被指定id的用户称赞过。
+			///	</summary>
+			/// <param name="id" type="number">称赞用户的id</param>
+			return this.find('.chatList_praise>p>a[userid="' + id + '"]').length > 0;
+		},
 		// 发送人
 		poster : undefined,
-		// 称赞的人
-		praise : [],
+		removePraise : function(id){
+			///	<summary>
+			///	移除赞。
+			///	</summary>
+			/// <param name="id" type="number">称赞用户的id</param>
+			if(!this.isPraisedBy(id))
+				return;
+
+			var praisePanel = this.find(".chatList_praise"), praiseEl = praisePanel.find(">button");
+
+			praiseEl.innerHTML = praiseEl.innerHTML - 1;
+			praisePanel.find('>p>a[userid="' + id + '"]').remove();
+
+			if(id !== Global.loginUser.id)
+				return;
+			
+			this.removeAttribute("praisedbyself");
+		},
 		// 信息文本
 		text : "",
 		// 信息发送时间
@@ -169,11 +203,13 @@ this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHt
 	return Message.constructor;
 }(
 	this.Attachment,
-	Bao.CallServer,
 	this.ImageBox,
+	// clickPraiseEvent
+	new jQun.Event("clickpraise"),
+	jQun.forEach,
 	// messageHtml
 	new HTML([
-		'<li class="chatList_message inlineBlock" action="{type}" ispostbyself="{poster.isLoginUser}" ispraisedbyself="{isPraisedBySelf}">',
+		'<li class="chatList_message inlineBlock" action="{type}" ispostbyself="{poster.isLoginUser}">',
 			'<aside>',
 				'<p class="normalAvatarPanel" userid="{poster.id}">',
 					'<img src="{poster.avatar}" />',
@@ -190,14 +226,8 @@ this.Message = (function(Attachment, CallServer, ImageBox, messageHtml, praiseHt
 				'<nav class="whiteFont inlineBlock">',
 					'<button>do</button>',
 					'<aside class="chatList_praise">',
-						'<button>{praise.length}</button>',
-						'<p class="inlineBlock">',
-							'@for(praise ->> p){',
-								'<a class="smallAvatarPanel " title="{p.name}" userid="{p.id}">',
-									'<img src="{p.avatar}" />',
-								'</a>',
-							'}',
-						'</p>',
+						'<button>0</button>',
+						'<p class="inlineBlock"></p>',
 						'<sub>',
 							'<button></button>',
 						'</sub>',
@@ -509,7 +539,7 @@ this.ChatList = (function(ChatInput, ChatListContent, listPanelHtml){
 				poster.isLoginUser = true;
 
 				set(message, {
-					isPraiseBySelf : false,
+					isPraisedBySelf : false,
 					poster : poster
 				});
 

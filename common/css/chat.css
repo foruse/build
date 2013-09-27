@@ -125,7 +125,7 @@
 .chatList_content[isleader="false"] .chatList_praise > p {
 	text-indent : 52px;
 }
-.chatList_message[ispraisedbyself="true"] .chatList_praise > button {
+.chatList_message[praisedbyself] .chatList_praise > button {
 	background-position : 0 -775px;
 }
 .chatList_message.morePraised .chatList_praise > sub {

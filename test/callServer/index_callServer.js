@@ -196,17 +196,6 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			
 				messages = data.messages, len = messages.length;
 
-			messages.forEach(function(msg){
-				var poster = msg.poster;
-
-				// 是否被自己赞过
-				msg.isPraisedBySelf = !msg.praise.every(function(user){
-					return user.id !== loginUserId;
-				});
-
-				poster.isLoginUser = poster.id === loginUserId;
-			}, new Date(new Date().setHours(0, 0, 0, 0)));
-
 			data.lastMessage = len > 0 ? messages[len - 1].text : "";
 
 			return data;
