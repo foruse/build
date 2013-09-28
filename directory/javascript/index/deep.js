@@ -272,6 +272,32 @@ this.AboutBaoPiQi = (function(){
 	return AboutBaoPiQi.constructor;
 }());
 
+this.ToDo = (function(){
+	function ToDo(selector, infoHtml){
+		this.assign({
+			infoHtml : infoHtml
+		});
+	};
+	ToDo = new NonstaticClass(ToDo, "Bao.Page.Index", PagePanel.prototype);
+
+	ToDo.override({
+		title : "To Do"
+	});
+
+	ToDo.properties({
+		fill : function(id){
+			var toDo = this;
+		
+			CallServer.open("getToDo", { id : id }, function(data){
+				toDo.find(">header").innerHTML = toDo.infoHtml.render(data);
+			});
+		},
+		infoHtml : undefined
+	});
+
+	return ToDo.constructor;
+}());
+
 Deep.members(this);
 }.call(
 	{},

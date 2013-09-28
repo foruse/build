@@ -27,7 +27,8 @@ this.Bao = (function(Bao){
 				Deep : new Namespace({ // ../../directoy/javascript/index/deep.js
 					AboutBaoPiQi : null,
 					Account : null,
-					QRCode : null
+					QRCode : null,
+					ToDo : null
 				}),
 				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
 					CreateFirstProject : null,

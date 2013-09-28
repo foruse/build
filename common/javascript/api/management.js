@@ -72,6 +72,9 @@ this.Loader = (function(Storage, Index, HTML){
 		systemOption : function(){
 			return new Index.Secondary.SystemOption("#systemOption");
 		},
+		toDo : function(){
+			return new Index.Deep.ToDo("#toDo", new HTML("toDo_info_html", true));
+		},
 		toDoList : function(){
 			this.load("singleProject");
 			return new Index.SingleProject.ToDoList("#toDoList");

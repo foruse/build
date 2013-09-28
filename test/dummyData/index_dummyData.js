@@ -115,37 +115,34 @@ this.SingleProject = (function(){
 				desc : String.random(1000),
 				attachments : Common.getAttachments()
 			};
-		},
-		getToDoInfo : function(){
-			return {
-				id : Number.random(100),
-				title : String.random(),
-				desc : String.random(30),
-				attachments : Common.getAttachments(),
-				messages : this.getMessages(),
-				endTime : new Date().getTime()
-			};
-		},
-		getToDoList : function(){
-			var completed = [], uncompleted = [];
-
-			jQun.forEach(Number.random(15), function(){
-				completed.push(this.getToDoInfo());
-			}, this);
-
-			jQun.forEach(Number.random(15), function(){
-				uncompleted.push(this.getToDoInfo());
-			}, this);
-
-			return {
-				completed : completed,
-				uncompleted : uncompleted
-			};
 		}
 	})
 
 	return SingleProject;
 }());
+
+this.Deep = (function(SingleProject){
+	function Deep(){};
+	Deep = new StaticClass(null, "Bao.Test.DummyData.Deep");
+
+	Deep.properties({
+		getToDoInfo : function(){
+			return {
+				id : Number.random(100),
+				color : Number.random(6),
+				title : String.random(),
+				desc : String.random(30),
+				attachments : Common.getAttachments(),
+				messages : SingleProject.getMessages(),
+				endTime : new Date().getTime()
+			};
+		}
+	});
+
+	return Deep;
+}(
+	this.SingleProject
+));
 
 this.SPP = (function(SingleProject){
 	function SPP(){};

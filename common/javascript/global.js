@@ -29,7 +29,7 @@ this.Global = (function(Fixed, Management, HTML){
 			},
 			login : function(e){
 				Global.loginUser = e.loginUser;
-				Global.history.go("toDoList").fill(1);
+				Global.history.go("toDo").fill(1);
 			}
 		});
 	};

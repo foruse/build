@@ -41,6 +41,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getProjects",			"url",										"", true],
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
 		["getSingleProject",	new Text("url?id={id}"),					"", true],
+		["getToDo",				new Text("url?id={id}"),					"", true],
 		["getToDoList",			new Text("url?id={id}"),					"",	true],
 		["getUser",				new Text("url?id={id}"),					"", true],
 		["globalSearch",		new Text("url?search={search}"),			"", true],
@@ -191,8 +192,10 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			return data;
 		},
-		getSingleProject : function(data){
+		getSingleProject : function(data, params){
 			data = Index.SingleProject.getSingleProject();
+
+			data.id = params.id;
 
 			return data;
 		},
@@ -217,8 +220,26 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			return data;
 		},
+		getToDo : function(data){
+			data = Index.Deep.getToDoInfo();
+
+			return data;
+		},
 		getToDoList : function(data){
-			data = Index.SingleProject.getToDoList();
+			var completed = [], uncompleted = [];
+
+			jQun.forEach(Bao.Test.DummyData.Generate.Number.random(15), function(){
+				completed.push(Deep.getToDoInfo());
+			}, this);
+
+			jQun.forEach(Bao.Test.DummyData.Generate.Number.random(15), function(){
+				uncompleted.push(Deep.getToDoInfo());
+			}, this);
+
+			data = {
+				completed : completed,
+				uncompleted : uncompleted
+			};
 
 			return data;
 		}

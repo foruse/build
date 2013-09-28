@@ -33,7 +33,7 @@ this.Header = (function(focusTabEvent){
 				var el = targetEl.between("li", this);
 
 				if(el.length > 0){
-					header.focus(el.getAttribute("targetpage"));
+					header.focus(el.getAttribute("pagename"));
 					return;
 				}
 			}
@@ -131,7 +131,7 @@ this.Discussion = (function(ProjectPanel, ChatList){
 	Bao.UI.Control.Chat.ChatList
 ));
 
-this.ToDoList = (function(ProjectPanel, AnchorList){
+this.ToDoList = (function(ProjectPanel, AnchorList, formatKey){
 	function ToDoList(selector){
 		var toDoList = this;
 
@@ -140,8 +140,17 @@ this.ToDoList = (function(ProjectPanel, AnchorList){
 				var project = e.project;
 
 				CallServer.open("getToDoList", { id : project.id }, function(data){
-					new AnchorList(data.completed, true).appendTo(toDoList.find(">section>dl:first-child>dd")[0]);
-					new AnchorList(data.uncompleted, true).appendTo(toDoList.find(">section>dl:last-child>dd")[0]);
+					var completedEl = toDoList.find(">section>dl:first-child>dd"),
+
+						uncompletedEl = toDoList.find(">section>dl:last-child>dd");
+
+					data = formatKey(data);
+
+					completedEl.innerHTML = "";
+					uncompletedEl.innerHTML = "";
+
+					new AnchorList(data.completed, true).appendTo(completedEl[0]);
+					new AnchorList(data.uncompleted, true).appendTo(uncompletedEl[0]);
 				});
 			}
 		});
@@ -149,7 +158,7 @@ this.ToDoList = (function(ProjectPanel, AnchorList){
 		this.attach({
 			clickanchor : function(e){
 				e.stopPropagation();
-				console.log(e);
+				Global.history.go("toDo").fill(e.anchor);
 			}
 		}, true);
 
@@ -160,7 +169,19 @@ this.ToDoList = (function(ProjectPanel, AnchorList){
 	return ToDoList.constructor;
 }(
 	this.ProjectPanel,
-	Bao.UI.Control.List.AnchorList
+	Bao.UI.Control.List.AnchorList,
+	// formatKey
+	function(data){
+		data.completed.forEach(function(dt){
+			dt.key = dt.id;
+		});
+
+		data.uncompleted.forEach(function(dt){
+			dt.key = dt.id;
+		});
+
+		return data;
+	}
 ));
 
 this.Self = (function(Header){
@@ -169,14 +190,17 @@ this.Self = (function(Header){
 		///	单个页面。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
-		var self = this, header = new Header("#singleProjectHeader");
+		var id, self = this, header = new Header("#singleProjectHeader");
 
 		this.attach({
 			beforeshow : function(e, targetEl){
 				header.focus(e.currentPanel.id);
 			},
-			focusTab : function(e){
-				Global.history.go(e.pageName);
+			focustab : function(e){
+				Global.history.go(e.pageName).fill(id);
+			},
+			loadproject : function(e){
+				id = e.project.id;
 			}
 		});
 	};
