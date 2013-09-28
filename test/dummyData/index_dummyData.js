@@ -23,6 +23,15 @@ this.Common = Common = (function(){
 				src : type === "voice" ? "javascript:void(0);" : "../../test/image/avatar/" + Number.random(16) + ".jpg"
 			};
 		},
+		getAttachments : function(){
+			var attachments = [];
+
+			jQun.forEach(Number.random(30), function(){
+				attachments.push(this.getAttachment());
+			}, this);
+
+			return attachments;
+		},
 		getUser : function(){
 			var name = String.random(5), firstLetter = name.substring(0, 1);
 
@@ -63,11 +72,11 @@ this.Common = Common = (function(){
 	return Common;
 }());
 
-this.Secondary = (function(){
-	function Secondary(){};
-	Secondary = new StaticClass(null, "Bao.Test.DummyData.Secondary");
+this.SingleProject = (function(){
+	function SingleProject(){};
+	SingleProject = new StaticClass(null, "Bao.Test.DummyData.SingleProject");
 
-	Secondary.properties({
+	SingleProject.properties({
 		getMessages : function(){
 			var msgs = [], date = new Date();
 
@@ -93,12 +102,6 @@ this.Secondary = (function(){
 			return msgs;
 		},
 		getSingleProject : function(){
-			var attachments = [];
-
-			jQun.forEach(Number.random(30), function(){
-				attachments.push(Common.getAttachment());
-			});
-
 			return {
 				id : Number.id(),
 				level : Number.random(3),
@@ -106,20 +109,45 @@ this.Secondary = (function(){
 				color : Number.random(5),
 				users : Common.getUsers(Number.random(20)),
 				lastMessage : String.random(),
-				messages : this.getMessages(),
 				creator : Common.getUser(),
 				creationTime : new Date().getTime(),
 				unread : Number.random(2) > 1 ? 0 : Number.random(),
 				desc : String.random(1000),
-				attachments : attachments
+				attachments : Common.getAttachments()
+			};
+		},
+		getToDoInfo : function(){
+			return {
+				id : Number.random(100),
+				title : String.random(),
+				desc : String.random(30),
+				attachments : Common.getAttachments(),
+				messages : this.getMessages(),
+				endTime : new Date().getTime()
+			};
+		},
+		getToDoList : function(){
+			var completed = [], uncompleted = [];
+
+			jQun.forEach(Number.random(15), function(){
+				completed.push(this.getToDoInfo());
+			}, this);
+
+			jQun.forEach(Number.random(15), function(){
+				uncompleted.push(this.getToDoInfo());
+			}, this);
+
+			return {
+				completed : completed,
+				uncompleted : uncompleted
 			};
 		}
 	})
 
-	return Secondary;
+	return SingleProject;
 }());
 
-this.SPP = (function(Secondary){
+this.SPP = (function(SingleProject){
 	function SPP(){};
 	SPP = new StaticClass(null, "Bao.Test.DummyData.SPP");
 
@@ -150,7 +178,7 @@ this.SPP = (function(Secondary){
 			}
 
 			for(var i = 0;i < _len;i++){
-				projects.push(Secondary.getSingleProject());
+				projects.push(SingleProject.getSingleProject());
 			}
 
 			return projects;
@@ -179,7 +207,7 @@ this.SPP = (function(Secondary){
 
 	return SPP;
 }(
-	this.Secondary
+	this.SingleProject
 ));
 
 Index.members(this);

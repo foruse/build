@@ -35,11 +35,13 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 	CallServer.save([
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
 		["getLoginInfo",		"url",										""],
+		["getMessages",			new Text("url?id={id}&type={type}"),		"", true],
 		["getPartnerGroups",	"url",										"", true],
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
 		["getProjects",			"url",										"", true],
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
 		["getSingleProject",	new Text("url?id={id}"),					"", true],
+		["getToDoList",			new Text("url?id={id}"),					"",	true],
 		["getUser",				new Text("url?id={id}"),					"", true],
 		["globalSearch",		new Text("url?search={search}"),			"", true],
 		["invitation",			new Text("url?emails={emails}"),			""],
@@ -190,21 +192,20 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			return data;
 		},
 		getSingleProject : function(data){
-			data = Index.Secondary.getSingleProject();
-
-			var loginUserId = Bao.Global.loginUser.id,
-			
-				messages = data.messages, len = messages.length;
-
-			data.lastMessage = len > 0 ? messages[len - 1].text : "";
+			data = Index.SingleProject.getSingleProject();
 
 			return data;
 		},
-		getLoginInfo : function(){
+		getLoginInfo : function(data){
 			data = {
 				count : Bao.Test.DummyData.Generate.Number.random(9999999),
 				validationImage : "javascript:void(0);"
 			};
+
+			return data;
+		},
+		getMessages : function(data){
+			data = Index.SingleProject.getMessages();
 
 			return data;
 		},
@@ -213,6 +214,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 				user : Index.Common.getUser(),
 				status : 0
 			};
+
+			return data;
+		},
+		getToDoList : function(data){
+			data = Index.SingleProject.getToDoList();
 
 			return data;
 		}

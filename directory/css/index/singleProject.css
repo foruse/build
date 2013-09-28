@@ -1,8 +1,7 @@
-﻿#singleProject {
-	bottom : 42px;
-}
-#singleProject > * {
+﻿#singleProject > * {
 	padding : 0 10px;
+	top : 36px;
+	overflow : hidden;
 }
 
 #singleProjectHeader {
@@ -49,9 +48,7 @@
 }
 
 #discussion {
-	top : 36px;
-	bottom : 10px;
-	overflow : hidden;
+	bottom : 52px;
 }
 .discussion_info > dt {
 	height : 30px;
@@ -129,4 +126,14 @@
 .discussion_info aside img {
 	width : 100%;
 	height : 100%;
+}
+
+.toDoList_content > dl:last-child {
+	margin-top : 5px;
+}
+.toDoList_content > dl > dt {
+	text-align : center;
+}
+.toDoList_content > dl > dd {
+	margin-top : 5px;
 }

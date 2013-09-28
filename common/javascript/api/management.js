@@ -67,15 +67,15 @@ this.Loader = (function(Storage, Index, HTML){
 			return new Index.SPP.Self("#SPP");
 		},
 		singleProject : function(){
-			return new Index.SingleProject.Self("#secondary");
+			return new Index.SingleProject.Self("#singleProject");
 		},
 		systemOption : function(){
 			return new Index.Secondary.SystemOption("#systemOption");
 		},
 		toDoList : function(){
 			this.load("singleProject");
-			return new Index.SingleProject.Discussion("#toDoList");
-		}
+			return new Index.SingleProject.ToDoList("#toDoList");
+		},
 	});
 
 	return Loader;

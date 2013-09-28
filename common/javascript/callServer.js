@@ -126,21 +126,6 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 			return {
 				schedules : data
 			};
-		},
-		getSingleProject : function(data){
-			var loginUserId = Bao.Global.loginUser.id,
-			
-				messages = data.messages, len = messages.length;
-
-			messages.forEach(function(msg){
-				var poster = msg.poster;
-
-				poster.isLoginUser = poster.id === loginUserId;
-			}, new Date(new Date().setHours(0, 0, 0, 0)));
-
-			data.lastMessage = len > 0 ? messages[len - 1].text : "";
-
-			return data;
 		}
 	}
 ));
