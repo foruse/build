@@ -352,27 +352,68 @@ this.ToDo = (function(ChatList, OverflowPanel, Global){
 	Bao.Global
 ));
 
-this.SendToDo = (function(ValidationList, Validation){
+this.SendToDo = (function(Validation, Global, validationHandle){
 	function SendToDo(selector, infoHtml){
-		var validationList = new ValidationList();
+		var sendToDo = this, titleBar = Global.titleBar,
+		
+			titleValidation = new Validation(this.find('li[desc="title"]>input'), validationHandle),
+
+			dateValidation = new Validation(this.find('li[desc="endDate"]>input[type="text"]'), validationHandle);
 
 		this.assign({
-			infoHtml : infoHtml
+			dateValidation : dateValidation,
+			infoHtml : infoHtml,
+			titleValidation : titleValidation
 		});
 
-		this.find("input, text").forEach(function(text){
-			validationList.addValidation(jQun(text), function(textEl){
-				return Validation.validate(textEl, textEl.getAttribute("vtype"));
-			});
+		// 提交按钮绑定事件
+		this.attach({
+			beforeshow : function(e){
+				titleBar.find('button[action="sendToDoCompleted"]').onuserclick = function(){
+					if(!titleValidation.validate())
+						return;
+
+					if(!dateValidation.validate())
+						return;
+
+					alert(124);
+				};
+			}
+		});
+
+		// 绑定日期控件事件
+		this.find('li>input[type="date"]').attach({
+			change : function(e){
+				var endDate = sendToDo = this.valueAsDate;
+
+				this.previousElementSibling.value = endDate.toLocaleDateString();
+			},
+			userclick : function(){
+				dateValidation.clearError();
+			}
 		});
 	};
 	SendToDo = new NonstaticClass(SendToDo, "Bao.Page.Index.Deep.SendToDo", PagePanel.prototype);
 
 	SendToDo.override({
-		title : "发送 To Do"
+		isNoTraces : true,
+		restore : function(){
+			var dateValidation = this.dateValidation;
+
+			this.titleValidation.clearError();
+			dateValidation.clearError();
+			// 设置初始时间
+			dateValidation.validationEl.value = this.endDate.toLocaleDateString();
+		},
+		title : "发送 To Do",
+		tools : [
+			{ urlname : "javascript:void(0);", action : "sendToDoCompleted" }
+		]
 	});
 
 	SendToDo.properties({
+		dateValidation : undefined,
+		endDate : new Date(),
 		fill : function(id){
 			var sendToDo = this;
 
@@ -380,13 +421,20 @@ this.SendToDo = (function(ValidationList, Validation){
 				sendToDo.find(">header").innerHTML = sendToDo.infoHtml.render(data);
 			});
 		},
-		infoHtml : undefined
+		infoHtml : undefined,
+		// 完成时候是否提醒
+		remind : false,
+		titleValidation : undefined
 	});
 
 	return SendToDo.constructor;
 }(
-	Bao.API.DOM.ValidationList,
-	jQun.Validation
+	Bao.API.DOM.Validation,
+	Bao.Global,
+	// validationHandle
+	function(inputEl){
+		return jQun.Validation.result(inputEl.value, inputEl.getAttribute("vtype"));
+	}
 ));
 
 Deep.members(this);
