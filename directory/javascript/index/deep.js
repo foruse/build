@@ -272,10 +272,44 @@ this.AboutBaoPiQi = (function(){
 	return AboutBaoPiQi.constructor;
 }());
 
-this.ToDo = (function(){
+this.ToDo = (function(ChatList, OverflowPanel, Global){
 	function ToDo(selector, infoHtml){
+		var toDo = this, chatList = new ChatList(), overflowPanel = new OverflowPanel(this.find(">section")[0]);
+
 		this.assign({
-			infoHtml : infoHtml
+			chatList : chatList,
+			infoHtml : infoHtml,
+			overflowPanel : overflowPanel
+		});
+
+		chatList.appendTo(overflowPanel.find(">figure")[0]);
+
+		chatList.attach({
+			messageappended : function(e){
+				overflowPanel.bottom();
+			},
+			clickpraise : function(e){
+				var message = e.message, loginUser = Global.loginUser;
+
+				CallServer.open("praise", {
+					messageId : message.id,
+					userId : loginUser.id,
+					type : "toDo"
+				}, function(){
+					message.addPraise(loginUser);
+				})
+			}
+		});
+
+		this.find(">section>header").attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between("dt>button").length > 0){
+					CallServer.open("toDoCompleted", { id : toDo.id }, function(data){
+						console.log(data);
+					}, true);
+					return;
+				}
+			}
 		});
 	};
 	ToDo = new NonstaticClass(ToDo, "Bao.Page.Index", PagePanel.prototype);
@@ -285,18 +319,75 @@ this.ToDo = (function(){
 	});
 
 	ToDo.properties({
+		chatList : undefined,
 		fill : function(id){
-			var toDo = this;
+			var toDo = this, chatListContent = this.chatList.chatListContent;
 		
 			CallServer.open("getToDo", { id : id }, function(data){
-				toDo.find(">header").innerHTML = toDo.infoHtml.render(data);
+				var figureEl = toDo.find(">section>figure");
+
+				toDo.overflowPanel.setTop(0);
+				chatListContent.clearAllMessages();
+				// 重置颜色
+				chatListContent.resetColor(project.color);
+
+				toDo.find(">section>header").innerHTML = toDo.infoHtml.render(data);
+
+				data.messages.forEach(function(msg){
+					this.appendMessageToGroup(msg);
+				}, chatListContent);
+			});
+
+			this.id = id;
+		},
+		id : -1,
+		infoHtml : undefined,
+		overflowPanel : undefined
+	});
+
+	return ToDo.constructor;
+}(
+	Bao.UI.Control.Chat.ChatList,
+	Bao.API.DOM.OverflowPanel,
+	Bao.Global
+));
+
+this.SendToDo = (function(ValidationList, Validation){
+	function SendToDo(selector, infoHtml){
+		var validationList = new ValidationList();
+
+		this.assign({
+			infoHtml : infoHtml
+		});
+
+		this.find("input, text").forEach(function(text){
+			validationList.addValidation(jQun(text), function(textEl){
+				return Validation.validate(textEl, textEl.getAttribute("vtype"));
+			});
+		});
+	};
+	SendToDo = new NonstaticClass(SendToDo, "Bao.Page.Index.Deep.SendToDo", PagePanel.prototype);
+
+	SendToDo.override({
+		title : "发送 To Do"
+	});
+
+	SendToDo.properties({
+		fill : function(id){
+			var sendToDo = this;
+
+			CallServer.open("getUser", { id : id }, function(data){
+				sendToDo.find(">header").innerHTML = sendToDo.infoHtml.render(data);
 			});
 		},
 		infoHtml : undefined
 	});
 
-	return ToDo.constructor;
-}());
+	return SendToDo.constructor;
+}(
+	Bao.API.DOM.ValidationList,
+	jQun.Validation
+));
 
 Deep.members(this);
 }.call(

@@ -63,6 +63,10 @@
 	border-top-left-radius : 0;
 	border-top-right-radius : 0;
 	padding : 5px 10px;
+	text-align : right;
+}
+.discussion_info > dd > * {
+	text-align : left;
 }
 .discussion_info figure {
 	height : 20px;
@@ -97,35 +101,15 @@
 	margin : 0 3px 3px 0;
 }
 .discussion_info aside {
-	text-align : right;
+	text-align : right !important;
 	margin-top : 10px;
 }
-.discussion_info aside > ul {
+.discussion_info aside {
 	padding : 5px;
 	display : inline-block;
 }
-.discussion_info aside li {
-	margin : 2px;
-}
-.discussion_info li > a {
-	width : 36px;
-	height : 36px;
-	display : inline-block;
-	overflow : hidden;
-}
-.discussion_info li:not([attachmenttype="voice"]) > a {
-	border : 0 none;
-}
-.discussion_info li[attachmenttype="voice"] > a {
-	background : url(../../../common/image/width24.png) 0 -575px no-repeat content-box content-box;
-	padding : 4px 4px 4px 6px;
-}
-.discussion_info li[attachmenttype="voice"] img {
+.discussion_info aside:empty {
 	display : none;
-}
-.discussion_info aside img {
-	width : 100%;
-	height : 100%;
 }
 
 .toDoList_content > dl:last-child {

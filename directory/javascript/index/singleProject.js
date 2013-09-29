@@ -8,8 +8,11 @@ this.ProjectPanel = (function(PagePanel, loadProjectEvent){
 			var pagePanel = this;
 
 			CallServer.open("getSingleProject", { id : id }, function(project){
+				var title = project.title;
+
 				// 重置标题
-				Global.titleBar.resetTitle(project.title);
+				pagePanel.title = title;
+				Global.titleBar.resetTitle(title);
 
 				loadProjectEvent.setEventAttrs({ project : project });
 				loadProjectEvent.trigger(pagePanel[0]);
@@ -91,7 +94,8 @@ this.Discussion = (function(ProjectPanel, ChatList){
 
 				CallServer.open("praise", {
 					messageId : message.id,
-					userId : loginUser.id
+					userId : loginUser.id,
+					type : "project"
 				}, function(){
 					message.addPraise(loginUser);
 				})

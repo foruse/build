@@ -97,7 +97,9 @@ this.BusinessCard = (function(Global, LoadingBar, clickAvatarEvent){
 		///	<summary>
 		///	点击用户头像。
 		///	</summary>
-		jQun(document.body).attach({
+		var bodyEl = jQun(document.body);
+		
+		bodyEl.attach({
 			userclick : function(e){
 				var avatarPanel = jQun(e.target).between('[class*="AvatarPanel"]');
 
@@ -108,7 +110,12 @@ this.BusinessCard = (function(Global, LoadingBar, clickAvatarEvent){
 					userId : avatarPanel.get("userid", "attr")
 				});
 				clickAvatarEvent.trigger(e.target);
-			},
+				
+				e.stopPropagation();
+			}
+		}, true, 2);
+
+		bodyEl.attach({
 			clickavatar : function (e){
 				Global.history.go("businessCard").fillUser(e.userId);
 			}

@@ -63,6 +63,9 @@ this.Loader = (function(Storage, Index, HTML){
 			this.load("spp");
 			return new Index.SPP.Schedule("#schedule", new HTML("spp_scheduleSign_html", true));
 		},
+		sendToDo : function(){
+			return new Index.Deep.SendToDo("#sendToDo", new HTML("sendToDo_info_html", true));
+		},
 		spp : function(){
 			return new Index.SPP.Self("#SPP");
 		},

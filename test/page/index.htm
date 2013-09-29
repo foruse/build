@@ -440,19 +440,62 @@
 				</section>
 			</script>
 			<article id="toDo">
-				<header></header>
-				<script id="toDo_info_html" type="text/html">
-					<dl>
-						<dt>{title}</dt>
-						<dd>
-							<figure>
-								<p>{desc}</p>
-								<aside></aside>
-							</figure>
-						</dd>
-					</dl>
+				<section>
+					<header class="toDo_header"></header>
+					<script id="toDo_info_html" type="text/html">
+						<dl class="largeRadius lightBdColor">
+							<dt class="projectColor_{color} normalRadius">
+								<button class="smallRadius"></button>
+								<span class="whiteFont">{title}</span>
+							</dt>
+							<dd>
+								<figure>
+									<p>{desc}</p>
+									<aside class="lightBdColor normalRadius inlineBlock">
+										@for(attachments ->> a){
+											<a attachmenttype="{a.type}" class="normalRadius lightBdColor" href="javascript:void(0);">
+												<img src="{a.src}" />
+											</a>
+										}
+									</aside>
+								</figure>
+							</dd>
+						</dl>
+					</script>
+					<figure></figure>
+				</section>
+			</article>
+			<article id="sendToDo">
+				<header class="inlineBlock"></header>
+				<script id="sendToDo_info_html" type="text/html">
+					<p class="largeAvatarPanel">
+						<img src="{avatar}" />
+					</p>
+					<aside class="normalRadius whiteFont">
+						<span>{name}</span>
+					</aside>
 				</script>
-				<section></section>
+				<section class="lightBdColor normalRadius">
+					<ul>
+						<li class="lightBdColor onlyBorderBottom" desc="title">
+							<input type="text" placeholder="To Do标题" vtype="notEmpty" autofocus />
+						</li>
+						<li desc="endDate">
+							<input type="text" placeholder="截止日期" vtype="notEmpty" readonly />
+							<input type="date" value="2013/09/1" vtype="notEmpty" />
+						</li>
+					</ul>
+				</section>
+				<section class="lightBdColor normalRadius" desc="remind">
+					<span class="placeHolderFont">完成提醒</span>
+					<button class="largeRadius">
+						<span></span>
+					</button>
+				</section>
+				<section class="lightBdColor normalRadius" desc="content">
+					<textarea placeholder="To Do内容"></textarea>
+					<aside></aside>
+				</section>
 			</article>
 		</div>
 		<div id="singleProject">
@@ -490,16 +533,12 @@
 										}
 									</p>
 								</nav>
-								<aside>
-									<ul class="lightBdColor inlineBlock normalRadius">
-										@for(attachments ->> a){
-											<li attachmenttype="{a.type}">
-												<a  class="normalRadius lightBdColor" href="javascript:void(0);">
-													<img src="{a.src}" />
-												</a>
-											</li>
-										}
-									</ul>
+								<aside class="lightBdColor inlineBlock normalRadius">
+									@for(attachments ->> a){
+										<a attachmenttype="{a.type}" class="normalRadius lightBdColor" href="javascript:void(0);">
+											<img src="{a.src}" />
+										</a>
+									}
 								</aside>
 							</dd>
 						</script>

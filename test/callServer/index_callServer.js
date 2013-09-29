@@ -49,7 +49,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["login",				new Text("url?email={email}&pwd={pwd}"),	""],
 		["myInformation",		"url",										"", true],
 		["praise",				new Text("url?messageId={messageId}"),		""],
-		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""]
+		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""],
+		["toDoCompleted",		new Text("url?id={id}"),					""]
 	], allHandlers);
 
 	return CallServer;
@@ -229,11 +230,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			var completed = [], uncompleted = [];
 
 			jQun.forEach(Bao.Test.DummyData.Generate.Number.random(15), function(){
-				completed.push(Deep.getToDoInfo());
+				completed.push(Index.Deep.getToDoInfo());
 			}, this);
 
 			jQun.forEach(Bao.Test.DummyData.Generate.Number.random(15), function(){
-				uncompleted.push(Deep.getToDoInfo());
+				uncompleted.push(Index.Deep.getToDoInfo());
 			}, this);
 
 			data = {
