@@ -56,6 +56,24 @@ with(this){
 		unread : 66, // number : the max is 99
 		desc : "abc" // string : description of the project
 	};
+
+	this.DS_toDoInfo = {
+		id : 1,
+		color : 1, // number : from 0 to 5(0 : orange, 1 : tan, 2 : cyan, 3 : blue, 4 : henna, 5 : purple)
+		title : "sss",
+		desc : "aaa",
+		attachments : [
+			DS_attachment,
+			// ...
+			DS_attachment
+		],
+		messages : [
+			DS_message,
+			// ...
+			DS_message
+		],
+		endTime : new Date().getTime()
+	};
 }
 window.index_dataStructure = this;
 }.call({}));

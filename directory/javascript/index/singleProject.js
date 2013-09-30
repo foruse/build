@@ -79,7 +79,7 @@ this.Discussion = (function(ProjectPanel, ChatList){
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="infoHtml" type="jQun.HTML">信息模板</param>
-		var discussion = this,
+		var projecetId, discussion = this,
 			
 			chatList = new ChatList(), overflowPanel = new OverflowPanel(this.find(">section")[0]);
 
@@ -99,6 +99,9 @@ this.Discussion = (function(ProjectPanel, ChatList){
 				}, function(){
 					message.addPraise(loginUser);
 				})
+			},
+			clickdo : function(e){
+				Global.history.go("sendToDo").fill(projecetId);
 			}
 		});
 
@@ -106,6 +109,7 @@ this.Discussion = (function(ProjectPanel, ChatList){
 			loadproject : function(e){
 				var project = e.project, chatListContent = chatList.chatListContent;
 
+				projecetId = project.id;
 				overflowPanel.setTop(0);
 
 				chatListContent.clearAllMessages();
@@ -114,7 +118,7 @@ this.Discussion = (function(ProjectPanel, ChatList){
 				// 项目信息
 				overflowPanel.find(">header>dl").innerHTML = infoHtml.render(project);
 
-				CallServer.open("getMessages", { id : project.id, type : "project" }, function(messages){
+				CallServer.open("getMessages", { id : projecetId, type : "project" }, function(messages){
 					// 添加聊天信息
 					messages.forEach(function(msg){
 						chatListContent.appendMessageToGroup(msg);

@@ -376,8 +376,25 @@ this.SendToDo = (function(Validation, Global, validationHandle){
 					if(!dateValidation.validate())
 						return;
 
-					alert(124);
+					CallServer.open("sendToDo", {
+						attachment : [],
+						title : titleValidation.validationEl.value,
+						date : sendToDo.endDate.getTime(),
+						remind : sendToDo.remind ? 1 : 0,
+						desc : sendToDo.find("textarea").innerHTML
+					}, function(data){
+						Global.history.go("toDo").fill(data.id);
+					});
 				};
+			},
+			userclick : function(e, targetEl){
+				if(targetEl.between('li[desc="remind"] button>span')){
+					var classList = targetEl.classList;
+
+					sendToDo.remind = !classList.contains("reminded");
+					classList.toggle("reminded");
+					return;
+				}
 			}
 		});
 

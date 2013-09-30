@@ -417,6 +417,11 @@
 	width : 22px;
 	border-radius : 22px;
 	background-color : #fff;
+	opacity : 0.7;
+}
+#sendToDo button > span.reminded {
+	float : left;
+	opacity : 1;
 }
 #sendToDo > section textarea {
 	min-height : 140px;

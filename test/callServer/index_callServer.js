@@ -50,6 +50,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["myInformation",		"url",										"", true],
 		["praise",				new Text("url?messageId={messageId}"),		""],
 		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""],
+		["sendToDo",			new Text("url?title={title}&remind={remind}&desc={desc}&attachments={attachments}&date={date}"), "POST"],
 		["toDoCompleted",		new Text("url?id={id}"),					""]
 	], allHandlers);
 
@@ -241,6 +242,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 				completed : completed,
 				uncompleted : uncompleted
 			};
+
+			return data;
+		},
+		sendToDo : function(data){
+			data = { id : Bao.Test.DummyData.Generate.Number.random(15) };
 
 			return data;
 		}

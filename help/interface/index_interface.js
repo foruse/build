@@ -151,7 +151,60 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				return : null
 			}
 		*/
-		["invitation",		new Text("url?emails={emails}"),				""]
+		["invitation",		new Text("url?emails={emails}"),				""],
+
+		/*
+			{
+				params {
+					id : "1213"
+				},
+				return : null
+			}
+		*/
+		["toDoCompleted",		new Text("url?id={id}"),					""],
+
+		/*
+			{
+				params : {
+					title : "sss",
+					remind : 0, // number : 0 -> false, 1 -> true
+					desc : "sss",
+					attachments : [
+						DS_attachment,
+						// ...
+						DS_attachment
+					]
+				},
+				return : {
+					id : 1 // the id of todo
+				}
+			}	
+		*/
+		["sendToDo",			new Text("url?title={title}&remind={remind}&desc={desc}&attachments={attachments}&date={date}"), "POST"],
+
+		/*
+			{
+				params : {
+					id : 1 // the id of todo
+				},
+				return : DS_toDoInfo
+			}
+		*/
+		["getToDo",				new Text("url?id={id}"),					"", true],
+
+		/*
+			{
+				params : {
+					id : 1 // the id of project
+				},
+				return : [
+					DS_toDoInfo,
+					// ...
+					DS_toDoInfo
+				]
+			}
+		*/
+		["getToDoList",			new Text("url?id={id}"),					"",	true],
 	]);
 }
 }(

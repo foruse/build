@@ -62,7 +62,7 @@ this.ImageBox = (function(imageBoxHtml){
 	].join(""))
 ));
 
-this.Message = (function(Attachment, ImageBox, clickPraiseEvent, forEach, messageHtml, praiseHtml){
+this.Message = (function(Attachment, ImageBox, clickDoEvent, clickPraiseEvent, forEach, messageHtml, praiseHtml){
 	function Message(msg){
 		///	<summary>
 		///	单个信息。
@@ -122,7 +122,8 @@ this.Message = (function(Attachment, ImageBox, clickPraiseEvent, forEach, messag
 				
 				// 判断点击的是否是 do 按钮
 				if(targetEl.between(">button", this).length > 0){
-					alert("you clicked todo button");
+					clickDoEvent.setEventAttrs({ message : message });
+					clickDoEvent.trigger(targetEl[0]);
 					return;
 				}
 
@@ -204,6 +205,8 @@ this.Message = (function(Attachment, ImageBox, clickPraiseEvent, forEach, messag
 }(
 	this.Attachment,
 	this.ImageBox,
+	// clickDoEvent
+	new jQun.Event("clickdo"),
 	// clickPraiseEvent
 	new jQun.Event("clickpraise"),
 	jQun.forEach,
