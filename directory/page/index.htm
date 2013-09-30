@@ -439,16 +439,74 @@
 					<img src="{QRCode}" />
 				</section>
 			</script>
+			<article id="toDo">
+				<section>
+					<header class="toDo_header"></header>
+					<script id="toDo_info_html" type="text/html">
+						<dl class="largeRadius lightBdColor">
+							<dt class="projectColor_{color} normalRadius">
+								<button class="smallRadius"></button>
+								<span class="whiteFont">{title}</span>
+							</dt>
+							<dd>
+								<figure>
+									<p>{desc}</p>
+									<aside class="lightBdColor normalRadius inlineBlock">
+										@for(attachments ->> a){
+											<a attachmenttype="{a.type}" class="normalRadius lightBdColor" href="javascript:void(0);">
+												<img src="{a.src}" />
+											</a>
+										}
+									</aside>
+								</figure>
+							</dd>
+						</dl>
+					</script>
+					<figure></figure>
+				</section>
+			</article>
+			<article id="sendToDo">
+				<header class="inlineBlock"></header>
+				<script id="sendToDo_info_html" type="text/html">
+					<p class="largeAvatarPanel">
+						<img src="{avatar}" />
+					</p>
+					<aside class="normalRadius whiteFont">
+						<span>{name}</span>
+					</aside>
+				</script>
+				<section class="lightBdColor normalRadius">
+					<ul>
+						<li class="lightBdColor onlyBorderBottom" desc="title">
+							<input type="text" placeholder="To Do标题" vtype="notEmpty" autofocus />
+						</li>
+						<li desc="endDate">
+							<input type="text" placeholder="截止日期" vtype="notEmpty" readonly />
+							<input type="date" value="2013/09/1" vtype="notEmpty" />
+						</li>
+					</ul>
+				</section>
+				<section class="lightBdColor normalRadius" desc="remind">
+					<span class="placeHolderFont">完成提醒</span>
+					<button class="largeRadius">
+						<span></span>
+					</button>
+				</section>
+				<section class="lightBdColor normalRadius" desc="content">
+					<textarea placeholder="To Do内容"></textarea>
+					<aside></aside>
+				</section>
+			</article>
 		</div>
 		<div id="singleProject">
 			<header id="singleProjectHeader">
 				<ul class="inlineBlock smallRadius lightBdColor">
-					<li class="lightBdColor whiteFont focused">讨论</li>
-					<li class="lightBdColor whiteFont">
+					<li class="lightBdColor whiteFont" pagename="discussion">讨论</li>
+					<li class="lightBdColor whiteFont" pagename="toDoList">
 						To Do
 						<span class="whiteFont">3</span>
 					</li>
-					<li class="lightBdColor whiteFont">工作集</li>
+					<li class="lightBdColor whiteFont" pagename="workStream">工作集</li>
 				</ul>
 			</header>
 			<article id="discussion">
@@ -475,22 +533,46 @@
 										}
 									</p>
 								</nav>
-								<aside>
-									<ul class="lightBdColor inlineBlock normalRadius">
-										@for(attachments ->> a){
-											<li attachmenttype="{a.type}">
-												<a  class="normalRadius lightBdColor" href="javascript:void(0);">
-													<img src="{a.src}" />
-												</a>
-											</li>
-										}
-									</ul>
+								<aside class="lightBdColor inlineBlock normalRadius">
+									@for(attachments ->> a){
+										<a attachmenttype="{a.type}" class="normalRadius lightBdColor" href="javascript:void(0);">
+											<img src="{a.src}" />
+										</a>
+									}
 								</aside>
 							</dd>
 						</script>
 					</header>
 					<figure></figure>
 				</section>
+			</article>
+			<article id="toDoList">
+				<section class="toDoList_content">
+					<dl>
+						<dt class="lightBgColor whiteFont smallRadius">未完成的To Do</dt>
+						<dd></dd>
+					</dl>
+					<dl>
+						<dt class="lightBgColor whiteFont smallRadius">完成的To Do</dt>
+						<dd></dd>
+					</dl>
+				</section>
+			</article>
+			<article id="workStream">
+				<ul></ul>
+				<script id="workStream_info_html" type="text/html">
+					@for(workStream ->> w){
+						<li>
+							<figure>
+								<p class="largeAvatarPanel">
+									<img src="{w.user.avatar}" />
+								</p>
+								<figcaption>{w.user.name}</figcaption>
+							</figure>
+							<aside></aside>
+						</li>
+					}
+				</script>
 			</article>
 		</div>
 	</div>

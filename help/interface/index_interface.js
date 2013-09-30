@@ -190,7 +190,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				return : DS_toDoInfo
 			}
 		*/
-		["getToDo",				new Text("url?id={id}"),					"", true],
+		["getToDoInfo",				new Text("url?id={id}"),					"", true],
 
 		/*
 			{

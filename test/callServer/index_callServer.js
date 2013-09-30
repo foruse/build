@@ -41,8 +41,6 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getProjects",			"url",										"", true],
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
 		["getSingleProject",	new Text("url?id={id}"),					"", true],
-		["getToDo",				new Text("url?id={id}"),					"", true],
-		["getToDoList",			new Text("url?id={id}"),					"",	true],
 		["getUser",				new Text("url?id={id}"),					"", true],
 		["globalSearch",		new Text("url?search={search}"),			"", true],
 		["invitation",			new Text("url?emails={emails}"),			""],
@@ -50,6 +48,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["myInformation",		"url",										"", true],
 		["praise",				new Text("url?messageId={messageId}"),		""],
 		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""],
+		["getToDoInfo",				new Text("url?id={id}"),					"", true],
+		["getToDoList",			new Text("url?id={id}"),					"",	true],
 		["sendToDo",			new Text("url?title={title}&remind={remind}&desc={desc}&attachments={attachments}&date={date}"), "POST"],
 		["toDoCompleted",		new Text("url?id={id}"),					""],
 		["getWorkStream",		new Text("url?id={id}"),					"", true]
@@ -223,7 +223,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			return data;
 		},
-		getToDo : function(data){
+		getToDoInfo : function(data){
 			data = Index.Deep.getToDoInfo();
 
 			return data;

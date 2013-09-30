@@ -10,28 +10,36 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 				project_partners : params.users
 			});
 		},
-		// getLoginInfo : function(){},
+		getLoginInfo : function(_params, complete){
+			Mdls.User.read(function(data){
+				complete(data);
+			});
+		},
 		getPartnerGroups : function(_params, complete){
 			Mdls.Partner_Groups.read(complete);
 		},
 		getPartners : function(params, complete){
 			Mdls.Partner_Groups.get_group_users(params.groupId, complete);
 		},
-		// getSchedules : function(){ }
+		// getSchedules : function(){ },
 		getSingleProject : function(params, complete){
 			Mlds.Project.read(params.id, complete);
 		},
 		getUser : function(params, complete){
 			Mlds.Partner.read(params.id, complete);
 		},
-		// globalSearch : function(){ }
-		// invitation : function(){ }
-		// login : function(){	}
+		// globalSearch : function(){ },
+		// invitation : function(){ },
+		// login : function(){ },
 		myInformation : function(_params, complete){
 			Mlds.User.read(complete);
 		},
-		// praise : function(){ }
-		// register : function(){ }
+		// praise : function(){ },
+		// register : function(){ },
+		// toDoCompleted : function(){ },
+		// sendToDo : function(){ },
+		// getToDoInfo : function(){ },
+		// getToDoList : function(){ }
 	});
 
 
