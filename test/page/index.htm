@@ -558,6 +558,22 @@
 					</dl>
 				</section>
 			</article>
+			<article id="workStream">
+				<ul></ul>
+				<script id="workStream_info_html" type="text/html">
+					@for(workStream ->> w){
+						<li>
+							<figure>
+								<p class="largeAvatarPanel">
+									<img src="{w.user.avatar}" />
+								</p>
+								<figcaption>{w.user.name}</figcaption>
+							</figure>
+							<aside></aside>
+						</li>
+					}
+				</script>
+			</article>
 		</div>
 	</div>
 	<div id="mask" action="none">

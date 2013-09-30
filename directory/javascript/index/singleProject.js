@@ -192,6 +192,29 @@ this.ToDoList = (function(ProjectPanel, AnchorList, formatKey){
 	}
 ));
 
+this.WorkStream = (function(ProjectPanel, ProjectAnchorList){
+	function WorkStream(selector, infoHtml){
+		var workStream = this;
+
+		this.attach({
+			loadproject : function(e){
+				var project = e.project;
+				
+				CallServer.open("getWorkStream", { id : project.id }, function(data){
+					workStream.find(">ul").innerHTML = infoHtml.render({ workSteam : data });
+				});
+			}
+		});
+	};
+	WorkStream = new NonstaticClass(WorkStream, "Bao.Page.Index.SingleProject.WorkStream", ProjectPanel.prototype);
+
+	return WorkStream.constructor;
+}(
+	this.ProjectPanel,
+	Bao.UI.Control.List.ProjectAnchorList
+));
+
+
 this.Self = (function(Header){
 	function Self(selector){
 		///	<summary>

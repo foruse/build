@@ -51,7 +51,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["praise",				new Text("url?messageId={messageId}"),		""],
 		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""],
 		["sendToDo",			new Text("url?title={title}&remind={remind}&desc={desc}&attachments={attachments}&date={date}"), "POST"],
-		["toDoCompleted",		new Text("url?id={id}"),					""]
+		["toDoCompleted",		new Text("url?id={id}"),					""],
+		["getWorkStream",		new Text("url?id={id}"),					"", true]
 	], allHandlers);
 
 	return CallServer;
@@ -247,6 +248,26 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		},
 		sendToDo : function(data){
 			data = { id : Bao.Test.DummyData.Generate.Number.random(15) };
+
+			return data;
+		},
+		getWorkStream : function(data){
+			var ws = [];
+
+			jQun.forEach(Bao.Test.DummyData.Generate.Number.random(15), function(){
+				var toDoList = [];
+
+				jQun.forEach(Bao.Test.DummyData.Generate.Number.random(5), function(){
+					toDoList.push(Index.Deep.getToDoInfo());
+				});
+
+				ws.push({
+					toDoList : toDoList,
+					user : Index.Common.getUser()
+				});
+			}, this);
+
+			data = ws;
 
 			return data;
 		}

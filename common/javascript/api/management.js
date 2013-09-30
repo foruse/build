@@ -82,6 +82,10 @@ this.Loader = (function(Storage, Index, HTML){
 			this.load("singleProject");
 			return new Index.SingleProject.ToDoList("#toDoList");
 		},
+		workStream : function(){
+			this.load("singleProject");
+			return new Index.SingleProject.WorkStream("#workStream", new HTML("workStream_info_html", true));
+		}
 	});
 
 	return Loader;

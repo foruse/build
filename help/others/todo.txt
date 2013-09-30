@@ -7,6 +7,7 @@
 	* 优化SingleProject的项目id问题，记录一次，分配到所有子panel，要逻辑清晰，类与类之间不要太多纠葛。
 	* 优化CallServer,对某些包含性的访问，例如project : { users : [] }，就要把project和user都存起来。
 	* 优化CallServer,上传和下载的判断：new UploadUrl() 或 new DownloadUrl();
+	* 附件
 
 ★★★★
 	* img元素未加载完成前先隐藏
