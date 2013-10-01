@@ -4,15 +4,19 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 	Models = new StaticClass(Models);
 
 	Models.properties({
-		addProject : function(params){
+		addProject : function(params, complete){
+			params = jQun.set({ descr : params.desc }, params);
+
 			Mdls.Project.create({
 				project : jQun.except(params, ["users"]),
 				project_partners : params.users
+			}, function(){
+				complete();
 			});
 		},
 		getLoginInfo : function(_params, complete){
 			Mdls.User.read(function(data){
-				complete(data);
+				Mdls.UsersCounter.read(complete);
 			});
 		},
 		getPartnerGroups : function(_params, complete){
@@ -25,15 +29,23 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 		getSingleProject : function(params, complete){
 			Mlds.Project.read(params.id, complete);
 		},
+		getProjects : function(params, complete){
+			Mdls.Project.read(params, complete);
+		},
 		getUser : function(params, complete){
 			Mlds.Partner.read(params.id, complete);
 		},
 		// globalSearch : function(){ },
 		// invitation : function(){ },
-		// login : function(){ },
+		login : function(params, complete){
+			Mdls.User.login(params, complete);
+		},
 		myInformation : function(_params, complete){
 			Mlds.User.read(complete);
 		},
+		getMessages : function(params, complete){
+			
+		}
 		// praise : function(){ },
 		// register : function(){ },
 		// toDoCompleted : function(){ },
@@ -114,6 +126,8 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 			data.projects.forEach(function(pro){
 				pro.status = 1;
 			});
+
+			data.pageMax = data.pageIndex + (data.pageSize - data.emptyFolders === 0 ? 0 : 1);
 
 			return data;
 		},

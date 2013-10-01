@@ -129,10 +129,10 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, loginEvent){
 
 		loginInfoManagement.attach({
 			login : function(e){
-				login.login();
+				login.login(e.email, e.password);
 			},
 			register : function(e){
-				login.register(e.eamil, e.name, e.pwd);
+				login.register(e.email, e.name, e.password);
 			}
 		});
 
@@ -257,7 +257,7 @@ this.CreateFirstProject = (function(){
 						title : namePanel.find("input").value,
 						color : createFirstProject.find("aside>button.selected").get("colormark", "attr"),
 						desc : createFirstProject.find("li:last-child>textarea").innerHTML,
-						user : []
+						users : []
 					}, function(data){
 						Global.history.go("invitation");
 					});

@@ -54,7 +54,10 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 		
 		/*
 			{
-				params : null,
+				params : {
+					pageIndex : 1, // number
+					pageSize : 15 // number
+				},
 				return : data = {
 					projects : DS_project,
 					pageIndex : 1, // number
@@ -205,6 +208,22 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			}
 		*/
 		["getToDoList",			new Text("url?id={id}"),					"",	true],
+
+
+		/*
+			{
+				params : {
+					id : 123, // number : the id of the type(project or todo)
+					type : "project" // string : "project" or "todo"
+				},
+				return : [
+					DS_message,
+					// ..
+					DS_message
+				]
+			}
+		*/
+		["getMessages",			new Text("url?id={id}&type={type}"),		"", true]
 	]);
 }
 }(
