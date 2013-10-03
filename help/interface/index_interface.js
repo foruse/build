@@ -51,13 +51,22 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			}
 		*/
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
-		
+
 		/*
 			{
 				params : {
-					pageIndex : 1, // number
-					pageSize : 15 // number
-				},
+					name : "1234",
+					users : [
+						
+					]
+				}
+			}
+		*/
+		["createGroup",			new Text("url?name={name}&users={users}"),	""],
+		
+		/*
+			{
+				params : null,
 				return : data = {
 					projects : DS_project,
 					pageIndex : 1, // number
@@ -70,7 +79,20 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 		["getProjects",			"url",										"", true],
 		
 		/*
-			undefined
+			{
+				params : {
+					last : 111111111, // number : time ticks
+					next : 111111111 // number : time ticks
+				},
+				return [
+					projects : [
+						DS_project,
+						// ...,
+						DS_project
+					],
+					time : 111111, // number : time ticks
+				]
+			}
 		*/
 		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
 		
@@ -223,7 +245,22 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				]
 			}
 		*/
-		["getMessages",			new Text("url?id={id}&type={type}"),		"", true]
+		["getMessages",			new Text("url?id={id}&type={type}"),		"", true],
+
+		/*
+			{
+				params : {
+					projectId : 1234,
+					text : "1234",
+					type : "text" // string : "text", "image" or "voice",
+					attachment : DS_attachment
+				},
+				return {
+					status : 0
+				}
+			}
+		*/
+		["addComment",			new Text("url?text={text}&type={type}"),	""]
 	]);
 }
 }(

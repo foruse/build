@@ -6,6 +6,7 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 	Models.properties({
 		addProject : function(params, complete){
 			params = jQun.set({ descr : params.desc }, params);
+			delete params.desc;
 
 			Mdls.Project.create({
 				project : jQun.except(params, ["users"]),
@@ -45,13 +46,30 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 		},
 		getMessages : function(params, complete){
 			
-		}
+		},
 		// praise : function(){ },
 		// register : function(){ },
 		// toDoCompleted : function(){ },
 		// sendToDo : function(){ },
 		// getToDoInfo : function(){ },
-		// getToDoList : function(){ }
+		// getToDoList : function(){ },
+		addComment : function(params, complete){
+            var _params = {};
+
+            switch (params.type) {
+                case "text":
+                    _params = {
+                        project_id : params.projectId,
+                        content : params.text,
+                        type : params.type
+                    };
+                    break;
+                case "voice":
+                    break;
+            }
+
+            Mdls.ProjectChat.send_message(_params, complete);
+		}
 	});
 
 
@@ -127,7 +145,7 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 				pro.status = 1;
 			});
 
-			data.pageMax = data.pageIndex + (data.pageSize - data.emptyFolders === 0 ? 0 : 1);
+			data.pageMax = data.pageIndex + (data.emptyFolders > 0 ? 0 : 1);
 
 			return data;
 		},
@@ -148,6 +166,17 @@ this.CallServer = (function(Mdls, Wait, Stroage, allHandlers){
 			return {
 				schedules : data
 			};
+		},
+		getMessages : function(data){
+			var id = Bao.Global.loginUser.id;
+
+			data.forEach(function(dt){
+				var poster = dt.poster;
+
+				poster.isLoginUser = poster.id === id;
+			});
+
+			return data;
 		}
 	}
 ));
