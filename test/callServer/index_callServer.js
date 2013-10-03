@@ -53,7 +53,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["sendToDo",			new Text("url?title={title}&remind={remind}&desc={desc}&attachments={attachments}&date={date}"), "POST"],
 		["toDoCompleted",		new Text("url?id={id}"),					""],
 		["getWorkStream",		new Text("url?id={id}"),					"", true],
-		["addComment",			new Text("url?text={text}&type={type}&projectId={projectId}&attachment={attachment}"),	""]
+		["addComment",			new Text("url?text={text}&type={type}&projectId={projectId}&attachment={attachment}"),	""],
+		["createGroup",		new Text("url?users=[users]&name={name}"),	""]
 	], allHandlers);
 
 	return CallServer;
