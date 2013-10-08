@@ -447,6 +447,22 @@ this.ChatInput = (function(messageCompletedEvent, reader){
 					inputClassList.toggle("voice");
 					return;
 				}
+			},
+			touchstart : function(){
+				// 如果有voice类，说明是语音输入状态
+				if(inputClassList.contains("voice")){
+					Voice.recordStart(function(path){
+						messageCompletedEvent.setEventAttrs({
+							message : {
+								text : "",
+								time : new Date().getTime(),
+								type : "voice"
+							}
+						});
+						messageCompletedEvent.trigger(chatInput[0]);
+					});
+					return;
+				}
 			}
 		});
 
@@ -478,7 +494,7 @@ this.ChatInput = (function(messageCompletedEvent, reader){
 					return;
 				}
 
-				if(!file.type.match(/^image\//)){
+				if(!file.name.match(/\.(png|jpg|jpeg|bmp|gif)$/)){
 					alert("请选择图像文件！");
 					this.value = "";
 					return;
@@ -495,8 +511,8 @@ this.ChatInput = (function(messageCompletedEvent, reader){
 			messageCompletedEvent.setEventAttrs({
 				message : {
 					attachment : {
-						src : this.result,
-						path : imagePath
+						base64 : this.result,
+						src : imagePath
 					},
 					text : "",
 					time : new Date().getTime(),
@@ -542,6 +558,10 @@ this.ChatList = (function(ChatInput, ChatListContent, listPanelHtml){
 					isPraisedBySelf : false,
 					poster : poster
 				});
+
+				if(message.type === "image"){
+					message.attachment = { src : message.attachment.base64 };
+				}
 
 				chatListContent.appendMessageToGroup(message);
 			}
