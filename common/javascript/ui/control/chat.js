@@ -451,18 +451,28 @@ this.ChatInput = (function(messageCompletedEvent, reader){
 			touchstart : function(){
 				// 如果有voice类，说明是语音输入状态
 				if(inputClassList.contains("voice")){
-					Voice.recordStart(function(path){
-						messageCompletedEvent.setEventAttrs({
-							message : {
-								text : "",
-								time : new Date().getTime(),
-								type : "voice"
-							}
-						});
-						messageCompletedEvent.trigger(chatInput[0]);
-					});
+					chatInput.recordStart();
 					return;
 				}
+			},
+			recordcomplete : function(e){
+				messageCompletedEvent.setEventAttrs({
+					message : {
+						text : "",
+						time : new Date().getTime(),
+						type : "voice"
+					}
+				});
+				messageCompletedEvent.trigger(chatInput[0]);
+			}
+		});
+
+		jQun(window).attach({
+			touchend : function(){
+				chatInput.recordStop();
+			},
+			touchcancel : function(){
+				chatInput.recordStop();
 			}
 		});
 
@@ -523,6 +533,24 @@ this.ChatInput = (function(messageCompletedEvent, reader){
 		};
 	};
 	ChatInput = new NonstaticClass(ChatInput, "Bao.UI.Control.Chat.ChatInput", Panel.prototype);
+
+	ChatInput.properties({
+		isRecording : false,
+		recordStart : function(){
+			if(this.isRecording)
+				return;
+
+			Voice.recordStart(this[0]);
+			this.isRecording = true;
+		},
+		recordStop : function(){
+			if(!this.isRecording)
+				return;
+
+			Voice.recordStop();
+			this.isRecording = false;
+		}
+	});
 
 	return ChatInput.constructor;
 }(

@@ -17,13 +17,12 @@ this.Voice = (function(Panel, VoiceMessage, recordCompleteEvent){
 			VoiceMessage.play(id);
 		},
 		recordStart : function(target){
-			if(!VoiceMessage)
+			if(!VoiceMessage){
+				recordCompleteEvent.trigger(target);
 				return;
+			}
 
-			voiceMessage.record_start(function(path){
-				recordCompleteEvent.setEventAttrs({
-					voicePath : path
-				});
+			voiceMessage.record_start(function(){
 				recordCompleteEvent.trigger(target);
 			});
 		},
