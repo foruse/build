@@ -1,5 +1,5 @@
 ﻿(function(Bao, StaticClass){
-this.Global = (function(Fixed, Management, HTML){
+this.Global = (function(Fixed, Management, HTML, Browser){
 	function Global(){
 		///	<summary>
 		///	全局类，用于存储页面中的一些全局属性。
@@ -8,10 +8,15 @@ this.Global = (function(Fixed, Management, HTML){
 
 		jQun(window).attach({
 			appload : function(){
-				//jQun("body").set("zoom", window.screen.width / 640, "css");
-			
 				// 初始化历史记录
 				var history = new Management.History();
+
+				//jQun("body").set("zoom", window.screen.width / 640, "css");
+
+				// iphone ios7标题栏css兼容
+				if(Browser.isMobile && Browser.agent === "IPhone" && Browser.version === "7.0"){
+					jQun(".main").setCSSPropertyValue("top", "20px");
+				}
 
 				Global.assign({
 					history :　history,
@@ -43,7 +48,8 @@ this.Global = (function(Fixed, Management, HTML){
 }(
 	Bao.UI.Fixed,
 	Bao.API.Management,
-	jQun.HTML
+	jQun.HTML,
+	jQun.Browser
 ));
 
 Bao.members(this);

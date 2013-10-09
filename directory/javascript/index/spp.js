@@ -5,7 +5,7 @@ this.Schedule = (function(Calendar, ProjectAnchorList, groupingHtml){
 			dateData : data
 		}));
 
-		new ProjectAnchorList(data.projects).appendTo(this.find("dd")[0]);
+		new ProjectAnchorList(data.toDos).appendTo(this.find("dd")[0]);
 	};
 	Grouping = new NonstaticClass(Grouping, null, Panel.prototype);
 
