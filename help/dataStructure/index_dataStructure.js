@@ -81,15 +81,18 @@ with(this){
 	this.DS_scheduleToDoInfo = {
 		title : "sss",
 		desc : "sadasda",
-		color : 1,
+		color : 1, // number : from 0 to 5(0 : orange, 1 : tan, 2 : cyan, 3 : blue, 4 : henna, 5 : purple)
 		id : 1,
-		level : "",
+		level : 1, // number : project level
+		isSendBySelf : false // boolean
 	};
 
 	this.DS_schedule = {
 		time : 111, // number : time ticks
 		toDos : [
-			
+			DS_scheduleToDoInfo,
+			// ...
+			DS_scheduleToDoInfo
 		]
 	};
 }
