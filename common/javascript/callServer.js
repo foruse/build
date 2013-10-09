@@ -1,8 +1,7 @@
 ﻿(function(Bao, StaticClass, Text, Index) {
     this.CallServer = (function(Mdls, Wait, Stroage, allHandlers) {
-        function Models() {
-        }
-        ;
+        function Models(){};
+
         Models = new StaticClass(Models);
         Models.properties({
             addProject: function(params, complete) {
