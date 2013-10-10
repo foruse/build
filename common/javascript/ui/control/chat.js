@@ -456,19 +456,6 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 						return;
 					}
 				}
-			},
-			recordcomplete : function(e){
-				messageCompletedEvent.setEventAttrs({
-					message : {
-						attachment : {
-							src : e.src
-						},
-						text : "",
-						time : new Date().getTime(),
-						type : "voice"
-					}
-				});
-				messageCompletedEvent.trigger(chatInput[0]);
 			}
 		});
 
@@ -546,14 +533,25 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 
 			Global.mask.fillBody("", true);
 			Global.mask.show("voiceRecording");
-			Voice.recordStart(this[0]);
+			Voice.recordStart();
 		},
 		recordStop : function(){
 			if(!Voice.isRecording)
 				return;
 
 			Global.mask.hide();
-			Voice.recordStop();
+
+			messageCompletedEvent.setEventAttrs({
+				message : {
+					attachment : {
+						src : Voice.recordStop()
+					},
+					text : "",
+					time : new Date().getTime(),
+					type : "voice"
+				}
+			});
+			messageCompletedEvent.trigger(this[0]);
 		}
 	});
 

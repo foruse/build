@@ -1,5 +1,5 @@
 ﻿(function(Media, NonstaticClass, StaticClass){
-this.Voice = (function(Panel, Models, recordCompleteEvent){
+this.Voice = (function(Panel, Models){
 	function Voice(){};
 	Voice = new StaticClass(Voice, "Bao.API.Media");
 
@@ -17,42 +17,31 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 
 			Models.VoiceMessage.play(id);
 		},
-		recordStart : function(target){
+		recordStart : function(){
 			if(this.isRecording)
 				return;
 
-			var Voice = this;
-
-			if(!Models.VoiceMessage){
-				recordCompleteEvent.setEventAttrs({
-					src : ""
-				});
-				recordCompleteEvent.trigger(target);
-				return;
-			}
-
-			var Voice = this;
-
 			this.isRecording = true;
 
-			Models.VoiceMessage.record_start(function(src){
-				Voice.isRecording = false;
-
-				recordCompleteEvent.setEventAttrs({
-					src : src
-				});
-				recordCompleteEvent.trigger(target);
-			});
-		},
-		recordStop : function(){
 			if(!Models.VoiceMessage)
 				return;
 
+			var Voice = this;
+
+			Models.VoiceMessage.record_start(function(src){
+				Voice.src = src;
+			});
+		},
+		recordStop : function(target){
 			if(!this.isRecording)
 				return;
 
-			Models.VoiceMessage.record_stop();
+			if(Models.VoiceMessage){
+				Models.VoiceMessage.record_stop();
+			}
+
 			this.isRecording = false;
+			return this.src;
 		},
 		save : function(){
 			if(!Models.VoiceMessage)
@@ -60,6 +49,7 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 
 			Models.VoiceMessage.save();
 		},
+		src : "",
 		stop : function(){
 			if(!Models.VoiceMessage)
 				return;
@@ -71,9 +61,7 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 	return Voice;
 }(
 	Bao.API.DOM.Panel,
-	window.Models || {},
-	// recordCompleteEvent
-	new jQun.Event("recordcomplete")
+	window.Models || {}
 ));
 
 Media.members(this);
