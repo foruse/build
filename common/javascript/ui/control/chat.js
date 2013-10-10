@@ -540,23 +540,20 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 	ChatInput = new NonstaticClass(ChatInput, "Bao.UI.Control.Chat.ChatInput", Panel.prototype);
 
 	ChatInput.properties({
-		isRecording : false,
 		recordStart : function(){
-			if(this.isRecording)
+			if(Voice.isRecording)
 				return;
 
 			Global.mask.fillBody("", true);
 			Global.mask.show("voiceRecording");
 			Voice.recordStart(this[0]);
-			this.isRecording = true;
 		},
 		recordStop : function(){
-			if(!this.isRecording)
+			if(!Voice.isRecording)
 				return;
 
 			Global.mask.hide();
 			Voice.recordStop();
-			this.isRecording = false;
 		}
 	});
 
