@@ -335,6 +335,8 @@ this.MessageGroup = (function(MessageList, messageAppendedEvent, singleNumRegx, 
 			var msg = this.messageList.push(message);
 
 			msg.appendTo(this.find(">dd>ol")[0]);
+
+			messageAppendedEvent.setEventAttrs({ messagePanel : msg });
 			messageAppendedEvent.trigger(this[0]);
 			return msg;
 		},
@@ -472,14 +474,7 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 		this.find(">p>input").attach({
 			keyup : function(e){
 				if(e.keyCode === 13){
-					messageCompletedEvent.setEventAttrs({
-						message : {
-							text : this.value,
-							time : new Date().getTime(),
-							type : "text"
-						}
-					});
-					messageCompletedEvent.trigger(chatInput[0]);
+					chatInput.messageCompleted("text", this.value);
 					
 					this.value = "";
 					return;
@@ -510,23 +505,31 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 
 		// 选择文件
 		reader.onload = function(e){
-			messageCompletedEvent.setEventAttrs({
-				message : {
-					attachment : {
-						base64 : this.result,
-						src : imagePath
-					},
-					text : "",
-					time : new Date().getTime(),
-					type : "image"
+			chatInput.messageCompleted(
+				"image", 
+				"",
+				{
+					base64 : this.result,
+					src : imagePath
 				}
-			});
-			messageCompletedEvent.trigger(chatInput[0]);
+			);
 		};
 	};
 	ChatInput = new NonstaticClass(ChatInput, "Bao.UI.Control.Chat.ChatInput", Panel.prototype);
 
 	ChatInput.properties({
+		messageCompleted : function(type, _text, _attachment){
+			// 当用户输入完成，提交的时候触发
+			messageCompletedEvent.setEventAttrs({
+				message : {
+					attachment : _attachment,
+					text : _text,
+					time : new Date().getTime(),
+					type : type
+				}
+			});
+			messageCompletedEvent.trigger(this[0]);
+		},
 		recordStart : function(){
 			if(Voice.isRecording)
 				return;
@@ -540,18 +543,7 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 				return;
 
 			Global.mask.hide();
-
-			messageCompletedEvent.setEventAttrs({
-				message : {
-					attachment : {
-						src : Voice.recordStop()
-					},
-					text : "",
-					time : new Date().getTime(),
-					type : "voice"
-				}
-			});
-			messageCompletedEvent.trigger(this[0]);
+			this.messageCompleted("voice", "", { src : Voice.recordStop() });
 		}
 	});
 

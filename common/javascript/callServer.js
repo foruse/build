@@ -212,10 +212,12 @@
                             };
                         },
                         getProjects: function(data) {
+							/*
                             data.projects.forEach(function(pro) {
                                 pro.status = 1;
                             });
-//                            data.pageMax = data.pageIndex + (data.pageSize - data.emptyFolders === 0 ? 0 : 1);
+							data.pageMax = data.pageIndex + (data.pageSize - data.emptyFolders === 0 ? 0 : 1);
+							*/
                             data.pageMax = data.pageIndex + (data.emptyFolders > 0 ? 0 : 1);
                             ;
                             return data;
