@@ -448,11 +448,13 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 					return;
 				}
 			},
-			touchstart : function(){
-				// 如果有voice类，说明是语音输入状态
-				if(inputClassList.contains("voice")){
-					chatInput.recordStart();
-					return;
+			touchstart : function(e, targetEl){
+				if(targetEl.between(">p>button", this).length > 0){
+					// 如果有voice类，说明是语音输入状态
+					if(inputClassList.contains("voice")){
+						chatInput.recordStart();
+						return;
+					}
 				}
 			},
 			recordcomplete : function(e){

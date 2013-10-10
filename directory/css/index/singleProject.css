@@ -142,3 +142,8 @@
 #workStream .anchorList > ul {
 	background-color : #fff;
 }
+
+#titleBar button[action="projectDetails"] {
+	border : 8px solid #f1af0f;
+	background : url(../../../common/image/width12.png) no-repeat 0 -180px content-box content-box;
+}

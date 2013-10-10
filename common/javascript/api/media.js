@@ -4,6 +4,7 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 	Voice = new StaticClass(Voice, "Bao.API.Media");
 
 	Voice.properties({
+		isRecording : false,
 		pause : function(){
 			if(!Models.VoiceMessage)
 				return;
@@ -17,6 +18,11 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 			Models.VoiceMessage.play(id);
 		},
 		recordStart : function(target){
+			if(this.isRecording)
+				return;
+
+			var Voice = this;
+
 			if(!Models.VoiceMessage){
 				recordCompleteEvent.setEventAttrs({
 					src : ""
@@ -28,6 +34,8 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 			var Voice = this;
 
 			Models.VoiceMessage.record_start(function(src){
+				Voice.isRecording = true;
+
 				recordCompleteEvent.setEventAttrs({
 					src : src
 				});
@@ -38,7 +46,11 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 			if(!Models.VoiceMessage)
 				return;
 
+			if(!this.isRecording)
+				return;
+
 			Models.VoiceMessage.record_stop();
+			this.isRecording = true;
 		},
 		save : function(){
 			if(!Models.VoiceMessage)
@@ -57,7 +69,7 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 	return Voice;
 }(
 	Bao.API.DOM.Panel,
-	window.Models,
+	window.Models || {},
 	// recordCompleteEvent
 	new jQun.Event("recordcomplete")
 ));
