@@ -33,8 +33,10 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 
 			var Voice = this;
 
+			this.isRecording = true;
+
 			Models.VoiceMessage.record_start(function(src){
-				Voice.isRecording = true;
+				Voice.isRecording = false;
 
 				recordCompleteEvent.setEventAttrs({
 					src : src
@@ -50,7 +52,7 @@ this.Voice = (function(Panel, Models, recordCompleteEvent){
 				return;
 
 			Models.VoiceMessage.record_stop();
-			this.isRecording = true;
+			this.isRecording = false;
 		},
 		save : function(){
 			if(!Models.VoiceMessage)
