@@ -286,21 +286,28 @@ this.ToDo = (function(ChatList, OverflowPanel, Global){
 
 		chatList.attach({
 			messageappended : function(e){
-				overflowPanel.bottom();
-			},
-			messagecompleted : function(e){
 				var message = e.message;
+
+				overflowPanel.bottom();
+
+				if(!message.isSending)
+					return;
+
+				var type = message.type;
 
 				CallServer.open(
 					"addCommentForToDo",
 					{
-						projectId : projecetId,
+						toDoId : toDo.id,
 						attachment : message.attachment,
 						text : message.text,
-						type : message.type
+						type : type
 					},
-					function(){
-				
+					function(data){
+						if(type !== "voice")
+							return;
+
+
 					}
 				);
 			},
