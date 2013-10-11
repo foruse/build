@@ -468,6 +468,11 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 					inputClassList.toggle("voice");
 					return;
 				}
+
+				if(targetEl.between(">p>input", this).length > 0){
+					targetEl.focus();
+					return;
+				}
 			},
 			touchstart : function(e, targetEl){
 				if(targetEl.between(">p>button", this).length > 0){
