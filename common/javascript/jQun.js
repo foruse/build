@@ -1258,7 +1258,7 @@ this.CSSPropertyCollection = (function(){
 		}
 	});
 
-	forEach(getComputedStyle(document.createElement("div")), function(value, name, CSSStyle){
+	forEach(getComputedStyle(document.documentElement), function(value, name, CSSStyle){
 		// firefox、chrome 与 IE 的 CSSStyleDeclaration 结构都不一样
 		var cssName = isNaN(name - 0) ? name : value;
 
@@ -1988,7 +1988,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 	}
 ));
 
-this.Event = (function(HTMLElementList, window, define, set, toArray){
+this.Event = (function(HTMLElementList, EventTarget, window, define, set, toArray){
 	function Event(name, _init, _type, _initEventArgs){
 		///	<summary>
 		///	DOM事件类。
@@ -2015,13 +2015,29 @@ this.Event = (function(HTMLElementList, window, define, set, toArray){
 			///	应该附加该事件的标签。
 			///	</summary>
 			///	<param name="target" type="string, element">标签名称。</param>
-			var name = this.name, attach = HTMLElementList.prototype.attach;
+			var t = [], name = this.name, attach = HTMLElementList.prototype.attach;
 
-			/* 以后用EventTarget优化此方法 */
+			if(typeof target === "string"){
+				if(target === "*"){
+					if(EventTarget){
+						t.push(EventTarget.prototype);
+					}
+					else {
+						t.push(Node.prototype, window.constructor.prototype);
+					}
+
+					t.push(HTMLElementList.prototype);
+				}
+				else {
+					t.push(document.createElement(target).constructor.prototype);
+				}
+			}
+			else {
+				t.push(target);
+			}
+
 			forEach(
-				typeof target === "string" ?
-					target === "*" ? [Node.prototype, Window.prototype, HTMLElementList.prototype] : [document.createElement(target).constructor.prototype] :
-					[target],
+				t,
 				function(tg){
 					define(tg, "on" + name, this,	{ settable : true, gettable : true });
 				},
@@ -2070,6 +2086,7 @@ this.Event = (function(HTMLElementList, window, define, set, toArray){
 	return Event.constructor;
 }(
 	this.HTMLElementList,
+	window.EventTarget,
 	window,
 	jQun.define,
 	jQun.set,
