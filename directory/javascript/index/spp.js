@@ -48,8 +48,12 @@ this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 				}
 				
 				dateTable.focus(date);
+			},
+			clickanchor : function(e){
+				e.stopPropagation();
+				Global.history.go("toDo").fill(e.anchor);
 			}
-		});
+		}, true);
 	};
 	ScheduleContent = new NonstaticClass(ScheduleContent, null, OverflowPanel.prototype);
 

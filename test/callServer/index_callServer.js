@@ -48,7 +48,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["myInformation",		"url",										"", true],
 		["praise",				new Text("url?messageId={messageId}"),		""],
 		["register",			new Text("url?name={name}&pwd={pwd}&email={email}&validation={validation}"),	""],
-		["getToDoInfo",				new Text("url?id={id}"),					"", true],
+		["getToDo",				new Text("url?id={id}"),					"", true],
 		["getToDoList",			new Text("url?id={id}"),					"",	true],
 		["sendToDo",			new Text("url?title={title}&remind={remind}&desc={desc}&attachments={attachments}&date={date}"), "POST"],
 		["toDoCompleted",		new Text("url?id={id}"),					""],
@@ -234,7 +234,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			return data;
 		},
-		getToDoInfo : function(data){
+		getToDo : function(data){
 			data = Index.Deep.getToDoInfo();
 
 			return data;
