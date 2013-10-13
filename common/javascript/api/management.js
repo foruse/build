@@ -13,6 +13,9 @@ this.Loader = (function(Storage, Index, HTML){
 		addProject : function(){
 			return new Index.Secondary.AddProject("#addProject");
 		},
+		archive : function(){
+			return new Index.Deep.Archive("#archive");
+		},
 		businessCard : function(){
 			return new Index.Secondary.BusinessCard("#businessCard", new HTML(jQun("#businessCard_html")));
 		},

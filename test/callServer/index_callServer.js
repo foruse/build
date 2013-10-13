@@ -55,7 +55,9 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getWorkStream",		new Text("url?id={id}"),					"", true],
 		["addComment",			new Text("url?text={text}&type={type}&projectId={projectId}&attachment={attachment}"),	""],
 		["createGroup",			new Text("url?users=[users]&name={name}"),	""],
-		["getSystemContacts",	"url",										"", true]
+		// 以下是还没有写到interface里的
+		["getSystemContacts",	"url",										"", true],
+		["getAllArchives",		"url",										"", true]
 	], allHandlers);
 
 	return CallServer;
@@ -285,6 +287,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		},
 		getSystemContacts : function(data){
 			data = Index.Common.getUsers();
+
+			return data;
+		},
+		getAllArchives : function(data){
+			data = Index.SPP.getProjects();
 
 			return data;
 		}

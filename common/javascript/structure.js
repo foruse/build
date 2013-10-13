@@ -30,6 +30,7 @@ this.Bao = (function(Bao){
 				Deep : new Namespace({ // ../../directoy/javascript/index/deep.js
 					AboutBaoPiQi : null,
 					Account : null,
+					Archive : null,
 					ProjectManagement : null,
 					QRCode : null,
 					ToDo : null

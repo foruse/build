@@ -477,6 +477,44 @@ this.SendToDo = (function(Validation, Global, validationHandle){
 	}
 ));
 
+this.Archive = (function(AnchorList, OverflowPanel, Global){
+	function Archive(selector){
+		var archive = this, overflowPanel = new OverflowPanel(this.find(">section")[0]);
+
+		this.attach({
+			clickanchor : function(e){
+				e.stopPropagation();
+				Global.history.go("ArchiveDetail").fill(e.anchor);
+			}
+		}, true);
+
+		CallServer.open("getAllArchives", null, function(archives){
+			archives.forEach(function(archive){
+				archive.key = archive.id;
+				archive.desc = new Date(archive.completeDate).toLocaleDateString();
+			});
+			
+			overflowPanel.innerHTML = "";
+			new AnchorList(archives, true).appendTo(overflowPanel[0]);
+
+			archives.forEach(function(archive){
+				overflowPanel.find('li[key="' + archive.id + '"]').classList.add("projectColor_" + archive.color);
+			});
+		});
+	};
+	Archive = new NonstaticClass(Archive, "Bao.Page.Index.Deep.Archive", PagePanel.prototype);
+
+	Archive.override({
+		title : "归档"
+	});
+
+	return Archive.constructor;
+}(
+	Bao.UI.Control.List.AnchorList,
+	Bao.API.DOM.OverflowPanel,
+	Bao.Global
+));
+
 this.ProjectManagement = (function(UserManagementList, AnchorList, Global, anchorListData){
 	function ProjectManagement(selector){
 		var projectManagement = this,

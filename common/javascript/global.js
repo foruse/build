@@ -43,7 +43,7 @@ this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
 				});
 
 				// 首先要登录才会用登录用户的数据
-				history.go("systemContacts");
+				history.go("archive");
 			},
 			login : function(e){
 				Global.loginUser = e.loginUser;
