@@ -38,12 +38,12 @@ this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
 					titleBar : new Fixed.TitleBar(
 						"#titleBar",
 						history,
-						new HTML("title_tools_html", true)
+						new HTML(jQun("#title_tools_html"))
 					)
 				});
 
 				// 首先要登录才会用登录用户的数据
-				history.go("projectManagement").fill(1);
+				history.go("systemContacts");
 			},
 			login : function(e){
 				Global.loginUser = e.loginUser;

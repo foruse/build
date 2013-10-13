@@ -52,6 +52,7 @@ this.Bao = (function(Bao){
 					AddProject : null,
 					BusinessCard : null,
 					SingleProject : null,
+					SystemContacts : null,
 					SystemOption : null
 				}),
 				SingleProject : new Namespace({ // ../../directoy/javascript/index/singleProject.js

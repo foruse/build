@@ -31,7 +31,7 @@
 			<p>
 				<strong></strong>
 			</p>
-			<ul></ul>
+			<ul class="inlineBlock"></ul>
 			<script id="title_tools_html" type="text/html">
 				@for(tools ->> t){
 					<li>
@@ -302,6 +302,20 @@
 					<button class="whiteFont">登出</button>
 				</footer>
 			</article>
+			<article id="systemContacts">
+				<header>通过其他方式邀请</header>
+				<section>
+					<ul class="themeBdColor normalRadius"></ul>
+				</section>
+				<script id="systemContacts_html" type="text/html">
+					@for(contacts ->> contact){
+						<li class="lightBdColor onlyBorderBottom">
+							<span>{contact.name}</span>
+							<small class="grayFont">{contact.email}</small>
+						</li>
+					}
+				</script>
+			</article>
 		</div>
 		<div class="deep">
 			<article id="globalSearch">
@@ -500,11 +514,11 @@
 				</section>
 			</article>
 			<article id="projectManagement">
-				<header></header>
-				<section></section>
+				<header class="smallRadius themeBdColor"></header>
+				<section class="grayFont"></section>
 				<footer>
 					<button class="largeRadius">移入归档</button>
-					<button class="largeRadius">删除项目</button>
+					<button class="largeRadius whiteFont">删除项目</button>
 				</footer>
 			</article>
 		</div>

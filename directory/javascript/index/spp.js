@@ -409,6 +409,10 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 			},
 			beforeshow : function(){
 				partner.load();
+
+				Global.titleBar.find('button[action="addPartner"]').onuserclick = function(){
+					Global.history.go("systemContacts");
+				};
 			}
 		});
 
@@ -418,7 +422,11 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 
 	Partner.override({
 		hideBackButton : true,
-		title : "MY PARTNERS 拍档"
+		title : "MY PARTNERS 拍档",
+		tools : [
+			{ username : "addPartner", action : "addPartner" },
+			{ urlname : "systemOption", action : "set" }
+		]
 	});
 
 	Partner.properties({

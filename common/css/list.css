@@ -168,6 +168,7 @@
 .userManagementList {
 	overflow : hidden;
 	min-height : 74px;
+	padding : 10px 5px;
 }
 .userManagementList dt {
 	width : 112px;

@@ -479,10 +479,52 @@ this.SendToDo = (function(Validation, Global, validationHandle){
 
 this.ProjectManagement = (function(UserManagementList, AnchorList, Global, anchorListData){
 	function ProjectManagement(selector){
-		var anchorList = new AnchorList(anchorListData);
+		var projectManagement = this,
+		
+			anchorList = new AnchorList(anchorListData),
+			
+			userManagementList = new UserManagementList("选择成员").appendTo(this.find(">header")[0]);
 
-		new UserManagementList("选择成员").appendTo(this.find(">header")[0]);
-		anchorList.appendTo(this.find(">section")[0]);
+		this.assign({
+			userManagementList : userManagementList
+		});
+
+		this.attach({
+			beforeshow : function(){
+				Global.titleBar.find('button[action="projectManagement_done"]').onuserclick = function(){
+					CallServer.open("editProjectInfo", {
+						userIds : userManagementList.userList.getAllUsers()
+					}, function(){
+						Global.history.go("singleProject").fill(projectManagement.id);
+					});
+				};
+			},
+			userclick : function(e, targetEl){
+				if(targetEl.between(">footer>button:first-child", this).length > 0){
+					if(confirm("确定将此项目归档吗？")){
+						CallServer.open("archiveProject", {
+							id : projectManagement.id
+						}, function(){
+							// Global.history.go("archive");
+						});
+					}
+
+					return;
+				}
+
+				if(targetEl.between(">footer>button:last-child", this).length > 0){
+					if(confirm("确定将此项目删除吗？")){
+						CallServer.open("removeProject", {
+							id : projectManagement.id
+						}, function(){
+							Global.history.go("project");
+						});
+					}
+
+					return;
+				}
+			}
+		});
 
 		anchorList.attach({
 			clickanchor : function(e){
@@ -490,6 +532,8 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, ancho
 				Global.history.go(e.anchor);
 			}
 		}, true);
+
+		anchorList.appendTo(this.find(">section")[0]);
 	};
 	ProjectManagement = new NonstaticClass(ProjectManagement, "Bao.Page.Index.Deep.ProjectManagement", PagePanel.prototype);
 
@@ -500,11 +544,16 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, ancho
 
 	ProjectManagement.properties({
 		fill : function(id){
+			var projectManagement = this;
+
 			CallServer.open("getSingleProject", { id : id }, function(data){
-				console.log(data);
+				projectManagement.userManagementList.userList.addUsers(data.users);
+
+				Global.titleBar.resetTitle("项目管理：" + data.title);
 			});
 		},
-		id : -1
+		id : -1,
+		userManagementList : undefined
 	});
 
 	return ProjectManagement.constructor;

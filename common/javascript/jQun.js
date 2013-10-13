@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.6.1
- *  本次修改：ElementList类，增加focus和blur方法
+ *  文档状态：1.0.6.2
+ *  本次修改：HTML类，修改参数：允许传入字符串模板和元素标签，如果是元素标签，则取innerHTML作为字符串模板
  *  开发浏览器信息：firefox 20.0+ 、 chrome 26.0+、基于webkit的手机浏览器
  */
 
@@ -1591,7 +1591,7 @@ this.ElementList = (function(NodeList, ChildrenCollection, ClassListCollection, 
 				elements = _parent.querySelectorAll(_selector);
 			} catch(e){
 				if(_parent === doc){
-					console.error('document不支持选择器："' + _selector + '"');
+					console.error('document 不支持选择器："' + _selector + '"');
 					return;
 				}
 
@@ -2093,13 +2093,12 @@ this.Event = (function(HTMLElementList, EventTarget, window, define, set, toArra
 	jQun.toArray
 ));
 
-this.HTML = (function(HTMLElementList, sRegx, fRegx, tReplace){
-	function HTML(str, _isId){
+this.HTML = (function(HTMLElementList, HTMLElement, sRegx, fRegx, tReplace){
+	function HTML(template){
 		///	<summary>
 		///	html模板。
 		///	</summary>
-		///	<param name="str" type="string">html模板源字符串。</param>
-		///	<param name="_isId" type="boolean">给定的字符串是否为id。</param>
+		///	<param name="template" type="string, HTMLElement, jQun.HTMLElementList">html模板源字符串或标签(一般为script标签)。</param>
 
 		// 此类代码还需优化
 		var arr = [], variables = {};
@@ -2109,7 +2108,7 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, tReplace){
 		arr.push(
 			// 使用Text类的replace替换参数
 			tReplace.call({
-				text : (_isId === true ? new HTMLElementList("#" + str).innerHTML : str)
+				text : (typeof template === "string" ? template : template.innerHTML)
 					// 给单引号加保护
 					.split("'").join("\\'")
 					// 替换掉特殊的空白字符
@@ -2196,6 +2195,7 @@ this.HTML = (function(HTMLElementList, sRegx, fRegx, tReplace){
 	return HTML.constructor;
 }(
 	this.HTMLElementList,
+	HTMLElement,
 	// sRegx => space(查找特殊的空白字符)
 	/[\r\t\n]/g,
 	// fRegx => for(查找for语句)

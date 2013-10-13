@@ -54,7 +54,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["toDoCompleted",		new Text("url?id={id}"),					""],
 		["getWorkStream",		new Text("url?id={id}"),					"", true],
 		["addComment",			new Text("url?text={text}&type={type}&projectId={projectId}&attachment={attachment}"),	""],
-		["createGroup",		new Text("url?users=[users]&name={name}"),	""]
+		["createGroup",			new Text("url?users=[users]&name={name}"),	""],
+		["getSystemContacts",	"url",										"", true]
 	], allHandlers);
 
 	return CallServer;
@@ -279,6 +280,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			}, this);
 
 			data = ws;
+
+			return data;
+		},
+		getSystemContacts : function(data){
+			data = Index.Common.getUsers();
 
 			return data;
 		}
