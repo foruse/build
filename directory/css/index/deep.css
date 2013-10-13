@@ -435,3 +435,11 @@
 #workStream li > figure {
 	
 }
+
+#projectManagement {
+	padding : 10px;
+}
+#projectManagement > header {
+	max-height : 200px;
+	overflow : hidden;
+}

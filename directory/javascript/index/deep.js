@@ -477,17 +477,17 @@ this.SendToDo = (function(Validation, Global, validationHandle){
 	}
 ));
 
-this.ProjectManagement = (function(UserManagementList, AnchorList, anchorListData){
+this.ProjectManagement = (function(UserManagementList, AnchorList, Global, anchorListData){
 	function ProjectManagement(selector){
 		var anchorList = new AnchorList(anchorListData);
 
 		new UserManagementList("选择成员").appendTo(this.find(">header")[0]);
 		anchorList.appendTo(this.find(">section")[0]);
-		window.as = anchorList;
+
 		anchorList.attach({
 			clickanchor : function(e){
 				e.stopPropagation();
-				console.log(e);
+				Global.history.go(e.anchor);
 			}
 		}, true);
 	};
@@ -511,6 +511,7 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, anchorListDat
 }(
 	Bao.UI.Control.List.UserManagementList,
 	Bao.UI.Control.List.AnchorList,
+	Bao.Global,
 	// anchorListData
 	[
 		{ title : "发送 To Do", key : "sendToDo" } //,
