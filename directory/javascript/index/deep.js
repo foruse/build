@@ -375,7 +375,7 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 	Bao.Global
 ));
 
-this.SendTodo = (function(Validation, Global, validationHandle){
+this.SendTodo = (function(UserManagementList, Validation, Global, validationHandle){
 	function SendTodo(selector, infoHtml){
 		var sendTodo = this, titleBar = Global.titleBar,
 		
@@ -469,6 +469,7 @@ this.SendTodo = (function(Validation, Global, validationHandle){
 
 	return SendTodo.constructor;
 }(
+	Bao.UI.Control.List.UserManagementList,
 	Bao.API.DOM.Validation,
 	Bao.Global,
 	// validationHandle

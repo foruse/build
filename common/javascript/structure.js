@@ -99,6 +99,7 @@ this.Bao = (function(Bao){
 					UserAnchorList : null,
 					UserIndexList : null,
 					UserList : null,
+					UserManagementList : null,
 					UserSelectionList : null
 				}),
 				Time : new Namespace().members({ // ui/control/time.js
