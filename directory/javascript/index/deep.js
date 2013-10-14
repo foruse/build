@@ -376,22 +376,29 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 ));
 
 this.SendTodo = (function(UserManagementList, Validation, Global, validationHandle){
-	function SendTodo(selector, infoHtml){
+	function SendTodo(selector){
 		var sendTodo = this, titleBar = Global.titleBar,
 		
 			titleValidation = new Validation(this.find('li[desc="title"]>input'), validationHandle),
 
-			dateValidation = new Validation(this.find('li[desc="endDate"]>input[type="text"]'), validationHandle);
+			dateValidation = new Validation(this.find('li[desc="endDate"]>input[type="text"]'), validationHandle),
+			
+			userManagementList = new UserManagementList("请选择该To Do的执行者");
 
 		this.assign({
 			dateValidation : dateValidation,
-			infoHtml : infoHtml,
-			titleValidation : titleValidation
+			titleValidation : titleValidation,
+			userManagementList : userManagementList
 		});
+
+		userManagementList.appendTo(this.header[0]);
+		userManagementList.setMaxLength(1);
 
 		// 提交按钮绑定事件
 		this.attach({
 			beforeshow : function(e){
+				userManagementList.clearUsers();
+
 				titleBar.find('button[action="sendTodoCompleted"]').onuserclick = function(){
 					if(!titleValidation.validate())
 						return;
@@ -457,14 +464,12 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 		fill : function(id){
 			var sendTodo = this;
 
-			CallServer.open("getUser", { id : id }, function(data){
-				sendTodo.find(">header").innerHTML = sendTodo.infoHtml.render(data);
-			});
+			
 		},
-		infoHtml : undefined,
 		// 完成时候是否提醒
 		remind : false,
-		titleValidation : undefined
+		titleValidation : undefined,
+		userManagementList : undefined
 	});
 
 	return SendTodo.constructor;
