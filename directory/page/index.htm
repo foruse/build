@@ -140,7 +140,7 @@
 						<ol class="schedule_list"></ol>
 					</nav>
 					<script id="spp_scheduleSign_html" type="text/html">
-						@for(toDos ->> t){
+						@for(todos ->> t){
 							<span class="projectColor_{t.color}" todoid="{t.id}"></span>
 						}
 					</script>
@@ -334,7 +334,7 @@
 				<script id="globalSearch_group_html" type="text/html">
 					@for([
 						{ title : "项目", group : "projects", color : 0 },
-						{ title : "ToDo", group : "todo", color : 1 },
+						{ title : "Todo", group : "todo", color : 1 },
 						{ title : "评论", group : "comments", color : 2 },
 						{ title : "拍档", group : "partners", color : 3 }
 					] ->> item){
@@ -455,10 +455,10 @@
 					<img src="{QRCode}" />
 				</section>
 			</script>
-			<article id="toDo">
+			<article id="todo">
 				<section>
-					<header class="toDo_header"></header>
-					<script id="toDo_info_html" type="text/html">
+					<header class="todo_header"></header>
+					<script id="todo_info_html" type="text/html">
 						<dl class="largeRadius lightBdColor">
 							<dt class="projectColor_{color} normalRadius">
 								<button class="smallRadius"></button>
@@ -484,9 +484,38 @@
 			<article id="archive">
 				<section></section>
 			</article>
-			<article id="sendToDo">
+			<article id="archivedProjectView">
+				<header>
+					<ul class="inlineBlock"></ul>
+					<script id="archivedProjectView_attachments_html" type="text/html">
+						@for(attachments ->> a){
+							<li attachmentid="{a.id}" attachmenttype="{a.type}">
+								<img src="{a.src}" />
+							</li>
+						}
+					</script>
+				</header>
+				<section></section>
+				<script id="archivedProjectView_todo_html" type="text/html">
+					<dl>
+						<dt>{title}</dt>
+						<dd>
+							<span>{user.name}</span>
+							<p>{desc}</p>
+							<aside class="lightBdColor inlineBlock normalRadius">
+								@for(attachments ->> a){
+									<a class="normalRadius lightBdColor" attachmenttype="{a.type}" href="javascript:void(0);">
+										<img src="{a.src}" />
+									</a>
+								}
+							</aside>
+						</dd>
+					</dl>
+				</script>
+			</article>
+			<article id="sendTodo">
 				<header class="inlineBlock"></header>
-				<script id="sendToDo_info_html" type="text/html">
+				<script id="sendTodo_info_html" type="text/html">
 					<p class="largeAvatarPanel">
 						<img src="{avatar}" />
 					</p>
@@ -529,7 +558,7 @@
 			<header id="singleProjectHeader">
 				<ul class="inlineBlock smallRadius lightBdColor">
 					<li class="lightBdColor whiteFont" pagename="discussion">讨论</li>
-					<li class="lightBdColor whiteFont" pagename="toDoList">
+					<li class="lightBdColor whiteFont" pagename="todoList">
 						To Do
 						<span class="whiteFont">3</span>
 					</li>
@@ -573,8 +602,8 @@
 					<figure></figure>
 				</section>
 			</article>
-			<article id="toDoList">
-				<section class="toDoList_content">
+			<article id="todoList">
+				<section class="todoList_content">
 					<dl>
 						<dt class="lightBgColor whiteFont smallRadius">未完成的To Do</dt>
 						<dd></dd>
