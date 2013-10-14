@@ -523,7 +523,7 @@ this.UserManagementList = (function(UserList, UserSelectionList, OverflowPanel, 
 	Bao.API.DOM.OverflowPanel,
 	// listHtml
 	new HTML([
-		'<div class="userManagementList lightBdColor smallRadius">',
+		'<div class="userManagementList">',
 			'<dl>',
 				'<dt>',
 					'<button action="add"></button>',

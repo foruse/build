@@ -411,7 +411,9 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 						title : titleValidation.validationEl.value,
 						date : sendTodo.endDate.getTime(),
 						remind : sendTodo.remind ? 1 : 0,
-						desc : sendTodo.find("textarea").innerHTML
+						desc : sendTodo.find("textarea").innerHTML,
+						userId : userManagementList.getAllUsers()[0],
+						projectId : userManagementList.projectId
 					}, function(data){
 						Global.history.go("todo").fill(data.id);
 					});
@@ -461,13 +463,17 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 	SendTodo.properties({
 		dateValidation : undefined,
 		endDate : new Date(),
-		fill : function(id){
-			var sendTodo = this;
-
-			
-		},
+		projectId : -1,
 		// 完成时候是否提醒
 		remind : false,
+		resetProjectId : function(id){
+			this.projectId = id;
+		},
+		selectUser : function(userData){
+			var sendTodo = this;
+
+			this.userManagementList.userList.addUsers([userData]);
+		},
 		titleValidation : undefined,
 		userManagementList : undefined
 	});
@@ -640,7 +646,7 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, ancho
 						CallServer.open("archiveProject", {
 							id : projectManagement.id
 						}, function(){
-							// Global.history.go("archive");
+							Global.history.go("archive");
 						});
 					}
 
