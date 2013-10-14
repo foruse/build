@@ -669,8 +669,14 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, ancho
 
 		anchorList.attach({
 			clickanchor : function(e){
+				var anchor = e.anchor;
+
 				e.stopPropagation();
-				Global.history.go(e.anchor);
+
+				if(anchor === "sendTodo"){
+					Global.history.go(anchor).resetProjectId(projectManagement.id);
+					return;
+				}
 			}
 		}, true);
 
@@ -691,6 +697,7 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, ancho
 				projectManagement.userManagementList.userList.addUsers(data.users);
 
 				Global.titleBar.resetTitle("项目管理：" + data.title);
+				projectManagement.id = id;
 			});
 		},
 		id : -1,
