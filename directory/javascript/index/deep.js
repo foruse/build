@@ -407,13 +407,13 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 						return;
 
 					CallServer.open("sendTodo", {
-						attachment : [],
+						attachments : [],
 						title : titleValidation.validationEl.value,
 						date : sendTodo.endDate.getTime(),
 						remind : sendTodo.remind ? 1 : 0,
 						desc : sendTodo.find("textarea").innerHTML,
 						userId : userManagementList.getAllUsers()[0],
-						projectId : userManagementList.projectId
+						projectId : sendTodo.projectId
 					}, function(data){
 						Global.history.go("todo").fill(data.id);
 					});
@@ -569,12 +569,27 @@ this.ArchivedProjectView = (function(AnchorList, Panel){
 
 		this.attach({
 			clickanchor : function(e){
-				var expendEl = archivedProjectView.find('li[key="' + e.anchor + '"]');
+				var expendEl = archivedProjectView.find('li[key="' + e.anchor + '"]'),
 
-				
+					classList = expendEl.classList;
 
 				e.stopPropagation();
+
+				if(classList.contains("expend")){
+					expendEl.find(">dl").remove();
+					classList.remove("expend");
+					return;
+				}
+
+				var el = archivedProjectView.find("li.expend");
+
+				if(el.length > 0){
+					el.find(">dl").remove();
+					el.classList.remove("expend");
+				}
+
 				todoContent.create(e.anchor).appendTo(expendEl[0]);
+				classList.add("expend");
 			}
 		}, true);
 
@@ -592,19 +607,27 @@ this.ArchivedProjectView = (function(AnchorList, Panel){
 			var archiveProjectView = this;
 
 			CallServer.open("getArchivedProject", { id : id }, function(data){
-				var anchorList, todoList = data.todoList, sectionEl = archiveProjectView.section;
+				var anchorList, anchorListData = [],
+					
+					sectionEl = archiveProjectView.section, todoList = data.todoList;
 
 				archiveProjectView.todoContent.resetData(todoList);
 
 				todoList.forEach(function(todo){
-					todo.key = todo.id;
-					todo.desc = new Date(todo.endTime).toLocaleDateString();
-				});
+					var t = this({}, todo);
+
+					this(t, {
+						key : todo.id,
+						desc : new Date(todo.endTime).toLocaleDateString()
+					});
+
+					anchorListData.push(t);
+				}, jQun.set);
 
 				archiveProjectView.header.find("ul").innerHTML = archiveProjectView.attachmentsHtml.render(data.project);
 				
 				sectionEl.innerHTML = "";
-				anchorList = new AnchorList(data.todoList, true)
+				anchorList = new AnchorList(anchorListData, true);
 				anchorList.appendTo(sectionEl[0]);
 				new OverflowPanel(anchorList);
 			});
