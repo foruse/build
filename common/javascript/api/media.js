@@ -10,11 +10,11 @@ this.Voice = (function(Panel, Models){
 
 			Models.VoiceMessage.pause();
 		},
-		play : function(id){
+		play : function(id, type){
 			if(!Models.VoiceMessage)
 				return;
 
-			Models.VoiceMessage.play(id);
+			Models.VoiceMessage.play(id, type);
 		},
 		recordStart : function(){
 			if(!Models.VoiceMessage)
