@@ -272,7 +272,7 @@ this.AboutBaoPiQi = (function(){
 	return AboutBaoPiQi.constructor;
 }());
 
-this.Todo = (function(ChatList, OverflowPanel, Global){
+this.Todo = (function(ChatList, OverflowPanel, Global, Voice){
 	function Todo(selector, infoHtml){
 		var todo = this, chatList = new ChatList(), overflowPanel = new OverflowPanel(this.find(">section")[0]);
 
@@ -321,6 +321,9 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 				}, function(){
 					message.addPraise(loginUser);
 				})
+			},
+			clickplay : function(e){
+				Voice.play(e.voiceId, "todo");
 			}
 		});
 
@@ -374,7 +377,8 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 }(
 	Bao.UI.Control.Chat.ChatList,
 	Bao.API.DOM.OverflowPanel,
-	Bao.Global
+	Bao.Global,
+	Bao.API.Media.Voice
 ));
 
 this.SendTodo = (function(UserManagementList, Validation, Global, validationHandle){

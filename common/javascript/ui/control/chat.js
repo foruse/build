@@ -1,4 +1,4 @@
-﻿(function(Chat, NonstaticClass, Panel, HTML, Global, Voice, set){
+﻿(function(Chat, NonstaticClass, Panel, HTML, Event, Global, set){
 this.Attachment = (function(){
 	function Attachment(type, id, _src, _base64){
 		///	<summary>
@@ -71,7 +71,7 @@ this.ImageBox = (function(imageBoxHtml){
 	].join(""))
 ));
 
-this.Message = (function(Attachment, ImageBox, clickDoEvent, clickPraiseEvent, forEach, messageHtml, praiseHtml){
+this.Message = (function(Attachment, ImageBox, clickDoEvent, clickPraiseEvent, clickPlayEvent, forEach, messageHtml, praiseHtml){
 	function Message(msg){
 		///	<summary>
 		///	单个信息。
@@ -108,7 +108,8 @@ this.Message = (function(Attachment, ImageBox, clickDoEvent, clickPraiseEvent, f
 
 				// 播放语音
 				if(targetEl.between(">a>button", this).length > 0){
-					Voice.play(message.attachment.id);
+					clickPlayEvent.setEventAttrs({ voiceId : message.attachment.id });
+					clickPlayEvent.trigger(targetEl[0]);
 					return;
 				}
 			}
@@ -230,9 +231,11 @@ this.Message = (function(Attachment, ImageBox, clickDoEvent, clickPraiseEvent, f
 	this.Attachment,
 	this.ImageBox,
 	// clickDoEvent
-	new jQun.Event("clickdo"),
+	new Event("clickdo"),
 	// clickPraiseEvent
-	new jQun.Event("clickpraise"),
+	new Event("clickpraise"),
+	// clickPlayEvent
+	new Event("clickplay"),
 	jQun.forEach,
 	// messageHtml
 	new HTML([
@@ -453,7 +456,7 @@ this.ChatListContent = (function(MessageGroup){
 	this.MessageGroup
 ));
 
-this.ChatInput = (function(Global, messageCompletedEvent, reader){
+this.ChatInput = (function(Global, Voice, messageCompletedEvent, reader){
 	function ChatInput(selector){
 		///	<summary>
 		///	聊天输入。
@@ -580,6 +583,7 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 	return ChatInput.constructor;
 }(
 	Bao.Global,
+	Bao.API.Media.Voice,
 	// messageCompletedEvent
 	new jQun.Event("messagecompleted"),
 	// reader
@@ -656,7 +660,7 @@ Chat.members(this);
 	jQun.NonstaticClass,
 	Bao.API.DOM.Panel,
 	jQun.HTML,
+	jQun.Event,
 	Bao.Global,
-	Bao.API.Media.Voice,
 	jQun.set
 ));
