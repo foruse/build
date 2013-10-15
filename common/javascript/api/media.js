@@ -4,7 +4,6 @@ this.Voice = (function(Panel, Models){
 	Voice = new StaticClass(Voice, "Bao.API.Media");
 
 	Voice.properties({
-		isRecording : false,
 		pause : function(){
 			if(!Models.VoiceMessage)
 				return;
@@ -18,11 +17,6 @@ this.Voice = (function(Panel, Models){
 			Models.VoiceMessage.play(id);
 		},
 		recordStart : function(){
-			if(this.isRecording)
-				return;
-
-			this.isRecording = true;
-
 			if(!Models.VoiceMessage)
 				return;
 
@@ -33,14 +27,10 @@ this.Voice = (function(Panel, Models){
 			});
 		},
 		recordStop : function(target){
-			if(!this.isRecording)
-				return;
-
 			if(Models.VoiceMessage){
 				Models.VoiceMessage.record_stop();
 			}
 
-			this.isRecording = false;
 			return this.src;
 		},
 		save : function(){

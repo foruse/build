@@ -307,7 +307,7 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 						if(type !== "voice")
 							return;
 
-
+						e.message.attachment.resetId(data.id);
 					}
 				);
 			},

@@ -545,6 +545,7 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 	ChatInput = new NonstaticClass(ChatInput, "Bao.UI.Control.Chat.ChatInput", Panel.prototype);
 
 	ChatInput.properties({
+		isRecording : false,
 		messageCompleted : function(type, _text, _attachment){
 			// 当用户输入完成，提交的时候触发
 			messageCompletedEvent.setEventAttrs({
@@ -558,17 +559,19 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 			messageCompletedEvent.trigger(this[0]);
 		},
 		recordStart : function(){
-			if(Voice.isRecording)
+			if(this.isRecording)
 				return;
 
+			this.isRecording = true;
 			Global.mask.fillBody("", true);
 			Global.mask.show("voiceRecording");
 			Voice.recordStart();
 		},
 		recordStop : function(){
-			if(!Voice.isRecording)
+			if(!this.isRecording)
 				return;
 
+			this.isRecording = false;
 			Global.mask.hide();
 			this.messageCompleted("voice", "", { src : Voice.recordStop() });
 		}
