@@ -356,9 +356,11 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 
 				todo.find(">section>header").innerHTML = todo.infoHtml.render(data);
 
-				data.messages.forEach(function(msg){
-					this.appendMessageToGroup(msg);
-				}, chatListContent);
+				CallServer.open("getMessages", { id : id, type : "todo" }, function(messages){
+					messages.forEach(function(msg){
+						this.appendMessageToGroup(msg);
+					}, chatListContent);
+				});
 			});
 
 			this.id = id;

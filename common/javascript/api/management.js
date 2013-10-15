@@ -170,7 +170,8 @@ this.History = (function(List, Loader, redirectEvent){
 
 			this.push({
 				self : name,
-				opener : _isBack ? (old ? old.opener : null) : this.getNameByIndex(lastIdx)
+				opener : _isBack ? (old ? old.name : null) : this.getNameByIndex(lastIdx)
+				// opener : _isBack ? (old ? old.opener : null) : this.getNameByIndex(lastIdx)
 			});
 			return panel;
 		},
