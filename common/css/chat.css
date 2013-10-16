@@ -53,6 +53,7 @@
 .chatList_message figcaption > a {
 	height : 22px;
 	width : 100%;
+	text-indent : -11px;
 	display : inline-block;
 	background-image : -webkit-linear-gradient(top, transparent 10px, rgba(0, 0, 0, 0.3) 10px, rgba(0, 0, 0, 0.3) 12px, transparent 12px);
 	border-color : #fff;
@@ -65,9 +66,8 @@
 	height : 22px;
 	width : 22px;
 	border-radius : 22px;
-	position : relative;
-	left : -11px;
 	border : 0 none;
+	position : relative;
 	background : url(../image/width24.png) 0 -725px no-repeat;
 }
 .chatList_message a.playing > button {

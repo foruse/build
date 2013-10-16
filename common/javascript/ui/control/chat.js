@@ -113,14 +113,14 @@ this.ActiveVoice = (function(Attachment, round){
 					return;
 				}
 
-				buttonStyle.marginLeft = round(i * 100 / max) + "%";
-
+				buttonStyle.left = round(i * 100 / max) + "%";
+				
 				if(i !== max){
 					return;
 				}
 
 				setTimeout(function(){
-					buttonStyle.marginLeft = 0;
+					buttonStyle.left = 0;
 					activeVoice.stop();
 				}, 1000);
 			}, this.pausePosition);
@@ -383,7 +383,7 @@ this.MessageGroup = (function(MessageList, messageAppendedEvent, singleNumRegx, 
 		///	</summary>
 		var dt = new Date(time),
 
-			desc = "今天", t = this - dt, hours = dt.getHours();
+			desc = "今天", t = time - dt, hours = dt.getHours();
 				
 		switch(true){
 			case t < 0 :
