@@ -156,7 +156,7 @@ this.History = (function(List, Loader, redirectEvent){
 				}
 			}
 
-			var panel, old, opener;
+			var panel;
 
 			redirectEvent.trigger(window);
 

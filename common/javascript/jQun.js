@@ -2005,7 +2005,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 			///	<summary>
 			///	隐藏元素。
 			///	</summary>
-			return this.set("display", "none", "css");
+			return this.setCSSPropertyValue("display", "none");
 		},
 		metrics : function(name, _value){
 			///	<summary>
@@ -2021,7 +2021,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 				_value += "px";
 			}
 
-			this.set(name, _value, "css");
+			this.setCSSPropertyValue(name, _value);
 			return this;
 		},
 		rect : function(_name){
@@ -2038,7 +2038,7 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 			///	显示元素。
 			///	</summary>
 			///	<param name="_display" type="string">修改元素display的css值。</param>
-			return this.set("display", _display || "block", "css");
+			return this.setCSSPropertyValue("display", _display || "block");
 		},
 		width : function(w){
 			///	<summary>

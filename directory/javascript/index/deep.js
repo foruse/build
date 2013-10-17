@@ -401,8 +401,6 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 		// 提交按钮绑定事件
 		this.attach({
 			beforeshow : function(e){
-				userManagementList.clearUsers();
-
 				titleBar.find('button[action="sendTodoCompleted"]').onuserclick = function(){
 					if(!titleValidation.validate())
 						return;
@@ -410,13 +408,20 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 					if(!dateValidation.validate())
 						return;
 
+					var users = userManagementList.getAllUsers();
+
+					if(users.length === 0){
+						alert("请至少选择一位用户才能发送To Do！");
+						return;
+					}
+
 					CallServer.open("sendTodo", {
 						attachments : [],
 						title : titleValidation.validationEl.value,
 						date : sendTodo.endDate.getTime(),
 						remind : sendTodo.remind ? 1 : 0,
-						desc : sendTodo.find("textarea").innerHTML,
-						userId : userManagementList.getAllUsers()[0],
+						desc : sendTodo.find("textarea").value,
+						userId : users[0],
 						projectId : sendTodo.projectId
 					}, function(data){
 						Global.history.go("todo").fill(data.id);
@@ -424,7 +429,7 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 				};
 			},
 			userclick : function(e, targetEl){
-				if(targetEl.between('li[desc="remind"] button>span')){
+				if(targetEl.between('section[desc="remind"] button>span', this).length > 0){
 					var classList = targetEl.classList;
 
 					sendTodo.remind = !classList.contains("reminded");
@@ -453,10 +458,15 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 		restore : function(){
 			var dateValidation = this.dateValidation;
 
+			this.userManagementList.clearUsers();
+			this.find('li[desc="title"]>input').value = "";
 			this.titleValidation.clearError();
 			dateValidation.clearError();
 			// 设置初始时间
 			dateValidation.validationEl.value = this.endDate.toLocaleDateString();
+			this.find('section[desc="remind"] button>span').classList.remove("reminded");
+			this.remind = false;
+			this.find("textarea").value = "";
 		},
 		title : "发送 To Do",
 		tools : [

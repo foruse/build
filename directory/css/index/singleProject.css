@@ -46,6 +46,7 @@
 	display : inline-block;
 	vertical-align : top;
 	font-size : 16px;
+	display : none;
 }
 #singleProjectHeader > ul span:empty {
 	display : none;

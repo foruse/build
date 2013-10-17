@@ -38,9 +38,11 @@ this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
 				//jQun("body").set("zoom", window.screen.width / 640, "css");
 
 				// iphone ios7标题栏css兼容
+				/*
 				if(Browser.isMobile && Browser.agent === "iPhone" && Browser.majorVersion === "7"){
 					jQun(".main").setCSSPropertyValue("top", "20px");
 				}
+				*/
 
 				Global.assign({
 					history :　history,
@@ -52,7 +54,7 @@ this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
 						new HTML(jQun("#title_tools_html"))
 					)
 				});
-
+	
 				// 首先要登录才会用登录用户的数据
 				history.go("login");
 				// history.go("login").login();
