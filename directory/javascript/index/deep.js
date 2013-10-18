@@ -671,6 +671,7 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, ancho
 			beforeshow : function(){
 				Global.titleBar.find('button[action="projectManagement_done"]').onuserclick = function(){
 					CallServer.open("editProjectInfo", {
+						projectId : projectManagement.id,
 						userIds : userManagementList.userList.getAllUsers()
 					}, function(){
 						Global.history.go("singleProject").fill(projectManagement.id);
@@ -704,6 +705,7 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, ancho
 			},
 			selectusers : function(){
 				CallServer.open("editProjectInfo", {
+					projectId : projectManagement.id,
 					userIds : userManagementList.userList.getAllUsers()
 				});
 			}

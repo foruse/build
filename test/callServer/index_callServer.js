@@ -26,7 +26,10 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 					}
 
 					LoadingBar.hide();
-					_complete(data);
+
+					if(typeof _complete === "function"){
+						_complete(data);
+					}
 				}, 500);
 			});
 		}
