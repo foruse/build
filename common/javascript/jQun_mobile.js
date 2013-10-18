@@ -1,9 +1,4 @@
 ﻿(function(NonstaticClass, StaticClass, Event, TouchEvent, isMobile){
-// 如果是移动设备，则不需要虚拟这些方法及事件
-if(isMobile){
-	return;
-}
-
 (function(appLoadEvent){
 	window.onload = function(){
 		appLoadEvent.trigger(this);
@@ -11,6 +6,11 @@ if(isMobile){
 }(
 	new Event("appload")
 ));
+
+// 如果是移动设备，则不需要虚拟这些方法及事件
+if(isMobile){
+	return;
+}
 
 TouchEvent = (function(List, window, attrs){
 	function Touch(){}

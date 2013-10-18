@@ -442,7 +442,7 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 		// 绑定日期控件事件
 		this.find('li>input[type="date"]').attach({
 			change : function(e){
-				var endDate = sendTodo = this.valueAsDate;
+				var endDate = this.valueAsDate;
 
 				this.previousElementSibling.value = endDate.toLocaleDateString();
 			},
