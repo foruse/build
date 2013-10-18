@@ -701,6 +701,11 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, ancho
 
 					return;
 				}
+			},
+			selectusers : function(){
+				CallServer.open("editProjectInfo", {
+					userIds : userManagementList.userList.getAllUsers()
+				});
 			}
 		});
 

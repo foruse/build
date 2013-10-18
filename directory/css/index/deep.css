@@ -449,7 +449,8 @@
 	border : 0 none;
 }
 #titleBar button[action="projectManagement_done"] {
-	background : #ffc000 url(../../../common/image/width24.png) no-repeat 7px -118px
+	background : #ffc000 url(../../../common/image/width24.png) no-repeat 7px -118px;
+	display : none;
 }
 
 #archive .anchorList > ul {
