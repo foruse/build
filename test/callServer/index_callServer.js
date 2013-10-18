@@ -60,7 +60,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getArchivedProject",	new Text("url?id={id}"),					"", true],
 
 		["addCommentForTodo",			new Text("url?text={text}&type={type}&projectId={projectId}"),	""],
-		["logout",				"",											""]
+		["logout",				"",											""],
+		["editProjectInfo",		"",		new Text("url?users={users}"),		""]
 	], allHandlers);
 
 	return CallServer;

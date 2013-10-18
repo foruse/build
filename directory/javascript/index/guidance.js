@@ -150,7 +150,6 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 
 		new OverflowPanel(this[0]);
 		this.getInfo();
-		this.tryLogin();
 	};
 	Login = new NonstaticClass(Login, "Bao.Page.Index.Guidance.Login", PagePanel.prototype);
 
