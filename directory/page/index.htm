@@ -149,7 +149,7 @@
 				<script id="spp_project_html" type="text/html">
 					@for(projects ->> pro){
 						<li projectid="{pro.id}">
-							<figure class="lightBdColor normalRadius" status="{pro.status}">
+							<figure class="lightBdColor normalRadius" status="{pro.status}" creatorid="{pro.creator.id}">
 								<figcaption class="projectColor_{pro.color} whiteFont">
 									<span>{pro.title}</span>
 									<strong class="inlineBlock">
@@ -646,6 +646,7 @@
 	<script src="../../common/javascript/ui/control/drag.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/list.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/time.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/mask.js" type="text/javascript"></script>
 
 	<script src="../javascript/index/spp.js" type="text/javascript"></script>
 	<script src="../javascript/index/secondary.js" type="text/javascript"></script>

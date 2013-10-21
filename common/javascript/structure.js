@@ -102,6 +102,9 @@ this.Bao = (function(Bao){
 					UserManagementList : null,
 					UserSelectionList : null
 				}),
+				Mask : new Namespace().members({ // ui/control/mask.js
+					Confirm : null
+				}),
 				Time : new Namespace().members({ // ui/control/time.js
 					Calendar : null,
 					DateTable : null
