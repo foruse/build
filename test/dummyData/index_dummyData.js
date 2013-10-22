@@ -109,7 +109,10 @@ this.SingleProject = (function(){
 				title : String.random(),
 				color : Number.random(5),
 				users : Common.getUsers(Number.random(20)),
-				lastMessage : String.random(),
+				lastMessage : {
+					content : String.random(),
+					type : ["text", "voice", "image"][Number.random(2)]
+				},
 				creator : Common.getUser(),
 				creationTime : new Date().getTime(),
 				unread : Number.random(2) > 1 ? 0 : Number.random(),

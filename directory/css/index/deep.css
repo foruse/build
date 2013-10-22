@@ -148,6 +148,14 @@
 #account > header dd {
 	left : 60px;
 }
+#account .largeAvatarPanel > input {
+	position : relative;
+	top : -62px;
+	opacity : 0;
+}
+#account .largeAvatarPanel > input[readonly] {
+	display : none;
+}
 #account > footer, #account > footer > ul {
 	display : none;
 }

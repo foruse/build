@@ -115,7 +115,7 @@
 }
 .discussion_info aside {
 	padding : 5px;
-	display : inline-block;
+	display : none;
 }
 .discussion_info aside:empty {
 	display : none;

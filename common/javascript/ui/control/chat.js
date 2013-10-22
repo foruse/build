@@ -128,7 +128,7 @@ this.ActiveVoice = (function(Attachment, round, lastActiveVoice){
 				buttonStyle.left = round(i * 100 / max) + "%";
 				activeVoice.position = i;
 				
-				if(i !== max){
+				if(i < max){
 					return;
 				}
 

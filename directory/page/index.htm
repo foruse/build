@@ -170,7 +170,7 @@
 										<hr class="projectColor_{pro.color}" />
 									</dd>
 									<dt class="grayFont">
-										<span>{pro.lastMessage}</span>
+										<span messagetype="{pro.lastMessage.type}">{pro.lastMessage.content}</span>
 										<a class="projectColor_{pro.color} whiteFont" unread="{pro.unread}">
 											{pro.unread}
 										</a>
@@ -352,6 +352,7 @@
 						<aside class="lightBdColor">
 							<p class="largeAvatarPanel">
 								<img src="{?~avatar}" />
+								<input type="file" readonly />
 							</p>
 						</aside>
 						<ul>
@@ -360,11 +361,9 @@
 								{ key : "公司", value : company, desc : "company" }
 							] ->> item){
 								<li>
-									<dl class="lightBdColor onlyBorderBottom" desc="{item.desc}">
-										<dt class="placeHolderFont">{item.key}：</dt>
-										<dd>
-											<input class="placeHolderFont" type="text" value="{item.value}" vtype="{item.vtype}" readonly />
-										</dd>
+									<dl class="lightBdColor onlyBorderBottom placeHolderFont" desc="{item.name}">
+										<dt>{item.key}：</dt>
+										<dd>{item.value}</dd>
 									</dl>
 								</li>
 							}

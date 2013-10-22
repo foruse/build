@@ -65,7 +65,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["addCommentForTodo",	new Text("url?text={text}&type={type}&projectId={projectId}"),	""],
 		["logout",				"",											""],
 		["editProjectInfo",		new Text("url?users={users}"),		""],
-		["removeProject",		new Text("url?projectId={projectId}"),		""]
+		["removeProject",		new Text("url?projectId={projectId}"),		""],
+		["editAccount",			new Text("url?positon={positon}&avatar={avatar}&phoneNum={phoneNum}&email={email}&password={password}"), ""]
 	], allHandlers);
 
 	return CallServer;

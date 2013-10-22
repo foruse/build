@@ -121,29 +121,24 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 	}
 ));
 
-this.Account = (function(LoadingBar, Global, ValidationList){
+this.Account = (function(LoadingBar, Global, ValidationList, fileReader){
 	function Account(selector, contentHtml){
 		///	<summary>
 		///	我的账户。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="contentHtml" type="jQun.HTML">内容的html模板</param>
-		var account = this, accountClassList = account.classList,
+		var footerEl,
+		
+			account = this, accountClassList = account.classList,
 
 			validationList = new ValidationList(),
 
 			titleBar = Global.titleBar;
 
 		// 渲染空数据
-		this.innerHTML = contentHtml.render({
-			name : "",
-			company : "",
-			email : "",
-			position : "",
-			phoneNum : "",
-			companyAdress : "",
-			password : ""
-		});
+		this.innerHTML = contentHtml.render(Global.loginUser);
+		footerEl = this.find(">footer");
 
 		// 监听事件
 		this.attach({
@@ -151,8 +146,6 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 				var editButtonEl = titleBar.find('button[action="editAccount"]');
 
 				editButtonEl.onuserclick = function(){
-					var footerEl = account.find(">footer");
-
 					// 如果点击了编辑按钮
 					if(editButtonEl.get("action", "attr") === "editAccount"){
 						// 所有input变为可以输入
@@ -168,12 +161,20 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 					if(!validationList.validate())
 						return;
 
-					editButtonEl.set("action", "editAccount", "attr");
-					// 所有input变为只读
-					account.find("input").set("readonly", "", "attr");
-					// 修改标题栏的标题
-					titleBar.resetTitle("我的账户");
-					footerEl.hide();
+					CallServer.open("editAccount", {
+						position : account.find('dl[desc="position"] input').value,
+						avatar : "",
+						phoneNum : account.find('dl[desc="phoneNum"] input').value,
+						email : account.find('dl[desc="email"] input').value,
+						password : footerEl.classList.contains("editable") ? account.find('dl[desc="rePwd"] input').value : null
+					}, function(data){
+						editButtonEl.set("action", "editAccount", "attr");
+						// 所有input变为只读
+						account.find("input").set("readonly", "", "attr");
+						// 修改标题栏的标题
+						titleBar.resetTitle("我的账户");
+						footerEl.hide();
+					});
 				};
 			},
 			userclick : function(e){
@@ -191,30 +192,60 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 					targetEl.innerHTML = "取消修改";
 					footerClassList.add("editable");
 				}
-			}
-		});
+			},
+			change : function(e){
+				var target = e.target;
+				
+				if(target.type !== "file")
+					return;
 
-		// 访问服务器
-		CallServer.open("myInformation", null, function(info){
-			account.innerHTML = contentHtml.render(info);
+				var file = target.files[0];
 
-			// 验证信息
-			account.find("dl").forEach(function(parent){
-				var parentEl = jQun(parent),
-
-					inputEl = parentEl.find("input"), vtype = inputEl.get("vtype", "attr");
-
-				if(!vtype){
+				if(!file){
 					return;
 				}
 
-				validationList.addValidation(parentEl, function(el, Validation){
-					if(vtype === "rePwd"){
-						return inputEl.value === account.find('dl[desc="editPwd"] input').value;
-					}
+				if(!file.name.match(/\.(png|jpg|jpeg|bmp|gif)$/)){
+					alert("请选择图像文件！");
+					target.value = "";
+					return;
+				}
 
-					return Validation.result(inputEl.value, vtype);
-				});
+				fileReader.readAsDataURL(file);
+				target.value = "";
+			}
+		});
+
+		this.attach({
+			clickavatar : function(e){
+				e.stopPropagation();
+			}
+		}, true);
+
+		fileReader.onload = function(){
+			account.find(".largeAvatarPanel>img").src = this.result;
+		};
+		
+		// 验证信息
+		this.find(">*:not(header) dl").forEach(function(parent){
+			var parentEl = jQun(parent), inputEl = parentEl.find("input"), vtype = inputEl.get("vtype", "attr");
+
+			if(!vtype){
+				return;
+			}
+
+			validationList.addValidation(parentEl, function(el, Validation){
+				if(inputEl.between("input", footerEl[0]).length > 0){
+					if(!footerEl.classList.contains("editable")){
+						return true;
+					}
+				}
+
+				if(vtype === "rePwd"){
+					return inputEl.value === account.find('dl[desc="editPwd"] input').value;
+				}
+
+				return Validation.result(inputEl.value, vtype);
 			});
 		});
 	};
@@ -231,7 +262,9 @@ this.Account = (function(LoadingBar, Global, ValidationList){
 }(
 	Bao.UI.Control.Wait.LoadingBar,
 	Bao.Global,
-	Bao.API.DOM.ValidationList
+	Bao.API.DOM.ValidationList,
+	// fileReader
+	new FileReader()
 ));
 
 this.QRCode = (function(){
