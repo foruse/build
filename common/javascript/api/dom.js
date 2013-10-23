@@ -203,7 +203,7 @@ this.Panel = (function(HTMLElementList){
 	jQun.HTMLElementList
 ));
 
-this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
+this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEvent){
 	function PagePanel(selector){};
 	PagePanel = new NonstaticClass(PagePanel, "Bao.API.DOM.PagePanel", Panel.prototype);
 
@@ -247,6 +247,11 @@ this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
 			beforeShowEvent.trigger(this[0]);
 
 			Panel.prototype.show.apply(this, arguments);
+
+			afterShowEvent.setEventAttrs({
+				currentPanel : this
+			});
+			afterShowEvent.trigger(this[0]);
 			return this;
 		}
 	});
@@ -256,6 +261,10 @@ this.PagePanel = (function(Panel, beforeShowEvent, beforeHideEvent){
 	this.Panel,
 	// beforeShowEvent
 	new Event("beforeshow", function(){
+		this.attachTo("*");
+	}),
+	// afterShowEvent
+	new Event("aftershow", function(){
 		this.attachTo("*");
 	}),
 	// beforeHideEvent

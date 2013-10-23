@@ -165,7 +165,7 @@ this.SPP = (function(SingleProject, Deep){
 
 	SPP.properties({
 		getPartnerGroups : function(){
-			var groups = [], length = Number.random(15);
+			var groups = [], length = Number.random(60);
 
 			for(var i = 0;i < length;i++){
 				groups.push({

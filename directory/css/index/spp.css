@@ -198,20 +198,22 @@
 #partner .navigator {
 	border-color : #00b0d6;
 }
+#partner .navigator > nav, #partner .navigator > nav > dl {
+	display : inline-block;
+}
 #partner .navigator > aside button.focused {
 	background-color : #00b0d6;
 }
 #partner .group {
 	padding : 5px 0;
 	height : 30px;
+	white-space : nowrap;
 }
 #partner .group > dt {
-	position : fixed;
 	padding : 0 5px;
 	background-color : #f7f7f7;
 }
 #partner .group > dd {
-	margin-left : 129px;
 	padding : 1px 0;
 }
 #partner .group button {

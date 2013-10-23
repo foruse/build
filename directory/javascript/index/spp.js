@@ -464,7 +464,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 					partner.focus(el.get("groupId", "attr"), el);
 				}
 			},
-			beforeshow : function(){
+			aftershow : function(){
 				partner.load();
 
 				Global.titleBar.find('button[action="addPartner"]').onuserclick = function(){
@@ -535,14 +535,13 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 
 			// 获取分组数据
 			CallServer.open("getPartnerGroups", null, function(data){
-				var groups = data.groups, len = groups.length;
+				var groups = data.groups;
 				
 				// 添加分组区域
 				navigator.content(partner.groupingHtml.render(data));
-				navigator.tab(Math.ceil(len / 3));
 				navigator.focusTab(0);
 
-				if(len === 0)
+				if(groups.length === 0)
 					return;
 
 				partner.focus(groups[0].id);
