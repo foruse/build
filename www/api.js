@@ -43,13 +43,15 @@
 //
 // PLEASE MENTION THAT SOCKET no interten method should be improved with .on("error"  ...etc   ---> in production
 
-
+CURRENT_DEVICE;
 BROWSER_TEST_VERSION = function check_dev() {
     var ua = navigator.userAgent.toLowerCase();
     if (ua.match(/(iphone|ipod|ipad)/i)) {
         device = "ios";
+        CURRENT_DEVICE = "ios";
     } else if (ua.match(/android/i)) {
         device = "android";
+        CURRENT_DEVICE = "android";
     } else if (ua.match(/blackberry/i)) {
         device = "blackberry";
     } else if (ua.match(/windows phone os 7.5/i)) {
@@ -91,10 +93,11 @@ function onDeviceReady() {
             file_upload_url: "upload",
             sockets: ""
         },
-        server_url: "http://115.28.131.52:3000",
-//        server_url: "http://212.8.40.254:5959",
+//        server_url: "http://115.28.131.52:3000",
+        server_url: "http://212.8.40.254:5959",
 //        server_url: "http://192.168.200.110:3000",
-        audio_format: "wav",
+//        audio_format: "wav",
+        audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO"//,
 //        route: function(url) {
 //            return  this.server_url + this.routes[url];
