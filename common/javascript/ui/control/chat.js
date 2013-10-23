@@ -394,14 +394,14 @@ this.MessageList = (function(List, Message){
 	this.Message
 ));
 
-this.MessageGroup = (function(MessageList, messageAppendedEvent, singleNumRegx, messageGroupHtml){
+this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumRegx, messageGroupHtml){
 	function MessageGroup(time){
 		///	<summary>
 		///	信息分组区域。
 		///	</summary>
 		var dt = new Date(time),
 
-			desc = "今天", t = time - dt, hours = dt.getHours();
+			desc = "今天", t = new Date().setHours(0, 0, 0, 0) - time, hours = dt.getHours();
 				
 		switch(true){
 			case t < 0 :
@@ -461,6 +461,7 @@ this.MessageGroup = (function(MessageList, messageAppendedEvent, singleNumRegx, 
 	return MessageGroup.constructor;
 }(
 	this.MessageList,
+	Date,
 	// messageAppendedEvent
 	new jQun.Event("messageappended"),
 	// singleNumRegx
@@ -594,6 +595,9 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 		this.find(">p>input").attach({
 			keyup : function(e){
 				if(e.keyCode === 13){
+					if(this.value === "")
+						return;
+
 					chatInput.messageCompleted("text", this.value);
 					
 					this.value = "";
