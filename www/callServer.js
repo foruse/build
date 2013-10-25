@@ -87,6 +87,18 @@
                             local_path: params.attachment.src
                         };
                         break;
+                    case "image":
+                        console.log(params)
+                        _params = {
+                            project_id: params.projectId,
+                            content: params.text,
+                            type: params.type,
+                            local_path: params.attachment.base64,
+                            fake_path: params.attachment.src
+//                            local_path: params.attachment.src
+                        };
+//                        console.log(_params)
+                        break;
                     default:
                         return;
                 }
@@ -114,8 +126,14 @@
                         };
                         break;
                     case "voice":
-                        console.log("TODO-VOICE")
-                        console.log(params)
+                        _params = {
+                            todo_id: params.todoId,
+                            content: params.text,
+                            type: params.type,
+                            local_path: params.attachment.src
+                        };
+                        break;
+                    case "image":
                         _params = {
                             todo_id: params.todoId,
                             content: params.text,

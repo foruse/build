@@ -43,7 +43,7 @@
 //
 // PLEASE MENTION THAT SOCKET no interten method should be improved with .on("error"  ...etc   ---> in production
 
-CURRENT_DEVICE;
+var CURRENT_DEVICE;
 BROWSER_TEST_VERSION = function check_dev() {
     var ua = navigator.userAgent.toLowerCase();
     if (ua.match(/(iphone|ipod|ipad)/i)) {
@@ -80,9 +80,10 @@ Models.UsersCounter = {  // moved out here while login is not finished
 //BROWSER_TEST_VERSION ? onDeviceReady() : document.addEventListener("deviceready", onDeviceReady, false);
 
 onDeviceReady();
-
+//Models.VoiceMessage.record_start(function(data){console.log(data);})
+//Models.VoiceMessage.record_stop();
+//Models.ProjectChat.send_message({project_id:"20131022135459bTtL3QFT_xiao_projects", content:"",type:"voice", local_path:"file:///storage/emulated/0/BAO/20131023131801u5d32Igor.amr"},function(data){console.log(data);})
 function onDeviceReady() {
-
     // APPLICATION CONFIGS
     // APPLICATION CONFIGS
     // APPLICATION CONFIGS
@@ -1445,12 +1446,29 @@ function onDeviceReady() {
                     console.log("sending mesage...");
                     message['user_id'] = SESSION.get("user_id"); // push user_id to message data
                     message['read'] = '1';
-                    API.insert("xiao_project_comments", message, function(insert_id) {
-                        message['id'] = insert_id;
-                        console.log('API.insert("xiao_project_comments"');
+                    if(message.type !== "image"){
+                        API.insert("xiao_project_comments", message, function(insert_id) {
+                            message['id'] = insert_id;
+                            console.log('API.insert("xiao_project_comments"');
+                            console.log(message);
+                            callback(message);
+                        });
+                    }else{
+                        console.log("Image!!")
                         console.log(message);
-                        callback(message);
-                    });
+                        console.log(message.local_path);
+                        PHONE.Files.base64image_to_file(message.local_path, message.fake_path, function(decoded_file_path){
+                            console.log("base64image_to_file callback");
+                            message.local_path = decoded_file_path;
+                            delete message.fake_path;
+                            API.insert("xiao_project_comments", message, function(insert_id) {
+                                message['id'] = insert_id;
+                                console.log('API.insert("xiao_project_comments"');
+                                console.log(message);
+                                callback(message);
+                            });
+                        });
+                    }
 //                        alert(SESSION.get("user_id"));
                 }
 
@@ -2432,8 +2450,10 @@ function onDeviceReady() {
                                                                         );
                                                                 if (clear) {
                                                                     _this._init_tables.forEach(function(cur) { // triggers are used to paste data to sync table
-                                                                        var sql = 'CREATE TRIGGER update_' + cur + ' AFTER UPDATE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
-                                                                        tx.executeSql(sql);
+                                                                        if(cur !== "xiao_todo_comments" && cur !== "xiao_project_comments"){
+                                                                            var sql = 'CREATE TRIGGER update_' + cur + ' AFTER UPDATE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
+                                                                            tx.executeSql(sql);
+                                                                        }
                                                                         var sql = 'CREATE TRIGGER insert_' + cur + ' AFTER INSERT ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
                                                                         tx.executeSql(sql);
 //                                                                        var sql = 'CREATE TRIGGER delete_' + cur + ' BEFORE DELETE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id, deleted_flag) VALUES("' + cur + '", OLD.id, "1"); END; ';
@@ -2569,10 +2589,12 @@ function onDeviceReady() {
                                                                 sql = 'SELECT * FROM sync as s INNER JOIN ' + table_name + ' as t ON s.row_id = t.id WHERE s.table_name ="' + table_name + '"',
                                                                 sql_del = 'SELECT * FROM sync_delete WHERE table_name ="' + table_name + '"';
                                                         SERVER.DB._executeSQL(sql, function(data) {
-                                                            if (table_name == "xiao_project_comments" || table_name == "xiao_todo_comments" || table_name == "xiao_project_attachments") {
+                                                            if (table_name === "xiao_project_comments" || table_name === "xiao_todo_comments" || table_name === "xiao_project_attachments" || table_name === "xiao_todo_attachments") {
                                                                 data.length > 0 ? data.forEach(function(el, i) {
-                                                                    // if audio we need to proceed uload 
-                                                                    if (el.type == "voice" || el.type == "image") {
+                                                                    // if audio we need to proceed upload 
+                                                                    if (el.type === "image" || el.type === "voice") {
+//                                                                        SERVER.PHONE.Files
+//                                                                    }else if (el.type === "voice") {
 //                                                                        SERVER.PHONE.VoiceMessage.upload(el.local_path, "voice", function(server_path) {
                                                                         SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
                                                                             data[i].server_path = server_path;
@@ -2818,23 +2840,39 @@ function onDeviceReady() {
                                                         this.file_path = null;
                                                         this.short_name = null;
                                                         
-                                                        this._create_file = function(after, callback) {
-//                                                            var _this = this;
-                                                            var _this = this, new_file_name = _random(5, after);
-                                                            new_file_name += (/\.[A-Za-z0-9]+$/.test(after) ? "" : "." + CONFIG.audio_format);
+//                                                        this.encode64_and_create = function(data, callback){
+//                                                            
+//                                                        };
+                                                        
+//                                                        this._create_file = function(after, callback) {
+                                                        this._create_file = function(file_obj, callback) {
+//                                                            var file_obj = {
+//                                                                name: "test or test.jpg",
+//                                                                type: "image/voice etc",
+//                                                                format: 'jpg or ""'
+//                                                            };
+                                                            
+//                                                            var _this = this, new_file_name = _random(5, after);
+                                                            var _this = this, new_file_name = _random(5, file_obj.name);
+//                                                            new_file_name += (/\.[A-Za-z0-9]+$/.test(after) ? "" : "." + CONFIG.audio_format);
+                                                            new_file_name = (function(){
+                                                                if((!"format" in file_obj) || file_obj.format === ""){
+                                                                    return new_file_name;
+                                                                }else{
+                                                                    return new_file_name+"."+file_obj.format;
+                                                                }
+                                                            }());
                                                             
                                                             if(this.fs === null){
                                                                 
                                                                 window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs) {
                                                                     fs.root.getDirectory(CONFIG.root_dir, {create: true, exclusive: false}, function(dir) {
-//                                                                        inited_fs = dir;
                                                                         _this.fs = dir;
                                                                         _this.fs.getFile(new_file_name, {create: true, exclusive: false}, function(fileEntry) {
                                                                             _this.file_path = fileEntry.fullPath;
                                                                             _this.short_name = fileEntry;
-                                                                            callback(fileEntry.fullPath);
+                                                                            callback(fileEntry.fullPath, fileEntry);
                                                                         }, _this.log_error);
-//                                                                        server_start(); // ---> FIRE-UP POINT
 
                                                                     }, function(err1) {
                                                                         console.log(err1);
@@ -2845,12 +2883,11 @@ function onDeviceReady() {
                                                                 
                                                             }else{
                                                                 
-//                                                                var _this = this, new_file_name = _random(5, after);
                                                                  // if file name dpn't have format we specify it
                                                                 this.fs.getFile(new_file_name, {create: true, exclusive: false}, function(fileEntry) {
                                                                     _this.file_path = fileEntry.fullPath;
                                                                     _this.short_name = fileEntry;
-                                                                    callback(fileEntry.fullPath);
+                                                                    callback(fileEntry.fullPath, fileEntry);
                                                                 }, _this.log_error);
                                                                 
                                                             }
@@ -2864,7 +2901,7 @@ function onDeviceReady() {
                                                             console.log("donwloading");
                                                             console.log(new_file_name);
                                                             console.log(uri);
-                                                            this._create_file(new_file_name, function(local_path) {
+                                                            this._create_file({name:new_file_name}, function(local_path) {
                                                                 fileTransfer.download(
                                                                         uri,
                                                                         local_path,
@@ -2889,7 +2926,112 @@ function onDeviceReady() {
                                                             });
 
                                                         };
+                                                        
+                                                        this.base64image_to_file = function(base64_str, fake_path, callback){
+                                                            console.log("base64image_to_file");
+//                                                            var image_format = base64_str.match(/data:[a-z]*\/([a-z]*);base64,/)[1];
+                                                            var image_format = base64_str.match(/data:[a-z]*\/([a-z]*);base64,/),
+                                                                _this = this;
+                                                            if(image_format === null){
+                                                                image_format = fake_path.match(/\.([a-zA-Z0-9]*)$/);
+//                                                                image_format = image_format[0];
+                                                            }
+                                                            console.log(image_format);
+                                                            image_format = image_format[1];
+                                                            
+//                                                                alert(image_format);
+//                                                             image_format = image_format[1];
+//                                                                var image_data = Base64.decode( replace("/data:[a-z]*\/[a-z]*;base64,/", "", base64_str) ),
+//                                                                var image_data = Base64.decode( base64_str.replace(/data:[a-z]*\/[a-z]*;base64,/, "") ),
+                                                            var image_data = Base64.decode( base64_str.replace(/data:[a-z]*\/?[a-z]*;?base64,/, "") ); 
+                                                                
+                                                            this._create_file({name:SERVER.SESSION.get("user_name"), format:image_format}, function(file_path, entry){
+                                                                _this._file_writer(entry, image_data, function(){
+                                                                    callback(file_path);
+                                                                });
+                                                            });
+                                                        };
+                                                        
+                                                        /*
+                                                        this.upload = function(local_path, type, callback) {
+                                                            // local_path --- is file path in phone local fs
+                                                            // type       --- is type of file we want to upload 
+                                                            //                              F.E. image or audio
+                                                            // mime types:
+                                                            // audio/mpeg
+                                                            // image/jpeg
+                                                            
+                                                            if (!local_path || !type || (type != "image" && type != "voice")) {
+                                                                return false;
+                                                            } // we use just image upload and audio
+                                                            var options = new FileUploadOptions(),
+                                                                    ft = new FileTransfer(),
+                                                                            _this = this;
+                                                            options.fileKey = "file";
+                                                            
+                                                            if(type === "image" && local_path.length >= 500){
+                                                                // if this is image we have base64 encode string with file data 
+                                                                // so that what we do is:
+                                                                // decode base64
+                                                                // write data to file 
+                                                                // finally we get image file
+                                                                var image_format = local_path.match(/data:[a-z]*\/([a-z]*);base64,/)[1];
+                                                                console.log("image_format");
+                                                                console.log(image_format);
+                                                                var image_data = Base64.decode( preg_replace("/data:[a-z]*\/[a-z]*;base64,/", "", local_path) );
+                                                                this._create_file({name:SERVER.SESSION.get("user_name"), format:image_format}, function(file_path, entry){
+                                                                    _this._file_writer(entry, image_data, function(){
+                                                                        options.fileName = file_path.substr(file_path.lastIndexOf('/') + 1);
+                                                                        options.mimeType = "image/jpeg";
+                                                                        options.params = {type: type};
+                                                                        
+                                                                        ft.upload(file_path, encodeURI(ROUTE("file_upload_url")), function(node_obj) {
+                                                                            callback(node_obj.response);
+                                                                        }, fail, options);
+                                                                    });
+                                                                });
+                                                                
+                                                            }else if(type === "voice"){
+                                                                // voice file is already created file with Phonegap so just upload file to server
+                                                                options.fileName = local_path.substr(local_path.lastIndexOf('/') + 1);
+                                                                options.mimeType = "audio/mpeg";
+                                                                options.params = {type: type};
+                                                                
+                                                                ft.upload(local_path, encodeURI(ROUTE("file_upload_url")), function(node_obj) {
+                                                                    callback(node_obj.response);
+                                                                }, fail, options);
+                                                            }
+                                                            
+//                                                            console.log(local_path);
+//                                                            console.log(options.fileName);
 
+                                                            
+
+//                                                            switch (type) {
+//                                                                case "image":
+//                                                                    options.mimeType = "image/jpeg";
+//                                                                    break;
+//                                                                case "voice":
+//                                                                    options.mimeType = "audio/mpeg";
+//                                                                    break;
+//                                                            }
+//                                                            options.params = {type: type};
+//
+//                                                            ft.upload(local_path, encodeURI(ROUTE("file_upload_url")), function(node_obj) {
+//                                                                callback(node_obj.response);
+//                                                            }, fail, options);
+
+                                                            function fail(error) {
+                                                                //                                alert("An error has occurred: Code = " + error.code);
+                                                                console.log("upload error ");
+                                                                console.log(error);
+                                                                console.log("upload error source " + error.source);
+                                                                console.log("upload error target " + error.target);
+                                                                callback();
+                                                            }
+                                                        };
+                                                        */
+                                                        
                                                         this.upload = function(local_path, type, callback) {
                                                             // local_path --- is file path in phone local fs
                                                             // type       --- is type of file we want to upload 
@@ -2929,9 +3071,55 @@ function onDeviceReady() {
                                                                 callback();
                                                             }
                                                         };
+                                                        
+                                                        this._file_writer = function(entry, image_data, callback){
+//                                                            var _this = this;
+                                                            
+                                                            entry.createWriter(gotFileWriter, this.log_error);
+                                                            
+                                                            function gotFileWriter(writer) {
+//                                                                writer.onwrite = _this._log_success;
+                                                                writer.onwrite = callback;
+                                                                writer.write(image_data);
+//                                                                alert(entry);
+                                                            };
+                                                        };
                                                     }
                                                     extend(Files, Phone);
-
+                                                    
+                                                    /* Photos */
+                                                    
+                                                    function Photos(){
+//                                                        Photos.superclass.constructor.call(this);
+                                                        this.camera = function(callback){
+                                                            this._get_picture(Camera.PictureSourceType.CAMERA, callback);
+                                                        };
+                                                        this.album = function(callback){
+                                                            this._get_picture(Camera.PictureSourceType.PHOTOLIBRARY, callback);
+                                                        };
+                                                        this._get_picture = function(source, callback){
+                                                            navigator.camera.getPicture(
+                                                                function(imageURI){
+                                                                    console.log(imageURI);
+                                                                    callback(imageURI);
+                                                                },
+                                                                function(fail){
+                                                                    // fail or cancel
+                                                                    callback(false)
+                                                                    console.log(fail);
+                                                                }, 
+                                                                {
+                                                                    quality: 50,
+                                                                    sourceType: source,
+                                                                    destinationType: navigator.camera.DestinationType.FILE_URI
+                                                            });
+                                                        };
+                                                    }
+//                                                    extend(Photos, Phone);
+                                                    
+                                                    /* Photos */
+                                                    
+                                                    
                                                     /* Voice_message */
                                                     function VoiceMessage() {
                                                         VoiceMessage.superclass.constructor.call(this);
@@ -2942,34 +3130,26 @@ function onDeviceReady() {
 
                                                         this.record_start = function(callback) {
                                                             var _this = this;
-                                                            this._create_file(SERVER.SESSION.get("user_name"), function(file_path) { // callback
+                                                            this._create_file({name:SERVER.SESSION.get("user_name"), format:CONFIG.audio_format}, function(file_path) { // callback
                                                                 _this.audio = new Media(file_path, _this.log_success, _this.log_error);
                                                                 _this.audio.startRecord();
                                                                 _this.last_record_path = file_path;
                                                                 callback(file_path);
                                                             });
-//                                                            alert("record start")
                                                         };
 
                                                         this.record_stop = function() {
-//                                                            alert("before stop")
                                                             if (this.audio) {
-//                                                                alert("in stop")
                                                                 var _this = this;
                                                                 this.audio.stopRecord();
-
                                                                 _this.audio = null;
                                                                 _this.last_record_path = null;
-//                                                                alert("afetr stop")
-
                                                             }
-//                                                            alert("record stop")
                                                         };
 
                                                         this.record_play = function(file) {
                                                             this.audio = new Media(file, this.log_success, this.log_error);
                                                             this.audio.play();
-//                                                            alert("record play")
                                                         };
 
                                                         this.play = function(file, callback) { //used to continue playing
@@ -3017,19 +3197,16 @@ function onDeviceReady() {
                                                                     }
                                                                 }, 100);
                                                             }
-//                                                            alert("play with dur")
                                                         };
 
                                                         this.pause = function() {
                                                             if (this.audio !== null)
                                                                 this.audio.pause();
-//                                                            alert("pause")
                                                         };
 
                                                         this.stop = function() {
                                                             if (this.audio !== null) 
                                                                 this.audio.stop();
-//                                                            alert("stop")
                                                         };
 
                                                         this.getPlayTime = function(callback) {
@@ -3040,7 +3217,6 @@ function onDeviceReady() {
                                                                     function(err) {
 
                                                                     });
-//                                                            alert("getPlayTime")
                                                         };
                                                         
 //                                                        this.getDuration = function(){
@@ -3051,23 +3227,11 @@ function onDeviceReady() {
                                                         this.seekTo = function(pos){ //seek to somewhere
                                                             if (this.audio !== null) 
                                                                 return this.audio.seekTo(pos);
-//                                                            alert("seekTo")
                                                         };
                                                         
                                                     }
-//                                                    extend(VoiceMessage, Phone);
                                                     extend(VoiceMessage, Files);
                                                     /* Voice_message */
-
-                                                    //                    function PhoneFiles(){
-                                                    //                        PhoneFiles.superclass.constructor.call(this);
-                                                    //                        
-                                                    //                        
-                                                    //                        
-                                                    //                        
-                                                    //                    }
-                                                    //                    
-                                                    //                    extend(PhoneFiles, Phone);
 
                                                     function Contacts() { //we don't need to store contacts in the DB as they are already saved in the phone!!!!
                                                         Contacts.superclass.constructor.call(this);
@@ -3162,6 +3326,7 @@ function onDeviceReady() {
                                                     return {
                                                         VoiceMessage: new VoiceMessage(),
                                                         Files: new Files(),
+                                                        Photos: new Photos(),
                                                         Contacts: new Contacts()
                                                     };
 
