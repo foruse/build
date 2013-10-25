@@ -92,6 +92,9 @@ this.Bao = (function(Bao){
 					Navigator : null,
 					Scroll : null
 				}),
+				File : new Namespace().members({ // ui/control/file.js
+					Attachment : null
+				}),
 				List : new Namespace().members({ // ui/control/list.js
 					AnchorList : null,
 					ChatList : null,
@@ -113,7 +116,7 @@ this.Bao = (function(Bao){
 					LoadingBar : null
 				})
 			}),
-			Fixed : new Namespace({ // ui/fixed.js
+			Fixed : new Namespace().members({ // ui/fixed.js
 				Mask : null,
 				TitleBar : null
 			})

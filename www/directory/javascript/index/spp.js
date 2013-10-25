@@ -337,7 +337,10 @@ this.Project = (function(CallServer, Confirm){
 				importantLevel : 0,
 				title : "新建项目",
 				users : [],
-				lastMessage : "",
+				lastMessage : {
+					content : "",
+					type : "text"
+				},
 				unread : 0,
 				status : _isUnopened ? -1 : 0,
 				color : -1,

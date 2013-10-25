@@ -93,9 +93,7 @@
                             project_id: params.projectId,
                             content: params.text,
                             type: params.type,
-                            local_path: params.attachment.base64,
-                            fake_path: params.attachment.src
-//                            local_path: params.attachment.src
+                            local_path: params.attachment.src
                         };
 //                        console.log(_params)
                         break;

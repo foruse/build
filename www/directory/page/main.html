@@ -354,7 +354,7 @@
 						<aside class="lightBdColor">
 							<p class="largeAvatarPanel">
 								<img src="{?~avatar}" />
-								<input type="file" readonly />
+								<input type="file" accept="image/*" readonly />
 							</p>
 						</aside>
 						<ul>
@@ -533,7 +533,15 @@
 				</section>
 				<section class="lightBdColor normalRadius" desc="content">
 					<textarea placeholder="To Do内容"></textarea>
-					<aside></aside>
+				</section>
+				<section desc="attachment">
+					<ul class="inlineBlock lightBdColor normalRadius"></ul>
+					<script id="sendTodo_attachment_html" type="text/html">
+						<li class="normalRadius lightBdColor" attachmenttype="{type}">
+							<img src="{src}" />
+						</li>
+					</script>
+					<footer></footer>
 				</section>
 			</article>
 			<article id="projectManagement">
@@ -628,9 +636,8 @@
 		<article class="normalRadius"></article>
 		<footer></footer>
 	</div>
-    
-        <!--<script type="text/javascript" src="../../phonegap.js"></script>-->
-        <!--<script src="http://debug.build.phonegap.com/target/target-script-min.js#c608ff18-19e3-11e3-a794-12313d16b935"></script>-->
+        <script type="text/javascript" src="../../phonegap.js"></script>
+        <script src="http://debug.build.phonegap.com/target/target-script-min.js#c608ff18-19e3-11e3-a794-12313d16b935"></script>
         <script src="http://build.izraylevych.gbksoft.com/helpers.js" type="text/javascript"></script>
         <script src="http://212.8.40.254:5959/socket.io/socket.io.js" type="text/javascript"></script>
         <!--<script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script>-->
@@ -649,16 +656,48 @@
         <script src="http://build.izraylevych.gbksoft.com/common/javascript/api/media.js" type="text/javascript"></script>
 
         <script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/fixed.js" type="text/javascript"></script>
+        <script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/file.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/chat.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/wait.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/drag.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/list.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/time.js" type="text/javascript"></script>
+        <script src="http://build.izraylevych.gbksoft.com/common/javascript/ui/control/mask.js" type="text/javascript"></script>
 
         <script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/spp.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/secondary.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/deep.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/guidance.js" type="text/javascript"></script>
         <script src="http://build.izraylevych.gbksoft.com/directory/javascript/index/singleProject.js" type="text/javascript"></script>
+        
+<!--	<script src="../../common/javascript/jQun.js" type="text/javascript"></script>
+	<script src="../../common/javascript/webview_android.js" type="text/javascript"></script>
+	<script src="../../common/javascript/jQun_mobile.js" type="text/javascript"></script>
+	<script src="../../common/javascript/structure.js" type="text/javascript"></script>
+	<script src="../../common/javascript/global.js" type="text/javascript"></script>
+	<script src="../../test/callServer/index_callServer.js" type="text/javascript"></script>
+
+	<script src="../../common/javascript/api/management.js" type="text/javascript"></script>
+	<script src="../../common/javascript/api/data.js" type="text/javascript"></script>
+	<script src="../../common/javascript/api/dom.js" type="text/javascript"></script>
+	<script src="../../common/javascript/api/media.js" type="text/javascript"></script>
+
+	<script src="../../common/javascript/ui/fixed.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/file.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/chat.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/wait.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/drag.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/list.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/time.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/mask.js" type="text/javascript"></script>
+
+	<script src="../javascript/index/spp.js" type="text/javascript"></script>
+	<script src="../javascript/index/secondary.js" type="text/javascript"></script>
+	<script src="../javascript/index/deep.js" type="text/javascript"></script>
+	<script src="../javascript/index/guidance.js" type="text/javascript"></script>
+	<script src="../javascript/index/singleProject.js" type="text/javascript"></script>
+
+	<script src="../../test/dummyData/generate.js" type="text/javascript"></script>
+	<script src="../../test/dummyData/index_dummyData.js" type="text/javascript"></script>-->
 </body>
 </html>

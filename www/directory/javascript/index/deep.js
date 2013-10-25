@@ -121,7 +121,7 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 	}
 ));
 
-this.Account = (function(LoadingBar, Global, ValidationList, fileReader){
+this.Account = (function(LoadingBar, Global, ValidationList, ImageFile){
 	function Account(selector, contentHtml){
 		///	<summary>
 		///	我的账户。
@@ -139,6 +139,8 @@ this.Account = (function(LoadingBar, Global, ValidationList, fileReader){
 		// 渲染空数据
 		this.innerHTML = contentHtml.render(Global.loginUser);
 		footerEl = this.find(">footer");
+
+		new ImageFile(this.find(">header .largeAvatarPanel>input")[0]);
 
 		// 监听事件
 		this.attach({
@@ -193,26 +195,8 @@ this.Account = (function(LoadingBar, Global, ValidationList, fileReader){
 					footerClassList.add("editable");
 				}
 			},
-			change : function(e){
-				var target = e.target;
-				
-				if(target.type !== "file")
-					return;
-
-				var file = target.files[0];
-
-				if(!file){
-					return;
-				}
-
-				if(!file.name.match(/\.(png|jpg|jpeg|bmp|gif)$/)){
-					alert("请选择图像文件！");
-					target.value = "";
-					return;
-				}
-
-				fileReader.readAsDataURL(file);
-				target.value = "";
+			imageloaded : function(e){
+				account.find(">header .largeAvatarPanel>img").src = e.base64;
 			}
 		});
 
@@ -221,10 +205,6 @@ this.Account = (function(LoadingBar, Global, ValidationList, fileReader){
 				e.stopPropagation();
 			}
 		}, true);
-
-		fileReader.onload = function(){
-			account.find(".largeAvatarPanel>img").src = this.result;
-		};
 		
 		// 验证信息
 		this.find(">*:not(header) dl").forEach(function(parent){
@@ -263,8 +243,7 @@ this.Account = (function(LoadingBar, Global, ValidationList, fileReader){
 	Bao.UI.Control.Wait.LoadingBar,
 	Bao.Global,
 	Bao.API.DOM.ValidationList,
-	// fileReader
-	new FileReader()
+	Bao.UI.Control.File.ImageFile
 ));
 
 this.QRCode = (function(){
@@ -412,15 +391,42 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 	Bao.Global
 ));
 
-this.SendTodo = (function(UserManagementList, Validation, Global, validationHandle){
-	function SendTodo(selector){
+this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Global, validationHandle){
+	function AttamentArea(selector, attachmentHtml){
+		var all = [], ul = this.find(">ul")[0];
+
+		this.assign({
+			all : all
+		});
+
+		new Attachment().appendTo(this.find('>footer')[0]);
+
+		this.attach({
+			attachmentcompleted : function(e){
+				var attachment = { type : e.attachmentType, src : e.attachmentSrc };
+
+				attachmentHtml.create(attachment).appendTo(ul);
+				all.push(attachment);
+			}
+		});
+	};
+	AttamentArea = new NonstaticClass(AttamentArea, null, Panel.prototype);
+
+	AttamentArea.properties({
+		all : undefined
+	});
+
+
+	function SendTodo(selector, attachmentHtml){
 		var sendTodo = this, titleBar = Global.titleBar,
 		
 			titleValidation = new Validation(this.find('li[desc="title"]>input'), validationHandle),
 
 			dateValidation = new Validation(this.find('li[desc="endDate"]>input[type="text"]'), validationHandle),
 			
-			userManagementList = new UserManagementList("请选择该To Do的执行者");
+			userManagementList = new UserManagementList("请选择该To Do的执行者"),
+
+			attachmentArea = new AttamentArea.constructor(this.find('>section[desc="attachment"]')[0], attachmentHtml);
 
 		this.assign({
 			dateValidation : dateValidation,
@@ -449,7 +455,7 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 					}
 
 					CallServer.open("sendTodo", {
-						attachments : [],
+						attachments : attachmentArea.all,
 						title : titleValidation.validationEl.value,
 						date : sendTodo.endDate.getTime(),
 						remind : sendTodo.remind ? 1 : 0,
@@ -483,6 +489,8 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 				dateValidation.clearError();
 			}
 		});
+
+		new OverflowPanel(this);
 	};
 	SendTodo = new NonstaticClass(SendTodo, "Bao.Page.Index.Deep.SendTodo", PagePanel.prototype);
 
@@ -529,6 +537,8 @@ this.SendTodo = (function(UserManagementList, Validation, Global, validationHand
 }(
 	Bao.UI.Control.List.UserManagementList,
 	Bao.API.DOM.Validation,
+	Bao.API.DOM.Panel,
+	Bao.UI.Control.File.Attachment,
 	Bao.Global,
 	// validationHandle
 	function(inputEl){

@@ -547,16 +547,17 @@ this.ChatListContent = (function(MessageGroup){
 	this.MessageGroup
 ));
 
-this.ChatInput = (function(Global, messageCompletedEvent, reader){
+this.ChatInput = (function(Global, ImageFile, VoiceRecorder, messageCompletedEvent, reader){
 	function ChatInput(selector){
 		///	<summary>
 		///	聊天输入。
 		///	</summary>
 		/// <param name="selector" type="string">对应元素选择器</param>
-		var chatInput = this, imagePath = "",
+		var chatInput = this, inputClassList = chatInput.classList;
 		
-			inputClassList = chatInput.classList;
-		
+		new ImageFile().appendTo(this.find(">aside>button:last-child")[0]);
+		new VoiceRecorder(this.find(">p>button:first-child")[0]);
+
 		// 点击事件
 		this.attach({
 			userclick : function(e, targetEl){
@@ -571,23 +572,18 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 					return;
 				}
 			},
-			touchstart : function(e, targetEl){
-				if(targetEl.between(">p>button", this).length > 0){
-					// 如果有voice类，说明是语音输入状态
-					if(inputClassList.contains("voice")){
-						chatInput.recordStart();
-						return;
+			imageloaded : function(e){
+				chatInput.messageCompleted(
+					"image", 
+					"",
+					{
+						base64 : e.base64,
+						src : ""
 					}
-				}
-			}
-		});
-
-		jQun(window).attach({
-			touchend : function(){
-				chatInput.recordStop();
+				);
 			},
-			touchcancel : function(){
-				chatInput.recordStop();
+			stoprecord : function(e){
+				chatInput.messageCompleted("voice", "", { src : e.voiceSrc });
 			}
 		});
 
@@ -605,44 +601,10 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 				}
 			}
 		});
-
-		// 选择文件事件
-		this.find(">aside input").attach({
-			change : function(){
-				var file = this.files[0];
-
-				if(!file){
-					return;
-				}
-
-				if(!file.name.match(/\.(png|jpg|jpeg|bmp|gif)$/)){
-					alert("请选择图像文件！");
-					this.value = "";
-					return;
-				}
-
-				imagePath = this.value;
-				reader.readAsDataURL(file);
-				this.value = "";
-			}
-		});
-
-		// 选择文件
-		reader.onload = function(e){
-			chatInput.messageCompleted(
-				"image", 
-				"",
-				{
-					base64 : this.result,
-					src : imagePath
-				}
-			);
-		};
 	};
 	ChatInput = new NonstaticClass(ChatInput, "Bao.UI.Control.Chat.ChatInput", Panel.prototype);
 
 	ChatInput.properties({
-		isRecording : false,
 		messageCompleted : function(type, _text, _attachment){
 			// 当用户输入完成，提交的时候触发
 			messageCompletedEvent.setEventAttrs({
@@ -654,29 +616,14 @@ this.ChatInput = (function(Global, messageCompletedEvent, reader){
 				}
 			});
 			messageCompletedEvent.trigger(this[0]);
-		},
-		recordStart : function(){
-			if(this.isRecording)
-				return;
-
-			this.isRecording = true;
-			Global.mask.fillBody("", true);
-			Global.mask.show("voiceRecording");
-			Voice.recordStart();
-		},
-		recordStop : function(){
-			if(!this.isRecording)
-				return;
-
-			this.isRecording = false;
-			Global.mask.hide();
-			this.messageCompleted("voice", "", { src : Voice.recordStop() });
 		}
 	});
 
 	return ChatInput.constructor;
 }(
 	Bao.Global,
+	Bao.UI.Control.File.ImageFile,
+	Bao.UI.Control.File.VoiceRecorder,
 	// messageCompletedEvent
 	new jQun.Event("messagecompleted"),
 	// reader
@@ -737,9 +684,7 @@ this.ChatList = (function(ChatInput, ChatListContent, listPanelHtml){
 				'</p>',
 				'<aside>',
 					'<button></button>',
-					'<button>',
-						'<input type="file" accept="image/*" />',
-					'</button>',
+					'<button></button>',
 				'</aside>',
 			'</footer>',
 		'</div>'

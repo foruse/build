@@ -352,7 +352,7 @@
 						<aside class="lightBdColor">
 							<p class="largeAvatarPanel">
 								<img src="{?~avatar}" />
-								<input type="file" readonly />
+								<input type="file" accept="image/*" readonly />
 							</p>
 						</aside>
 						<ul>
@@ -531,7 +531,15 @@
 				</section>
 				<section class="lightBdColor normalRadius" desc="content">
 					<textarea placeholder="To Do内容"></textarea>
-					<aside></aside>
+				</section>
+				<section desc="attachment">
+					<ul class="inlineBlock lightBdColor normalRadius"></ul>
+					<script id="sendTodo_attachment_html" type="text/html">
+						<li class="normalRadius lightBdColor" attachmenttype="{type}">
+							<img src="{src}" />
+						</li>
+					</script>
+					<footer></footer>
 				</section>
 			</article>
 			<article id="projectManagement">
@@ -640,6 +648,7 @@
 	<script src="../../common/javascript/api/media.js" type="text/javascript"></script>
 
 	<script src="../../common/javascript/ui/fixed.js" type="text/javascript"></script>
+	<script src="../../common/javascript/ui/control/file.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/chat.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/wait.js" type="text/javascript"></script>
 	<script src="../../common/javascript/ui/control/drag.js" type="text/javascript"></script>

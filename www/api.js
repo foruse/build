@@ -566,6 +566,16 @@ function onDeviceReady() {
                 }
 
             };
+            
+            Models.Picture = {
+                camera: function(callback){
+                    PHONE.Photos.camera(callback);
+                },
+                album: function(callback){
+                    PHONE.Photos.album(callback);
+                }
+            };
+            
             Models.Project = {
                 create: function(data, callback) {
                     // data is following:
@@ -1446,29 +1456,28 @@ function onDeviceReady() {
                     console.log("sending mesage...");
                     message['user_id'] = SESSION.get("user_id"); // push user_id to message data
                     message['read'] = '1';
-                    if(message.type !== "image"){
-                        API.insert("xiao_project_comments", message, function(insert_id) {
-                            message['id'] = insert_id;
-                            console.log('API.insert("xiao_project_comments"');
-                            console.log(message);
-                            callback(message);
-                        });
-                    }else{
-                        console.log("Image!!")
+                    API.insert("xiao_project_comments", message, function(insert_id) {
+                        message['id'] = insert_id;
+                        console.log('API.insert("xiao_project_comments"');
                         console.log(message);
-                        console.log(message.local_path);
-                        PHONE.Files.base64image_to_file(message.local_path, message.fake_path, function(decoded_file_path){
-                            console.log("base64image_to_file callback");
-                            message.local_path = decoded_file_path;
-                            delete message.fake_path;
-                            API.insert("xiao_project_comments", message, function(insert_id) {
-                                message['id'] = insert_id;
-                                console.log('API.insert("xiao_project_comments"');
-                                console.log(message);
-                                callback(message);
-                            });
-                        });
-                    }
+                        callback(message);
+                    });
+//                    else{
+//                        console.log("Image!!")
+//                        console.log(message);
+//                        console.log(message.local_path);
+//                        PHONE.Files.base64image_to_file(message.local_path, message.fake_path, function(decoded_file_path){
+//                            console.log("base64image_to_file callback");
+//                            message.local_path = decoded_file_path;
+//                            delete message.fake_path;
+//                            API.insert("xiao_project_comments", message, function(insert_id) {
+//                                message['id'] = insert_id;
+//                                console.log('API.insert("xiao_project_comments"');
+//                                console.log(message);
+//                                callback(message);
+//                            });
+//                        });
+//                    }
 //                        alert(SESSION.get("user_id"));
                 }
 
@@ -3105,7 +3114,7 @@ function onDeviceReady() {
                                                                 },
                                                                 function(fail){
                                                                     // fail or cancel
-                                                                    callback(false)
+                                                                    callback(false);
                                                                     console.log(fail);
                                                                 }, 
                                                                 {

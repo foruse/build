@@ -1,8 +1,3 @@
-document.addEventListener("deviceready", onDeviceReady, false);
-function onDeviceReady() {
-    alert("hi");
-    navigator.splashscreen.hide();
-}
 function onFail(message) {
     console.log(message)
     alert('Failed because: ' + message);
