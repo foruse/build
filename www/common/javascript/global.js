@@ -61,7 +61,7 @@ this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
 			},
 			login : function(e){
 				Global.loginUser = e.loginUser;
-				Global.history.go("sendTodo");
+//				Global.history.go("sendTodo");
 			}
 		});
 	};
