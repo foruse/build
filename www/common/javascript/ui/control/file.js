@@ -1,5 +1,5 @@
 ﻿(function(File, NonstaticClass, StaticClass, HTML, Event, Panel, fullName){
-this.ImageFile = (function(inputHtml, fileReader, imageLoadedEvent){
+this.ImageFile = (function(Models, inputHtml, fileReader, imageLoadedEvent){
 	function FileReader(){
 		var FileReader = this;
 		
@@ -28,8 +28,28 @@ this.ImageFile = (function(inputHtml, fileReader, imageLoadedEvent){
 	});
 
 	function ImageFile(_selector){
+		var imageFile = this, Picture = Models.Picture;
+
 		if(!_selector){
 			this.combine(inputHtml.create());
+		}
+
+		if(Picture){
+			this.attach({
+				click : function(e){
+					e.preventDefault();
+				}
+			});
+
+			Picture.album(function(src){
+				imageLoadedEvent.setEventAttrs({
+					file : null,
+					base64 : src
+				});
+
+				imageLoadedEvent.trigger(imageFile[0]);
+			});
+			return;
 		}
 
 		this.attach({
@@ -46,7 +66,6 @@ this.ImageFile = (function(inputHtml, fileReader, imageLoadedEvent){
 					return;
 				}
 
-				imagePath = this.value;
 				FileReader.read(file, this);
 				this.value = "";
 			}
@@ -56,6 +75,7 @@ this.ImageFile = (function(inputHtml, fileReader, imageLoadedEvent){
 
 	return ImageFile.constructor;
 }(
+	window.Models,
 	// inputHtml
 	new HTML('<input class="imageFile" type="file" accept="image/*" />'),
 	// fileReader

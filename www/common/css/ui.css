@@ -9,7 +9,7 @@
 .main > div {
 	position : absolute;
 	width : 100%;
-	top : 28px;
+	top : 40px;
 	bottom : 0;
 	display : none;
 }
@@ -22,7 +22,7 @@
 }
 
 #titleBar {
-	height : 28px;
+	height : 40px;
 	position : relative;
 	z-index : 3;
 }
@@ -31,32 +31,34 @@
 	display : block;
 }
 #titleBar > nav > button {
-	width : 24px;
-	height : 28px;
-	padding : 7px 0;
-	background : url(../image/width12.png) no-repeat 8px -105px content-box content-box;
+	width : 36px;
+	height : 40px;
+	padding : 10px 13px;
+	background : url(../image/width24.png) no-repeat 0 -1055px content-box content-box;
 }
 #titleBar > p {
 	text-indent : 5px;
 	height : 100%;
-	padding : 5px 0;
+	font-size : 14px;
 }
 #titleBar strong {
-	line-height : 20px;
+	line-height : 40px;
 }
 #titleBar > ul {
 	float : right;
 	height : auto;
 }
 #titleBar > ul button {
-	height : 28px;
-	width : 28px;
-	border : 0 none;
+	height : 40px;
+	width : 40px;
+	border : 8px solid transparent;
 	background-color : transparent;
+	background-clip : content-box !important;
+	background-origin : content-box !important;
 }
 #titleBar button[action~="submit"] {
 	background-color : #ffc000;
-	background : #ffc000 url(../image/width24.png) no-repeat 7px -118px;
+	background : #ffc000 url(../image/width24.png) no-repeat 3px -248px;
 }
 
 #mask {
