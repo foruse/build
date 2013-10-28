@@ -176,6 +176,14 @@
                     project_id  :   params.projectId
                 }, complete);
             },
+            archiveProject : function(params, complete){
+                console.log(params);
+                Mdls.Project.archive(params.projectId, complete);
+            },
+            removeProject: function(params, complete){
+                console.log(params);
+                Mdls.Project.remove(params.projectId, complete);
+            },
             myInformation: function(_params, complete) {
                 // Mdls.User.read(function(data){
                 // 	data['count'] = 123;
