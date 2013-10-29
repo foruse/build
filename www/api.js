@@ -193,7 +193,7 @@ function onDeviceReady() {
                         // partner by id
                         DB.select("u.id, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                         DB.from("xiao_users AS u");
-                        DB.join("xiao_company_partners AS p", "p.company_id = u.id");
+                        DB.join("xiao_company_partners AS p", "p.user_id = u.id");
                         DB.join("xiao_companies AS c", "p.company_id = c.id");
                         DB.where('u.id ="' + id + '"');
                         API.row(callback);
@@ -574,11 +574,11 @@ function onDeviceReady() {
             Models.Picture = {
                 camera: function(callback){
                     console.log("camera")
-//                    PHONE.Photos.camera(callback);
+                    PHONE.Photos.camera(callback);
                 },
                 album: function(callback){
                     console.log("album")
-//                    PHONE.Photos.album(callback);
+                    PHONE.Photos.album(callback);
                 },
                 download: function(table, id, callback){
                     DB.select('server_path');
@@ -830,7 +830,7 @@ function onDeviceReady() {
                             var result = [], logged_user = SESSION.get("user_id");
 //                            console.log(params)
                             params.othersOffset = (params.othersOffset ? params.othersOffset : 0);
-                            API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies"], function() {
+                            API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments"], function() {
                                 // get all projects with ME
                                 DB.select("p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 1 as status");
                                 DB.from("xiao_project_partners AS pp");
@@ -1011,19 +1011,20 @@ function onDeviceReady() {
                                             DB.where('p.id ="' + pr.id + '"');
                                             DB.query(function(partners) {
                                                 
-                                                DB.select("COUNT(pc.read) as unread");
-                                                DB.from("xiao_project_comments AS pc");
-                                                DB.where('pc.project_id ="' + pr.id + '"');
-                                                DB.where('pc.read ="0"');
+//                                                DB.select("COUNT(pc.read) as unread");
+//                                                DB.from("xiao_project_comments AS pc");
+//                                                DB.where('pc.project_id ="' + pr.id + '"');
+//                                                DB.where('pc.read ="0"');
+                                                DB.select('SUM(r) FROM (SELECT COUNT(tc.read) as r FROM xiao_todo_comments AS tc INNER JOIN xiao_todos as t ON t.id = tc.todo_id WHERE t.project_id = "'+pr.id+'" AND tc.read = "0" AND (t.user_id = "'+logged_user+'" OR t.creator_id = "'+logged_user+'" ) UNION SELECT COUNT(pc.read) as r FROM xiao_project_comments as pc WHERE pc.project_id = "'+pr.id+'" AND pc.read = "0")');
                                                 DB.col(function(unread1) {
                                                     
-                                                    DB.select('COUNT(tc.read) AS unread');
-                                                    DB.from('xiao_todo_comments AS tc');
-                                                    DB.join('xiao_todos AS t','tc.todo_id = t.id');
-                                                    DB.where('t.project_id = "'+pr.id+'"');
-                                                    DB.where('tc.read = "0"');
-                                                    DB.where('(t.user_id = "'+logged_user+'" OR t.creator_id = "'+logged_user+'" )');
-                                                    DB.col(function(unread2) {
+//                                                    DB.select('COUNT(tc.read) AS unread');
+//                                                    DB.from('xiao_todo_comments AS tc');
+//                                                    DB.join('xiao_todos AS t','tc.todo_id = t.id');
+//                                                    DB.where('t.project_id = "'+pr.id+'"');
+//                                                    DB.where('tc.read = "0"');
+//                                                    DB.where('(t.user_id = "'+logged_user+'" OR t.creator_id = "'+logged_user+'" )');
+//                                                    DB.col(function(unread2) {
                                                     
                                                         DB.select("pc.content, pc.type");
                                                         DB.from("xiao_project_comments AS pc");
@@ -1100,7 +1101,7 @@ function onDeviceReady() {
                                                                     });
                                                                 }
                                                             }
-                                                        });
+//                                                        });
                                                     });
                                                 });
 
@@ -1960,6 +1961,50 @@ function onDeviceReady() {
                         }
                     }
                 };
+                
+                Models.Search = {
+                    global: function(str, callback){
+                        var sync_tables = ['xiao_projects'], counter = sync_tables.length, result = {};
+                        API._sync(sync_tables, function(){
+                            
+                            //search projects
+                            DB.select();
+                            DB.from('xiao_projects as p');
+                            DB.where("p.title LIKE '%"+str+"%' OR p.descr LIKE '%"+str+"%'");
+                            DB.query(function(projects){
+                                result.projects = projects;
+                                make_callback();
+                            });
+                            
+                            //search projects comments
+                            DB.select();
+                            DB.from('xiao_projects_comments as pc');
+                            DB.where("pc.content LIKE '%"+str+"%'");
+                            DB.query(function(project_comments){
+                                result.project_comments = project_comments;
+                                make_callback();
+                            });
+                            
+                            // search todo
+                            DB.select();
+                            DB.from('xiao_todos as t');
+                            DB.where("t.title LIKE '%"+str+"%' OR t.descr LIKE '%"+str+"%'");
+                            DB.query(function(todos){
+                                result.todos = todos;
+                                make_callback();
+                            });
+                            
+                        });
+                        
+                        function make_callback(){
+                            --counter;
+                            if(counter <= 0)callback(result);
+                        }
+                    },
+                    project: function(str, callback){
+                        
+                    }
+                };
 //            };
             // Models
             // Models
@@ -2525,7 +2570,7 @@ function onDeviceReady() {
                                                                     update_time varchar(255) NULL,\n\
                                                                     UNIQUE(id))'
                                                                         ); 
-                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_projects(\n\
+                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_projects (\n\
                                                                     server_id VARCHAR(255) NULL,\n\
                                                                     id VARCHAR(255) NOT NULL,\n\
                                                                     creator_id INTEGER NULL,\n\
@@ -2684,19 +2729,6 @@ function onDeviceReady() {
                                                                 //  very important to add each new table to this._init_tables array
                                                                 //  very important to add each new table to this._init_tables array
                                                                 //  very important to add each new table to this._init_tables array
-                                                                            
-
-                                                                //                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comment_adds (\n\
-                                                                //                                                server_id VARCHAR(255) NULL,\n\
-                                                                //                                                id varchar(255) NOT NULL,\n\
-                                                                //                                                comment_id VARCHAR(255) NULL,\n\
-                                                                //                                                type VARCHAR(255) NULL,\n\
-                                                                //                                                server_path TEXT NULL,\n\
-                                                                //                                                local_path TEXT NULL,\n\
-                                                                //                                                update_time DATETIME,\n\
-                                                                //                                                company_id VARCHAR(255) NOT NULL DEFAULT '+SERVER.SESSION.get("company_id")+',\n\
-                                                                //                                                UNIQUE(id))'
-                                                                //                                );
 
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS sync_delete (\n\
                                                                     `sid` INTEGER NOT NULL PRIMARY KEY,\n\

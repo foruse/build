@@ -177,6 +177,9 @@
 	background : #ffc000 url(../../../common/image/width24.png) 3px -372px no-repeat content-box content-box;
 	border-color : #ffc000;
 }
+.confirm[action="projectConfirm"] > article {
+	line-height : 25px;
+}
 .confirm button[action="remove"] {
 	margin-right : 8px;
 	background-color : #ce312d;

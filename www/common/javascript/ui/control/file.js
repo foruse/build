@@ -1,5 +1,5 @@
 ﻿(function(File, NonstaticClass, StaticClass, HTML, Event, Panel, fullName){
-this.ImageFile = (function(Models, inputHtml, fileReader, imageLoadedEvent){
+this.ImageFile = (function(Models, Mask, inputHtml, fileReader, imageLoadedEvent){
 	function FileReader(){
 		var FileReader = this;
 		
@@ -38,17 +38,18 @@ this.ImageFile = (function(Models, inputHtml, fileReader, imageLoadedEvent){
 			this.attach({
 				click : function(e){
 					e.preventDefault();
+
+					Picture.album(function(src){
+						imageLoadedEvent.setEventAttrs({
+							file : null,
+							base64 : src
+						});
+
+						imageLoadedEvent.trigger(imageFile[0]);
+					});
 				}
 			});
 
-			Picture.album(function(src){
-				imageLoadedEvent.setEventAttrs({
-					file : null,
-					base64 : src
-				});
-
-				imageLoadedEvent.trigger(imageFile[0]);
-			});
 			return;
 		}
 
@@ -61,7 +62,7 @@ this.ImageFile = (function(Models, inputHtml, fileReader, imageLoadedEvent){
 				}
 
 				if(!file.name.match(/\.(png|jpg|jpeg|bmp|gif)$/)){
-					alert("请选择图像文件！");
+					new Mask.Alert("请选择图像文件！").show();
 					this.value = "";
 					return;
 				}
@@ -76,6 +77,7 @@ this.ImageFile = (function(Models, inputHtml, fileReader, imageLoadedEvent){
 	return ImageFile.constructor;
 }(
 	window.Models,
+	Bao.UI.Control.Mask,
 	// inputHtml
 	new HTML('<input class="imageFile" type="file" accept="image/*" />'),
 	// fileReader
