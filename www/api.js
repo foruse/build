@@ -95,8 +95,8 @@ function onDeviceReady() {
             sockets: ""
         },
 //        server_url: "http://115.28.131.52:3000",
-//        server_url: "http://192.168.200.110:3000",
-        server_url: "http://212.8.40.254:5959",
+        server_url: "http://192.168.200.110:3000",
+//        server_url: "http://212.8.40.254:5959",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
@@ -180,6 +180,7 @@ function onDeviceReady() {
                 read: function(id, callback) { // if id is specified we get one partner else all partners
                     if (typeof(id) === "function") {// no id
                         callback = id;
+                        console.log("all partners");
                         // all partners
                         DB.select("u.id, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                         DB.from("xiao_company_partners AS p");
@@ -190,6 +191,7 @@ function onDeviceReady() {
                         DB.where('p.user_id <>"' + SESSION.get("user_id") + '"');
                         API.read(callback);
                     } else if (id) {
+                        console.log("partner by id");
                         // partner by id
                         DB.select("u.id, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                         DB.from("xiao_users AS u");
@@ -1219,7 +1221,8 @@ function onDeviceReady() {
                                             attachment: {
                                                 id: mess.id,
                                                 type: mess.type,
-                                                src: mess.server_path,
+                                                src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+//                                                src: mess.server_path,
                                                 from: "project"
                                             },
                                             praise: [],
@@ -1318,7 +1321,8 @@ function onDeviceReady() {
                                             attachment: {
                                                 id: mess.id,
                                                 type: mess.type,
-                                                src: mess.server_path,
+                                                src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+//                                                src: mess.server_path,
                                                 from: "project"
                                             },
                                             praise: [],
@@ -1582,7 +1586,8 @@ function onDeviceReady() {
                                             attachment: {
                                                 id: mess.id,
                                                 type: mess.type,
-                                                src: mess.server_path,
+                                                src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+//                                                src: mess.server_path,
                                                 from: "todo"
                                             },
                                             praise: [],
@@ -1677,7 +1682,8 @@ function onDeviceReady() {
                                         attachment: {
                                             id: mess.id,
                                             type: mess.type,
-                                            src: mess.server_path,
+                                            src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+//                                            src: mess.server_path,
                                             from: "todo"
                                         },
                                         praise: [],
@@ -2823,7 +2829,9 @@ function onDeviceReady() {
                                                         SERVER.DB.insert(table, data, function(insert_id) {
 //                                if(callback && timeout === true){
 //                                    _this._sync( [table], function(){ callback(insert_id); });
-//                                }else
+//                                }else     
+                                                            console.log("________________table")
+                                                            console.log(table)
                                                             if (callback) {
                                                                 callback(insert_id);
                                                                 _this._sync([table]);
@@ -2893,8 +2901,14 @@ function onDeviceReady() {
                                                                     if (el.type === "image" || el.type === "voice") {
                                                                         
                                                                         SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
-                                                                            el['server_path'] = server_path;
-                                                                            result.updated.push(el);
+                                                                            var copy_el = {};
+                                                                            for(var c_i in el){
+                                                                                copy_el[c_i] = el[c_i];
+                                                                            }
+                                                                            copy_el.server_path = server_path;
+//                                                                            el.server_path = server_path;
+//                                                                            result.updated.push(el);
+                                                                            result.updated.push(copy_el);
                                                                             make_callback_v2();
                                                                         });
                                                                         
@@ -2908,8 +2922,14 @@ function onDeviceReady() {
                                                                     if (el.local_path !== CONFIG.default_user_avatar && el.server_path == "") {
                                                                         // if the file is not default avatar and we have a "" as server_path then we need to upload
                                                                         SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
-                                                                            el['server_path'] = server_path;
-                                                                            result.updated.push(el);
+                                                                            var copy_el = {};
+                                                                            for(var c_i in el){
+                                                                                copy_el[c_i] = el[c_i];
+                                                                            }
+                                                                            copy_el.server_path = server_path;
+//                                                                            el['server_path'] = server_path;
+//                                                                            result.updated.push(el);
+                                                                            result.updated.push(copy_el);
                                                                             make_callback_v2();
                                                                         });
                                                                     } else {
@@ -2934,6 +2954,7 @@ function onDeviceReady() {
                                                         function make_callback_v2(){
                                                             --counter;
                                                             if (result.deleted && result.updated && counter <= 0) {
+                                                                console.log("make_callback");
                                                                 callback({
                                                                     name: table_name,
                                                                     last_sync: SERVER.SESSION._get_sync_time(table_name),
@@ -2943,86 +2964,13 @@ function onDeviceReady() {
                                                             }
                                                         }
                                                             
-                                                            //////////////////////////
-                                                            //////////////////////////
-                                                            //////////////////////////
-//                                                            if (table_name === "xiao_project_comments" || table_name === "xiao_todo_comments" || table_name === "xiao_project_attachments" || table_name === "xiao_todo_attachments") {
-//                                                                data.length > 0 ? data.forEach(function(el, i) {
-//                                                                    // if audio we need to proceed upload 
-//                                                                    if (el.type === "image" || el.type === "voice") {
-//                                                                        SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
-//                                                                            data[i].server_path = server_path;
-//                                                                            var new_data = data[i];
-//                                                                            var datadata = {};
-//                                                                            for (var ijk in new_data) {
-//                                                                                datadata[ijk] = new_data[ijk];
-//                                                                            }
-//                                                                            datadata['server_path'] = server_path;
-//                                                                            make_callback({updated: [datadata]});
-//                                                                        });
-//                                                                    } else if (el.type == "text") {
-//                                                                        if (i == (data.length - 1)) {
-//                                                                            make_callback({updated: data});
-//                                                                        }
-//                                                                    }
-//                                                                    // filter removing local_path from array
-//
-//                                                                }) : make_callback({updated: data});
-//                                                            }else if(table_name === "xiao_users"){
-//                                                                // we need to upload user avatars
-//                                                                data.length > 0 ? data.forEach(function(el, i) {
-//                                                                    if (el.local_path !== CONFIG.default_user_avatar && el.server_path == "") {
-//                                                                        // if the file is not default avatar and we have a "" as server_path then we need to upload
-//                                                                        SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
-//                                                                            data[i].server_path = server_path;
-//                                                                            var new_data = data[i];
-//                                                                            var datadata = {};
-//                                                                            for (var ijk in new_data) {
-//                                                                                datadata[ijk] = new_data[ijk];
-//                                                                            }
-//                                                                            datadata['server_path'] = server_path;
-//                                                                            make_callback({updated: [datadata]});
-//                                                                        });
-//                                                                    } else {
-//                                                                        if (i == (data.length - 1)) {
-//                                                                            make_callback({updated: data});
-//                                                                        }
-//                                                                    }
-//                                                                    // filter removing local_path from array
-//
-//                                                                }) : make_callback({updated: data});
-//                                                                
-//                                                            }else{
-//                                                                make_callback({updated: data});
-//                                                            }
-//
-//                                                        });
-//
-//                                                        SERVER.DB._executeSQL(sql_del, function(del_data) {
-//                                                            make_callback({deleted: del_data});
-//                                                        });
-//
-//                                                        function make_callback(data) {
-//                                                            if (data.updated) {
-//                                                                result.updated = data.updated;
-//                                                            }
-//                                                            if (data.deleted) {
-//                                                                result.deleted = data.deleted;
-//                                                            }
-//                                                            if (result.deleted && result.updated) {
-//                                                                callback({
-//                                                                    name: table_name,
-//                                                                    last_sync: SERVER.SESSION._get_sync_time(table_name),
-//                                                                    updated: result.updated, // move here
-//                                                                    deleted: result.deleted
-//                                                                });
-//                                                            }
-//                                                        }
                                                     },
                                                     _sync: function(tables, callback) { // the main application method
                                                         // used to sync local db and remote
                                                         // also used to sync chat messages
                                                         var sync_data = [], _this = this;
+                                                        console.log("sync_____tables")
+                                                        console.log(tables)
                                                         tables.forEach(function(table_name, table_num) {
                                                             _this._check_local_DB_and_fs(table_name, function(data) {
                                                                 sync_data.push(data);
@@ -3440,6 +3388,8 @@ function onDeviceReady() {
                                                             options.params = {type: type};
 
                                                             ft.upload(local_path, encodeURI(ROUTE("file_upload_url")), function(node_obj) {
+                                                                console.log("___________file");
+                                                                console.log(node_obj);
                                                                 callback(node_obj.response);
                                                             }, fail, options);
 
