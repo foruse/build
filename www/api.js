@@ -2915,8 +2915,9 @@ function onDeviceReady() {
                                                                     }else if (el.type === "text") {
                                                                         result.updated.push(el);
                                                                         make_callback_v2();
+//                                                                        alert("text")
                                                                     }
-                                                                    
+//                                                                    alert("11")
                                                                 }else if(table_name === "xiao_users"){
                                                                     
                                                                     if (el.local_path !== CONFIG.default_user_avatar && el.server_path == "") {
@@ -2938,6 +2939,7 @@ function onDeviceReady() {
                                                                     }
                                                                     
                                                                 }else{
+//                                                                    alert("else");
                                                                     result.updated.push(el);
                                                                     make_callback_v2();
                                                                 }
@@ -2955,6 +2957,8 @@ function onDeviceReady() {
                                                             --counter;
                                                             if (result.deleted && result.updated && counter <= 0) {
                                                                 console.log("make_callback");
+                                                                console.log("___________result")
+                                                                console.log(result)
                                                                 callback({
                                                                     name: table_name,
                                                                     last_sync: SERVER.SESSION._get_sync_time(table_name),
@@ -2969,11 +2973,20 @@ function onDeviceReady() {
                                                         // used to sync local db and remote
                                                         // also used to sync chat messages
                                                         var sync_data = [], _this = this;
-                                                        console.log("sync_____tables")
-                                                        console.log(tables)
+//                                                        console.log("sync_____tables")
+//                                                        console.log(tables)
+//                                                        console.log("sync_____sync_data")
+//                                                        var c = sync_data;
+//                                                        console.log(c)
                                                         tables.forEach(function(table_name, table_num) {
+//                                                                 console.log("_before______sync_data")
+//                                                                console.log(sync_data)
                                                             _this._check_local_DB_and_fs(table_name, function(data) {
                                                                 sync_data.push(data);
+//                                                                console.log("_______data")
+//                                                                console.log(data)
+//                                                                console.log("_______sync_data")
+//                                                                console.log(sync_data)
                                                                 if (table_num == (tables.length - 1)) {
                                                                     callback ? _this._make_socket_request(sync_data, callback) : _this._make_socket_request(sync_data);
                                                                 }
@@ -2983,9 +2996,30 @@ function onDeviceReady() {
                                                     _make_socket_request: function(sync_data, callback) {//used to post socket request with all updates to server or request them
                                                         var _this = this;
                                                         this._tables_to_sync = [];
-                                                        console.log("SERVER REQUEST: ");
+                                                        console.log("OLD ___SERVER REQUEST: ");
                                                         console.log(sync_data);
+//                                                        var fix_sync_data = [];
+//                                                        if(sync_data.length > 1){
+//                                                            
+//                                                            sync_data.forEach(function(sd, sd_i){
+//                                                                console.log(sd_i);
+//                                                                console.log(sync_data[sd_i-1].name);
+//                                                                if(sd_i > 0){
+//                                                                    if(sync_data[sd_i-1].name !== sd.name){
+//                                                                        fix_sync_data.push(sd);
+//                                                                    }
+//                                                                }else{
+//                                                                    fix_sync_data.push(sd);
+//                                                                }
+//                                                            });
+//                                                            
+//                                                        }else{
+//                                                            fix_sync_data = sync_data;
+//                                                        }
+//                                                        console.log("SERVER REQUEST: ");
+//                                                        console.log(fix_sync_data);
                                                         SERVER.SOCKET.sync({
+//                                                            tables: fix_sync_data,
                                                             tables: sync_data,
                                                             info: SERVER.SESSION.local_data()
                                                         }, function(server) {
@@ -3059,7 +3093,12 @@ function onDeviceReady() {
                                                 // API
                                                 // API
                                                 // API
-
+                                                
+                                                Sync : function(tables){
+                                                    //will be used as new SERVER.Sync(tables) to incapsulate the connection
+                                                },
+                                                
+                                                
                                                 // Storage
                                                 // Storage
                                                 // Storage
