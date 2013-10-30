@@ -62,7 +62,6 @@ BROWSER_TEST_VERSION = function check_dev() {
     return device === "desktop" ? true : false;
 //    return true;
 }();
-
 Models = {}; // Models are needed to be created in the following method. As they are used before the device ready actually. They are filled later.
 Models.UsersCounter = {  // moved out here while login is not finished
                 // uncomment all the stuff below for PRODUCTION
