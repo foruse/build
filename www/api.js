@@ -288,7 +288,16 @@ function onDeviceReady() {
 //                            isNewUser: 1,
 //                            company_id: 1
 //                        };
-                    if("avatar" in data){
+//                    for(var i in data){
+//                        alert(i);
+//                        alert(data[i]);
+//                    }
+                    if("avatar" in data && data.avatar == ""){
+//                        alert("avatar empty")
+                        delete data.avatar;
+                    }
+                    if("avatar" in data && data.avatar != ""){
+//                        alert("avatar not emt")
                         data.local_path = data.avatar;
                         delete data.avatar;
                         data.server_path = ""; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
@@ -303,11 +312,15 @@ function onDeviceReady() {
                 },
                 read: function(callback) {
                     // get user data
-                    DB.select("u.id, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                     DB.from("xiao_users AS u");
                     DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                     DB.where('u.id ="' + SESSION.get("user_id") + '"');
-                    API.row(callback);
+//                    API.row(callback);
+                    API.row(function(data){
+                        data.avatar = (data.local_path != "" && data.local_path != null && data.local_path !== CONFIG.default_user_avatar ) ? data.local_path : data.server_path;
+                        callback(data);
+                    });
                 },
 //                    create: function(data, callback) {
 //
@@ -2923,10 +2936,12 @@ function onDeviceReady() {
                                                                     }
 //                                                                    alert("11")
                                                                 }else if(table_name === "xiao_users"){
-                                                                    
+//                                                                    alert("xiao_users")
                                                                     if (el.local_path !== CONFIG.default_user_avatar && el.server_path == "") {
                                                                         // if the file is not default avatar and we have a "" as server_path then we need to upload
-                                                                        SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
+//                                                                        alert("server_path == ")
+                                                                        SERVER.PHONE.Files.upload(el.local_path, "image", function(server_path) {
+                                                                            alert("upload")
                                                                             var copy_el = {};
                                                                             for(var c_i in el){
                                                                                 copy_el[c_i] = el[c_i];
@@ -3411,6 +3426,9 @@ function onDeviceReady() {
                                                             // mime types:
                                                             // audio/mpeg
                                                             // image/jpeg
+                                                            alert("upload")
+                                                            alert(type)
+                                                            alert(local_path)
                                                             if (!local_path || !type || (type != "image" && type != "voice")) {
                                                                 return false;
                                                             } // we use just image upload and audio
@@ -3440,6 +3458,7 @@ function onDeviceReady() {
                                                                 //                                alert("An error has occurred: Code = " + error.code);
                                                                 console.log("upload error ");
                                                                 console.log(error);
+                                                                alert("error");
                                                                 console.log("upload error source " + error.source);
                                                                 console.log("upload error target " + error.target);
                                                                 callback();
