@@ -96,7 +96,8 @@ function onDeviceReady() {
         },
 //        server_url: "http://115.28.131.52:3000",
 //        server_url: "http://192.168.200.110:3000",
-        server_url: "http://212.8.40.254:5959",
+//        server_url: "http://212.8.40.254:5959",
+        server_url: "http://gbksoft.com:5959",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
@@ -292,6 +293,10 @@ function onDeviceReady() {
                         data.local_path = data.avatar;
                         delete data.avatar;
                         data.server_path = ""; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
+                    }
+                    if("password" in data){
+                        data.pwd = data.password;
+                        delete data.password;
                     }
                     callback ?
                             API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', callback) :
