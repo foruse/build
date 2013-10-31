@@ -270,20 +270,24 @@
 //                title: "gggbbbvv"
 //                userId: "17"
                 Mdls.Todo.create({
-                    creator_id  : params.creator_id,
-                    user_id     : params.userId,
-                    title       : params.title,
-                    descr       : params.desc,
-                    project_id  : params.projectId,
-                    endTime     : params.date
-                }, complete);
+                        creator_id  : params.creator_id,
+                        user_id     : params.userId,
+                        title       : params.title,
+                        descr       : params.desc,
+                        project_id  : params.projectId,
+                        endTime     : params.date
+                    },
+                    params.attachments, //attachments
+                    complete
+                );
             },
             getAllArchives: function(params, complete){
                 console.log(params);
-                Mdls.Project.getArchive(params, complete);
+                Mdls.Archive.read(params, complete);
             },
             getArchivedProject: function(params, complete){
-                Mdls.Project.getArchive(params, complete);
+                console.log(params)
+                Mdls.Archive.read(params, complete);
             },
             ArchiveDetail: function(params, complete){
                 console.log(params)

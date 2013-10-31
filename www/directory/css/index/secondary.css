@@ -160,7 +160,9 @@
 	font-size : 20px;
 }
 #systemOption li[key="globalSearch"], #systemOption li[key="accountConnection"],
-#systemOption li[key="qrCode"], #systemOption li[key="archive"] {
+#systemOption li[key="qrCode"]
+/*, #systemOption li[key="archive"]*/ 
+{
 	display : none;
 }
 
