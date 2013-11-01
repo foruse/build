@@ -149,6 +149,10 @@
             getUser: function(params, complete) {
                 console.log(params)
                 Mdls.Partner.read(params.id, complete);
+//                Mdls.Partner.read(params.id, function(data){
+//                    console.log(data);
+//                    complete(data);
+//                });
             },
             // globalSearch : function(){ },
             // invitation : function(){ },
@@ -309,6 +313,10 @@
                 }
                 console.log(_params)
                 Mdls.User.update(_params, complete);
+//                Mdls.User.update(_params, function(data){
+//                    console.log(data)
+//                    complete(data)
+//                });
             }
             
         });

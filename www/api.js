@@ -45,7 +45,7 @@
 
 var CURRENT_DEVICE;
 BROWSER_TEST_VERSION = function check_dev() {
-    var ua = navigator.userAgent.toLowerCase();
+    var ua = navigator.userAgent.toLowerCase(), device;
     if (ua.match(/(iphone|ipod|ipad)/i)) {
         device = "ios";
         CURRENT_DEVICE = "ios";
@@ -59,6 +59,7 @@ BROWSER_TEST_VERSION = function check_dev() {
     } else {
         device = "desktop";
     }
+    console.log(device);
     return device === "desktop" ? true : false;
 //    return true;
 }();
@@ -292,27 +293,33 @@ function onDeviceReady() {
 //                        alert(i);
 //                        alert(data[i]);
 //                    }
-                    if("avatar" in data && data.avatar == ""){
+                    if("avatar" in data && data.avatar == "" && data.avatar === null){
 //                        alert("avatar empty")
                         delete data.avatar;
                     }
-                    if("avatar" in data && data.avatar != ""){
+                    if("avatar" in data && data.avatar != "" && data.avatar !== null){
 //                        alert("avatar not emt")
                         data.local_path = data.avatar;
                         delete data.avatar;
-                        data.server_path = ""; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
+//                        data.server_path = ""; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
+                        data.avatar_update = "1"; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
                     }
                     if("password" in data){
                         data.pwd = data.password;
                         delete data.password;
                     }
+                    console.log("update_user_data")
+                    console.log(data)
                     callback ?
                             API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
                                 DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                                 DB.from("xiao_users AS u");
                                 DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                                 DB.where('u.id ="' + SESSION.get("user_id") + '"');
-                                DB.row(callback);
+                                DB.row(function(new_user_data){
+                                    new_user_data.avatar = (new_user_data.local_path != "" && new_user_data.local_path != CONFIG.default_user_avatar) ? new_user_data.local_path : new_user_data.server_path;
+                                    callback(new_user_data);
+                                });
                             }) :
                             API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"');
                 },
@@ -455,7 +462,7 @@ function onDeviceReady() {
                         
                 logout: function(callback){
                     //session
-                    SESSION.clear();
+//                    SESSION.clear();
                     callback();
                 },
                         
@@ -1454,33 +1461,48 @@ function onDeviceReady() {
                                     DB.join("xiao_companies AS c", "u.company_id = c.id");
                                     DB.where('u.id="'+data.user_id+'"');
                                     DB.row(function(user_data){
-                                        callback({
-                                            id    : data.id,
-                                            title : data.title,
-                                            desc  : data.descr,
-                                            color : data.color,
-                                            user : {
-                                                id: user_data.uid,
-                                                name: user_data.name,
-                                                pinyin: user_data.pinyin,
-//                                                avatar: user_data.avatar,
-                                                avatar: (user_data.local_path != "" && user_data.local_path != CONFIG.default_user_avatar) ? user_data.local_path : user_data.server_path,
-                                                company: user_data.company,
-                                                companyAdress: user_data.companyAdress,
-                                                position: user_data.position,
-                                                phoneNum: user_data.phoneNum,
-                                                email: user_data.email,
-                                                adress: user_data.adress,
-                                                isNewUser: user_data.isNewUser,
-                                                isLoginUser: login_user == user_data.uid,
-        //                                            isLeader: leader,
-                                                QRCode: user_data.QRCode
-                                            },
-                                            attachments : [],
-                                            endTime : data.endTime
+                                        
+                                        DB.select("at.id, at.type, at.server_path, at.local_path");
+                                        DB.from("xiao_todos as t");
+                                        DB.join("xiao_todo_attachments as at", "t.id = at.todo_id");
+                                        DB.where('t.id = "' + params.id + '"');
+                                        DB.query(function(atch){
+                                            var atch_ar = [];
+                                            atch.forEach(function(cur_atch){
+                                                atch_ar.push({
+                                                    id: cur_atch.id,
+                                                    src: (cur_atch.local_path != "" && cur_atch.local_path != null) ? cur_atch.local_path : cur_atch.server_path,
+                                                    type: cur_atch.type
+                                                });
+                                            });
+                                            callback({
+                                                id    : data.id,
+                                                title : data.title,
+                                                desc  : data.descr,
+                                                color : data.color,
+                                                user : {
+                                                    id: user_data.uid,
+                                                    name: user_data.name,
+                                                    pinyin: user_data.pinyin,
+    //                                                avatar: user_data.avatar,
+                                                    avatar: (user_data.local_path != "" && user_data.local_path != CONFIG.default_user_avatar) ? user_data.local_path : user_data.server_path,
+                                                    company: user_data.company,
+                                                    companyAdress: user_data.companyAdress,
+                                                    position: user_data.position,
+                                                    phoneNum: user_data.phoneNum,
+                                                    email: user_data.email,
+                                                    adress: user_data.adress,
+                                                    isNewUser: user_data.isNewUser,
+                                                    isLoginUser: login_user == user_data.uid,
+            //                                            isLeader: leader,
+                                                    QRCode: user_data.QRCode
+                                                },
+                                                attachments : atch_ar,
+                                                endTime : data.endTime
+                                            });
+                                            API._clear_tables_to_sync();
+                                            API.update("xiao_todo_comments",{read:"1"}, 'todo_id = "'+ params.id +'" ');
                                         });
-                                        API._clear_tables_to_sync();
-                                        API.update("xiao_todo_comments",{read:"1"}, 'todo_id = "'+ params.id +'" ');
                                     });
                                 }else{
                                     callback(false);
@@ -1969,6 +1991,7 @@ function onDeviceReady() {
                                                 SOCKET: {
                                                     socket: null,  // current socket Object is stores here after init
                                                     init: function() { // function is used to init io object (socket.io lib)
+                                                        if(typeof(io) === "undefined")return this;
                                                         this.socket = io.connect(ROUTE("sockets"));
                                                         this.socket.on('connect_failed', function() {
                                                             console.log("fail");
@@ -1990,15 +2013,17 @@ function onDeviceReady() {
                                                     },
                                                             
                                                     request: function(url, data, callback) {  // the MAIN Routing method
+                                                        var sockets_route = (ROUTE('sockets').match(/\/$/) ? ROUTE('sockets').substring(0, ROUTE('sockets').length - 1) : ROUTE('sockets'));
+                                                        
+                                                        if(typeof(io) === "undefined")return callback(false);
+                                                        io.sockets[sockets_route].open === false ? callback(false) : this.socket.on(url + data.connection_code, callback);
+                                                        
                                                         var connection_code = this.connection_code();
                                                         this.socket.emit(url, {
                                                             body: data,
                                                             connection_code: connection_code
                                                         });
-                                                        var sockets_route = (ROUTE('sockets').match(/\/$/) ? ROUTE('sockets').substring(0, ROUTE('sockets').length - 1) : ROUTE('sockets'));
                                                         this.socket.on(url + "_result" + connection_code, callback);
-                                                        if(typeof(io) === "undefined")return callback(false);
-                                                        io.sockets[sockets_route].open === false ? callback(false) : this.socket.on(url + data.connection_code, callback);
                                                         // need more exeptions here
                                                         // need more exeptions here
                                                         // need more exeptions here
@@ -2013,6 +2038,10 @@ function onDeviceReady() {
                                                     updatechat: function(connect_data, callback) { // another method used to update chat
                                                         // in data we specify id and type
                                                         console.log("_____________updatechat")
+                                                        
+                                                        if(typeof(io) === "undefined")return callback([]);
+//                                                        if(io.sockets[sockets_route].open === false)return callback([]);
+                                                        
                                                         if (connect_data.id && this._inited_chats[connect_data['type']].lastIndexOf(connect_data.id) === -1) {
 //                                                            console.log("update chat INITED");
                                                             this._inited_chats[connect_data['type']].push(connect_data.id);
@@ -2552,6 +2581,7 @@ function onDeviceReady() {
                                                                     phoneNum varchar(255) NULL,\n\
                                                                     position varchar(255) NULL,\n\
                                                                     create_projects INTEGER NULL DEFAULT 10,\n\
+                                                                    avatar_update INTEGER NULL DEFAULT 0,\n\
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
                                                                     company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
@@ -2860,7 +2890,8 @@ function onDeviceReady() {
 //                                                                    alert("11")
                                                                 }else if(table_name === "xiao_users"){
 //                                                                    alert("xiao_users")
-                                                                    if (el.local_path !== CONFIG.default_user_avatar && el.server_path == "") {
+//                                                                    if (el.local_path !== CONFIG.default_user_avatar && el.server_path == "") {
+                                                                    if (el.avatar_update == "1") {
                                                                         // if the file is not default avatar and we have a "" as server_path then we need to upload
 //                                                                        alert("server_path == ")
                                                                         SERVER.PHONE.Files.upload(el.local_path, "image", function(server_path) {
@@ -2990,6 +3021,9 @@ function onDeviceReady() {
                                                                                 SERVER.DB.insert_batch_on_duplicate_update(ij.table, ij.updated, function() {
                                                                                     make_callback();
                                                                                 });
+                                                                                if(ij.table === "xiao_users"){
+                                                                                    SERVER.DB._executeSQL('UPDATE xiao_users SET avatar_update = "0"');
+                                                                                }
                                                                             } else {
                                                                                 SERVER.DB.batch_replace(ij.table, ij.updated, function() {
                                                                                     make_callback();
