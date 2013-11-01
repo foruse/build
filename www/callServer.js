@@ -331,7 +331,7 @@
             open: function(name, params, _complete, _isUpload) {
                 var LoadingBar = Wait.LoadingBar;
 
-                LoadingBar.show(_isUpload ? "正在上传数据.." : null);
+//                LoadingBar.show(_isUpload ? "正在上传数据.." : null);
                 console.log(name)
                 Models[name](params, function(data) {
                     if (name in allHandlers) {

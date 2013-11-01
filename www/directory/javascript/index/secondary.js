@@ -104,7 +104,7 @@ this.BusinessCard = (function(Global, Confirm, clickAvatarEvent){
 					return;
 
 				var userId = avatarPanel.getAttribute("userid");
-                                 alert(userId);
+//                                 alert(userId);
 				if(userId === null)
 					return;
 
