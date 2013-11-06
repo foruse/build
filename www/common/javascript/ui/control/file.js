@@ -71,10 +71,17 @@ this.ImageFile = (function(Models, Mask, inputHtml, fileReader, imageLoadedEvent
 
 				FileReader.read(file, this);
 				this.value = "";
+			},
+			imageloaded : function(e){
+				imageFile.selectSrc = e.src;
 			}
 		});
 	};
 	ImageFile = new NonstaticClass(ImageFile, fullName("ImageFile"), Panel.prototype);
+
+	ImageFile.properties({
+		selectedSrc : null
+	});
 
 	return ImageFile.constructor;
 }(

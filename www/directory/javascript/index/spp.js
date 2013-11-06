@@ -101,7 +101,8 @@ this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 		});
 
 		calendar.attach({
-			focusmonth : function(){
+			focusmonth : function(e){
+				batchLoad.setParam("time", e.monthTime);
 				batchLoad.callServer();
 			},
 			focusdate : function(e){
@@ -227,7 +228,7 @@ this.Project = (function(CallServer, Confirm){
 					return;
 				
 				// 添加空文件夹
-				project.addEmptyFolders(data.emptyFolders);
+				project.addEmptyFolders(1);
 				// 添加未解锁的项目
 				project.addEmptyFolders(this.getParam("pageSize") - data.projects.length, true);
 			});
@@ -338,6 +339,9 @@ this.Project = (function(CallServer, Confirm){
 			///	<summary>
 			///	添加未解锁的项目，1次为10个。
 			///	</summary>
+			if(_isUnopened)
+				return;
+
 			var data = [], i = {
 				id : -1,
 				importantLevel : 0,

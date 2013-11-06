@@ -153,9 +153,8 @@ this.Account = (function(Panel, Global, ValidationList, SelectImage){
 
 		this.attach({
 			clickavatar : function(e){
-//                                alert("click")
 				e.stopPropagation();
-                                
+
 				selectImage.show();
 			}
 		}, true);

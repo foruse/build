@@ -1,6 +1,9 @@
 стянуть все отсюда
 https://github.com/VisionSquared/baopiqi-cordova.git
 
+http://gbksoft.com/admin/erd/  ---> структура БД --->>> izraylevych_xiao
+
+
 GIT  заказчика https://github.com/VisionSquared
 URL для тетсирование http://build.izraylevych.gbksoft.com/index.html
 онлайн билд https://build.phonegap.com/apps

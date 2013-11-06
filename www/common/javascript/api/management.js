@@ -98,6 +98,10 @@ this.Loader = (function(Storage, Index, HTML){
 			this.load("singleProject");
 			return new Index.SingleProject.TodoList("#todoList");
 		},
+		uploadAvatar : function(){
+			this.load("guidance");
+			return new Index.Guidance.UploadAvatar("#uploadAvatar");
+		},
 		workStream : function(){
 			this.load("singleProject");
 			return new Index.SingleProject.WorkStream("#workStream", new HTML(jQun("#workStream_info_html")));

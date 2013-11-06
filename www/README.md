@@ -1,2 +1,2 @@
-baopiqi-cordova
+baopiqi-frontend
 ================

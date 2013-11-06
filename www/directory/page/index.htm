@@ -65,7 +65,6 @@
 					<script type="text/static-html">
 						<ul>
 							@for([
-								{ placeholder : "姓名", vtype : "notEmpty", desc : "name", type : "text", errorText : "姓名不能为空！" },
 								{ placeholder : "邮箱", vtype : "email", desc : "email", type : "text", errorText : "输入的邮箱不符合规范！" },
 								{ placeholder : "密码", vtype : "userInfo", desc : "pwd", type : "password", errorText : "密码不正确！" },
 								{ placeholder : "确认密码", vtype : "userInfo", desc : "repwd", type : "password", errorText : "2次输入的密码不一致！" }
@@ -81,6 +80,20 @@
 						<button class="normalRadius">注册账号</button>
 					</p>
 				</section>
+			</article>
+			<article id="uploadAvatar">
+				<header>
+					<button>
+						<img src="../../../common/image/avatar_default_large.jpg" />
+					</button>
+					<span class="grayFont">点击上传头像</span>
+				</header>
+				<section>
+					<input class="lightBdColor smallRadius" placeholder="姓名(注册后不能更改)" />
+				</section>
+				<footer>
+					<button class="smallRadius whiteFont">下一步</button>
+				</footer>
 			</article>
 			<article id="createFirstProject">
 				<header>创建一个新项目</header>

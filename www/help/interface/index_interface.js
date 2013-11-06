@@ -90,7 +90,7 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				]
 			}
 		*/
-		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
+		["getSchedules",		new Text("url?time={time}"),	"", true],
 		
 		/*
 			{

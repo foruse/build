@@ -1,8 +1,8 @@
 /*
  *  类库名称：jQun
  *  中文释义：骥群(聚集在一起的千里马)
- *  文档状态：1.0.6.5
- *  本次修改：修改参数描述。
+ *  文档状态：1.0.6.6
+ *  本次修改：增加枚举类。
  *  开发浏览器信息：firefox 20.0+ 、 chrome 26.0+、基于webkit的手机浏览器
  */
 
@@ -13,6 +13,8 @@ var jQun,
 
 	List, ElementPropertyCollection,
 
+	HTMLElementList,
+
 	emptyAttrCollection,
 
 	undefined,
@@ -20,19 +22,21 @@ var jQun,
 	forEach;
 
 
-jQun = (function(argRegx, argListRegx, every, toNative){
+jQun = (function(create, defineProperty, argRegx, argListRegx, every, toNative){
 	function jQun(_selector){
 		///	<summary>
 		///	返回一个通过指定选择器筛选出来的元素集合。
 		///	</summary>
 		///	<param name="_selector" type="String, HTMLElement, Array">选择器、html、dom元素或dom元素数组。</param>
-		if(jQun.isInstanceOf(this, arguments.callee)){
+		var callee = arguments.callee;
+
+		if(callee.isInstanceOf(this, callee)){
 			return this.creator.apply(this, arguments);
 		}
 
-		return new jQun.HTMLElementList(_selector);
+		return new HTMLElementList(_selector);
 	};
-	jQun.prototype = Object.create(null, { constructor : { value : jQun, writable : true } });
+	jQun.prototype = create(null, { constructor : { value : jQun, writable : true } });
 
 	with(jQun){
 		// 为jQun添加常用方法
@@ -67,12 +71,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 					desc.value = value;
 				}
 
-				Object.defineProperty(obj, name, desc);
-
-				if(desc.extensible === false && !isAccessor){
-					Object.preventExtensions(obj[name]);
-				}
-
+				defineProperty(obj, name, desc);
 				return obj;
 			},
 			defineProperties : function(obj, properties, _descriptor){
@@ -206,9 +205,8 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 				///	</summary>
 				///	<param name="properties" type="Object">包含一个或多个属性的键值对。</param>
 				forEach(properties, function(val, name){
-					if(val === undefined){
+					if(val === undefined)
 						return;
-					}
 
 					this[name] = val;
 				}, this);
@@ -291,7 +289,7 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 					toString : toNative
 				});
 
-				Pseudo.prototype = Object.create(
+				Pseudo.prototype = create(
 					_ParentClass || this.ownClass(),
 					{
 						constructor : {
@@ -362,6 +360,8 @@ jQun = (function(argRegx, argListRegx, every, toNative){
 
 	return jQun;
 }(
+	Object.create,
+	Object.defineProperty,
 	// argRegx
 	/([^\s\,]+)/g,
 	// argListRegx
@@ -470,6 +470,42 @@ this.StaticClass = StaticClass = (function(){
 
 	return StaticClass.constructor;
 }());
+
+this.Namespace = (function(){
+	function Namespace(){
+		///	<summary>
+		///	开辟一个命名空间。
+		///	</summary>
+	};
+	Namespace = new NonstaticClass(Namespace, "Namespace");
+
+	Namespace.properties({
+		members : function(members){
+			///	<summary>
+			///	给该命名空间赋予成员。
+			///	</summary>
+			this.assign(members);
+			return this;
+		}
+	});
+
+	return Namespace.constructor;
+}());
+
+this.Enum = (function(freeze){
+	function Enum(data){
+		///	<summary>
+		///	枚举。
+		///	</summary>
+		this.assign(data);
+		freeze(this);
+	};
+	Enum = new NonstaticClass(Enum, "Enum");
+
+	return Enum.constructor;
+}(
+	Object.freeze
+));
 
 this.Browser = (function(){
 	function Browser(){
@@ -652,35 +688,6 @@ this.List = List = (function(addArrayMethods){
 	}
 ));
 
-this.Namespace = (function(){
-	function Namespace(){
-		///	<summary>
-		///	开辟一个命名空间。
-		///	</summary>
-		
-		//return Object.create(this.self);
-	};
-	Namespace = new NonstaticClass(Namespace, "Namespace");
-
-	Namespace.properties({
-		/*
-		self : Namespace.properties.call(Object.create(null), {
-			constructor : Namespace.constructor,
-			members : Namespace.assign
-		})
-		*/
-		members : function(members){
-			///	<summary>
-			///	给该命名空间赋予成员。
-			///	</summary>
-			this.assign(members);
-			return this;
-		}
-	});
-
-	return Namespace.constructor;
-}());
-
 this.Text = (function(tRegx){
 	function Text(text){
 		///	<summary>
@@ -740,21 +747,22 @@ this.Text = (function(tRegx){
 	/\{\s*(?:\?([^\{\}\s]{1}))?\s*([^\{\}]*?)\s*\}/g
 ));
 
-this.Validation = (function(RegExp, regExpStrings){
+this.Validation = (function(RegExp, RegExpEnum){
 	function Validation(){
 		///	<summary>
 		///	验证。
 		///	</summary>
-	};
-	Validation = new StaticClass(Validation, "jQun.Validation");
+		var nameList = this.nameList;
 
-	forEach(regExpStrings, function(str, name){
-		Validation[name.toUpperCase()] = name;
-	});
+		forEach(RegExpEnum, function(str, name){
+			nameList.push(name);
+		});
+	};
+	Validation = new StaticClass(Validation, "jQun.Validation", { nameList : [] });
 
 	Validation.properties({
 		match : function(str, type, _regxAttrs){
-			return str.match(new RegExp(regExpStrings[type], _regxAttrs));
+			return str.match(new RegExp(RegExpEnum[type], _regxAttrs));
 		},
 		result : function(str, type){
 			return !!this.match.apply(this, arguments);
@@ -764,8 +772,8 @@ this.Validation = (function(RegExp, regExpStrings){
 	return Validation;
 }(
 	RegExp,
-	// regExpStrings
-	{
+	// RegExpEnum
+	new this.Enum({
 		chinese : "[\\u4e00-\\u9fa5]",
 		email : "(\\w+(?:[-+.]\\w+)*)@(\\w+(?:[-.]\\w+)*)\\.(\\w+(?:[-.]\\w+)*)",
 		empty : "^$",
@@ -773,7 +781,7 @@ this.Validation = (function(RegExp, regExpStrings){
 		userInfo : "^\\w{6,16}$",
 		telephone : "^(\\d{3}|\\d{4})?-(\\d{7,8}|\\d{11})$",
 		webUrl : "http:\\/\\/([\\w-]+)\\.+([\\w-]+)(?:\\/([\\w- .\\/?%&=]*))?"
-	}
+	})
 ));
 
 this.Cache = (function(JSON, sessionStorage){
@@ -2066,7 +2074,9 @@ this.HTMLElementList = (function(ElementList, CSSPropertyCollection, addProperty
 	}
 ));
 
-this.Event = (function(HTMLElementList, EventTarget, window, define, set, toArray){
+HTMLElementList = this.HTMLElementList;
+
+this.Event = (function(EventTarget, window, define, set, toArray){
 	function Event(name, _init, _type, _initEventArgs){
 		///	<summary>
 		///	DOM事件类。
@@ -2163,7 +2173,6 @@ this.Event = (function(HTMLElementList, EventTarget, window, define, set, toArra
 
 	return Event.constructor;
 }(
-	this.HTMLElementList,
 	window.EventTarget,
 	window,
 	jQun.define,
@@ -2171,7 +2180,7 @@ this.Event = (function(HTMLElementList, EventTarget, window, define, set, toArra
 	jQun.toArray
 ));
 
-this.HTML = (function(HTMLElementList, HTMLElement, sRegx, fRegx, tReplace){
+this.HTML = (function(HTMLElement, sRegx, fRegx, tReplace){
 	function HTML(template){
 		///	<summary>
 		///	html模板。
@@ -2272,7 +2281,6 @@ this.HTML = (function(HTMLElementList, HTMLElement, sRegx, fRegx, tReplace){
 
 	return HTML.constructor;
 }(
-	this.HTMLElementList,
 	HTMLElement,
 	// sRegx => space(查找特殊的空白字符)
 	/[\r\t\n]/g,
@@ -2282,7 +2290,7 @@ this.HTML = (function(HTMLElementList, HTMLElement, sRegx, fRegx, tReplace){
 	this.Text.prototype.replace
 ));
 
-this.StaticHTML = (function(HTML, HTMLElementList){
+this.StaticHTML = (function(HTML){
 	function StaticHTML(){
 		///	<summary>
 		///	静态html模板。
@@ -2313,8 +2321,7 @@ this.StaticHTML = (function(HTML, HTMLElementList){
 
 	return StaticHTML;
 }(
-	this.HTML,
-	this.HTMLElementList
+	this.HTML
 ));
 
 with(jQun){

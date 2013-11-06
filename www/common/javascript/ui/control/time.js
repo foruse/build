@@ -7,8 +7,9 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 		var dateTable = this;
 
 		this.combine(tablePanelHtml.create());
+		
 		// 采用溢出功能
-		new OverflowPanel(this[0]);
+		new OverflowPanel(this[0], true);
 
 		this.attach({
 			userclick : function(e){
@@ -34,7 +35,7 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			}
 		});
 	};
-	DateTable = new NonstaticClass(DateTable, null, Panel.prototype);
+	DateTable = new NonstaticClass(DateTable, "Bao.UI.Control.Time.DateTable", Panel.prototype);
 
 	DateTable.properties({
 		addMonth : function(time){
@@ -42,19 +43,12 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			///	添加一个月的表格。
 			///	</summary>
 			/// <param name="time" type="number">当月第一天的0时0分的毫秒数</param>
-			var firstDate = new Date(time);
+			var firstDate = new Date(time), lastDate = new Date(time),
+			
+				monthData = [], month = firstDate.getMonth() + 1;
 			
 			// 设置本月第一天
 			firstDate.setDate(1);
-
-			// 如果恢复已有月份数据成功
-			if(this.restore(firstDate.getTime()))
-				return;
-			
-			var lastDate = new Date(time),
-
-				monthData = [], month = firstDate.getMonth() + 1;
-
 			// 设置本月最后一天
 			lastDate.setMonth(month, 0);
 
@@ -76,7 +70,7 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 					day : k.getDay(),
 					// 0 : 表示本月日期，-1表示上个月日期
 					dateStatus : i < 0 ? "-1" : "0",
-					month : i < 0 ? month - 1 : month
+					month : i < 0 ? (month - 1 || 12) : month
 				});
 
 				k.setDate(d + 1);
@@ -95,7 +89,6 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			///	<summary>
 			///	清空表格。
 			///	</summary>
-			this.save();
 			this.innerHTML = "";
 		},
 		focus : function(time){
@@ -137,16 +130,17 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			// 更新月份
 			this.updateSiblingMonths(time);
 
-			// 如果聚焦元素找不到
-			if(focusedDateEl.length === 0){
-				focusedDateEl = this.find('ol > li[time="' + time + '"]');
-				monthEl = this.find('li[time="' + (new Date(time).setDate(1)) + '"]');
-			}
+			focusedDateEl = this.find('ol > li[time="' + time + '"]');
+			monthEl = this.find('li.calendar_month[time="' + (new Date(time).setDate(1)) + '"]');
 			
 			monthEl.classList.add("focused");
 			focusedDateEl.classList.add("focusedDate");
 
+			focusMonthEvent.setEventAttrs({
+				monthTime : monthEl.getAttribute("time") - 0
+			});
 			focusMonthEvent.trigger(monthEl[0]);
+
 			focusDateEvent.trigger(focusedDateEl[0]);
 		},
 		getFocused : function(){
@@ -154,31 +148,6 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			///	获取当前聚焦的日期元素。
 			///	</summary>
 			return this.find('ol > li.focusedDate');
-		},
-		restore : function(time){
-			///	<summary>
-			///	恢复已储存指定时间的当月表格。
-			///	</summary>
-			/// <param name="time" type="number">当月第一天的0时0分的毫秒数</param>
-			var liEl = jQun();
-
-			return !this.savedTable.every(function(li){
-				liEl.splice(0, 1, li);
-					
-				// 如果已经存在该月
-				if(liEl.get("time", "attr") == time){
-					liEl.appendTo(this[0]);
-					return false;
-				}
-
-				return true;
-			}, this);
-		},
-		save : function(){
-			///	<summary>
-			/// 储存目前的月份表格。
-			///	</summary>
-			this.savedTable = this.find(">li");
 		},
 		savedTable : undefined,
 		top : function(){

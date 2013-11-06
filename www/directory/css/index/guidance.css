@@ -73,6 +73,52 @@
 	background-color : #39bead;
 }
 
+#uploadAvatar {
+	padding : 70px 40px 0 40px;
+}
+#uploadAvatar > header, #uploadAvatar > footer {
+	text-align : center;
+}
+#uploadAvatar > header > button {
+	width : 135px;
+	height : 135px;
+	border-radius : 140px;
+	border : 1px solid #dfdfdf;
+	padding : 5px;
+	box-sizing : content-box;
+}
+#uploadAvatar > header img {
+	width : 100%;
+	height : 100%;
+	border-radius : 135px;
+}
+#uploadAvatar > header input {
+	position : relative;
+	top : -135px;
+}
+#uploadAvatar > header > span {
+	display : block;
+	margin-top : 10px;
+	font-size : 15px;
+}
+#uploadAvatar > section {
+	margin-top : 20px;
+}
+#uploadAvatar > section > input {
+	width : 100%;
+	height : 36px;
+	padding : 8px 15px;
+	line-height : 20px;
+}
+#uploadAvatar > footer {
+	margin-top : 40px;
+}
+#uploadAvatar > footer > button {
+	width : 100px;
+	height : 30px;
+	background-color : #39bead;
+	border : 0 none;
+}
 
 #createFirstProject, #invitation {
 	padding : 15px 10px;

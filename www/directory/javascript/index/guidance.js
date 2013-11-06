@@ -39,10 +39,10 @@ this.LoginInfoManagement = (function(loginEvent, registerEvent){
 
 					// 如果点击的是 登录 按钮
 					if(htmlStr === "登录"){
-						if(!validationList[1].validate())
+						if(!validationList[0].validate())
 							return;
 
-						if(!validationList[2].validate())
+						if(!validationList[1].validate())
 							return;
 
 						loginEvent.setEventAttrs({
@@ -70,7 +70,6 @@ this.LoginInfoManagement = (function(loginEvent, registerEvent){
 					
 					registerEvent.setEventAttrs({
 						email : infoManagement.find('input[desc="email"]').value,
-						name : infoManagement.find('input[desc="name"]').value,
 						password : infoManagement.find('input[desc="pwd"]').value
 					});
 					registerEvent.trigger(targetEl[0]);
@@ -150,7 +149,7 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 				login.login(e.email, e.password);
 			},
 			register : function(e){
-				login.register(e.email, e.name, e.password);
+				login.register(e.email, e.password);
 			}
 		});
 
@@ -190,7 +189,7 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 
 				var user = data.user;
 				
-				Global.history.go(user.isNewUser ? "createFirstProject" : "project");
+				Global.history.go(user.isNewUser ? "uploadAvatar" : "project");
 
 				loginEvent.setEventAttrs({ loginUser : user });
 				loginEvent.trigger(window);
@@ -201,17 +200,15 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 			});
 		},
 		loginInfoManagement : undefined,
-		register : function(email, name, pwd){
+		register : function(email, pwd){
 			///	<summary>
 			///	注册。
 			///	</summary>
 			/// <param name="email" type="string">用户邮箱</param>
-			/// <param name="name" type="string">用户姓名</param>
 			/// <param name="pwd" type="string">用户密码</param>
 			var login = this, loginInfoManagement = this.loginInfoManagement;
 			
 			CallServer.open("register", {
-				name : name,
 				email : email,
 				pwd : pwd
 			}, function(data){
@@ -249,6 +246,52 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 	localStorage,
 	// loginEvent
 	new Event("login")
+));
+
+this.UploadAvatar = (function(ImageFile, Validation){
+	function UploadAvatar(selector){
+		var validation,
+			
+			uploadAvatar = this,
+
+			imageFile = new ImageFile();
+
+		imageFile.appendTo(this.header.find(">button")[0]);
+
+		validation = new Validation(this.section.find(">input"), function(inputEl, Validation){
+			return Validation.result(inputEl.value, "notEmpty");
+		}, "请输入姓名！");
+
+		this.attach({
+			imageloaded : function(e){
+				uploadAvatar.header.find("img").src = e.base64;
+			},
+			userclick : function(e, targetEl){
+				if(targetEl.between(">footer>button", this).length > 0){
+					if(!validation.validate())
+						return;
+
+					CallServer.open("registerUserInfo", {
+						name : validation.validationEl.value,
+						avatar : imageFile.selectedSrc
+					}, function(){
+						Global.history.go("demo");
+					});
+					return;
+				}
+			}
+		});
+	};
+	UploadAvatar = new NonstaticClass(UploadAvatar, "Bao.Page.Index.Guidance.UploadAvatar", PagePanel.prototype);
+
+	UploadAvatar.override({
+		showTitleBar : false
+	});
+
+	return UploadAvatar.constructor;
+}(
+	Bao.UI.Control.File.ImageFile,
+	Bao.API.DOM.Validation
 ));
 
 this.CreateFirstProject = (function(){
@@ -498,6 +541,11 @@ this.Self = (function(Login, CreateFirstProject, Invitation, Footer){
 		///	</summary>
 		/// <param name="selector" type="string">对应元素选择器</param>
 		var footer = new Footer("#guidance_footer");
+
+		// 新设计不需要footer部分
+		footer.hidePrev();
+		footer.hideNext();
+		return;
 
 		this.attach({
 			beforeshow : function(e){

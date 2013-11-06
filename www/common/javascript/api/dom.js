@@ -274,12 +274,12 @@ this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEve
 ));
 
 this.OverflowPanel = (function(Panel, IntervalTimer, setTopEvent, leaveborder){
-	function OverflowPanel(selector, _disableScrollBar){
+	function OverflowPanel(selector, _isHideScrollBar){
 		///	<summary>
 		///	溢出区域。
 		///	</summary>
 		///	<param name="selector" type="string">元素选择器。</param>
-		///	<param name="_disableScrollBar" type="boolean">是否显示滚动条。</param>
+		///	<param name="_isHideScrollBar" type="boolean">是否显示滚动条。</param>
 		var overflowPanel = this,
 		
 			isLeaveborder = false, panelStyle = this.style,
@@ -287,6 +287,7 @@ this.OverflowPanel = (function(Panel, IntervalTimer, setTopEvent, leaveborder){
 			timer = new IntervalTimer(40);
 
 		this.assign({
+			isHideScrollBar : _isHideScrollBar,
 			panelStyle : panelStyle
 		});
 		
@@ -355,10 +356,14 @@ this.OverflowPanel = (function(Panel, IntervalTimer, setTopEvent, leaveborder){
 		getTop : function(){
 			return this.panelStyle.top.toString().split("px").join("") - 0 || 0;
 		},
+		isHideScrollBar : false,
 		panelStyle : undefined,
 		setTop : function(top){
 			this.panelStyle.top = Math.round(top) + "px";
 			
+			if(this.isHideScrollBar)
+				return;
+
 			setTopEvent.setEventAttrs({
 				overflowPanel : this
 			});

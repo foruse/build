@@ -42,7 +42,8 @@ this.Bao = (function(Bao){
 					Footer : null,
 					Invitation : null,
 					Login : null,
-					LoginInfoManagement : null
+					LoginInfoManagement : null,
+					UploadAvatar : null
 				}),
 				SPP : new Namespace({ // ../../directoy/javascript/index/home.js
 					Partner : null,

@@ -206,16 +206,16 @@ this.SPP = (function(SingleProject, Deep){
 
 			return projects;
 		},
-		getSchedules : function(date, last, next){
+		getSchedules : function(time){
 			var endDate, schedule = [],
 			
-				beginDate = new Date(date.getTime());
+				beginDate = new Date(time);
 
-			beginDate.setMonth(beginDate.getMonth() - 1, 1);
+			beginDate.setDate(1);
 			beginDate.setHours(0, 0, 0, 0);
 
-			endDate = new Date(beginDate.getTime());
-			endDate.setMonth(beginDate.getMonth() + 3, 0);
+			endDate = new Date(time);
+			endDate.setMonth(beginDate.getMonth() + 1, 0);
 
 			for(var j = endDate.getTime();beginDate.getTime() < j;){
 				var todos = [];

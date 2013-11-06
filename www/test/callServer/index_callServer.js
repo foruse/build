@@ -42,7 +42,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getPartnerGroups",	"url",										"", true],
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
 		["getProjects",			"url",										"", true],
-		["getSchedules",		new Text("url?last={last}&next={next}"),	"", true],
+		["getSchedules",		new Text("url?time={time}"),	"", true],
 		["getSingleProject",	new Text("url?id={id}"),					"", true],
 		["getUser",				new Text("url?id={id}"),					"", true],
 		["globalSearch",		new Text("url?search={search}"),			"", true],
@@ -67,7 +67,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["editProjectInfo",		new Text("url?users={users}"),		""],
 		["removeProject",		new Text("url?projectId={projectId}"),		""],
 		["editAccount",			new Text("url?positon={positon}&avatar={avatar}&phoneNum={phoneNum}&email={email}&password={password}"), ""],
-		["archiveProject",		new Text("url?porjectId={projectId}"),		""]
+		["archiveProject",		new Text("url?porjectId={projectId}"),		""],
+		["registerUserInfo",	new Text("url?name={name}&avatar={avatar}"),""]
 	], allHandlers);
 
 	return CallServer;
@@ -136,8 +137,8 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			*/
 			return data;
 		},
-		getSchedules : function(data){
-			data = Index.SPP.getSchedules(new Date(Date.now()), 2, 2);
+		getSchedules : function(data, params){
+			data = Index.SPP.getSchedules(params.time);
 
 			data.forEach(function(d){
 				var localDate = new Date(d.time);
