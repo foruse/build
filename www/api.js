@@ -558,7 +558,22 @@ function onDeviceReady() {
                                     if (data.local_path != "" && data.local_path != undefined) {
                                         console.log("file exists");
                                         // if this file exists in local db then there is a local path in the db
+										var dur_offset = initial_dur = 0;
+										
                                         PHONE.VoiceMessage.play_and_get_duration(data['local_path'], function(dur){
+											if (initial_dur == 0) {
+												initial_dur = dur;
+											}
+											
+											if (inital_dur < 0 && dur_offset == 0) {
+												dur_offset = Math.abs(initial_dur);
+											}
+											
+											dur += dur_offset;
+											
+											console.log('Duration offset: ' + dur_offset);
+											console.log('Initial dur: ' + initial_dur);
+											
 //                                            callback(Math.ceil(dur));
                                             PHONE.VoiceMessage.getPlayTime(function(pos){
                                                 callback(Math.ceil(dur), Math.ceil(pos));
