@@ -556,7 +556,7 @@ function onDeviceReady() {
                                     console.log("PLAY data");
                                     console.log(data);
                                     if (data.local_path != "" && data.local_path != undefined) {
-                                        console.log("file exists");
+                                        console.log("file exists, y");
                                         // if this file exists in local db then there is a local path in the db
 										var dur_offset = initial_dur = 0;
 										
@@ -571,6 +571,7 @@ function onDeviceReady() {
 											
 											dur += dur_offset;
 											
+											console.log('Fix the negative duration');
 											console.log('Duration offset: ' + dur_offset);
 											console.log('Initial dur: ' + initial_dur);
 											
