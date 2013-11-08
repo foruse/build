@@ -580,6 +580,10 @@ function onDeviceReady() {
                                             PHONE.VoiceMessage.play_and_get_duration(new_local_path, function(dur){
 //                                                callback(Math.ceil(dur));
                                                 PHONE.VoiceMessage.getPlayTime(function(pos){
+													if (pos < 0) {
+														pos = 0;
+													}
+													console.log('pos: ' + pos);
                                                     callback(Math.ceil(dur), Math.ceil(pos));
                                                 });
                                             });
