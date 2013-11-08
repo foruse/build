@@ -11,6 +11,9 @@
 #schedule .calendar {
 	z-index : 2;
 }
+#schedule .calendar.stretch aside[todoslength] {
+	display : none;
+}
 #schedule .calendar_month aside[todoslength] {
 	display : inline-block;
 	-webkit-column-width : 5px;

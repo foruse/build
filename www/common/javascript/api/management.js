@@ -176,7 +176,7 @@ this.History = (function(List, Loader, redirectEvent){
 				}
 
 				// 显示当前的panel
-				panel.show(null, _isBack);
+				panel.show();
 			}
 			else {
 				// 加载、初始化新panel信息

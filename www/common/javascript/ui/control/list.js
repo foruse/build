@@ -30,6 +30,12 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 	};
 	AnchorList = new NonstaticClass(AnchorList, "Bao.UI.Control.List.AnchorList", Panel.prototype);
 
+	AnchorList.properties({
+		resetPlaceholder : function(placeHolder){
+			this.find(">p").innerHTML = placeHolder;
+		}
+	});
+
 	return AnchorList.constructor;
 }(
 	Bao.Global,
@@ -56,6 +62,7 @@ this.AnchorList = (function(Global, anchorListHtml, clickAnchorEvent){
 					'</li>',
 				'}',
 			'</ul>',
+			'<p class="lightBdColor normalRadius grayFont">空列表</p>',
 		'</div>'
 	].join("")),
 	// clickAnchorEvent

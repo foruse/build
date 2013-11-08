@@ -260,7 +260,7 @@
 	height : 100%;
 }
 #aboutBaoPiQi > footer {
-	margin-top : 45px;
+	margin-top : 30px;
 	text-align : center;
 }
 #aboutBaoPiQi nav > * {
@@ -268,7 +268,7 @@
 }
 #aboutBaoPiQi > footer a:first-child {
 	color : #ab2424;
-	margin-bottom : 20px;
+	margin-bottom : 15px;
 }
 
 #QRCode {
@@ -499,6 +499,21 @@
 	padding : 0;
 	background-color : #fff;
 }
+#archivedProjectView > header > ul + p {
+	margin : 10px 20px;
+}
+#archivedProjectView ul + p {
+	display : none;
+	height : 45px;
+	line-height : 45px;
+	font-size : 15px;
+	text-align : center;
+	margin : 10px;
+	background-color : #fff;
+}
+#archivedProjectView ul:empty + p {
+	display : block;
+}
 #archivedProjectView > section {
 	position : absolute;
 	top : 190px;
@@ -559,4 +574,7 @@
 	height : 34px;
 	width : 34px;
 	display : inline-block;
+}
+#archivedProjectView > header > ul:empty, #archivedProjectView .anchorList > ul:empty {
+	display : none;
 }

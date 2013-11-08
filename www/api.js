@@ -94,10 +94,10 @@ function onDeviceReady() {
             file_upload_url: "upload",
             sockets: ""
         },
-//        server_url: "http://115.28.131.52:3000",
+        server_url: "http://115.28.131.52:3000",
 //        server_url: "http://192.168.200.110:3000",
 //        server_url: "http://212.8.40.254:5959",
-        server_url: "http://gbksoft.com:5959",
+//        server_url: "http://gbksoft.com:5959",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
@@ -556,28 +556,18 @@ function onDeviceReady() {
                                     console.log("PLAY data");
                                     console.log(data);
                                     if (data.local_path != "" && data.local_path != undefined) {
-                                        console.log("file exists, y");
+                                        console.log("file exists");
                                         // if this file exists in local db then there is a local path in the db
-										var dur_offset = initial_dur = 0;
 										
                                         PHONE.VoiceMessage.play_and_get_duration(data['local_path'], function(dur){
-											if (initial_dur == 0) {
-												initial_dur = dur;
-											}
-											
-											if (inital_dur < 0 && dur_offset == 0) {
-												dur_offset = Math.abs(initial_dur);
-											}
-											
-											dur += dur_offset;
-											
-											console.log('Fix the negative duration');
-											console.log('Duration offset: ' + dur_offset);
-											console.log('Initial dur: ' + initial_dur);
-											
-//                                            callback(Math.ceil(dur));
+
+											//callback(Math.ceil(dur));
                                             PHONE.VoiceMessage.getPlayTime(function(pos){
-                                                callback(Math.ceil(dur), Math.ceil(pos));
+												if (pos < 0) {
+													pos = 0;
+												}
+												console.log('pos: ' + pos);
+												callback(Math.ceil(dur), Math.ceil(pos));
                                             });
                                         });
                                         _this._last_play_path = data.local_path;
@@ -3551,16 +3541,19 @@ function onDeviceReady() {
                                                             this.audio = new Media(file, this.log_success, this.log_error);
                                                             var normal_duration = this.audio.getDuration();
                                                             if(normal_duration > 0){
+																console.log('normal_duration: ' + normal_duration);
                                                                 callback(normal_duration);
                                                             }else{
                                                                 this.audio.play();this.audio.stop();
                                                                 var timerDur = setInterval(function() {
-                                                                    counter = counter + 100;
+																	console.log('counter: ' + counter);
+																	counter = counter + 100;
                                                                     if (counter > 2000) {
                                                                         callback(false);
                                                                         clearInterval(timerDur);
                                                                     }
                                                                     var dur = _this.audio.getDuration();
+																	console.log('dur: ' + dur);
                                                                     if (dur > 0) {
                                                                         if(callback)callback(dur);
                                                                         _this.audio.play();

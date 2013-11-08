@@ -79,7 +79,18 @@
 .anchorList_level > li:first-child {
 	margin-left : 0;
 }
-
+.anchorList > ul + p {
+	background-color : #fff;
+	height : 45px;
+	line-height : 45px;
+	margin : 10px;
+	text-align : center;
+	font-size : 15px;
+	display : none;
+}
+.anchorList > ul:empty + p {
+	display : block;
+}
 
 .userAnchorList li {
 	padding : 0;

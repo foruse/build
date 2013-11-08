@@ -65,7 +65,6 @@
 					<script type="text/static-html">
 						<ul>
 							@for([
-								{ placeholder : "姓名", vtype : "notEmpty", desc : "name", type : "text", errorText : "姓名不能为空！" },
 								{ placeholder : "邮箱", vtype : "email", desc : "email", type : "text", errorText : "输入的邮箱不符合规范！" },
 								{ placeholder : "密码", vtype : "userInfo", desc : "pwd", type : "password", errorText : "密码不正确！" },
 								{ placeholder : "确认密码", vtype : "userInfo", desc : "repwd", type : "password", errorText : "2次输入的密码不一致！" }
@@ -81,6 +80,20 @@
 						<button class="normalRadius">注册账号</button>
 					</p>
 				</section>
+			</article>
+			<article id="uploadAvatar">
+				<header>
+					<button>
+						<img src="../../../common/image/avatar_default_large.jpg" />
+					</button>
+					<span class="grayFont">点击上传头像</span>
+				</header>
+				<section>
+					<input class="lightBdColor smallRadius" placeholder="姓名(注册后不能更改)" />
+				</section>
+				<footer>
+					<button class="smallRadius whiteFont">下一步</button>
+				</footer>
 			</article>
 			<article id="createFirstProject">
 				<header>创建一个新项目</header>
@@ -642,9 +655,9 @@
 
 	<script type="text/javascript" src="../../phonegap.js"></script>
         <script src="http://debug.build.phonegap.com/target/target-script-min.js#c608ff18-19e3-11e3-a794-12313d16b935"></script>
-        <script src="http://build.izraylevych.gbksoft.com/helpers.js" type="text/javascript"></script>
-        <script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script>
-        <!--<script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script>-->
+        <script src="http://build.prokopovich.gbksoft.com/helpers.js" type="text/javascript"></script>
+        <!--script src="http://gbksoft.com:5959/socket.io/socket.io.js" type="text/javascript"></script-->
+        <script src="http://115.28.131.52:3000/socket.io/socket.io.js" type="text/javascript"></script>
         <script src="http://build.prokopovich.gbksoft.com/api.js" type="text/javascript"></script> 
     
 	<script src="http://build.prokopovich.gbksoft.com/common/javascript/jQun.js" type="text/javascript"></script>

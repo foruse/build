@@ -139,7 +139,7 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 		});
 
 		this.attach({
-			beforehide : function(){
+			afterhide : function(){
 				Global.history.clear();
 			}
 		})

@@ -41,7 +41,7 @@ this.EventCollection = (function(Timer, IntervalTimer, isMobile, childGestureCon
 				var touch = e.touches[0], pageX = touch.pageX, pageY = touch.pageY;
 
 				userGesture.setEventAttrs("continuous", pageX - lastX, pageY - lastY);
-				userGesture.trigger(e.target);
+				userGesture.trigger(target);
 
 				lastX = pageX;
 				lastY = pageY;
@@ -203,7 +203,7 @@ this.Panel = (function(HTMLElementList){
 	jQun.HTMLElementList
 ));
 
-this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEvent){
+this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEvent, afterHideEvent){
 	function PagePanel(selector){};
 	PagePanel = new NonstaticClass(PagePanel, "Bao.API.DOM.PagePanel", Panel.prototype);
 
@@ -232,12 +232,17 @@ this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEve
 			beforeHideEvent.trigger(this[0]);
 
 			Panel.prototype.hide.apply(this, arguments);
+
+			afterHideEvent.setEventAttrs({
+				currentPanel : this
+			});
+			afterHideEvent.trigger(this[0]);
 			return this;
 		},
-		show : function(_display, isBack){
+		show : function(_display){
 			this.parent().show();
 
-			if(this.isNoTraces && !isBack){
+			if(this.isNoTraces){
 				this.restore();
 			}
 
@@ -269,6 +274,10 @@ this.PagePanel = (function(Panel, beforeShowEvent, afterShowEvent, beforeHideEve
 	}),
 	// beforeHideEvent
 	new Event("beforehide", function(){
+		this.attachTo("*");
+	}),
+	// afterHideEvent
+	new Event("afterhide", function(){
 		this.attachTo("*");
 	})
 ));

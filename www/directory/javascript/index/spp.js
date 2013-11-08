@@ -20,6 +20,8 @@ this.Schedule = (function(Calendar, LevelAnchorList, groupingHtml){
 		// 初始化日程信息的滚动效果
 		this.attach({
 			continuousgesture : function(e){
+				return;
+
 				var date = new Date(dateTable.getFocused().get("time", "attr") - 0),
 				
 					top = scheduleContent.get("top", "css").split("px").join("") - 0 || 0;

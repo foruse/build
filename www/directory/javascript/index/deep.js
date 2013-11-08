@@ -524,22 +524,30 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 	AttamentArea = new NonstaticClass(AttamentArea, null, Panel.prototype);
 
 	AttamentArea.properties({
-		all : undefined
+		all : undefined,
+		clear : function(){
+			this.find(">ul>li").remove();
+			this.all.splice(0);
+		}
 	});
 
 
 	function SendTodo(selector, attachmentHtml){
-		var sendTodo = this, titleBar = Global.titleBar,
+		var titleValidation, dateValidation, userManagementList, attachmentArea,
 		
-			titleValidation = new Validation(this.find('li[desc="title"]>input'), validationHandle, "标题不能为空！"),
+			sendTodo = this, titleBar = Global.titleBar, isBack = true;
 
-			dateValidation = new Validation(this.find('li[desc="endDate"]>input[type="text"]'), validationHandle, "日期不能为空！"),
+
+		titleValidation = new Validation(this.find('li[desc="title"]>input'), validationHandle, "标题不能为空！");
+
+		dateValidation = new Validation(this.find('li[desc="endDate"]>input[type="text"]'), validationHandle, "日期不能为空！");
 			
-			userManagementList = new UserManagementList("请选择该To Do的执行者"),
+		userManagementList = new UserManagementList("请选择该To Do的执行者");
 
-			attachmentArea = new AttamentArea.constructor(this.find('>section[desc="attachment"]')[0], attachmentHtml);
+		attachmentArea = new AttamentArea.constructor(this.find('>section[desc="attachment"]')[0], attachmentHtml);
 
 		this.assign({
+			attachmentArea : attachmentArea,
 			dateValidation : dateValidation,
 			titleValidation : titleValidation,
 			userManagementList : userManagementList
@@ -550,6 +558,12 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 
 		// 提交按钮绑定事件
 		this.attach({
+			afterhide : function(){
+				if(!isBack){
+					isBack = true;
+					Global.history.clear();
+				}
+			},
 			beforeshow : function(e){
 				titleBar.find('button[action="sendTodoCompleted"]').onuserclick = function(){
 					if(!titleValidation.validate())
@@ -574,6 +588,7 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 						userId : users[0],
 						projectId : sendTodo.projectId
 					}, function(data){
+						isBack = false;
 						Global.history.go("todo").fill(data.id);
 					});
 				};
@@ -614,6 +629,7 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 			this.find('section[desc="remind"] button>span').classList.remove("reminded");
 			this.remind = false;
 			this.find("textarea").value = "";
+			this.attachmentArea.clear();
 		},
 		title : "发送 To Do",
 		tools : [
@@ -622,6 +638,7 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 	});
 
 	SendTodo.properties({
+		attachmentArea : undefined,
 		dateValidation : undefined,
 		endDate : new Date(),
 		projectId : -1,
@@ -791,9 +808,11 @@ this.ArchivedProjectView = (function(AnchorList, Panel){
 				}, jQun.set);
 
 				archiveProjectView.header.find("ul").innerHTML = archiveProjectView.attachmentsHtml.render(data.project);
-				
+
 				sectionEl.innerHTML = "";
 				anchorList = new AnchorList(anchorListData, true);
+
+				anchorList.resetPlaceholder("此归档没有任何Todo");
 				anchorList.appendTo(sectionEl[0]);
 				new OverflowPanel(anchorList);
 			});

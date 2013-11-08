@@ -13,7 +13,7 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 
 		this.attach({
 			userclick : function(e){
-				var dateEl = jQun(e.target).between('li[datestatus]', this);
+				var dateEl = jQun(e.target).between('li[datestatus="0"]', this);
 
 				if(dateEl.length === 0)
 					return;
@@ -34,6 +34,9 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 				dateTable.focus(toFocusEl.get("time", "attr") - 0);
 			}
 		});
+
+		// 更新月份
+		this.updateSiblingMonths(new Date() - 0);
 	};
 	DateTable = new NonstaticClass(DateTable, "Bao.UI.Control.Time.DateTable", Panel.prototype);
 
@@ -49,29 +52,37 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			
 			// 设置本月第一天
 			firstDate.setDate(1);
+			firstDate.setHours(0, 0, 0, 0);
 			// 设置本月最后一天
 			lastDate.setMonth(month, 0);
+			lastDate.setHours(0, 0, 0, 0);
 
 			// 数据
 			for(
-				var i = firstDate.getDay() * -1,
-					l = lastDate.getDay(),
-					// l === 6：判断这个月的最后一天是否是星期6，决定这周包含了其它月的日期
-					j = lastDate.getDate() - (l === 6 ? 0 : l + 1),
-					k = new Date(new Date(firstDate.getTime()).setDate(i + 1));
+				var maxDate = lastDate.getDate(),
+					i = firstDate.getDay() * -1,
+					j = maxDate + (6 - lastDate.getDay()),
+					k = new Date(firstDate.getTime());
 				i < j;
 				i++	
 			){
 				var d = k.getDate();
 
-				monthData.push({
+				monthData.push(i < 0 || i >= maxDate ? {
+					time : -1,
+					date : -1,
+					day : -1,
+					dateStatus : "-1"
+				} : {
 					time : k.getTime(),
 					date : d,
 					day : k.getDay(),
-					// 0 : 表示本月日期，-1表示上个月日期
-					dateStatus : i < 0 ? "-1" : "0",
-					month : i < 0 ? (month - 1 || 12) : month
+					dateStatus : "0"
 				});
+
+				if(i < 0){
+					continue;
+				}
 
 				k.setDate(d + 1);
 			}
@@ -81,8 +92,7 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 				monthData : monthData,
 				month : month,
 				year : firstDate.getFullYear(),
-				time : firstDate.getTime(),
-				weeks : Math.ceil(monthData.length / 7)
+				time : firstDate.getTime()
 			}).appendTo(this[0]);
 		},
 		clearTable : function(){
@@ -106,7 +116,7 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			if(oldFocusedDateEl.length > 0){
 				var oldTime = oldFocusedDateEl.get("time", "attr") - 0;
 
-				// 如果2个日期的时间差小于1天，就证明是同一天
+				// 如果是同一天
 				if(oldTime === time){
 					return;
 				}
@@ -126,9 +136,6 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			}
 			
 			var monthEl = this.find('li[time="' + new Date(time).setDate(1) + '"]');
-
-			// 更新月份
-			this.updateSiblingMonths(time);
 
 			focusedDateEl = this.find('ol > li[time="' + time + '"]');
 			monthEl = this.find('li.calendar_month[time="' + (new Date(time).setDate(1)) + '"]');
@@ -154,25 +161,20 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			///	<summary>
 			///	将当前聚焦的日期置顶。
 			///	</summary>
-			var top,
+			var focusedDateEl = this.find("li.focusedDate");
 
-				focusedDateEl = this.find("li.focusedDate"),
+			if(focusedDateEl.length === 0)
+				return;
+
+			var top, 
 
 				focusedMonthEl = focusedDateEl.between("li.focused", this[0]);
 
-			// 如果当前聚焦的日期是属于下个月的容器内
-			if(focusedMonthEl.length === 0){
-				top = this.find(">li.focused").height() * -1;
-			}
-			else {
-				top = Math.floor(focusedMonthEl.find("li").indexOf(focusedDateEl[0]) / 6 - 1) * -45;
-			}
-
-			this.set("top",	top + "px", "css");
+			this.set("top",	this.rect("top") - focusedDateEl.rect("top") + "px", "css");
 		},
 		updateSiblingMonths : function(time){
 			///	<summary>
-			///	更新相邻的月份（指定月份的上个月，指定的月份，指定的月份的下一个月）。
+			///	更新相邻的月份（指定月份之前的半年，指定的月份，指定的月份后1年）。
 			///	</summary>
 			/// <param name="time" type="number">指定月份的某一天的0时0分的毫秒数</param>
 			var date = new Date(time),
@@ -182,7 +184,7 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 			// 清空
 			this.clearTable();
 
-			for(var i = -1;i < 2;i++){
+			for(var i = -6;i < 13;i++){
 				date.setFullYear(year, month + i, 1);
 				this.addMonth(date.getTime());
 			}
@@ -197,21 +199,21 @@ this.DateTable = (function(OverflowPanel, Date, tablePanelHtml, dateTableHtml, f
 	new HTML('<ul></ul>'),
 	// dateTableHtml
 	new HTML([
-		'<li class="calendar_month" time="{time}" weeks={weeks}>',
+		'<li class="calendar_month" time="{time}">',
+			'<p class="whiteFont">',
+				'<strong>{year}年{month}月</strong>',
+			'</p>',
 			'<ol class="inlineBlock">',
 				'@for(monthData ->> dt){',
 					'<li datestatus="{dt.dateStatus}" day="{dt.day}" time="{dt.time}">',
 						'<aside purpose="用户自定义内容"></aside>',
 						'<p>',
-							'<small>{dt.month}月</small>',
+							'<small>{month}月</small>',
 							'<span>{dt.date}</span>',
 						'</p>',
 					'</li>',
 				'}',
 			'</ol>',
-			'<p class="whiteFont">',
-				'<strong>{year}年{month}月</strong>',
-			'</p>',
 		'</li>'
 	].join("")),
 	// focusDateEvent
@@ -251,10 +253,8 @@ this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
 
 		dateTable.attach({
 			focusdate : function(e){
-				if(calendar.isStretched())
-					return;
-				
 				dateTable.top();
+				calendar.shrink();
 			}
 		});
 
@@ -309,7 +309,7 @@ this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
 	this.DateTable,
 	// calendarHtml
 	new HTML([
-		'<div class="calendar lightBdColor smallRadius">',
+		'<div class="calendar lightBdColor">',
 			'<dl>',
 				'<dt class="inlineBlock whiteFont">',
 					'@for(["Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat"] ->> title, day){',
