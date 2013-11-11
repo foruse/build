@@ -94,10 +94,10 @@ function onDeviceReady() {
             file_upload_url: "upload",
             sockets: ""
         },
-        server_url: "http://115.28.131.52:3000",
+//        server_url: "http://115.28.131.52:3000",
 //        server_url: "http://192.168.200.110:3000",
 //        server_url: "http://212.8.40.254:5959",
-//        server_url: "http://gbksoft.com:5959",
+        server_url: "http://gbksoft.com:5959",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
@@ -190,7 +190,7 @@ function onDeviceReady() {
                         DB.where('c.id ="' + SESSION.get("company_id") + '"'); // actually not needed
 //                            DB.where('p.user_id ="' + SESSION.get("user_id") + '"');
                         DB.where('p.user_id <>"' + SESSION.get("user_id") + '"');
-                        API.read(callback);
+						API.read(callback);
                     } else if (id) {
                         console.log("partner by id");
                         // partner by id
@@ -310,15 +310,20 @@ function onDeviceReady() {
                     }
                     console.log("update_user_data")
                     console.log(data)
+					console.log('do it');
                     callback ?
-                            API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
+							API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
+								console.log('callback0');
                                 DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                                 DB.from("xiao_users AS u");
                                 DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                                 DB.where('u.id ="' + SESSION.get("user_id") + '"');
                                 DB.row(function(new_user_data){
+									console.log('callback1');
                                     new_user_data.avatar = (new_user_data.local_path != "" && new_user_data.local_path != CONFIG.default_user_avatar) ? new_user_data.local_path : new_user_data.server_path;
+									console.log('callback2');
                                     callback(new_user_data);
+									console.log('callback3');
                                 });
                             }) :
                             API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"');
@@ -382,6 +387,7 @@ function onDeviceReady() {
 //                        alert("12")
 //                        callback(JSON.parse(SESSION.get("saved_user_data")))
 //                    }else{
+
 
                     if(SESSION.get("user_pass")){
                         var old_user_data = SESSION.get("saved_user_data"),
@@ -457,7 +463,6 @@ function onDeviceReady() {
                         });
 //                    }
                     }
-
                 },
                         
                 logout: function(callback){
@@ -476,6 +481,8 @@ function onDeviceReady() {
 //                            phoneNum: "testuser_123",
 //                            position: "testuser_123"
 //                        };
+console.log('CREATE LOG');
+console.log(data);
                     if("avatar" in data){
                         data.local_path = data.avatar;
                         delete data.avatar;
@@ -485,8 +492,12 @@ function onDeviceReady() {
                         if (result !== false) {
                             if (result.user) {
                                 API._sync(['xiao_users', 'xiao_company_partners'], function() {
-
-                                    DB.insert_with_id('xiao_users', result.user);
+									
+									var normal_result = result.user;
+									delete normal_result.pwd;
+									
+									
+                                    DB.insert_with_id('xiao_users', normal_result);
                                     API._clear_tables_to_sync();
                                     SESSION.set("user_id", result.user.id);
                                     SESSION.set("user_name", result.user.name);
@@ -800,13 +811,13 @@ function onDeviceReady() {
                                 DB.from("xiao_project_partners AS pp");
 //                                DB.from("xiao_projects AS p");
                                 DB.join("xiao_projects AS p", "pp.project_id = p.id");
-                                DB.join("xiao_users AS u", "u.id = p.creator_id");
+                                DB.join("xiao_users AS u", "u.id = pp.user_id");
                                 DB.join("xiao_companies AS c", "u.company_id = c.id");
                                 DB.where('pp.user_id = "' + logged_user + '"');
                                 DB.where('p.archived <> "1"');
                                 DB.group_by('p.id');
 //                                DB.having('pp.user_id = "' + logged_user + '"');
-                                DB.limit(params.pageSize, (params.pageIndex - 1) * params.pageSize);
+                                DB.limit(params.pageSize, (params.pageIndex - 1) * params.pageSiz9e);
 
                                 DB.query(function(projects) {
                                     var others_limit = params.pageSize - projects.length;
@@ -816,7 +827,7 @@ function onDeviceReady() {
                                         DB.select("DISTINCT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 2 as status");
                                         DB.from("xiao_projects AS p");
                                         DB.left_join("xiao_project_partners AS pp", "pp.project_id = p.id");
-                                        DB.left_join("xiao_users AS u", "u.id = p.creator_id");
+                                        DB.left_join("xiao_users AS u", "u.id = pp.user_id");
                                         DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                                         DB.where('p.archived <> "1"');
                                         DB.group_by('p.id');
@@ -913,10 +924,10 @@ function onDeviceReady() {
                                                                     });
                                                                     if (result.length == projects.length) {
                                                                         if (params.pageSize - projects.length === 0) {
-                                                                            DB.select("create_projects");
+                                                                            /*DB.select("create_projects");
                                                                             DB.from("xiao_users");
                                                                             DB.where('id="' + SESSION.get('user_id') + '"');
-                                                                            DB.col(function(createProjects) {
+                                                                            DB.col(function(createProjects) {*/
                                                                                 callback({
                                                                                     projects: result,
                                                                                     pageIndex: params.pageIndex,
@@ -925,7 +936,7 @@ function onDeviceReady() {
                                                                                     othersOffset: params.othersOffset + others_limit,
                                                                                     emptyFolders: params.pageSize - projects.length
                                                                                 });
-                                                                            });
+                                                                            //});
 
                                                                         } else {
                                                                             callback({
@@ -947,10 +958,10 @@ function onDeviceReady() {
                                                 });
 
                                             } else {
-                                                DB.select("create_projects");
+                                                /*DB.select("create_projects");
                                                 DB.from("xiao_users");
                                                 DB.where('id="' + SESSION.get('user_id') + '"');
-                                                DB.col(function(createProjects) {
+                                                DB.col(function(createProjects) {*/
                                                     callback({
                                                         projects: [],
                                                         pageIndex: params.pageIndex,
@@ -959,7 +970,7 @@ function onDeviceReady() {
                                                         othersOffset: params.othersOffset + others_limit,
                                                         emptyFolders: params.pageSize - projects.length
                                                     });
-                                                });
+                                                //});
                                             }
 
                                         });
@@ -1044,10 +1055,10 @@ function onDeviceReady() {
                                                             });
                                                             if (result.length == projects.length) {
                                                                 if (params.pageSize - projects.length === 0) {
-                                                                    DB.select("create_projects");
+                                                                    /*DB.select("create_projects");
                                                                     DB.from("xiao_users");
                                                                     DB.where('id="' + SESSION.get('user_id') + '"');
-                                                                    DB.col(function(createProjects) {
+                                                                    DB.col(function(createProjects) {*/
                                                                         callback({
                                                                             projects: result,
                                                                             pageIndex: params.pageIndex,
@@ -1055,7 +1066,7 @@ function onDeviceReady() {
         //                                                                    createProjects: createProjects,
                                                                             emptyFolders: params.pageSize - projects.length
                                                                         });
-                                                                    });
+                                                                    //});
 
                                                                 } else {
                                                                     callback({
@@ -2585,7 +2596,7 @@ function onDeviceReady() {
                                                                         ); 
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_users(\n\
                                                                     id INTEGER NULL,\n\
-                                                                    name varchar(255) NOT NULL,\n\
+                                                                    name varchar(255) NULL,\n\
                                                                     email varchar(100) NOT NULL,\n\
                                                                     server_path TEXT NULL,\n\
                                                                     local_path varchar(255) DEFAULT "'+CONFIG.default_user_avatar+'",\n\
@@ -3133,6 +3144,7 @@ function onDeviceReady() {
 //                                                            if( this.get("saved_user_data") ){
 //                                                                var old_user = JSON.parse(this.get("saved_user_data"));
 //                                                            }
+
                                                             this.clear();
 //                                                            if(old_user)this.set("saved_user_data", JSON.stringify(old_user));
                                                             this.set("user_id", test_user_id);
@@ -3717,14 +3729,14 @@ function onDeviceReady() {
                                                 SOCKET: SERVER.SOCKET.init(),
                                                 API: SERVER.API,
                                                 SESSION: SERVER.SESSION,
-                                                DB: SERVER.DB,
+                                                //DB: SERVER.DB,
 //                                                DB: SERVER.DB._init_db(),
                                                 // if it is needed to RECREATE DB AND STORAGE 
                                                 // uncomment lines below
                                                 // than comment again after refresh
 
-//                                                SESSION: SERVER.SESSION._init_storage(1),
-//                                                DB: SERVER.DB._init_db(1),
+                                                //SESSION: SERVER.SESSION._init_storage(1),
+                                                DB: SERVER.DB._init_db(1),
                                                 PHONE: SERVER.PHONE
 
                                             };

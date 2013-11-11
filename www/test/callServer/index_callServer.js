@@ -68,7 +68,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["removeProject",		new Text("url?projectId={projectId}"),		""],
 		["editAccount",			new Text("url?positon={positon}&avatar={avatar}&phoneNum={phoneNum}&email={email}&password={password}"), ""],
 		["archiveProject",		new Text("url?porjectId={projectId}"),		""],
-		["registerUserInfo",	new Text("url?name={name}&avatar={avatar}"),""]
+		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""]
 	], allHandlers);
 
 	return CallServer;
@@ -329,6 +329,11 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			return data;
 		},
 		editAccount : function(data){
+			data = Index.Common.getUser();
+
+			return data;
+		},
+		registerUserInfo : function(data){
 			data = Index.Common.getUser();
 
 			return data;

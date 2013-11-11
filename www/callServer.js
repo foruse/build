@@ -221,6 +221,11 @@
             register: function(params, complete) {
                 Mdls.User.create(params, complete);
             },
+			registerUserInfo: function(params, complete) {
+				delete params['avatar'];
+				delete params['id'];
+				Mdls.User.update(params, complete);
+			},
             // toDoCompleted : function(){ },
             getToDo: function(params, complete) {
                 console.log(params);
@@ -332,7 +337,6 @@
                 var LoadingBar = Wait.LoadingBar;
 
 //                LoadingBar.show(_isUpload ? "正在上传数据.." : null);
-                console.log(name)
                 Models[name](params, function(data) {
                     if (name in allHandlers) {
                         data = allHandlers[name](data);

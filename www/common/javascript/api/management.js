@@ -30,6 +30,10 @@ this.Loader = (function(Storage, Index, HTML){
 			this.load("guidance");
 			return new Index.Guidance.CreateFirstProject("#createFirstProject");
 		},
+		demo : function(){
+			this.load("guidance");
+			return new Index.Guidance.Demo("#demo", new HTML(jQun("#demo_html")));
+		},
 		discussion : function(){
 			this.load("singleProject");
 			return new Index.SingleProject.Discussion("#discussion", new HTML(jQun("#discussion_info_html")));

@@ -295,7 +295,19 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				}
 			}
 		*/
-		["getArchivedProject",	new Text("url?id={id}"),					"", true]
+		["getArchivedProject",	new Text("url?id={id}"),					"", true],
+
+		/*
+			{
+				params : {
+					id : 1,
+					name : "abc", // string : user name
+					avatar : "javascript:void(0);"
+				},
+				return : DS_user
+			}
+		*/
+		["registerUserInfo",	new Text("url?name={name}&avatar={avatar}"),""]
 	]);
 }
 }(

@@ -59,6 +59,7 @@
 	overflow : hidden;
 	position : absolute;
 	top : 20px;
+	background-color : #f7f7f7;
 }
 .calendar_month {
 	position : relative;

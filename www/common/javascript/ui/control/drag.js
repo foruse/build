@@ -107,7 +107,7 @@ this.Scroll = (function(scrollPanel, body){
 	document.body
 ));
 
-this.Navigator = (function(Timer, Math, panelHtml, tabItemsHtml){
+this.Navigator = (function(Timer, Math, focusTabEvent, panelHtml, tabItemsHtml, emptyContentHtml){
 	function Navigator(){
 		///	<summary>
 		///	导航。
@@ -136,7 +136,7 @@ this.Navigator = (function(Timer, Math, panelHtml, tabItemsHtml){
 				if(!buttonEls.contains(target))
 					return;
 
-				navigator.focusTab(jQun(target).get("idx", "attr"));
+				navigator.focusTab(jQun(target).get("idx", "attr") - 0);
 			},
 			touchstart : function(){
 				x = 0;
@@ -235,6 +235,9 @@ this.Navigator = (function(Timer, Math, panelHtml, tabItemsHtml){
 			tabEl.find('button.focused').classList.remove("focused");
 			classList.add("focused");
 			this.currentTabIndex = idx;
+
+			focusTabEvent.setEventAttrs({ tabIndex : idx });
+			focusTabEvent.trigger(focusEl[0]);
 		},
 		resetTab : function(){
 			///	<summary>
@@ -244,6 +247,7 @@ this.Navigator = (function(Timer, Math, panelHtml, tabItemsHtml){
 			
 			tabEl.innerHTML = tabItemsHtml.render({ length : Math.ceil(this.contentEl.width() / this.width()) || 0 });
 			this.buttonEls = tabEl.find("button");
+			this.focusTab(0);
 		},
 		tabEl : undefined,
 		timer : undefined
@@ -253,6 +257,8 @@ this.Navigator = (function(Timer, Math, panelHtml, tabItemsHtml){
 }(
 	Bao.API.Management.Timer,
 	Math,
+	// focusTabEvent
+	new jQun.Event("focustab"),
 	// panelHtml
 	new HTML([
 		'<div class="navigator onlyBorderBottom lightBdColor">',

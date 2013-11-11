@@ -554,7 +554,6 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 				
 				// 添加分组区域
 				navigator.content(partner.groupingHtml.render(data));
-				navigator.focusTab(0);
 
 				if(groups.length === 0)
 					return;

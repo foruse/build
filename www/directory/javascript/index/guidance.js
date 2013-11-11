@@ -272,9 +272,11 @@ this.UploadAvatar = (function(ImageFile, Validation){
 						return;
 
 					CallServer.open("registerUserInfo", {
+						id : Global.loginUser.id,
 						name : validation.validationEl.value,
 						avatar : imageFile.selectedSrc
-					}, function(){
+					}, function(userData){
+						Global.loginUser = userData;
 						Global.history.go("demo");
 					});
 					return;
@@ -292,6 +294,50 @@ this.UploadAvatar = (function(ImageFile, Validation){
 }(
 	Bao.UI.Control.File.ImageFile,
 	Bao.API.DOM.Validation
+));
+
+this.Demo = (function(Navigator, descriptor, descriptorHtml){
+	function DemoNavigator(){
+		var descriptEl = descriptorHtml.create();
+
+		descriptEl.appendTo(this.find(">aside")[0]);
+
+		this.attach({
+			focustab : function(e){
+				descriptEl.innerHTML = descriptor[e.tabIndex];
+			}
+		});
+	};
+	DemoNavigator = new NonstaticClass(DemoNavigator, null, Navigator.prototype);
+
+	function Demo(selector, html){
+		var demoNavigator = new DemoNavigator.constructor();
+
+		demoNavigator.appendTo(this[0]);
+
+		this.attach({
+			aftershow : function(){
+				demoNavigator.content(html.render());
+			}
+		});
+	};
+	Demo = new NonstaticClass(Demo, "Bao.Page.Index.Guidance.Demo", PagePanel.prototype);
+
+	Demo.override({
+		showTitleBar : false
+	});
+
+	return Demo.constructor;
+}(
+	Bao.UI.Control.Drag.Navigator,
+	// descriptor
+	[
+		"可以通过Email添加好友",
+		"给拍档发送To Do的时候可以传送语音、图片以及位置",
+		"点击空的文件夹新建一个项目"
+	],
+	// descriptorHtml
+	new jQun.HTML('<p></p>')
 ));
 
 this.CreateFirstProject = (function(){
