@@ -369,18 +369,35 @@
                             });
 
                             forEach(data, function(user) {
+								console.log('My');
+								console.log(user);
+								console.log(user.pinyin);
+								console.log(user.pinyin.substring(0, 1));
+								console.log(user.pinyin.substring(0, 1).toUpperCase());
+								
                                 var firstLetter = user.pinyin.substring(0, 1).toUpperCase(),
                                         idx = letters[firstLetter];
+								
+								console.log(letters);
+								console.log(firstLetter);
 
-                                if (idx === -1) {
-                                    letters[firstLetter] = userListCollection.length;
-                                    userListCollection.push({
-                                        firstLetter: firstLetter,
-                                        users: [user]
-                                    });
+								if (user.name) {
+									if (idx === -1) {
+										letters[firstLetter] = userListCollection.length;
+										userListCollection.push({
+											firstLetter: firstLetter,
+											users: [user]
+										});
 
-                                    return;
-                                }
+										return;
+									}
+								} else {
+									idx = 0;
+								}
+								
+								console.log('My2');
+								console.log(userListCollection);
+								console.log(idx);
 
                                 userListCollection[idx].users.push(user);
                             });
