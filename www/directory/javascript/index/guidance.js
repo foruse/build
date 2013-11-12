@@ -305,6 +305,12 @@ this.Demo = (function(Navigator, descriptor, descriptorHtml){
 		this.attach({
 			focustab : function(e){
 				descriptEl.innerHTML = descriptor[e.tabIndex];
+			},
+			failingfocus : function(e){
+				if(e.tabIndex !== 3)
+					return;
+
+				Global.history.go("project");
 			}
 		});
 	};

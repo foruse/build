@@ -128,12 +128,10 @@
 	left : 0;
 }
 .chatList_message.morePraised nav > button,
-.chatList_message[ispostbyself="true"] nav > button,
 .chatList_content[isleader="false"] .chatList_message nav > button {
 	display : none;
 }
 .chatList_message.morePraised .chatList_praise,
-.chatList_message[ispostbyself="true"] .chatList_praise,
 .chatList_content[isleader="false"] .chatList_message .chatList_praise {
 	text-indent : 16px;
 }
@@ -141,7 +139,6 @@
 	height : auto;
 }
 .chatList_message.morePraised .chatList_praise > p,
-.chatList_message[ispostbyself="true"] .chatList_praise > p,
 .chatList_content[isleader="false"] .chatList_praise > p {
 	text-indent : 52px;
 }

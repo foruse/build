@@ -262,14 +262,18 @@ this.Calendar = (function(DateTable, calendarHtml, stretchEvent, shrinkEvent){
 			touchstart : function(e){
 				// 如果点的是在该日历控件上，那么展开，否则收起
 				if(jQun(e.target).between(calendar[0], calendar.parent()[0]).length > 0){
+					if(calendar.isStretched()){
+						return;
+					}
 					calendar.stretch();
+					e.stopPropagation();
 					return;
 				}
 	
 				dateTable.top();
 				calendar.shrink();
 			}
-		});
+		}, true);
 	};
 	Calendar = new NonstaticClass(Calendar, "Bao.UI.Control.Time.Calendar", Panel.prototype);
 

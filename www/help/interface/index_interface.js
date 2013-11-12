@@ -307,7 +307,72 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				return : DS_user
 			}
 		*/
-		["registerUserInfo",	new Text("url?name={name}&avatar={avatar}"),""]
+		["registerUserInfo",	new Text("url?name={name}&avatar={avatar}"),""],
+		
+		/*
+			params : {
+				text : "abc",
+				type : "image", // message type
+				projectId : 1
+			},
+			return {
+				id : 1 // the id of comment
+			}
+		*/
+		["addCommentForTodo",	new Text("url?text={text}&type={type}&projectId={projectId}"),	""],
+
+		/*
+			params : null,
+			return : null
+		*/
+		["logout",				"",											""],
+
+		/*
+			params : {
+				projectId : 1,
+				users : [1, 2, 3, 4] // all of the user id
+			},
+			return : null
+		*/
+		["editProjectInfo",		new Text("url?projectId={projectId}&users={users}"),		""],
+
+		/*
+			params : {
+				projectId : 1
+			},
+			return : null
+		*/
+		["removeProject",		new Text("url?projectId={projectId}"),		""],
+
+		/*
+			params : {
+				position : "boss",
+				avatar : "javascript:void(0);",
+				phoneNum : 13611111111,
+				email : "liji@baopiqi.com",
+				password : 123456 // if the user didn't edit his password and the value is null
+			},
+			return : DS_user // new user data
+		*/
+		["editAccount",			new Text("url?positon={positon}&avatar={avatar}&phoneNum={phoneNum}&email={email}&password={password}"), ""]
+
+		/*
+			params : {
+				projectId : 1
+			},
+			return : return
+		*/
+		["archiveProject",		new Text("url?porjectId={projectId}"),		""],
+
+		/*
+			params : {
+				id : 1,
+				name : "michael lee",
+				avatar : "javascript:void(0);"
+			},
+			return : DS_user
+		*/
+		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""]
 	]);
 }
 }(

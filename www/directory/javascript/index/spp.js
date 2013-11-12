@@ -230,7 +230,7 @@ this.Project = (function(CallServer, Confirm){
 					return;
 				
 				// 添加空文件夹
-				project.addEmptyFolders(1);
+				// project.addEmptyFolders(1);
 				// 添加未解锁的项目
 				project.addEmptyFolders(this.getParam("pageSize") - data.projects.length, true);
 			});
@@ -326,7 +326,10 @@ this.Project = (function(CallServer, Confirm){
 	Project.override({
 		hideBackButton : true,
 		title : "MY PROJECTS 项目",
-		tools : [{ urlname : "systemOption", action : "set" }]
+		tools : [
+			{ urlname : "addProject", action : "addProject" },
+			{ urlname : "systemOption", action : "set" }
+		]
 	});
 
 	Project.properties({
@@ -341,9 +344,6 @@ this.Project = (function(CallServer, Confirm){
 			///	<summary>
 			///	添加未解锁的项目，1次为10个。
 			///	</summary>
-			if(_isUnopened)
-				return;
-
 			var data = [], i = {
 				id : -1,
 				importantLevel : 0,
@@ -376,7 +376,7 @@ this.Project = (function(CallServer, Confirm){
 
 			if(!_isRefresh){
 				if(batchLoad.isEqual("pageIndex", "pageMax")){
-					this.addEmptyFolders(10, true);
+					// this.addEmptyFolders(10, true);
 					return;
 				}
 			}

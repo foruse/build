@@ -1,4 +1,4 @@
-﻿(function(Drag, NonstaticClass, StaticClass, Panel, HTML, IntervalTimer){
+﻿(function(Drag, NonstaticClass, StaticClass, Panel, HTML, Event, IntervalTimer){
 this.Scroll = (function(scrollPanel, body){
 	function Scroll(){
 		///	<summary>
@@ -107,7 +107,7 @@ this.Scroll = (function(scrollPanel, body){
 	document.body
 ));
 
-this.Navigator = (function(Timer, Math, focusTabEvent, panelHtml, tabItemsHtml, emptyContentHtml){
+this.Navigator = (function(Timer, Math, focusTabEvent, failingFocusEvent, panelHtml, tabItemsHtml, emptyContentHtml){
 	function Navigator(){
 		///	<summary>
 		///	导航。
@@ -221,6 +221,9 @@ this.Navigator = (function(Timer, Math, focusTabEvent, panelHtml, tabItemsHtml, 
 			var tabEl = this.tabEl, focusEl = tabEl.find('button[idx="' + idx + '"]');
 
 			if(focusEl.length === 0){
+				failingFocusEvent.setEventAttrs({ tabIndex : idx });
+				failingFocusEvent.trigger(tabEl[0]);
+
 				idx = this.currentTabIndex;
 				focusEl = tabEl.find('button[idx="' + idx + '"]');
 			}
@@ -258,7 +261,9 @@ this.Navigator = (function(Timer, Math, focusTabEvent, panelHtml, tabItemsHtml, 
 	Bao.API.Management.Timer,
 	Math,
 	// focusTabEvent
-	new jQun.Event("focustab"),
+	new Event("focustab"),
+	// failingFocusEvent
+	new Event("failingfocus"),
 	// panelHtml
 	new HTML([
 		'<div class="navigator onlyBorderBottom lightBdColor">',
@@ -286,5 +291,6 @@ Drag.members(this);
 	jQun.StaticClass,
 	Bao.API.DOM.Panel,
 	jQun.HTML,
+	jQun.Event,
 	Bao.API.Management.IntervalTimer
 ));

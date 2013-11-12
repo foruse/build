@@ -61,10 +61,9 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["getSystemContacts",	"url",										"", true],
 		["getAllArchives",		"url",										"", true],
 		["getArchivedProject",	new Text("url?id={id}"),					"", true],
-
 		["addCommentForTodo",	new Text("url?text={text}&type={type}&projectId={projectId}"),	""],
 		["logout",				"",											""],
-		["editProjectInfo",		new Text("url?users={users}"),		""],
+		["editProjectInfo",		new Text("url?projectId={projectId}&users={users}"),		""],
 		["removeProject",		new Text("url?projectId={projectId}"),		""],
 		["editAccount",			new Text("url?positon={positon}&avatar={avatar}&phoneNum={phoneNum}&email={email}&password={password}"), ""],
 		["archiveProject",		new Text("url?porjectId={projectId}"),		""],

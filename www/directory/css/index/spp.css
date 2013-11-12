@@ -178,6 +178,9 @@
 #project dt a[unread="0"] {
 	display : none;
 }
+#titleBar button[action="addProject"] {
+	border-color : #ffc000;
+}
 #titleBar button[action="set"] {
 	background : #ffc000 url(../../../common/image/width24.png) 3px -372px no-repeat content-box content-box;
 	border-color : #ffc000;
