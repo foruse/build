@@ -369,18 +369,9 @@
                             });
 
                             forEach(data, function(user) {
-								console.log('My');
-								console.log(user);
-								console.log(user.pinyin);
-								console.log(user.pinyin.substring(0, 1));
-								console.log(user.pinyin.substring(0, 1).toUpperCase());
-								
                                 var firstLetter = user.pinyin.substring(0, 1).toUpperCase(),
                                         idx = letters[firstLetter];
 								
-								console.log(letters);
-								console.log(firstLetter);
-
 								if (user.name) {
 									if (idx === -1) {
 										letters[firstLetter] = userListCollection.length;
@@ -395,11 +386,16 @@
 									idx = 0;
 								}
 								
-								console.log('My2');
-								console.log(userListCollection);
-								console.log(idx);
+								
+								/*alert(JSON.stringify(userListCollection));
+								alert(idx);*/
+								
+								if (userListCollection[idx] == undefined) {
+									userListCollection[idx] = [];
+									userListCollection[idx]['users'] = [];
+								}
 
-                                userListCollection[idx].users.push(user);
+                                userListCollection[idx]['users'].push(user);
                             });
 
                             userListCollection.sort(function(i, n) {
