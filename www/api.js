@@ -311,22 +311,25 @@ function onDeviceReady() {
                     console.log("update_user_data")
                     console.log(data)
 					console.log('do it');
-                    callback ?
+					
+					console.log('Manually create trigger :(');
+					var sql = 'INSERT INTO sync (table_name, row_id) VALUES ("xiao_users", ' + SESSION.get("user_id") + ')';
+					SERVER.DB._executeSQL(sql, function(sync_data) {
+						console.log('Trigger created');
+						
+						callback ?
 							API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
-								console.log('callback0');
                                 DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                                 DB.from("xiao_users AS u");
                                 DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                                 DB.where('u.id ="' + SESSION.get("user_id") + '"');
                                 DB.row(function(new_user_data){
-									console.log('callback1');
                                     new_user_data.avatar = (new_user_data.local_path != "" && new_user_data.local_path != CONFIG.default_user_avatar) ? new_user_data.local_path : new_user_data.server_path;
-									console.log('callback2');
                                     callback(new_user_data);
-									console.log('callback3');
                                 });
                             }) :
                             API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"');
+					});
                 },
                 read: function(callback) {
                     // get user data
@@ -2399,6 +2402,7 @@ console.log(data);
                                                             if (where != "" && where != false) {
                                                                 sql += " WHERE " + where;
                                                             }
+															
                                                             return (
                                                                     callback ? this._executeSQL(sql, function() {
                                                                 callback();
@@ -2863,7 +2867,7 @@ console.log(data);
                                                         }
                                                         var _this = this;
                                                         SERVER.DB.update(table, data, where, function() {
-                                                            if (callback) {
+															if (callback) {
                                                                 _this._sync([table], callback);
                                                             } else {
                                                                 _this._sync([table]);
@@ -2887,6 +2891,7 @@ console.log(data);
                                                                 sql = 'SELECT * FROM sync as s INNER JOIN ' + table_name + ' as t ON s.row_id = t.id WHERE s.table_name ="' + table_name + '"',
                                                                 sql_del = 'SELECT * FROM sync_delete WHERE table_name ="' + table_name + '"';
                                                         SERVER.DB._executeSQL(sql, function(data) {
+															console.log(data);
                                                             counter = data.length;
                                                             data.length > 0 ? data.forEach(function(el, i) {
                                                                 
@@ -3720,8 +3725,8 @@ console.log(data);
                                                         // PHONEGAP
 
                                             };
-
-                                            return {
+											
+											return {
                                                 //                API     : SERVER.API,
                                                 //                DB      : SERVER.DB,
                                                 //                SESSION : SERVER.SESSION,
@@ -3737,7 +3742,7 @@ console.log(data);
                                                 // than comment again after refresh
 
                                                 //SESSION: SERVER.SESSION._init_storage(1),
-                                                DB: SERVER.DB._init_db(1),
+												DB: SERVER.DB,
                                                 PHONE: SERVER.PHONE
 
                                             };
