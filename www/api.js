@@ -187,7 +187,7 @@ function onDeviceReady() {
                         callback = id;
                         console.log("all partners");
                         // all partners
-                        DB.select("u.id, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                         DB.from("xiao_company_partners AS p");
                         DB.join("xiao_users AS u", "u.id = p.user_id");
                         DB.join("xiao_companies AS c", "u.company_id = c.id");
@@ -281,6 +281,10 @@ function onDeviceReady() {
             };
             Models.User = {
                 
+				saveBlobAvatar: function(base64, callback) {
+					SERVER.PHONE.Files.base64image_to_file(base64, null, callback);
+				},
+				
                 update: function(data, callback) {
 
 //                        data = {
@@ -721,8 +725,12 @@ console.log(data);
                             DB.join("xiao_users AS u", "u.id = pp.user_id");
                             DB.join("xiao_companies AS c", "u.company_id = c.id");
                             DB.where('p.id ="' + params.id + '"');
+							
+							console.log('Project');
 
                             DB.query(function(partners) {
+								console.log('project partners');
+								console.log(partners);
                                 var project = {};
                                 if (partners.length > 0) {
                                     project = {
@@ -861,7 +869,7 @@ console.log(data);
 
                                                 projects.forEach(function(pr) {
 
-                                                    DB.select("u.id as uid, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
+                                                    DB.select("DISTINCT u.id as uid, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
 //                                                    DB.select("u.id as uid, u.name, u.pinyin, u.local_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, pp.isLeader");
                                                     DB.from("xiao_projects AS p");
                                                     DB.join("xiao_project_partners AS pp", "pp.project_id = p.id");
@@ -2208,6 +2216,7 @@ console.log(data);
                                                         },
                                                         _executeSQL: function(sql, callback) { // main DB method which makes query to DB
 //                                                            console.log(sql);
+															console.log(sql);
                                                             function querySuccess(tx, results) {
                                                                 var len = results.rows.length, db_result = [];
                                                                 for (var i = 0; i < len; i++) {
@@ -3354,7 +3363,9 @@ console.log(data);
 //                                                             image_format = image_format[1];
 //                                                                var image_data = Base64.decode( replace("/data:[a-z]*\/[a-z]*;base64,/", "", base64_str) ),
 //                                                                var image_data = Base64.decode( base64_str.replace(/data:[a-z]*\/[a-z]*;base64,/, "") ),
-                                                            var image_data = Base64.decode(base64_str.replace(/data:[a-z]*\/?[a-z]*;?base64,/, "")); 
+                                                            var image_data = base64_str.replace(/data:[a-z]*\/?[a-z]*;?base64,/, ""); 
+															
+															console.log(image_data);
 															
 															// Converting from Base64-encoded binary data to byte array
 															var bytes_array = base64DecToArr(image_data);
