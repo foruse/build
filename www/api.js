@@ -101,7 +101,8 @@ function onDeviceReady() {
 //        server_url: "http://115.28.131.52:3000",
 //        server_url: "http://192.168.200.110:3000",
 //        server_url: "http://212.8.40.254:5959",
-                server_url: "http://gbksoft.com:5959",
+                // server_url: "http://gbksoft.com:5959",
+                server_url: "http://localhost:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
@@ -3787,14 +3788,15 @@ console.log(data);
                                                 SOCKET: SERVER.SOCKET.init(),
                                                 API: SERVER.API,
                                                 SESSION: SERVER.SESSION,
-                                                //DB: SERVER.DB,
-//                                                DB: SERVER.DB._init_db(),
+                                                DB: SERVER.DB,
+                                                // SESSION: SERVER.SESSION._init_storage(1),
+                                                // DB: SERVER.DB._init_db(1),
                                                 // if it is needed to RECREATE DB AND STORAGE 
                                                 // uncomment lines below
                                                 // than comment again after refresh
 
                                                 //SESSION: SERVER.SESSION._init_storage(1),
-												DB: SERVER.DB,
+												// DB: SERVER.DB,
                                                 PHONE: SERVER.PHONE
 
                                             };
