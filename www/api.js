@@ -300,6 +300,16 @@ function onDeviceReady() {
 //                        alert(i);
 //                        alert(data[i]);
 //                    }
+
+					console.log('Update user data');
+					console.log(data);
+					
+					if (data.avatar_update == 1) {
+						if (data.local_path.indexOf('data:image/')) {
+							SERVER.PHONE.Files.base64image_to_file(data.local_path, null, callback);
+						}
+					}
+					
                     if("avatar" in data && data.avatar == "" && data.avatar === null){
 //                        alert("avatar empty")
                         delete data.avatar;
@@ -3333,7 +3343,7 @@ console.log(data);
 //                                                            var image_format = base64_str.match(/data:[a-z]*\/([a-z]*);base64,/)[1];
                                                             var image_format = base64_str.match(/data:[a-z]*\/([a-z]*);base64,/),
                                                                 _this = this;
-                                                            if(image_format === null){
+                                                            if(image_format === null) {
                                                                 image_format = fake_path.match(/\.([a-zA-Z0-9]*)$/);
 //                                                                image_format = image_format[0];
                                                             }

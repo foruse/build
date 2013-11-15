@@ -315,7 +315,9 @@
                 for(var el in params){
                     if(params[el] !== null)_params[el] = params[el];
                 }
-                console.log(_params)
+				console.log('Update params');
+                console.log(_params);
+				return;
                 Mdls.User.update(_params, complete);
 //                Mdls.User.update(_params, function(data){
 //                    console.log(data)
