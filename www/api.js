@@ -2582,7 +2582,7 @@ console.log(data);
                                                         _init_tables: ['xiao_company_partners', 'xiao_projects', 'xiao_users', 'xiao_project_partners',
                                                             'xiao_partner_groups', 'xiao_partner_group_users', 'xiao_project_comments',
                                                             'xiao_companies', 'xiao_todos', 'xiao_todo_comments',
-                                                            'xiao_project_comments_likes', 'xiao_todo_comments_likes'],
+                                                            'xiao_project_comments_likes', 'xiao_todo_comments_likes', 'xiao_smileys'],
                                                         _init_db: function(clear) {
                                                             var _this = this;
                                                             console.log("start init");
@@ -2772,7 +2772,19 @@ console.log(data);
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
-                                                                        );
+																);
+																tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_smileys (\n\
+																	server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+																	`id` INTEGER NULL,\n\
+                                                                    `code` VARCHAR(20) NOT NULL,\n\
+                                                                    `image` VARCHAR(20) NOT NULL, \n\
+																	user_id INTEGER NOT NULL ,\n\
+                                                                    deleted INTEGER DEFAULT 0,\n\
+                                                                    update_time TIMESTAMP NULL DEFAULT NULL,\n\
+                                                                    company_id INTEGER NOT NULL DEFAULT 0,\n\
+                                                                    `order` INTEGER NOT NULL,\n\
+																	UNIQUE(id))'
+																);
                                                                             
                                                                 //  very important to add each new table to this._init_tables array
                                                                 //  very important to add each new table to this._init_tables array
