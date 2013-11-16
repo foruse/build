@@ -222,7 +222,9 @@
                 Mdls.User.create(params, complete);
             },
 			registerUserInfo: function(params, complete) {
-				delete params['avatar'];
+                console.log("registerUserInfo params");
+                console.log(params);
+				// delete params['avatar'];
 				delete params['id'];
 				Mdls.User.update(params, complete);
 			},
@@ -345,7 +347,7 @@
         CallServer.properties({
             open: function(name, params, _complete, _isUpload) {
                 var LoadingBar = Wait.LoadingBar;
-
+                console.log(name)
 //                LoadingBar.show(_isUpload ? "正在上传数据.." : null);
                 Models[name](params, function(data) {
                     if (name in allHandlers) {

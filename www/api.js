@@ -68,19 +68,19 @@ var BROWSER_TEST_VERSION = function check_dev() {
 //    return true;
 }();
 Models = {}; // Models are needed to be created in the following method. As they are used before the device ready actually. They are filled later.
-Models.UsersCounter = {  // moved out here while login is not finished
-                // uncomment all the stuff below for PRODUCTION
-                read: function(callback) {
-//                    SOCKET.request("counter", {}, function(result) {
-//                        if (result) {
-//                            callback(result);
-//                        } else {
-                    callback({count: 100000, validationImage: "src"});
-//                        }
-//                    });
-                }
+// Models.UsersCounter = {  // moved out here while login is not finished
+//                 // uncomment all the stuff below for PRODUCTION
+//                 read: function(callback) {
+// //                    SOCKET.request("counter", {}, function(result) {
+// //                        if (result) {
+// //                            callback(result);
+// //                        } else {
+//                     callback({count: 100000, validationImage: "src"});
+// //                        }
+// //                    });
+//                 }
 
-            };
+//             };
 //BROWSER_TEST_VERSION ? onDeviceReady() : document.addEventListener("deviceready", onDeviceReady, false);
 
 onDeviceReady();
@@ -168,19 +168,24 @@ function onDeviceReady() {
                 }
             };
 
-//            Models.UsersCounter = {
-//                // uncomment all the stuff below for PRODUCTION
-//                read: function(callback) {
-//                    SOCKET.request("counter", {}, function(result) {
-//                        if (result) {
-//                            callback(result);
-//                        } else {
-//                            callback({count: 100000, validationImage: "src"});
-//                        }
-//                    });
-//                }
-//
-//            };
+           Models.UsersCounter = {
+               // uncomment all the stuff below for PRODUCTION
+               read: function(callback) {
+                    if(!SESSION.get("saved_user_data")){
+                        SESSION._init_storage(1);
+                        DB._init_db(1);  
+                    }
+                     
+                    SOCKET.request("counter", {}, function(result) {
+                        if (result) {
+                           callback(result);
+                        } else {
+                           callback({count: 100000, validationImage: "src"});
+                        }
+                    });
+               }
+
+           };
 
             Models.Partner = {
                 read: function(id, callback) { // if id is specified we get one partner else all partners
@@ -308,39 +313,73 @@ function onDeviceReady() {
 
 					console.log('Update user data');
 					console.log(data);
+
+                    // WHY here??? -->> this will never work here
+					// if (data.avatar_update == 1) {
+     //                    if (data.local_path.indexOf('data:image/')) {
+     //                        SERVER.PHONE.Files.base64image_to_file(data.local_path, null, callback);
+     //                    }
+     //                }
 					
-					if (data.avatar_update == 1) {
-						if (data.local_path.indexOf('data:image/')) {
-							SERVER.PHONE.Files.base64image_to_file(data.local_path, null, callback);
-						}
-					}
 					
                     if("avatar" in data && data.avatar == "" && data.avatar === null){
 //                        alert("avatar empty")
                         delete data.avatar;
                     }
+
+                    if("password" in data){
+                        data.pwd = data.password;
+                        delete data.password;
+                    }
+                    if("name" in data){
+                        data.pinyin = data.name.substring(0, 1).toLowerCase();
+                    }
+                    console.log("update_user_data")
+                    console.log(data)
+					// console.log('do it');
+					
+					// console.log('Manually create trigger :(');
+					// var sql = 'INSERT INTO sync (table_name, row_id) VALUES ("xiao_users", ' + SESSION.get("user_id") + ')';
+					// SERVER.DB._executeSQL(sql, function(sync_data) {
+						// console.log('Trigger created');
+					
                     if("avatar" in data && data.avatar != "" && data.avatar !== null){
 //                        alert("avatar not emt")
                         data.local_path = data.avatar;
                         delete data.avatar;
 //                        data.server_path = ""; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
                         data.avatar_update = "1"; //  ----->>   HOOK TO KNOW in sync THAT avatar was updated
-                    }
-                    if("password" in data){
-                        data.pwd = data.password;
-                        delete data.password;
-                    }
-                    console.log("update_user_data")
-                    console.log(data)
-					console.log('do it');
-					
-					console.log('Manually create trigger :(');
-					var sql = 'INSERT INTO sync (table_name, row_id) VALUES ("xiao_users", ' + SESSION.get("user_id") + ')';
-					SERVER.DB._executeSQL(sql, function(sync_data) {
-						console.log('Trigger created');
-						
-						callback ?
-							API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
+
+                        //avatar creation
+
+                        this.saveBlobAvatar(data.local_path, function(blob_local_path){
+
+                            data.local_path = blob_local_path;
+
+                            callback ?
+                                API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
+                                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                                    DB.from("xiao_users AS u");
+                                    DB.left_join("xiao_companies AS c", "u.company_id = c.id");
+                                    DB.where('u.id ="' + SESSION.get("user_id") + '"');
+                                    DB.row(function(new_user_data){
+                                        new_user_data.avatar = (new_user_data.local_path != "" && new_user_data.local_path != CONFIG.default_user_avatar) ? new_user_data.local_path : new_user_data.server_path;
+                                        callback(new_user_data);
+                                    });
+                                }) :
+                                API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"');
+                            
+                        });
+
+                        // if (data.avatar_update == 1) {
+                        // if (data.local_path.indexOf('data:image/')) {
+                        //     SERVER.PHONE.Files.base64image_to_file(data.local_path, null, callback);
+                        // }
+                        // }
+                    }else{
+
+                        callback ?
+                            API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"', function(){
                                 DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
                                 DB.from("xiao_users AS u");
                                 DB.left_join("xiao_companies AS c", "u.company_id = c.id");
@@ -351,7 +390,12 @@ function onDeviceReady() {
                                 });
                             }) :
                             API.update('xiao_users', data, 'id="' + SESSION.get("user_id") + '"');
-					});
+
+                    }
+
+
+						
+					// });
                 },
                 read: function(callback) {
                     // get user data
@@ -413,14 +457,19 @@ function onDeviceReady() {
 //                        callback(JSON.parse(SESSION.get("saved_user_data")))
 //                    }else{
 
-
+                    console.log(data)
                     if(SESSION.get("user_pass")){
                         var old_user_data = SESSION.get("saved_user_data"),
                             json_old_user_data = JSON.parse(old_user_data);
-                        console.log({
-                            status  :   0,
-                            user    :   json_old_user_data
-                        });
+                        // console.log({
+                        //     status  :   0,
+                        //     user    :   json_old_user_data
+                        // });
+                        if(SESSION.get("login_once") == 1) json_old_user_data.isNewUser = 0;
+
+                        SESSION.set("login_once",1);
+
+                        API.update("xiao_users", {isNewUser: 0}, 'id="' + json_old_user_data.id + '"');
                         callback({
                             status  :   0,
                             user    :   json_old_user_data
@@ -430,18 +479,19 @@ function onDeviceReady() {
                             console.log(result);
                             if (result !== false) {
                                 if (result.user) {
-                                    SERVER.SESSION._init_storage(1);
-                                    SERVER.DB._init_db(1);                   
+                                    // SERVER.SESSION._init_storage(1);
+                                    // SERVER.DB._init_db(1);                   
 //                                    result.user.isNewUser = 0;
                                     SESSION.set("saved_user_data", JSON.stringify(result.user));
                                     SESSION.set("user_id", result.user.id);
                                     SESSION.set("user_name", result.user.name);
                                     SESSION.set("user_email", result.user.email);
                                     SESSION.set("user_pwd", result.user.pwd);
+                                    // result.user.isNewUser = 0;
                                     callback(result);
     //                                    if (result.user.isNewUser == 1){
     //    //                                    alert("cool");
-    //                                        API.update("xiao_users", {isNewUser: 0}, 'id="' + result.user.id + '"');
+                                           API.update("xiao_users", {isNewUser: 0}, 'id="' + result.user.id + '"');
     //                                    }
                                     console.log(result);
                                     //                                callback(result);
@@ -492,8 +542,11 @@ function onDeviceReady() {
                         
                 logout: function(callback){
                     //session
-//                    SESSION.clear();
+                    // SESSION.clear();
+                     
                     callback();
+                    SESSION._init_storage(1);
+                    DB._init_db(1); 
                 },
                         
                 create: function(data, callback) {
@@ -506,27 +559,43 @@ function onDeviceReady() {
 //                            phoneNum: "testuser_123",
 //                            position: "testuser_123"
 //                        };
-console.log('CREATE LOG');
-console.log(data);
+                    // SERVER.SESSION._init_storage(1);
+                    // SERVER.DB._init_db(1);   
+
+
+                    console.log('CREATE LOG');
+                    console.log(data);
                     if("avatar" in data){
                         data.local_path = data.avatar;
                         delete data.avatar;
                         data.server_path = "";
                     }
+
                     SOCKET.request("registration", data, function(result) {
 						console.log(result);
                         if (result !== false) {
                             if (result.user) {
-                                API._sync(['xiao_users', 'xiao_company_partners'], function() {
-									
-									var normal_result = result.user;
-									delete normal_result.pwd;
-									
-									
-                                    DB.insert_with_id('xiao_users', normal_result);
-                                    API._clear_tables_to_sync();
-                                    SESSION.set("user_id", result.user.id);
-                                    SESSION.set("user_name", result.user.name);
+
+                                var normal_result = result.user;
+                                    delete normal_result.pwd;
+
+                                // DB.insert_with_id('xiao_users', normal_result, function(){
+
+                                    API._sync(['xiao_users', 'xiao_company_partners'], function() {
+
+                                        SESSION.set("user_pass", result.user.pwd);
+                                        SESSION.set("saved_user_data", JSON.stringify(result.user));
+
+                                        
+                                    
+                                    
+
+                                        // API._clear_tables_to_sync();
+                                        SESSION.set("user_id", result.user.id);
+                                        SESSION.set("user_name", result.user.name);
+                                    
+                                    // });
+
                                     callback({
                                         status: 0,
                                         user: result.user
@@ -2052,8 +2121,8 @@ console.log(data);
                         // PRIVATE
                                 // PRIVATE
                                         function() {
-                                            var SERVER = {
-//                                            SERVER = {
+                                            // var SERVER = {
+                                           SERVER = {
                                                 SOCKET: {
                                                     socket: null,  // current socket Object is stores here after init
                                                     init: function() { // function is used to init io object (socket.io lib)
@@ -2217,7 +2286,7 @@ console.log(data);
                                                         },
                                                         _executeSQL: function(sql, callback) { // main DB method which makes query to DB
 //                                                            console.log(sql);
-															console.log(sql);
+															// console.log(sql);
                                                             function querySuccess(tx, results) {
                                                                 var len = results.rows.length, db_result = [];
                                                                 for (var i = 0; i < len; i++) {
@@ -2225,8 +2294,8 @@ console.log(data);
                                                                     db_result[i] = results.rows.item(i);
                                                                 }
 //                                                                console.log(db_result);
-                                                                if (db_result.length == 0 && !(sql.match(/sync/)))
-                                                                    console.log(sql);
+                                                                // if (db_result.length == 0 && !(sql.match(/sync/)))
+                                                                //     console.log(sql);
 
                                                                 return (callback ? callback(db_result) : true);
                                                             }
@@ -2234,6 +2303,7 @@ console.log(data);
                                                                 console.log("Error processing SQL code: " + err.code);
                                                                 console.log("Error processing SQL error below ");
                                                                 console.log(err);
+                                                                console.log("SQL query with error below:")
                                                                 console.log(sql);
                                                             }
                                                             db.transaction(queryDB, errorCB);
@@ -2603,10 +2673,10 @@ console.log(data);
                                                                     id VARCHAR(255) NOT NULL, \n\
                                                                     project_id VARCHAR(255) NOT NULL,\n\
                                                                     user_id INTEGER NOT NULL,\n\
-                                                                    isLeader VARCHAR(255) NULL,\n\
+                                                                    isLeader INTEGER NULL DEFAULT 0,\n\
                                                                     update_time varchar(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         ); 
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_companies(\n\
@@ -2626,13 +2696,13 @@ console.log(data);
                                                                     title VARCHAR(255) NOT NULL,\n\
                                                                     descr TEXT NULL,\n\
                                                                     color INTEGER NULL,\n\
-                                                                    level VARCHAR(255) NULL,\n\
+                                                                    level INTEGER NULL DEFAULT 0,\n\
                                                                     archived INTEGER DEFAULT 0,\n\
                                                                     update_time varchar(255) NULL,\n\
                                                                     creationTime varchar(255) NULL,\n\
-                                                                    completeDate varchar(255) NULL,\n\
+                                                                    completeDate DATETIME NULL DEFAULT CURRENT_TIMESTAMP,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );   
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_company_partners(\n\
@@ -2640,7 +2710,7 @@ console.log(data);
                                                                     user_id INTEGER NOT NULL,\n\
                                                                     update_time varchar(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         ); 
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_users(\n\
@@ -2648,7 +2718,7 @@ console.log(data);
                                                                     name varchar(255) NULL,\n\
                                                                     email varchar(100) NOT NULL,\n\
                                                                     server_path TEXT NULL,\n\
-                                                                    local_path varchar(255) DEFAULT "'+CONFIG.default_user_avatar+'",\n\
+                                                                    local_path varchar(255) NULL DEFAULT "'+CONFIG.default_user_avatar+'",\n\
                                                                     pinyin varchar(255) NULL,\n\
                                                                     QRCode varchar(255) NULL,\n\
                                                                     adress varchar(255) NULL,\n\
@@ -2658,7 +2728,7 @@ console.log(data);
                                                                     avatar_update INTEGER NULL DEFAULT 0,\n\
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     isNewUser INTEGER NULL,\n\
                                                                     UNIQUE(id))'
                                                                         );   
@@ -2669,7 +2739,7 @@ console.log(data);
                                                                     creator_id VARCHAR(255) NOT NULL,\n\
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );    
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_group_users (\n\
@@ -2679,7 +2749,7 @@ console.log(data);
                                                                     user_id INTEGER NOT NULL,\n\
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );   
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments (\n\
@@ -2695,7 +2765,7 @@ console.log(data);
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     read INTEGER DEFAULT 0,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todos (\n\
@@ -2711,7 +2781,7 @@ console.log(data);
                                                                     project_id VARCHAR(255) NOT NULL ,\n\
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments (\n\
@@ -2727,7 +2797,7 @@ console.log(data);
                                                                     update_time VARCHAR(255) NULL,\n\
                                                                     read INTEGER DEFAULT 0,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
 //                                                                tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_attachments (\n\
@@ -2751,7 +2821,7 @@ console.log(data);
                                                                     todo_id VARCHAR(255) DEFAULT NULL,\n\
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );  
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_comments_likes (\n\
@@ -2761,7 +2831,7 @@ console.log(data);
                                                                     user_id INTEGER NOT NULL ,\n\
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_todo_comments_likes (\n\
@@ -2771,7 +2841,7 @@ console.log(data);
                                                                     user_id INTEGER NOT NULL ,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
                                                                     update_time TIMESTAMP NULL DEFAULT NULL,\n\
-                                                                    company_id INTEGER NOT NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
+                                                                    company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     UNIQUE(id))'
                                                                         );
                                                                             
@@ -3036,6 +3106,7 @@ console.log(data);
 //                                                                console.log("_______sync_data")
 //                                                                console.log(sync_data)
                                                                 if (table_num == (tables.length - 1)) {
+                                                                    console.log("last");
                                                                     callback ? _this._make_socket_request(sync_data, callback) : _this._make_socket_request(sync_data);
                                                                 }
                                                             });
@@ -3112,8 +3183,14 @@ console.log(data);
                                                                     function make_callback() {
                                                                         _this._sync_clear(ij.table, server.info.time);
                                                                         if (num == (changes.length - 1)) {
+                                                                            console.log("ssss")
                                                                             _this._sync_delete_clear();
-                                                                            return (callback ? callback() : true);
+                                                                            // return (callback ? callback() : true);
+                                                                            if(callback){
+                                                                                
+                                                                                console.log("back");
+                                                                                callback();
+                                                                            }
                                                                         }
                                                                     }
                                                                 });
