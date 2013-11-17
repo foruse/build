@@ -30,13 +30,18 @@
             },
             getPartners: function(params, complete) {
                 console.log(params)
-                if(params.groupId == "-1"){
-                    Mdls.Partner.read(complete);    
-                }else{
-                    Mdls.Partner_Groups.get_group_users(params.groupId, complete);    
+                if("groupId" in params){
+
+                    if(params.groupId == "-1"){
+                        Mdls.Partner.read(complete);    
+                    }else{
+                        Mdls.Partner_Groups.get_group_users(params.groupId, complete);    
+                    }
+
+                }else if("projectId" in params){
+                    Mdls.Partner.get_project_partners(params.projectId, complete);    
                 }
             },
-            // getSchedules : function(){ },
             getSingleProject: function(params, complete) {
 //                Mdls.Project.read(params, complete);
                 console.log("_______________________getSingleProject");
@@ -207,6 +212,8 @@
                 Mdls.Partner_Groups.create(params, complete);
             },
             praise : function(params, complete){
+                console.log("___callserver.js likes params___");
+                console.log(params);
                 switch(params.type){
                     case "project":
                         Mdls.ProjectChat.like(params.messageId,complete);
@@ -263,6 +270,11 @@
             },
             getSchedules: function(params, complete) {
                 console.log(params);
+                // Mdls.Calendar.read(params.time, complete);
+                Mdls.Calendar.read(params.time, function(data){
+                    console.log(data);
+                    complete(data);
+                });
 //                 Mdls.Todo.read({project_id: params.id}, complete);
 //                Mdls.Todo.read({project_id: params.id}, function(data) {
 //                    console.log(data);
@@ -290,6 +302,10 @@
                     params.attachments, //attachments
                     complete
                 );
+            },
+            todoCompleted: function(params, complete){
+                console.log(params)
+                Mdls.Todo.done(params.id, complete);
             },
             getAllArchives: function(params, complete){
                 //console.log(params);
@@ -428,7 +444,7 @@
                             return data;
                         },
                         getSchedules: function(data) {
-                            data.forEach(function(d) {
+                            data.todos.forEach(function(d) {
                                 var localDate = new Date(d.time);
 
                                 jQun.set(d, {
@@ -436,13 +452,13 @@
                                     date: localDate.getDate()
                                 });
 
-                                d.projects.forEach(function(pro) {
-                                    pro.key = pro.id;
-                                });
+                                // d.projects.forEach(function(pro) {
+                                //     pro.key = pro.id;
+                                // });
                             });
 
                             return {
-                                schedules: data
+                                schedules: data.todos
                             };
                         }
 //                        getMessages: function(data) {
