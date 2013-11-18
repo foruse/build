@@ -120,7 +120,7 @@ function onDeviceReady() {
 //      server_url: "http://115.28.131.52:3000",
 //      server_url: "http://212.8.40.254:5959",
 		// server_url: "http://gbksoft.com:5959",
-		server_url: "http://192.168.0.101:3000",
+		server_url: "http://192.168.0.103:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
@@ -368,8 +368,8 @@ function onDeviceReady() {
                     if("name" in data){
                         data.pinyin = data.name.substring(0, 1).toLowerCase();
                     }
-                    console.log("update_user_data")
-                    console.log(data)
+                    // console.log("update_user_data")
+                    // console.log(data)
 					// console.log('do it');
 					
 					// console.log('Manually create trigger :(');
@@ -3665,8 +3665,8 @@ function onDeviceReady() {
                                                         };
                                                         
                                                         this.base64image_to_file = function(base64_str, fake_path, callback){
-                                                            console.log("base64image_to_file");
-															console.log(base64_str);
+                                                            // console.log("base64image_to_file");
+															// console.log(base64_str);
 //                                                            var image_format = base64_str.match(/data:[a-z]*\/([a-z]*);base64,/)[1];
                                                             var image_format = base64_str.match(/data:[a-z]*\/([a-z]*);base64,/),
                                                                 _this = this;
@@ -3674,7 +3674,7 @@ function onDeviceReady() {
                                                                 image_format = fake_path.match(/\.([a-zA-Z0-9]*)$/);
 //                                                                image_format = image_format[0];
                                                             }
-                                                            console.log(image_format);
+                                                            // console.log(image_format);
                                                             image_format = image_format[1];
                                                             
 //                                                                alert(image_format);
@@ -3683,7 +3683,7 @@ function onDeviceReady() {
 //                                                                var image_data = Base64.decode( base64_str.replace(/data:[a-z]*\/[a-z]*;base64,/, "") ),
                                                             var image_data = base64_str.replace(/data:[a-z]*\/?[a-z]*;?base64,/, ""); 
 															
-															console.log(image_data);
+															// console.log(image_data);
 															
 															// Converting from Base64-encoded binary data to byte array
 															var bytes_array = base64DecToArr(image_data);
