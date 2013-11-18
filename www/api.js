@@ -1666,7 +1666,6 @@ function onDeviceReady() {
                 },
                 send_message: function(message, callback) {
 //                    alert("sending mesage...");
-					message.content = 'qwe';
                     console.log("sending mesage...");
                     message['user_id'] = SESSION.get("user_id"); // push user_id to message data
                     message['read'] = '1';
