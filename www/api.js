@@ -221,7 +221,6 @@ function onDeviceReady() {
                         DB.where('p.user_id <>"' + SESSION.get("user_id") + '"');
 						API.read(callback);
                     } else if (id) {
-						alert('asd');
                         console.log("partner by id");
                         // partner by id
                         DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.can_create_projects, c.title as company, c.companyAdress");
@@ -1401,8 +1400,7 @@ function onDeviceReady() {
                 }
                 
             };
-            Models.ProjectChat = {
-//                _inited_chats: [],
+			Models.Smileys = {
 				get_smileys: function(callback) {
 					API._sync(['xiao_smileys'], function() {
 						DB.select("sm.code, sm.image");
@@ -1438,7 +1436,10 @@ function onDeviceReady() {
 						}
 						return message;
 					}
-				},
+				}
+			};
+            Models.ProjectChat = {
+//                _inited_chats: [],
                 chat_init: function(project_id, callback) {
 					var _this = this;
 					
@@ -1464,10 +1465,7 @@ function onDeviceReady() {
                         DB.order_by(' pc.time, pc.id');
     //                    API.read(function(messages) {
                         DB.query(function(messages) {
-							DB.select("sm.code, sm.image");
-							DB.from("xiao_smileys AS sm");
-							DB.where("sm.deleted = 0");
-							DB.query(function(smileys) {
+							Models.Smileys.get_smileys(function(smileys) {
 								console.log("__________messages");
 								var mess_result = [], unread = 0, indexes = [];
 								if (messages.length > 0) {
@@ -1478,7 +1476,7 @@ function onDeviceReady() {
 											unread += (mess.read == 0 ? 1 : 0);
 
 											var message = mess.content;
-											message = _this.convert_smileys(message, null, smileys);
+											message = Models.Smileys.convert_smileys(message, null, smileys);
 
 											mess_result.push({
 												id: mess.id,
@@ -1886,85 +1884,91 @@ function onDeviceReady() {
                         var login_user = SESSION.get("user_id");
                         DB.query(function(messages) {
     //                    API.read(function(messages) {
-                            var mess_result = [], unread = 0, indexes = [];
-                            if (messages.length > 0) {
-                                messages.forEach(function(mess) {
-                                    if(indexes.lastIndexOf(mess.id) === -1){
-                                        indexes.push(mess.id);
-    //                                console.log(mess.uid)
-    //                                    var leader = mess.isLeader == "1" ? true : false,
-    //                                            new_user = mess.isNewUser == "0" ? true : false;
-                                        unread += (mess.read == 0 ? 1 : 0);
-                                        mess_result.push({
-                                            id: mess.id,
-                                            text: mess.content,
-                                            poster: {
-                                                id: mess.uid,
-                                                name: mess.name,
-                                                pinyin: mess.pinyin,
-//                                                avatar: mess.avatar,
-                                                //avatar: (mess.local_path != "" && mess.local_path != CONFIG.default_user_avatar) ? mess.local_path : mess.server_path,
-												avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
-                                                company: mess.company,
-                                                companyAdress: mess.companyAdress,
-                                                position: mess.position,
-                                                phoneNum: mess.phoneNum,
-                                                email: mess.email,
-                                                adress: mess.adress,
-                                                isNewUser: mess.isNewUser,
-                                                isLoginUser: login_user == mess.uid,
-        //                                            isLeader: mess.isLeader,
-                                                QRCode: mess.QRCode
-                                            },
-                                            attachment: {
-                                                id: mess.id,
-                                                type: mess.type,
-                                                src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
-//                                                src: mess.server_path,
-                                                from: "todo"
-                                            },
-                                            praise: [],
-                                            time: new Date(websql_date_to_number(mess.time)).getTime(),
-                                            type: mess.type
-                                        });
-                                        if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
-                                            mess_result[mess_result.length-1].praise.push({
-                                                id: mess.cl_uid,
-                                                name: mess.cl_name,
-                                                pinyin: mess.cl_pinyin,
-//                                                avatar: mess.cl_avatar,
-                                                avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-                                                company: mess.cl_company,
-                                                companyAdress: mess.cl_companyAdress,
-                                                position: mess.cl_position,
-                                                phoneNum: mess.cl_phoneNum,
-                                                email: mess.cl_email,
-                                                adress: mess.cl_adress,
-                                                isNewUser: mess.cl_isNewUser,
-                                                isLoginUser: login_user == mess.cl_uid,
-                                                QRCode: mess.cl_QRCode
-                                            });
-                                    }else{
-                                        mess_result[mess_result.length-1].praise.push({
-                                            id: mess.cl_uid,
-                                            name: mess.cl_name,
-                                            pinyin: mess.cl_pinyin,
-//                                            avatar: mess.cl_avatar,
-                                            avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-                                            company: mess.cl_company,
-                                            companyAdress: mess.cl_companyAdress,
-                                            position: mess.cl_position,
-                                            phoneNum: mess.cl_phoneNum,
-                                            email: mess.cl_email,
-                                            adress: mess.cl_adress,
-                                            isNewUser: mess.cl_isNewUser,
-                                            isLoginUser: login_user == mess.cl_uid,
-                                            QRCode: mess.cl_QRCode
-                                        });
-                                    }
-                                });
-                            }
-                            callback(mess_result);
+							Models.Smileys.get_smileys(function(smileys){
+								var mess_result = [], unread = 0, indexes = [];
+								if (messages.length > 0) {
+									messages.forEach(function(mess) {
+										if(indexes.lastIndexOf(mess.id) === -1){
+											indexes.push(mess.id);
+		//                                console.log(mess.uid)
+		//                                    var leader = mess.isLeader == "1" ? true : false,
+		//                                            new_user = mess.isNewUser == "0" ? true : false;
+											unread += (mess.read == 0 ? 1 : 0);
+											
+											var message = mess.content;
+											message = Models.Smileys.convert_smileys(message, null, smileys);
+											
+											mess_result.push({
+												id: mess.id,
+												text: message,
+												poster: {
+													id: mess.uid,
+													name: mess.name,
+													pinyin: mess.pinyin,
+	//                                                avatar: mess.avatar,
+													//avatar: (mess.local_path != "" && mess.local_path != CONFIG.default_user_avatar) ? mess.local_path : mess.server_path,
+													avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
+													company: mess.company,
+													companyAdress: mess.companyAdress,
+													position: mess.position,
+													phoneNum: mess.phoneNum,
+													email: mess.email,
+													adress: mess.adress,
+													isNewUser: mess.isNewUser,
+													isLoginUser: login_user == mess.uid,
+			//                                            isLeader: mess.isLeader,
+													QRCode: mess.QRCode
+												},
+												attachment: {
+													id: mess.id,
+													type: mess.type,
+													src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+	//                                                src: mess.server_path,
+													from: "todo"
+												},
+												praise: [],
+												time: new Date(websql_date_to_number(mess.time)).getTime(),
+												type: mess.type
+											});
+											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
+												mess_result[mess_result.length-1].praise.push({
+													id: mess.cl_uid,
+													name: mess.cl_name,
+													pinyin: mess.cl_pinyin,
+	//                                                avatar: mess.cl_avatar,
+													avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+													company: mess.cl_company,
+													companyAdress: mess.cl_companyAdress,
+													position: mess.cl_position,
+													phoneNum: mess.cl_phoneNum,
+													email: mess.cl_email,
+													adress: mess.cl_adress,
+													isNewUser: mess.cl_isNewUser,
+													isLoginUser: login_user == mess.cl_uid,
+													QRCode: mess.cl_QRCode
+												});
+										}else{
+											mess_result[mess_result.length-1].praise.push({
+												id: mess.cl_uid,
+												name: mess.cl_name,
+												pinyin: mess.cl_pinyin,
+	//                                            avatar: mess.cl_avatar,
+												avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+												company: mess.cl_company,
+												companyAdress: mess.cl_companyAdress,
+												position: mess.cl_position,
+												phoneNum: mess.cl_phoneNum,
+												email: mess.cl_email,
+												adress: mess.cl_adress,
+												isNewUser: mess.cl_isNewUser,
+												isLoginUser: login_user == mess.cl_uid,
+												QRCode: mess.cl_QRCode
+											});
+										}
+									});
+								}
+								callback(mess_result);
+							});
     //                            make_callback({messages: mess_result, unread: unread});
                         });
 
