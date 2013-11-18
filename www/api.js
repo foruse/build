@@ -209,7 +209,7 @@ function onDeviceReady() {
 
             Models.Partner = {
                 read: function(id, callback) { // if id is specified we get one partner else all partners
-                    if (typeof(id) === "function") {// no id
+					if (typeof(id) === "function") {// no id
                         callback = id;
                         console.log("all partners");
                         // all partners
@@ -222,9 +222,10 @@ function onDeviceReady() {
                         DB.where('p.user_id <>"' + SESSION.get("user_id") + '"');
 						API.read(callback);
                     } else if (id) {
+						alert('asd');
                         console.log("partner by id");
                         // partner by id
-                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.can_create_projects, c.title as company, c.companyAdress");
                         DB.from("xiao_users AS u");
                         DB.join("xiao_company_partners AS p", "p.user_id = u.id");
                         DB.join("xiao_companies AS c", "p.company_id = c.id");
@@ -434,7 +435,7 @@ function onDeviceReady() {
                 },
                 read: function(callback) {
                     // get user data
-                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress");
+                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.can_create_projects, c.title as company, c.companyAdress");
                     DB.from("xiao_users AS u");
                     DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                     DB.where('u.id ="' + SESSION.get("user_id") + '"');
@@ -2958,6 +2959,7 @@ function onDeviceReady() {
                                                                     deleted INTEGER DEFAULT 0,\n\
                                                                     company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     isNewUser INTEGER NULL,\n\
+																	can_create_projects INTEGER NULL DEFAULT 0,\n\
                                                                     UNIQUE(id))'
                                                                         );   
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_groups (\n\

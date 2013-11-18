@@ -651,6 +651,7 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 		remind : false,
 		resetProjectId : function(id){
 			this.projectId = id;
+			this.userManagementList.resetParamsOfGetPartners({projectId : id});
 		},
 		selectUser : function(userData){
 			var sendTodo = this;
@@ -935,7 +936,10 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 			var projectManagement = this;
 
 			CallServer.open("getSingleProject", { id : id }, function(data){
-				projectManagement.userManagementList.userList.addUsers(data.users);
+				var userManagementList = projectManagement.userManagementList;
+				
+				userManagementList.restore();
+				userManagementList.userList.addUsers(data.users);
 
 				Global.titleBar.resetTitle("项目管理：" + data.title);
 				projectManagement.id = id;
