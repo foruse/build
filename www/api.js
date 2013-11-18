@@ -3,6 +3,7 @@
 // For Lavrentiy:
 // FROM xiao_todos TABLE field color have been removed  ---> also remove it from MySQL
 // ALSO remove field from table from http://gbksoft.com/admin/erd/
+// Done - Lavrentiy
 
 
 // For me : 
@@ -116,11 +117,11 @@ function onDeviceReady() {
             file_upload_url: "upload",
             sockets: ""
         },
-       server_url: "http://115.28.131.52:3000",
-//        server_url: "http://192.168.200.110:3000",
-//        server_url: "http://212.8.40.254:5959",
-                // server_url: "http://gbksoft.com:5959",
-        // server_url: "http://192.168.0.101:3000",
+//      server_url: "http://115.28.131.52:3000",
+//      server_url: "http://192.168.200.110:3000",
+//      server_url: "http://212.8.40.254:5959",
+		server_url: "http://gbksoft.com:5959",
+//		server_url: "http://192.168.0.101:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
