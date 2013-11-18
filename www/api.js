@@ -2510,7 +2510,7 @@ function onDeviceReady() {
                                                         },
                                                         _executeSQL: function(sql, callback) { // main DB method which makes query to DB
 //                                                            console.log(sql);
-															console.log(sql);
+															// console.log(sql);
                                                             function querySuccess(tx, results) {
                                                                 var len = results.rows.length, db_result = [];
                                                                 for (var i = 0; i < len; i++) {
