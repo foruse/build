@@ -333,23 +333,23 @@
                 for(var el in params){
                     if(params[el] !== null)_params[el] = params[el];
                 }
-                if (_params.avatar.indexOf('data:image') != -1) {
-					console.log('Saving base64 to file');
-					Mdls.User.saveBlobAvatar(_params.avatar, function(local_path) {
-						console.log('Saved from base64 image');
-						console.log(local_path);
-						_params.avatar = local_path;
-						Mdls.User.update(_params, complete);
-					});
-				} else {
-					console.log('Normal saving');
-					Mdls.User.update(_params, complete);
-				}
-				return;
-//                Mdls.User.update(_params, function(data){
-//                    console.log(data)
-//                    complete(data)
-//                });
+    //             if (_params.avatar.indexOf('data:image') != -1) {
+				// 	console.log('Saving base64 to file');
+				// 	Mdls.User.saveBlobAvatar(_params.avatar, function(local_path) {
+				// 		console.log('Saved from base64 image');
+				// 		console.log(local_path);
+				// 		_params.avatar = local_path;
+				// 		Mdls.User.update(_params, complete);
+				// 	});
+				// } else {
+				// 	console.log('Normal saving');
+				// 	Mdls.User.update(_params, complete);
+				// }
+				// return;
+               Mdls.User.update(_params, function(data){
+                   console.log(data)
+                   complete(data)
+               });
             }
             
         });
