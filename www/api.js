@@ -223,7 +223,7 @@ function onDeviceReady() {
                     } else if (id) {
                         console.log("partner by id");
                         // partner by id
-                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.can_create_projects, c.title as company, c.companyAdress");
+                        DB.select("u.id, u.name, u.pinyin, u.server_path as avatar, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, c.title as company, c.companyAdress");
                         DB.from("xiao_users AS u");
                         DB.join("xiao_company_partners AS p", "p.user_id = u.id");
                         DB.join("xiao_companies AS c", "p.company_id = c.id");
@@ -231,25 +231,7 @@ function onDeviceReady() {
 						/*API.row(function(data){
 							console.log(data);
 						});*/
-                        API.row(function(row) {
-							var p_company_id = row.company_id;
-							var a_user_id = SESSION.get("user_id");
-							
-							DB.select("c.creator_id");
-							DB.from("xiao_companies AS c");
-							DB.where("c.id = " + p_company_id);
-							API.row(function(company_row) {
-								row.change_rights = false;
-								
-								if (company_row.creator_id == a_user_id && company_row.creator_id != id) {
-									row.change_rights = true;
-								}
-								
-								alert('++++++++++++++++CAN CHANGE RIGHTS: ' + row.change_rights);
-								
-								callback(row);
-							});
-						});
+                        callback(row);
                     }
                 },
 
@@ -263,11 +245,11 @@ function onDeviceReady() {
                     API.read(callback);
                 },
 						
-				can_create_projects: function(id, value) {
-					DB.update('xiao_users', {can_create_projects: value}, 'id="' + id + '"');
+				poweruser: function(id, value) {
+					DB.update('xiao_users', {poweruser: value}, 'id="' + id + '"');
 				},
 						
-				check_company_creator_for_user: function(user_id, callback) {
+				check_admin_for_user: function(user_id, callback) {
 					DB.select("u.company_id");
 					DB.from("xiao_users AS u");
 					DB.where('u.id ="' + user_id + '"');
@@ -478,7 +460,7 @@ function onDeviceReady() {
                 },
                 read: function(callback) {
                     // get user data
-                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.can_create_projects, c.title as company, c.companyAdress");
+                    DB.select("u.id, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, u.poweruser, c.title as company, c.companyAdress");
                     DB.from("xiao_users AS u");
                     DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                     DB.where('u.id ="' + SESSION.get("user_id") + '"');
@@ -1444,18 +1426,49 @@ function onDeviceReady() {
                     callback ? API.update("xiao_projects", {archived:1, completeDate: 'datetime()'}, 'id="'+id+'"', callback) : API.update("xiao_projects", {archived:1, completeDate: 'datetime()'}, 'id="'+id+'"');
                 },
 						
-				check_project_creator_for_user: function(project_id, callback) {
-					var a_user_id = SESSION.get("user_id");
+				check_poweruser_for_project: function(project_id, callback) {
+					var res = false;
 			
-					DB.select("p.creator_id");
-					DB.from("project AS p");
-					DB.where("p.id = '" + project_id + "'");
+					var a_user_id = SESSION.get("user_id");
+					DB.select("u.poweruser");
+					DB.from("xiao_users AS u");
+					DB.where("u.id = " + a_user_id);
 					API.row(function(row) {
-						if (row.creator_id == a_user_id) {
-							callback(true);
-						} else {
-							callback(false);
+						if (row.poweruser) {
+							DB.select("pp.user_id");
+							DB.from("xiao_project_partners AS pp");
+							DB.where("u.id = '" + a_user_id + "'");
+							DB.query(function(project_partners) {
+								for (var i in project_partners) {
+									if (project_partners[i].user_id == a_user_id) {
+										res = true;
+									}
+								}
+							});
 						}
+					});
+					
+					callback(res);
+				},
+				
+				can_create_projects: function(callback) {
+					var a_company_id = SESSION.get("company_id");
+					var a_user_id = SESSION.get("user_id");
+					
+					DB.select("c.creator_id");
+					DB.from("xiao_companies AS c");
+					DB.where("c.id = " + a_user_id);
+					API.row(function(c_row) {
+						DB.select("u.poweruser");
+						DB.from("xiao_users AS u");
+						DB.where("u.id = " + a_user_id);
+						API.row(function(u_row) {
+							if (c_row.creator_id == a_user_id || u_row.poweruser == 1) {
+								callback(true);
+							} else {
+								callback(false);
+							}
+						})
 					});
 				}
                 
@@ -3022,7 +3035,7 @@ function onDeviceReady() {
                                                                     deleted INTEGER DEFAULT 0,\n\
                                                                     company_id INTEGER NULL DEFAULT ' + SERVER.SESSION.get("company_id") + ',\n\
                                                                     isNewUser INTEGER NULL,\n\
-																	can_create_projects INTEGER NULL DEFAULT 0,\n\
+																	poweruser INTEGER NULL DEFAULT 0,\n\
                                                                     UNIQUE(id))'
                                                                         );   
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_partner_groups (\n\
