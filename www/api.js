@@ -245,6 +245,8 @@ function onDeviceReady() {
 									row.change_rights = true;
 								}
 								
+								alert('++++++++++++++++CAN CHANGE RIGHTS: ' + row.change_rights);
+								
 								callback(row);
 							});
 						});
@@ -263,6 +265,29 @@ function onDeviceReady() {
 						
 				can_create_projects: function(id, value) {
 					DB.update('xiao_users', {can_create_projects: value}, 'id="' + id + '"');
+				},
+						
+				check_company_creator_for_user: function(user_id, callback) {
+					DB.select("u.company_id");
+					DB.from("xiao_users AS u");
+					DB.where('u.id ="' + user_id + '"');
+					API.row(function(row) {
+						var p_company_id = row.company_id;
+						var a_user_id = SESSION.get("user_id");
+
+						DB.select("c.creator_id");
+						DB.from("xiao_companies AS c");
+						DB.where("c.id = " + p_company_id);
+						API.row(function(company_row) {
+							row.change_rights = false;
+
+							if (company_row.creator_id == a_user_id && company_row.creator_id != id) {
+								callback(true);
+							} else {
+								callback(false);
+							}
+						});
+					});
 				},
 
                 remove: function(user_id, callback) {
@@ -1417,7 +1442,22 @@ function onDeviceReady() {
                 
                 archive: function(id, callback){
                     callback ? API.update("xiao_projects", {archived:1, completeDate: 'datetime()'}, 'id="'+id+'"', callback) : API.update("xiao_projects", {archived:1, completeDate: 'datetime()'}, 'id="'+id+'"');
-                }
+                },
+						
+				check_project_creator_for_user: function(project_id, callback) {
+					var a_user_id = SESSION.get("user_id");
+			
+					DB.select("p.creator_id");
+					DB.from("project AS p");
+					DB.where("p.id = '" + project_id + "'");
+					API.row(function(row) {
+						if (row.creator_id == a_user_id) {
+							callback(true);
+						} else {
+							callback(false);
+						}
+					});
+				}
                 
             };
 			Models.Smileys = {
