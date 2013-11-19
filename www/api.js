@@ -232,7 +232,23 @@ function onDeviceReady() {
 						/*API.row(function(data){
 							console.log(data);
 						});*/
-                        API.row(callback);
+                        API.row(function(row) {
+							var p_company_id = row.company_id;
+							var a_user_id = SESSION.get("user_id");
+							
+							DB.select("c.creator_id");
+							DB.from("xiao_companies AS c");
+							DB.where("c.id = " + p_company_id);
+							API.row(function(company_row) {
+								row.change_rights = false;
+								
+								if (company_row.creator_id == a_user_id && company_row.creator_id != id) {
+									row.change_rights = true;
+								}
+								
+								callback(row);
+							});
+						});
                     }
                 },
 
@@ -245,6 +261,10 @@ function onDeviceReady() {
                     DB.where('pp.user_id <> "' + SESSION.get("user_id") + '"');
                     API.read(callback);
                 },
+						
+				can_create_projects: function(id, value) {
+					DB.update('xiao_users', {can_create_projects: value}, 'id="' + id + '"');
+				},
 
                 remove: function(user_id, callback) {
                     // remove partner from company
