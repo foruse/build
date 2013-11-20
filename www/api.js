@@ -144,8 +144,10 @@ function onDeviceReady() {
                     SESSION = SERVER.SESSION,
                     PHONE = SERVER.PHONE,
                     SOCKET = SERVER.SOCKET;
-            /* Private */
-
+			
+			
+			/* Private */
+			
             // Models
             // Models
             // Models
@@ -632,52 +634,66 @@ function onDeviceReady() {
                         data.server_path = "";
                     }
 
-                    SOCKET.request("registration", data, function(result) {
-						console.log(result);
-                        if (result !== false) {
-                            if (result.user) {
+					API._sync(['xiao_invites'], function() {
+						DB.select("i.company_id");
+						DB.from("xiao_invites AS i");
+						DB.where("i.email = '" + data.email + "' AND i.deleted != 1");
+						DB.row(function(invite) {
+							console.log('INVITE');
+							console.log(invite);
+							console.log(data.email);
+							if (invite && invite.company_id) {
+								data.company_id = invite.company_id;
+							}
+							
+							SOCKET.request("registration", data, function(result) {
+								console.log(result);
+								if (result !== false) {
+									if (result.user) {
 
-                                var normal_result = result.user;
-                                    delete normal_result.pwd;
+										var normal_result = result.user;
+											delete normal_result.pwd;
 
-                                // DB.insert_with_id('xiao_users', normal_result, function(){
+										// DB.insert_with_id('xiao_users', normal_result, function(){
 
-                                    API._sync(['xiao_users', 'xiao_company_partners'], function() {
+											API._sync(['xiao_users', 'xiao_company_partners'], function() {
 
-                                        SESSION.set("user_pass", result.user.pwd);
-                                        SESSION.set("saved_user_data", JSON.stringify(result.user));
+												SESSION.set("user_pass", result.user.pwd);
+												SESSION.set("saved_user_data", JSON.stringify(result.user));
 
-                                        
-                                    
-                                    
 
-                                        // API._clear_tables_to_sync();
-                                        SESSION.set("user_id", result.user.id);
-                                        SESSION.set("user_name", result.user.name);
-                                    
-                                    // });
 
-                                    callback({
-                                        status: 0,
-                                        user: result.user
-                                    });
 
-                                });
-                            } else if (result.error.code == 2) {
-                                console.log(result.error.message);
-                                callback({
-                                    status: -1
-                                });
-                            } else {
-                                console.log(result.error.message);
-                                callback({
-                                    status: -1
-                                });
-                            }
-                        } else {
-                            alert("no internet connection");
-                        }
-                    });
+
+												// API._clear_tables_to_sync();
+												SESSION.set("user_id", result.user.id);
+												SESSION.set("user_name", result.user.name);
+
+											// });
+
+											callback({
+												status: 0,
+												user: result.user
+											});
+
+										});
+									} else if (result.error.code == 2) {
+										console.log(result.error.message);
+										callback({
+											status: -1
+										});
+									} else {
+										console.log(result.error.message);
+										callback({
+											status: -1
+										});
+									}
+								} else {
+									alert("no internet connection");
+								}
+							});
+						});
+					});
                 }
 
             };
@@ -809,6 +825,18 @@ function onDeviceReady() {
                 }
             };
             
+			Models.Invites = {
+				send_invite: function(email, company_id, callback) {
+					var invite_data = {
+						email: email,
+						company_id: company_id
+					};
+					DB.insert('xiao_invites', invite_data, function() {
+						API._sync(['xiao_invites'], callback);
+					});
+				}
+			};
+			
             Models.Project = {
                 create: function(data, callback) {
                     // data is following:
@@ -2415,7 +2443,7 @@ function onDeviceReady() {
 
             document.dispatchEvent(a);
             if(!BROWSER_TEST_VERSION)navigator.splashscreen.hide();
-
+			
         }(
                 // PRIVATE
                         // PRIVATE
@@ -2586,7 +2614,7 @@ function onDeviceReady() {
                                                         },
                                                         _executeSQL: function(sql, callback) { // main DB method which makes query to DB
 //                                                            console.log(sql);
-															// console.log(sql);
+//															console.log(sql);
                                                             function querySuccess(tx, results) {
                                                                 var len = results.rows.length, db_result = [];
                                                                 for (var i = 0; i < len; i++) {
@@ -2958,7 +2986,7 @@ function onDeviceReady() {
                                                         _init_tables: ['xiao_company_partners', 'xiao_projects', 'xiao_users', 'xiao_project_partners',
                                                             'xiao_partner_groups', 'xiao_partner_group_users', 'xiao_project_comments',
                                                             'xiao_companies', 'xiao_todos', 'xiao_todo_comments',
-                                                            'xiao_project_comments_likes', 'xiao_todo_comments_likes', 'xiao_smileys'],
+                                                            'xiao_project_comments_likes', 'xiao_todo_comments_likes', 'xiao_smileys', 'xiao_invites'],
                                                         _init_db: function(clear) {
                                                             var _this = this;
                                                             console.log("start init");
@@ -3155,6 +3183,15 @@ function onDeviceReady() {
                                                                     code VARCHAR(20) NOT NULL,\n\
                                                                     image VARCHAR(20) NOT NULL,\n\
 																	sort INTEGER NOT NULL,\n\
+																	update_time TIMESTAMP NULL DEFAULT NULL,\n\
+                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+                                                                    company_id INTEGER NOT NULL DEFAULT 0,\n\
+																	deleted INTEGER DEFAULT 0,\n\
+																	UNIQUE(id))'
+																);
+																tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_invites (\n\
+																	id VARCHAR(255) NULL,\n\
+                                                                    email VARCHAR(255) NOT NULL,\n\
 																	update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     server_id VARCHAR(255) NULL DEFAULT NULL,\n\
                                                                     company_id INTEGER NOT NULL DEFAULT 0,\n\
