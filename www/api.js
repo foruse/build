@@ -126,7 +126,9 @@ function onDeviceReady() {
         root_dir: "BAO",
         default_user_avatar: "../../common/image/avatar_default.jpg"
     };
-
+	
+	FlurryAgent.logEvent('Application started');
+	
     var ROUTE = function(url) { //server route helper
         return  CONFIG.server_url + "/" + CONFIG.routes[url];
     };
@@ -144,8 +146,10 @@ function onDeviceReady() {
                     SESSION = SERVER.SESSION,
                     PHONE = SERVER.PHONE,
                     SOCKET = SERVER.SOCKET;
-            /* Private */
-
+			
+			
+			/* Private */
+			
             // Models
             // Models
             // Models
@@ -383,7 +387,7 @@ function onDeviceReady() {
 //                     }
 					
 					
-                    if("avatar" in data && data.avatar == "" && data.avatar === null){
+                    if("avatar" in data && (data.avatar == "" || data.avatar === null)){
 //                        alert("avatar empty")
                         delete data.avatar;
                     }
@@ -414,6 +418,8 @@ function onDeviceReady() {
                         //avatar creation
 
                         this.saveBlobAvatar(data.local_path, function(blob_local_path){
+							console.log('dataaaaa');
+							console.log(data);
 							
                             data.local_path = blob_local_path;
 
@@ -446,6 +452,8 @@ function onDeviceReady() {
                                 DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                                 DB.where('u.id ="' + SESSION.get("user_id") + '"');
                                 DB.row(function(new_user_data){
+									console.log('new user data');
+									console.log(new_user_data);
                                     new_user_data.avatar = (new_user_data.local_path != "" && new_user_data.local_path != CONFIG.default_user_avatar) ? new_user_data.local_path : new_user_data.server_path;
                                     callback(new_user_data);
                                 });
@@ -546,9 +554,15 @@ function onDeviceReady() {
                                     SESSION.set("saved_user_data", JSON.stringify(result.user));
                                     SESSION.set("user_id", result.user.id);
                                     SESSION.set("user_name", result.user.name);
-                                    SESSION.set("user_email", result.user.email);
+									SESSION.set("user_email", result.user.email);
                                     SESSION.set("user_pwd", result.user.pwd);
+									SESSION.set("company_id", result.user.company_id);
                                     // result.user.isNewUser = 0;
+									
+									// ----- Flurry analytics injection -----
+									FlurryAgent.setUserId(result.user.email);
+									// ----- Flurry analytics injection -----
+									
                                     callback(result);
     //                                    if (result.user.isNewUser == 1){
     //    //                                    alert("cool");
@@ -631,53 +645,92 @@ function onDeviceReady() {
                         delete data.avatar;
                         data.server_path = "";
                     }
+					
+					API._sync(['xiao_invites'], function() {
+						DB.select("i.company_id");
+						DB.from("xiao_invites AS i");
+						DB.where("i.email = '" + data.email + "' AND i.deleted != 1");
+						DB.row(function(invite) {
+							if (invite && invite.company_id) {
+								data.company_id = invite.company_id;
+							}
+							
+							var company_name = data.company_name;
+							delete data.company_name;
+							
+							SOCKET.request("registration", data, function(result) {
+								console.log(result);
+								if (result !== false) {
+									if (result.user) {
 
-                    SOCKET.request("registration", data, function(result) {
-						console.log(result);
-                        if (result !== false) {
-                            if (result.user) {
+										var normal_result = result.user;
+											delete normal_result.pwd;
+											
+											function reg_callback(company_id) {
+												SESSION.set('company_id', company_id);
+												
+												if (company_id) {
+													DB.insert('xiao_company_partners', {id: 0, user_id: normal_result.id, company_id: company_id}, function() {
+														API._sync(['xiao_users', 'xiao_company_partners'], function() {
+															SESSION.set("user_pass", result.user.pwd);
+															SESSION.set("saved_user_data", JSON.stringify(result.user));
+															// API._clear_tables_to_sync();
+															SESSION.set("user_id", result.user.id);
+															SESSION.set("user_name", result.user.name);
 
-                                var normal_result = result.user;
-                                    delete normal_result.pwd;
+															callback({
+																status: 0,
+																user: result.user
+															});
+														});
+													});
+												} else {
+													API._sync(['xiao_users', 'xiao_company_partners'], function() {
+														SESSION.set("user_pass", result.user.pwd);
+														SESSION.set("saved_user_data", JSON.stringify(result.user));
+														// API._clear_tables_to_sync();
+														SESSION.set("user_id", result.user.id);
+														SESSION.set("user_name", result.user.name);
 
-                                // DB.insert_with_id('xiao_users', normal_result, function(){
-
-                                    API._sync(['xiao_users', 'xiao_company_partners'], function() {
-
-                                        SESSION.set("user_pass", result.user.pwd);
-                                        SESSION.set("saved_user_data", JSON.stringify(result.user));
-
-                                        
-                                    
-                                    
-
-                                        // API._clear_tables_to_sync();
-                                        SESSION.set("user_id", result.user.id);
-                                        SESSION.set("user_name", result.user.name);
-                                    
-                                    // });
-
-                                    callback({
-                                        status: 0,
-                                        user: result.user
-                                    });
-
-                                });
-                            } else if (result.error.code == 2) {
-                                console.log(result.error.message);
-                                callback({
-                                    status: -1
-                                });
-                            } else {
-                                console.log(result.error.message);
-                                callback({
-                                    status: -1
-                                });
-                            }
-                        } else {
-                            alert("no internet connection");
-                        }
-                    });
+														callback({
+															status: 0,
+															user: result.user
+														});
+													});
+												}
+											}
+											
+											if (!invite) {
+												if (company_name == '' || company_name == undefined) {
+													console.log('create company: ' + company_name);
+													console.log(normal_result);
+													console.log(data.email, normal_result.id);
+													Models.Companies.create_company(data.email, normal_result.id, reg_callback);
+												} else if (company_name != '' && company_name != undefined) {
+													Models.Companies.create_company(company_name, normal_result.id, reg_callback);
+												} else {
+													reg_callback();
+												}
+											} else {
+												reg_callback();
+											}
+									} else if (result.error.code == 2) {
+										console.log(result.error.message);
+										callback({
+											status: -1
+										});
+									} else {
+										console.log(result.error.message);
+										callback({
+											status: -1
+										});
+									}
+								} else {
+									alert("no internet connection");
+								}
+							});
+						});
+					});
                 }
 
             };
@@ -809,6 +862,49 @@ function onDeviceReady() {
                 }
             };
             
+			Models.Invites = {
+				send_invite: function(email, company_id, callback) {
+					var invite_data = {
+						email: email,
+						company_id: company_id
+					};
+					DB.insert('xiao_invites', invite_data, function() {
+						API._sync(['xiao_invites'], callback);
+					});
+				}
+			};
+			
+			Models.Companies = {
+				create_company: function(title, creator_id, callback) {
+					API._sync(['xiao_companies'], function() {
+						var company_id = 0;
+
+						DB.select("c.id");
+						DB.from("xiao_companies AS c")
+						DB.order_by("c.id DESC");
+						DB.row(function(row) {
+							company_id = parseInt(row.id + 1);
+
+							var company_data = {
+								id: company_id,
+								title: title,
+								descr: '',
+								creator_id: creator_id,
+								companyAdress: ''
+							};
+
+							console.log('Create company');
+
+							DB.insert('xiao_companies', company_data, function(insert_id) {
+								API._sync(['xiao_companies'], function() {
+									callback(company_id);
+								});
+							});
+						});
+					});
+				}
+			};
+			
             Models.Project = {
                 create: function(data, callback) {
                     // data is following:
@@ -2423,7 +2519,7 @@ function onDeviceReady() {
 
             document.dispatchEvent(a);
             if(!BROWSER_TEST_VERSION)navigator.splashscreen.hide();
-
+			
         }(
                 // PRIVATE
                         // PRIVATE
@@ -2602,7 +2698,7 @@ function onDeviceReady() {
                                                         },
                                                         _executeSQL: function(sql, callback) { // main DB method which makes query to DB
 //                                                            console.log(sql);
-															// console.log(sql);
+//															console.log(sql);
                                                             function querySuccess(tx, results) {
                                                                 var len = results.rows.length, db_result = [];
                                                                 for (var i = 0; i < len; i++) {
@@ -2628,8 +2724,16 @@ function onDeviceReady() {
                                                             }
                                                         },
                                                         insert: function(table, data, callback) {
-                                                            var insert_id = this._make_id(table),
-                                                                    sql = 'INSERT INTO ' + table + ' (id';
+															if ('id' in data) {
+																var insert_id = data.id;
+																delete data.id;
+															} else {
+																var insert_id = this._make_id(table);
+															}
+															
+															console.log('Insert to ' + table +' with id ' + insert_id);
+															
+															var sql = 'INSERT INTO ' + table + ' (id';
                                                             for (var key in data) { // we put id first
                                                                 sql += "," + key;
                                                             }
@@ -2974,7 +3078,7 @@ function onDeviceReady() {
                                                         _init_tables: ['xiao_company_partners', 'xiao_projects', 'xiao_users', 'xiao_project_partners',
                                                             'xiao_partner_groups', 'xiao_partner_group_users', 'xiao_project_comments',
                                                             'xiao_companies', 'xiao_todos', 'xiao_todo_comments',
-                                                            'xiao_project_comments_likes', 'xiao_todo_comments_likes', 'xiao_smileys'],
+                                                            'xiao_project_comments_likes', 'xiao_todo_comments_likes', 'xiao_smileys', 'xiao_invites'],
                                                         _init_db: function(clear) {
                                                             var _this = this;
                                                             console.log("start init");
@@ -3027,7 +3131,8 @@ function onDeviceReady() {
                                                                     UNIQUE(id))'
                                                                         );   
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_company_partners(\n\
-                                                                    id INTEGER NOT NULL,\n\
+																	server_id VARCHAR(255) NULL,\n\
+                                                                    id INTEGER PRIMARY KEY NOT NULL,\n\
                                                                     user_id INTEGER NOT NULL,\n\
                                                                     update_time varchar(255) NULL,\n\
                                                                     deleted INTEGER DEFAULT 0,\n\
@@ -3171,6 +3276,15 @@ function onDeviceReady() {
                                                                     code VARCHAR(20) NOT NULL,\n\
                                                                     image VARCHAR(20) NOT NULL,\n\
 																	sort INTEGER NOT NULL,\n\
+																	update_time TIMESTAMP NULL DEFAULT NULL,\n\
+                                                                    server_id VARCHAR(255) NULL DEFAULT NULL,\n\
+                                                                    company_id INTEGER NOT NULL DEFAULT 0,\n\
+																	deleted INTEGER DEFAULT 0,\n\
+																	UNIQUE(id))'
+																);
+																tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_invites (\n\
+																	id VARCHAR(255) NULL,\n\
+                                                                    email VARCHAR(255) NOT NULL,\n\
 																	update_time TIMESTAMP NULL DEFAULT NULL,\n\
                                                                     server_id VARCHAR(255) NULL DEFAULT NULL,\n\
                                                                     company_id INTEGER NOT NULL DEFAULT 0,\n\
