@@ -385,7 +385,7 @@ function onDeviceReady() {
 //                     }
 					
 					
-                    if("avatar" in data && data.avatar == "" && data.avatar === null){
+                    if("avatar" in data && (data.avatar == "" || data.avatar === null)){
 //                        alert("avatar empty")
                         delete data.avatar;
                     }
@@ -416,6 +416,8 @@ function onDeviceReady() {
                         //avatar creation
 
                         this.saveBlobAvatar(data.local_path, function(blob_local_path){
+							console.log('dataaaaa');
+							console.log(data);
 							
                             data.local_path = blob_local_path;
 
@@ -448,6 +450,8 @@ function onDeviceReady() {
                                 DB.left_join("xiao_companies AS c", "u.company_id = c.id");
                                 DB.where('u.id ="' + SESSION.get("user_id") + '"');
                                 DB.row(function(new_user_data){
+									console.log('new user data');
+									console.log(new_user_data);
                                     new_user_data.avatar = (new_user_data.local_path != "" && new_user_data.local_path != CONFIG.default_user_avatar) ? new_user_data.local_path : new_user_data.server_path;
                                     callback(new_user_data);
                                 });
@@ -639,9 +643,6 @@ function onDeviceReady() {
 						DB.from("xiao_invites AS i");
 						DB.where("i.email = '" + data.email + "' AND i.deleted != 1");
 						DB.row(function(invite) {
-							console.log('INVITE');
-							console.log(invite);
-							console.log(data.email);
 							if (invite && invite.company_id) {
 								data.company_id = invite.company_id;
 							}
