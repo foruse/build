@@ -2165,6 +2165,14 @@ function onDeviceReady() {
                 }
             };
             
+            Models.Notification = {
+
+                notification_init: function(callback){
+                    SOCKET.notification(SESSION.get("company_id"), callback);
+                }
+
+            }
+
             Models.Calendar = {
                 read: function(day, callback) {
 
@@ -2470,6 +2478,14 @@ function onDeviceReady() {
                                                     sync: function(data, callback) { // the main application method used to post data to server
                                                         this.request("sync", data, callback);
                                                     },
+
+                                                    notification: function(company_id, callback){
+                                                        this.socket.emit("addnotify", {id: company_id});
+                                                        this.socket.on("addnotify_result", function(data){
+                                                            callback(data);
+                                                        });
+                                                    },
+
                                                     updatechat: function(connect_data, callback) { // another method used to update chat
                                                         // in data we specify id and type
                                                         console.log("_____________updatechat")

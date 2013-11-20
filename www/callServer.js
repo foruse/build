@@ -53,22 +53,28 @@
             },
             getMessages: function(params, complete) {
                 console.log("_______________________getMessages");
-                switch (params.type) {
-                    case "project":
-//                        Mdls.ProjectChat.chat_init(params.id, complete);
-                        Mdls.ProjectChat.chat_init(params.id, function(data) {
-                            console.log("getMessages");
-                            console.log(data);
-                            complete(data);
-                        });
-                        break;
-                    case "todo":
-//                        Mdls.TodoChat.chat_init(params.id, complete)
-                        Mdls.TodoChat.chat_init(params.id, function(data){
-                            console.log(data);
-                            complete(data);
-                        });
-                        break;
+                if(params.projectId === -1){
+
+                    Mdls.Notification.notification_init(complete);
+
+                }else{
+                    switch (params.type) {
+                        case "project":
+    //                        Mdls.ProjectChat.chat_init(params.id, complete);
+                            Mdls.ProjectChat.chat_init(params.id, function(data) {
+                                console.log("getMessages");
+                                console.log(data);
+                                complete(data);
+                            });
+                            break;
+                        case "todo":
+    //                        Mdls.TodoChat.chat_init(params.id, complete)
+                            Mdls.TodoChat.chat_init(params.id, function(data){
+                                console.log(data);
+                                complete(data);
+                            });
+                            break;
+                    }
                 }
             },
             addComment: function(params, complete) {
