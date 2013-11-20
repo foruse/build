@@ -51,9 +51,56 @@
                     complete(data);
                 });
             },
+
+
+            //  copy of messagesListener
+            //  copy of messagesListener
+            //  copy of messagesListener
+            //  copy of messagesListener
+            //  copy of messagesListener
+            //  copy of messagesListener
+
             getMessages: function(params, complete) {
+
                 console.log("_______________________getMessages");
-                if(params.projectId === -1){
+                // if(params.projectId === -1){
+                if(params.projectId === window.Infinity){
+
+                    Mdls.Notification.notification_init(complete);
+
+                }else{
+                    switch (params.type) {
+                        case "project":
+    //                        Mdls.ProjectChat.chat_init(params.id, complete);
+                            Mdls.ProjectChat.chat_init(params.id, function(data) {
+                                console.log("getMessages");
+                                console.log(data);
+                                complete(data);
+                            });
+                            break;
+                        case "todo":
+    //                        Mdls.TodoChat.chat_init(params.id, complete)
+                            Mdls.TodoChat.chat_init(params.id, function(data){
+                                console.log(data);
+                                complete(data);
+                            });
+                            break;
+                    }
+                }
+
+            },
+
+            //  copy of messagesListener
+            //  copy of messagesListener
+            //  copy of messagesListener
+            //  copy of messagesListener
+            //  copy of messagesListener
+            //  copy of messagesListener
+
+            messagesListener: function(params, complete) {
+                console.log("_______________________getMessages");
+                // if(params.projectId === -1){
+                if(params.projectId === window.Infinity){
 
                     Mdls.Notification.notification_init(complete);
 
@@ -77,6 +124,7 @@
                     }
                 }
             },
+            
             addComment: function(params, complete) {
 //                alert("project")
 //                console.log(params)
