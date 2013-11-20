@@ -126,7 +126,9 @@ function onDeviceReady() {
         root_dir: "BAO",
         default_user_avatar: "../../common/image/avatar_default.jpg"
     };
-
+	
+	FlurryAgent.logEvent('Application started');
+	
     var ROUTE = function(url) { //server route helper
         return  CONFIG.server_url + "/" + CONFIG.routes[url];
     };
