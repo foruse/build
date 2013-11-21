@@ -13,7 +13,7 @@
                 }, complete);
             },
             getLoginInfo: function(_params, complete) {
-                Mdls.UsersCounter.read(complete);
+				Mdls.UsersCounter.read(complete);
             },
             getWorkStream: function(params, complete) {
 //                Mdls.Partner(complete);

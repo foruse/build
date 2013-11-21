@@ -269,6 +269,7 @@ this.Project = (function(CallServer, Confirm){
 				var el = targetEl.between('figure[status="1"]', this);
 
 				if(el.length > 0){
+					project.stopShake(el.parent().getAttribute("projectid"));
 					Global.history.go("discussion").fill(el.parent().getAttribute("projectid"));
 					return;
 				}
@@ -324,6 +325,10 @@ this.Project = (function(CallServer, Confirm){
 				confirm.show();
 			}
 		});
+
+		CallServer.open("messagesListener", { id : Infinity, type : "project" }, function(messages, id){
+			project.addUnreadMessages(id, messages.length);
+		});
 	};
 	Project = new NonstaticClass(Project, null, PagePanel.prototype);
 
@@ -344,6 +349,13 @@ this.Project = (function(CallServer, Confirm){
 			///	</summary>
 			/// <param name="data" type="array">项目数据</param>
 			this.html.create(data).appendTo(this.find(">ul")[0]);
+
+			data.projects.forEach(function(project){
+				if(project.unread === 0 || project.status !== 1)
+					return;
+
+				this.shake(project.id);
+			}, this);
 		},
 		addEmptyFolders : function(_len, _isUnopened){
 			///	<summary>
@@ -370,8 +382,26 @@ this.Project = (function(CallServer, Confirm){
 
 			this.add({ projects : data });
 		},
+		addUnreadMessages : function(id, lenth){
+			var unreadEl = this.find('li[projectid="' + id + '"] a[unread]'),
+			
+				len = unreadEl.getAttribute("unread") - 0 + length;
+
+			if(len === 0)
+				return;
+
+			unreadEl.innerHTML = len;
+			this.shake(id);
+		},
 		batchLoad : undefined,
+		clearUnreadMessages : function(id){
+			this.find('li[projectid="' + id + '"] a[unread]').innerHTML = "0";
+			this.stopShake(id);
+		},
 		html : undefined,
+		getProjectById : function(id){
+			return this.find('li[projectid="' + id + '"]');
+		},
 		load : function(_isRefresh){
 			///	<summary>
 			///	去服务器取数据，并加载。
@@ -393,7 +423,23 @@ this.Project = (function(CallServer, Confirm){
 
 			batchLoad.callServer();
 		},
-		overflowPanel : undefined
+		overflowPanel : undefined,
+		shake : function(id){
+			var projectEl = this.getProjectById(id);
+
+			if(projectEl.length === 0)
+				return;
+
+			projectEl.find(">figure").classList.add("shake");
+		},
+		stopShake : function(id){
+			var projectEl = this.getProjectById(id);
+
+			if(projectEl.length === 0)
+				return;
+
+			projectEl.find(">figure").classList.remove("shake");
+		}
 	});
 
 	return Project.constructor;

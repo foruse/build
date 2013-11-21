@@ -166,7 +166,7 @@ this.Discussion = (function(ProjectPanel, ChatList){
 				// 项目信息
 				overflowPanel.find(">header>dl").innerHTML = infoHtml.render(project);
 
-				CallServer.open("getMessages", { id : projecetId, type : "project" }, function(messages){
+				CallServer.open("messagesListener", { id : projecetId, type : "project" }, function(messages){
 					// 添加聊天信息
 					messages.forEach(function(msg){
 						chatListContent.appendMessageToGroup(msg);

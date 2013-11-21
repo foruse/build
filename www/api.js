@@ -199,10 +199,8 @@ function onDeviceReady() {
                         DB._init_db(1);  
                     }
 					
-					console.log(callback);
-                     
-                    SOCKET.request("counter", {}, function(result) {
-                        if (result) {
+					SOCKET.request("counter", {}, function(result) {
+						if (result) {
                            callback(result);
                         } else {
                            callback({count: 100000, validationImage: "src"});

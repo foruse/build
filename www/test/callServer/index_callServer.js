@@ -38,7 +38,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 	CallServer.save([
 		["addProject",			new Text("url?title={title}&color={color}&desc={desc}&users={users}"), "POST"],
 		["getLoginInfo",		"url",										""],
-		["getMessages",			new Text("url?id={id}&type={type}"),		"", true],
+		["messagesListener",	new Text("url?id={id}&type={type}"),		"", true],
 		["getPartnerGroups",	"url",										"", true],
 		["getPartners",			new Text("url?groupId={groupId}"),			"", true],
 		["getProjects",			"url",										"", true],
@@ -226,7 +226,7 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			return data;
 		},
-		getMessages : function(data){
+		messagesListener : function(data){
 			var id = Bao.Global.loginUser.id;
 
 			data = Index.SingleProject.getMessages();
