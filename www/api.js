@@ -908,6 +908,7 @@ function onDeviceReady() {
 //                        };
 
                     data.project['creator_id'] = SESSION.get("user_id");
+					data.project['company_id'] = SESSION.get("company_id");
 
                     data.users.push(SESSION.get("user_id"));
                     if (data.project) {
@@ -917,7 +918,8 @@ function onDeviceReady() {
                                 for (var i in data.users) {
                                     partners.push({
                                         project_id: insert_id,
-                                        user_id: data.users[i]
+                                        user_id: data.users[i],
+										company_id: data.project.company_id
                                     });
                                 }
                                 DB.batch_insert('xiao_project_partners', partners, function(){
