@@ -629,6 +629,7 @@ this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEv
 					});
 
 					clickSmileEvent.trigger(targetEl[0]);
+					smilies.hide();
 					return;
 				}
 

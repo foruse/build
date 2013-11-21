@@ -872,7 +872,6 @@ function onDeviceReady() {
 						DB.from("xiao_companies AS c")
 						DB.order_by("c.id DESC");
 						API.row(function(row) {
-							alert('Last company' + JSON.stringify(row));
 							company_id = parseInt(row.id) + 1;
 
 							var company_data = {
