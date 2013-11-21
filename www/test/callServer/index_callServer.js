@@ -226,16 +226,26 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 
 			return data;
 		},
-		messagesListener : function(data){
+		messagesListener : function(data, params){
 			var id = Bao.Global.loginUser.id;
 
-			data = Index.SingleProject.getMessages();
+			if(params.id !== Infinity){
+				data = Index.SingleProject.getMessages();
 
-			data.forEach(function(dt){
-				var poster = dt.poster;
+				data.forEach(function(dt){
+					var poster = dt.poster;
 
-				poster.isLoginUser = poster.id === id;
-			});
+					poster.isLoginUser = poster.id === id;
+				});
+			}
+			else {
+				var random = Bao.Test.DummyData.Generate.Number.random;
+
+				data = {
+					id : random(555),
+					messagesCount  : random(10)
+				};
+			}
 
 			return data;
 		},

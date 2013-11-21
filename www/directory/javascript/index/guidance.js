@@ -189,6 +189,8 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 
 				var user = data.user;
 				
+				Global.loginUser = user;
+
 				Global.history.go(user.isNewUser ? "uploadAvatar" : "project");
 
 				loginEvent.setEventAttrs({ loginUser : user });
