@@ -198,6 +198,8 @@ function onDeviceReady() {
                         SESSION._init_storage(1);
                         DB._init_db(1);  
                     }
+					
+					console.log(callback);
                      
                     SOCKET.request("counter", {}, function(result) {
                         if (result) {
