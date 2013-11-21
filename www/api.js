@@ -235,7 +235,7 @@ function onDeviceReady() {
 						/*API.row(function(data){
 							console.log(data);
 						});*/
-                        callback(row);
+                        API.row(callback);
                     }
                 },
 
@@ -871,8 +871,9 @@ function onDeviceReady() {
 						DB.select("c.id");
 						DB.from("xiao_companies AS c")
 						DB.order_by("c.id DESC");
-						DB.row(function(row) {
-							company_id = parseInt(row.id + 1);
+						API.row(function(row) {
+							alert('Last company' + JSON.stringify(row));
+							company_id = parseInt(row.id) + 1;
 
 							var company_data = {
 								id: company_id,
@@ -883,6 +884,7 @@ function onDeviceReady() {
 							};
 
 							console.log('Create company');
+							console.log(company_data);
 
 							DB.insert('xiao_companies', company_data, function(insert_id) {
 								API._sync(['xiao_companies'], function() {
@@ -934,10 +936,6 @@ function onDeviceReady() {
                 last_page_index: null,
                 read: function(params, callback) {
 					if ("id" in params) {
-						Models.AbusedMessages.get_abused_messages(function(messages) {
-							
-						});
-						
                         // get inside project page
                         var result = {};
                         API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies"], function() {
