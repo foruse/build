@@ -267,6 +267,10 @@ this.UploadAvatar = (function(ImageFile, SelectionImageArea, Validation){
 		}, "请输入姓名！");
 
 		this.attach({
+			beforeshow : function(){
+				validation.validationEl.value = "";
+				uploadAvatar.header.find("img").src = "../../common/image/avatar_default_large.jpg";
+			},
 			imageloaded : function(e){
 				SelectionImageArea.show();
 				SelectionImageArea.loadImage(e.base64, function(src){
