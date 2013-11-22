@@ -138,6 +138,8 @@
 	margin-bottom : 5px;
 	background-color : #fff;
 	padding : 10px 15px;
+}
+#businessCard > footer li:not([action="authority"]) {
 	display : none;
 }
 #businessCard li[action="removePartner"] {
@@ -213,4 +215,25 @@
 }
 #titleBar button[action="systemContacts_done"] {
 	background : #cc2c27 url(../../../common/image/width24.png) no-repeat 7px -118px;
+}
+
+#invitation > ul {
+	padding : 10px 15px;
+}
+#invitation > ul > li {
+	height : 35px;
+	margin-bottom : 10px;
+	padding : 0 20px 0 40px;
+	background : url(../../../common/image/width24.png) 10px -496px no-repeat;
+}
+#invitation > ul > li:last-child {
+	margin-bottom : 0;
+}
+#invitation > ul input {
+	height : 100%;
+	width : 100%;
+	padding : 10px;
+}
+#invitation > ul > input:focus {
+	border : 1px solid #6f6966;
 }

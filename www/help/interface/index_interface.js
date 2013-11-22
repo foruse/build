@@ -167,9 +167,12 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 		/*
 			{
 				params : {
-					emails : "a@vision2.com,b@vision2.com,c@vision2.com"
+					emails : "a@bixinews.com,b@bixinews.com,c@bixinews.com"
 				},
-				return : null
+				return : {
+					status : -1, if it has some errors
+					error : "error information"
+				}
 			}
 		*/
 		["invitation",		new Text("url?emails={emails}"),				""],

@@ -41,7 +41,6 @@ this.Bao = (function(Bao){
 				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
 					CreateFirstProject : null,
 					Footer : null,
-					Invitation : null,
 					Login : null,
 					LoginInfoManagement : null,
 					UploadAvatar : null
@@ -56,6 +55,7 @@ this.Bao = (function(Bao){
 				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
 					AddProject : null,
 					BusinessCard : null,
+					Invitation : null,
 					SingleProject : null,
 					SystemContacts : null,
 					SystemOption : null
@@ -89,7 +89,11 @@ this.Bao = (function(Bao){
 					ImageBox : null,
 					Message : null,
 					MessageGroup : null,
-					MessageList : null
+					MessageList : null,
+					MessageMode : null,
+					Smilies : null,
+					SmiliesButtonAction : null,
+					SmiliesStatus : null
 				}),
 				Drag : new Namespace().members({ // ui/control/drag.js
 					Navigator : null,

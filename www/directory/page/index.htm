@@ -133,22 +133,6 @@
 					<button class="whiteFont normalRadius">创建</button>
 				</footer>
 			</article>
-			<article id="invitation">
-				<header>邀请你的团队</header>
-				<section>
-					<ul></ul>
-					<script id="invitation_html" type="text/html">
-						@for(length ->> i){
-							<li>
-								<input class="lightBdColor smallRadius" type="text" placeholder="请输入邮箱" />
-							</li>
-						}
-					</script>
-				</section>
-				<footer>
-					<button class="whiteFont normalRadius">邀请</button>
-				</footer>
-			</article>
 			<footer id="guidance_footer">
 				<button class="themeBgColor themeBdColor" desc="prev"></button>
 				<button class="themeBgColor themeBdColor" desc="next"></button>
@@ -313,7 +297,7 @@
 						</li>
 						<li class="lightBdColor normalRadius" action="authority">
 							<span>授予权限</span>
-							<button>
+							<button appearance="on_off">
 								<small></small>
 							</button>
 						</li>
@@ -338,6 +322,16 @@
 						<li class="lightBdColor onlyBorderBottom">
 							<span>{contact.name}</span>
 							<small class="grayFont">{contact.email}</small>
+						</li>
+					}
+				</script>
+			</article>
+			<article id="invitation">
+				<ul></ul>
+				<script id="invitation_html" type="text/html">
+					@for(length ->> i){
+						<li>
+							<input class="lightBdColor smallRadius" type="text" placeholder="请输入邮箱" />
 						</li>
 					}
 				</script>
