@@ -535,10 +535,6 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 			},
 			aftershow : function(){
 				partner.load();
-
-				Global.titleBar.find('button[action="addPartner"]').onuserclick = function(){
-					Global.history.go("systemContacts");
-				};
 			}
 		});
 
@@ -551,7 +547,7 @@ this.Partner = (function(Navigator, UserIndexList, InputSelectionList, Validatio
 		title : "MY PARTNERS 拍档管理",
 		titleBarColor : TitleBarColor.Partner,
 		tools : [
-			{ urlname : "javascript:void(0);", action : "addPartner" },
+			{ urlname : "invitation", action : "addPartner" },
 			{ urlname : "systemOption", action : "set" }
 		]
 	});

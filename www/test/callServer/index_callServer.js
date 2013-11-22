@@ -346,6 +346,14 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			data = Index.Common.getUser();
 
 			return data;
+		},
+		invitation : function(data, params){
+			data = {
+				status : -1,
+				error : params.emails.split(",")[0] + "已存在"
+			};
+
+			return data;
 		}
 	}
 ));

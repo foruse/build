@@ -549,7 +549,6 @@ this.ChatListContent = (function(MessageGroup){
 		///	聊天列表内容区域。
 		///	</summary>
 		/// <param name="selector" type="string, element">对应元素选择器</param>
-		
 	};
 	ChatListContent = new NonstaticClass(ChatListContent, "Bao.UI.Control.Chat.ChatListContent", Panel.prototype);
 

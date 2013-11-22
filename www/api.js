@@ -1822,11 +1822,7 @@ function onDeviceReady() {
 							console.log({abused: abused + 1});
 							console.log("server_id = '" + id + "'");
 
-							DB.update(table, {abused: abused + 1}, "server_id = '" + id + "'", function() {
-								API._sync([table], function() {
-									callback();
-								})
-							});
+							DB.update(table, {abused: abused + 1}, "server_id = '" + id + "'", callback);
 						});
 					});
 				}
@@ -3540,10 +3536,10 @@ function onDeviceReady() {
                                                                         );
                                                                 if (clear) {
                                                                     _this._init_tables.forEach(function(cur) { // triggers are used to paste data to sync table
-                                                                        if(cur !== "xiao_todo_comments" && cur !== "xiao_project_comments"){
+//                                                                        if(cur !== "xiao_todo_comments" && cur !== "xiao_project_comments"){
                                                                             var sql = 'CREATE TRIGGER update_' + cur + ' AFTER UPDATE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
                                                                             tx.executeSql(sql);
-                                                                        }
+//                                                                        }
                                                                         var sql = 'CREATE TRIGGER insert_' + cur + ' AFTER INSERT ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';
                                                                         tx.executeSql(sql);
 //                                                                        var sql = 'CREATE TRIGGER delete_' + cur + ' BEFORE DELETE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id, deleted_flag) VALUES("' + cur + '", OLD.id, "1"); END; ';
@@ -3681,6 +3677,7 @@ function onDeviceReady() {
                                                                 sql = 'SELECT * FROM sync as s INNER JOIN ' + table_name + ' as t ON s.row_id = t.id WHERE s.table_name ="' + table_name + '"',
                                                                 sql_del = 'SELECT * FROM sync_delete WHERE table_name ="' + table_name + '"';
                                                         SERVER.DB._executeSQL(sql, function(data) {
+															console.log('Data to sync in ' + table_name);
 															console.log(data);
                                                             counter = data.length;
                                                             data.length > 0 ? data.forEach(function(el, i) {
@@ -3691,6 +3688,9 @@ function onDeviceReady() {
                                                                     
                                                                     if (el.type === "image" || el.type === "voice") {
                                                                         
+																		console.log('EL');
+																		console.log(el);
+																		
                                                                         SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
                                                                             var copy_el = {};
                                                                             for(var c_i in el){

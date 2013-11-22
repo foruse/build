@@ -45,8 +45,7 @@ this.Loader = (function(Storage, Index, HTML){
 			return new Index.Guidance.Self("#guidance");
 		},
 		invitation : function(){
-			this.load("guidance");
-			return new Index.Guidance.Invitation("#invitation", new HTML(jQun("#invitation_html")));
+			return new Index.Secondary.Invitation("#invitation", new HTML(jQun("#invitation_html")));
 		},
 		load : function(name){
 			var pagePanel = this.pageStorage.get(name);

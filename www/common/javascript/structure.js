@@ -41,7 +41,6 @@ this.Bao = (function(Bao){
 				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
 					CreateFirstProject : null,
 					Footer : null,
-					Invitation : null,
 					Login : null,
 					LoginInfoManagement : null,
 					UploadAvatar : null
@@ -56,6 +55,7 @@ this.Bao = (function(Bao){
 				Secondary : new Namespace({ // ../../directoy/javascript/index/secondary.js
 					AddProject : null,
 					BusinessCard : null,
+					Invitation : null,
 					SingleProject : null,
 					SystemContacts : null,
 					SystemOption : null
