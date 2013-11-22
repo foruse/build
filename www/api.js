@@ -119,12 +119,13 @@ function onDeviceReady() {
         },
 //      server_url: "http://115.28.131.52:3000",
 //      server_url: "http://212.8.40.254:5959",
-		server_url: "http://gbksoft.com:5959",
-//		server_url: "http://192.168.0.103:3000",
+		// server_url: "http://gbksoft.com:5959",
+		server_url: "http://192.168.0.102:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
-        default_user_avatar: "../../common/image/avatar_default.jpg"
+        default_user_avatar: "../../common/image/avatar_default.jpg",
+        new_message_sound: "./sounds/top_choice.mp3"
     };
 	
 	FlurryAgent.logEvent('Application started');
@@ -2098,6 +2099,7 @@ function onDeviceReady() {
 										}
 									});
 									callback(mess_result);
+                                    PHONE.MessageNotification.play();
 								});
                             });
 
@@ -2513,6 +2515,7 @@ function onDeviceReady() {
                                     }
                                 });
                                 callback(mess_result);
+                                PHONE.MessageNotification.play();
                             });
 
                         });
@@ -2541,6 +2544,10 @@ function onDeviceReady() {
 
                 notification_init: function(callback){
                     SOCKET.notification(SESSION.get("company_id"), callback);
+                    // SOCKET.notification(SESSION.get("company_id"), function(data){
+                    //     callback(data);
+                    //     PHONE.MessageNotification.play();
+                    // });
                 }
 
             }
@@ -4565,11 +4572,20 @@ function onDeviceReady() {
                                                     };
                                                     extend(Contacts, Phone);
 
+
+                                                    var MessageNotification = {
+                                                        audio : new Audio(CONFIG.new_message_sound),
+                                                        play : function(){
+                                                            this.audio.play();
+                                                        }
+                                                    }
+
                                                     return {
                                                         VoiceMessage: new VoiceMessage(),
                                                         Files: new Files(),
                                                         Photos: new Photos(),
-                                                        Contacts: new Contacts()
+                                                        Contacts: new Contacts(),
+                                                        MessageNotification : MessageNotification
                                                     };
 
 
