@@ -852,13 +852,56 @@ function onDeviceReady() {
             };
             
 			Models.Invites = {
-				send_invite: function(email, company_id, callback) {
-					var invite_data = {
-						email: email,
-						company_id: company_id
-					};
-					DB.insert('xiao_invites', invite_data, function() {
-						API._sync(['xiao_invites'], callback);
+				send_invite: function(emails, callback) {
+					var registered_emails = [];
+					
+					API._sync(['xiao_users', 'xiao_invites'], function() {
+						DB.select('u.email');
+						DB.from('xiao_users AS u');
+						DB.query(function(users_emails_raw) {
+							DB.select('i.email');
+							DB.from('xiao_invites AS i');
+							DB.query(function(invites_emails_raw) {
+								for (var i in users_emails_raw) {
+									registered_emails.push(users_emails_raw[i].email);
+								}
+								
+								for (var i in invites_emails_raw) {
+									registered_emails.push(invites_emails_raw[i].email);
+								}
+								
+								console.log(registered_emails);
+								
+								for (var i in emails) {
+									if (registered_emails.indexOf(emails[i]) !== -1) {
+										callback({
+											status: -1,
+											error: emails[i] + "已存在"
+										});
+										
+										console.log("EXISTST!");
+										
+										return;
+									}
+								}
+								
+								console.log('emails');
+								
+								var invite_data = [];
+								
+								for (var i in emails) {
+									invite_data.push({email: emails[i], company_id: SESSION.get('company_id')})
+								}
+								
+								DB.batch_insert('xiao_invites', invite_data, function() {
+									API._sync(['xiao_invites'], function() {
+										callback({
+											status: 1
+										});
+									});
+								});
+							});
+						});
 					});
 				}
 			};

@@ -73,15 +73,15 @@
     <icon src="icon.png" gap:platform="winphone"   gap:role="background" />
     
     <gap:splash src="splash.png" />
-    <!--gap:splash src="splash/W320H480.png" gap:platform="ios" width="320" height="480" /-->
-    <gap:splash src="splash/W320H480.gif" gap:platform="ios" width="320" height="480" />
-    <!--gap:splash src="splash/W640H960.png" gap:platform="ios" width="640" height="960" /-->
-    <gap:splash src="splash/W640H960.gif" gap:platform="ios" width="640" height="960" />
-    <!--gap:splash src="splash/W640H1136.png" gap:platform="ios" width="640" height="1136" /-->
-    <gap:splash src="splash/W640H1136.gif" gap:platform="ios" width="640" height="1136" />
+    <gap:splash src="splash/W320H480.png" gap:platform="ios" width="320" height="480" />
+    <!--<gap:splash src="splash/W320H480.gif" gap:platform="ios" width="320" height="480" />-->
+    <gap:splash src="splash/W640H960.png" gap:platform="ios" width="640" height="960" />
+    <!--<gap:splash src="splash/W640H960.gif" gap:platform="ios" width="640" height="960" />-->
+    <gap:splash src="splash/W640H1136.png" gap:platform="ios" width="640" height="1136" >
+    <!--<gap:splash src="splash/W640H1136.gif" gap:platform="ios" width="640" height="1136" />-->
     <gap:splash src="splash/W1024H748.png" gap:platform="ios" width="1024" height="748" />
-    <!--gap:splash src="splash/W768H1004.png" gap:platform="ios" width="768" height="1004" /-->
-    <gap:splash src="splash/W768H1004.gif" gap:platform="ios" width="768" height="1004" />
+    <gap:splash src="splash/W768H1004.png" gap:platform="ios" width="768" height="1004" />
+    <!--<gap:splash src="splash/W768H1004.gif" gap:platform="ios" width="768" height="1004" />-->
 
     <!-- retina iPad support: PhoneGap 2.5.0+ only -->
     <gap:splash src="splash/W2048H1496.png" gap:platform="ios" width="2048" height="1496" />

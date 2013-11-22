@@ -409,7 +409,10 @@
                    console.log(data)
                    complete(data)
                });
-            }
+            },
+			invitation : function(params, complete){
+				Mdls.Invites.send_invite(params.emails.split(','), complete);
+			}
 			
         });
 
