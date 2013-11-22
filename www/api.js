@@ -1045,7 +1045,7 @@ function onDeviceReady() {
                             }
                         });
                     } else {
-						Models.AbusedMessages.report_abuse('project', 59, function() {
+						Models.AbusedMessages.remove_message('todo', 5, function() {
 							Models.AbusedMessages.get_abused_messages(function(messages) {
 								console.log('------------ABUSED MESSAGES');
 								console.log(messages);
@@ -1610,13 +1610,13 @@ function onDeviceReady() {
 					var abused_messages = {}, abused_pc, abused_tc;
 					
 					API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments","xiao_project_comments_likes","xiao_smileys"], function() {
-						DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%d %m %Y %H:%M:%S', pc.time) as time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
+						DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%d %m %Y %H:%M:%S', pc.time) as time, pc.read, pc.abused, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
 						DB.from("xiao_project_comments AS pc");
 						DB.left_join("xiao_users AS u", "u.id = pc.user_id");
 						DB.left_join("xiao_companies AS c", "u.company_id = c.id");
 						DB.left_join("xiao_project_comments_likes AS cl", "cl.comment_id = pc.id");
 						DB.left_join("xiao_users AS clu", "clu.id = cl.user_id");
-						DB.where('pc.abused > 0 AND pc.company_id = "' + SESSION.get('company_id') + '"');
+						DB.where('pc.abused > 0 AND pc.company_id = "' + SESSION.get('company_id') + '" AND pc.deleted == 0');
 						DB.order_by('pc.abused DESC');
 						DB.query(function(messages) {
 							Models.Smileys.get_smileys(function(smileys) {
@@ -1634,6 +1634,7 @@ function onDeviceReady() {
 											abused_pc.push({
 												id: mess.id,
 												text: message,
+												abused: mess.abused,
 												poster: {
 													id: mess.uid,
 													name: mess.name,
@@ -1694,13 +1695,13 @@ function onDeviceReady() {
 
 								abused_messages.abused_pc = abused_pc;
 
-								DB.select("tc.id, tc.content, tc.type, tc.server_path, tc.local_path, tc.todo_id, tc.user_id, strftime('%d %m %Y %H:%M:%S', tc.time) as time, tc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
+								DB.select("tc.id, tc.content, tc.type, tc.server_path, tc.local_path, tc.todo_id, tc.user_id, strftime('%d %m %Y %H:%M:%S', tc.time) as time, tc.read, tc.abused, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
 								DB.from("xiao_todo_comments AS tc");
 								DB.left_join("xiao_users AS u", "u.id = tc.user_id");
 								DB.left_join("xiao_companies AS c", "u.company_id = c.id");
 								DB.left_join("xiao_todo_comments_likes AS cl", "cl.comment_id = tc.id");
 								DB.left_join("xiao_users AS clu", "clu.id = cl.user_id");
-								DB.where('tc.abused > 0 AND tc.company_id = "' + SESSION.get('company_id') + '"');
+								DB.where('tc.abused > 0 AND tc.company_id = "' + SESSION.get('company_id') + '" AND tc.deleted == 0');
 								DB.order_by('tc.time, tc.id');
 								DB.query(function(messages) {
 									abused_tc = []
@@ -1716,6 +1717,7 @@ function onDeviceReady() {
 												abused_tc.push({
 													id: mess.id,
 													text: message,
+													abused: mess.abused,
 													poster: {
 														id: mess.uid,
 														name: mess.name,
@@ -1793,7 +1795,11 @@ function onDeviceReady() {
 							break;
 					}
 					
-					API.remove(table, "id='" + id + "'", callback);
+					DB.remove(table, "server_id='" + id + "'", function() {
+						//API._sync(function() {
+							callback();
+						//});
+					});
 				},
 						
 				report_abuse: function(type, id, callback) {
@@ -1808,7 +1814,7 @@ function onDeviceReady() {
 							break;
 					}
 					
-					API._sync([table], function() {
+					//API._sync([table], function() {
 						DB.select('m.abused');
 						DB.from(table + ' AS m');
 						DB.where("m.server_id = '" + id + "'");
@@ -1822,9 +1828,13 @@ function onDeviceReady() {
 							console.log({abused: abused + 1});
 							console.log("server_id = '" + id + "'");
 
-							DB.update(table, {abused: abused + 1}, "server_id = '" + id + "'", callback);
+							DB.update(table, {abused: abused + 1}, "server_id = '" + id + "'", function() {
+								API._sync([table], function() {
+									callback();
+								});
+							});
 						});
-					});
+					//});
 				}
 			};
             Models.ProjectChat = {
@@ -3685,29 +3695,30 @@ function onDeviceReady() {
                                                                 if (table_name === "xiao_project_comments" || table_name === "xiao_todo_comments" ||
                                                                     table_name === "xiao_project_attachments" || table_name === "xiao_todo_attachments"
                                                                 ) {
-                                                                    
-                                                                    if (el.type === "image" || el.type === "voice") {
-                                                                        
-																		console.log('EL');
-																		console.log(el);
-																		
-                                                                        SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
-                                                                            var copy_el = {};
-                                                                            for(var c_i in el){
-                                                                                copy_el[c_i] = el[c_i];
-                                                                            }
-                                                                            copy_el.server_path = server_path;
-//                                                                            el.server_path = server_path;
-//                                                                            result.updated.push(el);
-                                                                            result.updated.push(copy_el);
-                                                                            make_callback_v2();
-                                                                        });
-                                                                        
-                                                                    }else if (el.type === "text") {
-                                                                        result.updated.push(el);
-                                                                        make_callback_v2();
-//                                                                        alert("text")
-                                                                    }
+                                                                    if (el.abused == 0) {
+																		if (el.type === "image" || el.type === "voice") {
+
+																			SERVER.PHONE.Files.upload(el.local_path, el.type, function(server_path) {
+																				var copy_el = {};
+																				for(var c_i in el){
+																					copy_el[c_i] = el[c_i];
+																				}
+																				copy_el.server_path = server_path;
+	//                                                                            el.server_path = server_path;
+	//                                                                            result.updated.push(el);
+																				result.updated.push(copy_el);
+																				make_callback_v2();
+																			});
+
+																		}else if (el.type === "text") {
+																			result.updated.push(el);
+																			make_callback_v2();
+	//                                                                        alert("text")
+																		}
+																	} else {
+																		result.updated.push(el);
+																		make_callback_v2();
+																	}
 //                                                                    alert("11")
                                                                 }else if(table_name === "xiao_users"){
 //                                                                    alert("xiao_users")
