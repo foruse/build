@@ -2030,7 +2030,8 @@ function onDeviceReady() {
 		//                                            new_user = mess.isNewUser == 0 ? true : false;
 		
 											var message = mess.content;
-											message = _this.convert_smileys(message, null, smileys);
+                                            message = Models.Smileys.convert_smileys(message, null, smileys);
+											// message = _this.convert_smileys(message, null, smileys);
 		
 											mess_result.push({
 												id: mess.id,
@@ -2859,6 +2860,7 @@ function onDeviceReady() {
                                                     },
 
                                                     notification: function(company_id, callback){
+                                                        if(typeof(io) === "undefined")return callback(false);
                                                         this.socket.emit("addnotify", {id: company_id});
                                                         this.socket.on("addnotify_result", function(data){
                                                             callback(data);
@@ -4573,19 +4575,26 @@ function onDeviceReady() {
                                                     extend(Contacts, Phone);
 
 
-                                                    var MessageNotification = {
-                                                        audio : new Audio(CONFIG.new_message_sound),
-                                                        play : function(){
+                                                    function MessageNotification(){
+                                                        MessageNotification.superclass.constructor.call(this);
+
+                                                        this.audio = null;
+
+                                                        this.play = function(){
+                                                            if(this.audio === null) this.audio = new Media(CONFIG.new_message_sound, this.log_success, this.log_error);
                                                             this.audio.play();
+                                                            // console.log(this);
+                                                            // alert("hi")
                                                         }
                                                     }
+                                                    extend(MessageNotification, Phone);
 
                                                     return {
                                                         VoiceMessage: new VoiceMessage(),
                                                         Files: new Files(),
                                                         Photos: new Photos(),
                                                         Contacts: new Contacts(),
-                                                        MessageNotification : MessageNotification
+                                                        MessageNotification : new MessageNotification()
                                                     };
 
 
