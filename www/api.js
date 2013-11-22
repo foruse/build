@@ -875,7 +875,7 @@ function onDeviceReady() {
 							company_id = parseInt(row.id) + 1;
 
 							var company_data = {
-								id: company_id,
+								'-id': company_id,
 								title: title,
 								descr: '',
 								creator_id: creator_id,
@@ -1045,6 +1045,12 @@ function onDeviceReady() {
                             }
                         });
                     } else {
+						Models.AbusedMessages.report_abuse('project', 59, function() {
+							Models.AbusedMessages.get_abused_messages(function(messages) {
+								console.log('------------ABUSED MESSAGES');
+								console.log(messages);
+							});
+						});
                         // SELECT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 1 as status  FROM xiao_project_partners AS pp INNER JOIN xiao_projects AS p ON pp.project_id = p.id INNER JOIN xiao_users AS u ON u.id = pp.user_id INNER JOIN xiao_companies AS c ON u.company_id = c.id WHERE pp.user_id = "4" AND p.archived <> "1" GROUP BY p.id UNION SELECT DISTINCT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 2 as status  FROM xiao_projects AS p LEFT JOIN xiao_project_partners AS pp ON pp.project_id = p.id LEFT JOIN xiao_users AS u ON u.id = pp.user_id LEFT JOIN xiao_companies AS c ON u.company_id = c.id WHERE p.archived <> "1" GROUP BY p.id HAVING p.id NOT IN ( SELECT project_id FROM xiao_project_partners WHERE user_id = "4" ) LIMIT 10
                         // var result = [], logged_user = SESSION.get("user_id");
                         //     params.othersOffset = (params.othersOffset ? params.othersOffset : 0);
@@ -1601,21 +1607,21 @@ function onDeviceReady() {
 			};
 			Models.AbusedMessages = {
 				get_abused_messages: function(callback) {
-					var abused_messages, abused_pc, abused_tc;
+					var abused_messages = {}, abused_pc, abused_tc;
 					
-					API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments","xiao_project_comments_likes"], function() {
+					API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments","xiao_project_comments_likes","xiao_smileys"], function() {
 						DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%d %m %Y %H:%M:%S', pc.time) as time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
 						DB.from("xiao_project_comments AS pc");
 						DB.left_join("xiao_users AS u", "u.id = pc.user_id");
 						DB.left_join("xiao_companies AS c", "u.company_id = c.id");
 						DB.left_join("xiao_project_comments_likes AS cl", "cl.comment_id = pc.id");
 						DB.left_join("xiao_users AS clu", "clu.id = cl.user_id");
-						DB.where('pc.abused > 0');
+						DB.where('pc.abused > 0 AND pc.company_id = "' + SESSION.get('company_id') + '"');
 						DB.order_by('pc.abused DESC');
 						DB.query(function(messages) {
 							Models.Smileys.get_smileys(function(smileys) {
-								console.log(smileys);
-								abused_pc = [], unread = 0, indexes = [];
+								abused_pc = []
+								var unread = 0, indexes = [];
 								if (messages.length > 0) {
 									// Found no way to change iteration object in jQun forEach
 									messages.forEach(function(mess) {
@@ -1685,7 +1691,6 @@ function onDeviceReady() {
 										}
 									});
 								}
-								console.log(abused_pc);
 
 								abused_messages.abused_pc = abused_pc;
 
@@ -1695,9 +1700,8 @@ function onDeviceReady() {
 								DB.left_join("xiao_companies AS c", "u.company_id = c.id");
 								DB.left_join("xiao_todo_comments_likes AS cl", "cl.comment_id = tc.id");
 								DB.left_join("xiao_users AS clu", "clu.id = cl.user_id");
-								DB.where('tc.todo_id ="' + project_id + '"');
+								DB.where('tc.abused > 0 AND tc.company_id = "' + SESSION.get('company_id') + '"');
 								DB.order_by('tc.time, tc.id');
-								var login_user = SESSION.get("user_id");
 								DB.query(function(messages) {
 									abused_tc = []
 									var unread = 0, indexes = [];
@@ -1724,7 +1728,6 @@ function onDeviceReady() {
 														email: mess.email,
 														adress: mess.adress,
 														isNewUser: mess.isNewUser,
-														isLoginUser: login_user == mess.uid
 													},
 													attachment: {
 														id: mess.id,
@@ -1768,7 +1771,7 @@ function onDeviceReady() {
 											}
 										});
 									}
-
+									
 									abused_messages.abused_tc = abused_tc;
 
 									callback(abused_messages);
@@ -1778,7 +1781,7 @@ function onDeviceReady() {
 					});
 				},
 				
-				removeMessage: function(type, id, callback) {
+				remove_message: function(type, id, callback) {
 					var table = '';
 					
 					switch(type) {
@@ -1791,6 +1794,41 @@ function onDeviceReady() {
 					}
 					
 					API.remove(table, "id='" + id + "'", callback);
+				},
+						
+				report_abuse: function(type, id, callback) {
+					var table = '';
+					
+					switch(type) {
+						case 'project':
+							table = 'xiao_project_comments';
+							break;
+						case 'todo':
+							table = 'xiao_todo_comments';
+							break;
+					}
+					
+					API._sync([table], function() {
+						DB.select('m.abused');
+						DB.from(table + ' AS m');
+						DB.where("m.server_id = '" + id + "'");
+						DB.row(function(row) {
+							console.log('Message to abuse');
+							console.log(row);
+							var abused = parseInt(row.abused);
+							
+							console.log('Data to update');
+							console.log(table);
+							console.log({abused: abused + 1});
+							console.log("server_id = '" + id + "'");
+
+							DB.update(table, {abused: abused + 1}, "server_id = '" + id + "'", function() {
+								API._sync([table], function() {
+									callback();
+								})
+							});
+						});
+					});
 				}
 			};
             Models.ProjectChat = {
@@ -2022,7 +2060,9 @@ function onDeviceReady() {
                     console.log("sending mesage...");
                     message['user_id'] = SESSION.get("user_id"); // push user_id to message data
                     message['read'] = '1';
+					message['company_id'] = SESSION.get('company_id');
                     API.insert("xiao_project_comments", message, function(insert_id) {
+						console.log('Sent message with company id: ' + SESSION.get('company_id'));
                         message['id'] = insert_id;
                         console.log('API.insert("xiao_project_comments"');
                         console.log(message);
@@ -2433,6 +2473,7 @@ function onDeviceReady() {
                 send_message: function(message, callback) {
 //                    console.log("sending mesage...");
                     message['user_id'] = SESSION.get("user_id"); // push user_id to message data
+					message['company_id'] = SESSION.get('company_id');
                     API.insert("xiao_todo_comments", message, function(insert_id) {
                         message['id'] = insert_id;
 //                        console.log('API.insert("xiao_todo_comments"');
@@ -2910,9 +2951,9 @@ function onDeviceReady() {
                                                             }
                                                         },
                                                         insert: function(table, data, callback) {
-															if ('id' in data) {
-																var insert_id = data.id;
-																delete data.id;
+															if ('-id' in data) {
+																var insert_id = data['-id'];
+																delete data['-id'];
 															} else {
 																var insert_id = this._make_id(table);
 															}

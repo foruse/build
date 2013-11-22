@@ -63,12 +63,15 @@
             getMessages: function(params, complete) {
 
                 console.log("_______________________getMessages");
+				console.log(params);
+				console.log('params');
                 // if(params.projectId === -1){
                 if(params.projectId === window.Infinity){
 
                     Mdls.Notification.notification_init(complete);
 
                 }else{
+					console.log('inichat');
                     switch (params.type) {
                         case "project":
     //                        Mdls.ProjectChat.chat_init(params.id, complete);
@@ -99,8 +102,10 @@
 
             messagesListener: function(params, complete) {
                 console.log("_______________________getMessages");
+				console.log(params);
+				console.log('params');
                 // if(params.projectId === -1){
-                if(params.projectId === window.Infinity){
+                if(params.id === window.Infinity){
 
                     Mdls.Notification.notification_init(complete);
 
