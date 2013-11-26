@@ -94,6 +94,9 @@ this.Loader = (function(Storage, Index, HTML){
 		systemOption : function(){
 			return new Index.Secondary.SystemOption("#systemOption");
 		},
+		tc : function(){
+			return new Index.Deep.TC("#TC");
+		}, 
 		todo : function(){
 			return new Index.Deep.Todo("#todo", new HTML(jQun("#todo_info_html")));
 		},

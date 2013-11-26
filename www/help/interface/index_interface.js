@@ -257,7 +257,8 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 					attachment : DS_attachment
 				},
 				return {
-					status : 0
+					attachmentId : 1,
+					id : 2
 				}
 			}
 		*/
@@ -319,7 +320,8 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 				projectId : 1
 			},
 			return {
-				id : 1 // the id of comment
+				id : 1, // the id of comment
+				attachmentId : 2
 			}
 		*/
 		["addCommentForTodo",	new Text("url?text={text}&type={type}&projectId={projectId}"),	""],
@@ -375,7 +377,23 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			},
 			return : DS_user
 		*/
-		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""]
+		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""],
+
+		/*
+			params : {
+				id : 1 // user id
+			},
+			return : null
+		*/
+		["assignPermissions",	new Text("url?id={id}"),					""],
+
+		/*
+			params : {
+				id : 1 // user id
+			},
+			return : null
+		*/
+		["removePermissions",	new Text("url?id={id}"),					""]
 	]);
 }
 }(

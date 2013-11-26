@@ -378,6 +378,19 @@ this.QRCode = (function(){
 	return QRCode.constructor;
 }());
 
+this.TC = (function(){
+	function TC(selector){
+	
+	};
+	TC = new NonstaticClass(TC, "Bao.Page.Index.Deep.TC", PagePanel.prototype);
+
+	TC.override({
+		title : "使用条款 和 隐私政策"
+	});
+
+	return TC.constructor;
+}());
+
 this.AboutBaoPiQi = (function(){
 	function AboutBaoPiQi(selector){
 		///	<summary>
@@ -428,10 +441,12 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 						type : type
 					},
 					function(data){
-						if(type !== "voice")
-							return;
+						if(type === "voice"){
+							attachment.resetFrom("project");
+							attachment.resetId(data.attachmentId);
+						}
 
-						attachment.resetId(data.id);
+						message.resetId(data.id);
 					}
 				);
 			},

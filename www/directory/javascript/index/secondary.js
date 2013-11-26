@@ -92,7 +92,7 @@ this.AddProject = (function(Global, Validation, UserManagementList){
 	Bao.UI.Control.List.UserManagementList
 ));
 
-this.BusinessCard = (function(Global, Confirm, clickAvatarEvent){
+this.BusinessCard = (function(Global, Confirm, Switch, SwitchStatus, clickAvatarEvent){
 	function ClickUserAvatar(){
 		///	<summary>
 		///	点击用户头像。
@@ -135,9 +135,13 @@ this.BusinessCard = (function(Global, Confirm, clickAvatarEvent){
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
 		/// <param name="userInfoHtml" type="jQun.HTML">用户信息模板</param>
+		var businessCard = this, swt = new Switch();
+
 		this.assign({
 			userInfoHtml : userInfoHtml
 		});
+
+		swt.appendTo(this.find('li[action="authority"]>aside')[0]);
 
 		this.attach({
 			clickavatar : function(e){
@@ -148,6 +152,18 @@ this.BusinessCard = (function(Global, Confirm, clickAvatarEvent){
 					console.log("你点击了一个按钮：" + targetEl.getAttribute("action"));
 					return;
 				}
+			}
+		});
+
+		swt.attach({
+			statuschanged : function(e){
+				console.log(e.status === SwitchStatus.On ? "assignPermissions" : "removePermissions");
+
+				CallServer.open(
+					e.status === SwitchStatus.On ? "assignPermissions" : "removePermissions",
+					{ id : businessCard.userId },
+					function(){}
+				);
 			}
 		});
 	};
@@ -184,6 +200,8 @@ this.BusinessCard = (function(Global, Confirm, clickAvatarEvent){
 }(
 	Bao.Global,
 	Bao.UI.Control.Mask.Confirm,
+	Bao.UI.Control.Drag.Switch,
+	Bao.UI.Control.Drag.SwitchStatus,
 	// clickAvatarEvent
 	new jQun.Event("clickavatar", function(){
 		this.attachTo("*");

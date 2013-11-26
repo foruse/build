@@ -97,7 +97,9 @@ this.Bao = (function(Bao){
 				}),
 				Drag : new Namespace().members({ // ui/control/drag.js
 					Navigator : null,
-					Scroll : null
+					Scroll : null,
+					Switch : null,
+					SwitchStatus : null
 				}),
 				File : new Namespace().members({ // ui/control/file.js
 					Attachment : null,

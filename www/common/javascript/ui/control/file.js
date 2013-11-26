@@ -415,6 +415,9 @@ this.SelectionImageArea = (function(Global, Direction, callBack, round, selectio
 			Global.mask.hide();
 		},
 		loadImage : function(src, _callBack){
+			if(!src)
+				return;
+
 			callBack = _callBack;
 
 			this.setDirection(Direction.None);

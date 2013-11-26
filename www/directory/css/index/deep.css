@@ -180,7 +180,9 @@
 	display : block;
 	border-top-left-radius : 0;
 	overflow : hidden;
+	/*
 	-webkit-animation : editPassword steps(14) 500ms 1;
+	*/
 }
 @-webkit-keyframes editPassword {
 	from {
@@ -349,6 +351,8 @@
 .todo_header dd p {
 	padding : 0 8px;
 	text-align : left;
+	white-space : normal;
+	word-break : break-all;
 }
 .todo_header dd aside {
 	margin-top : 20px;
@@ -577,4 +581,11 @@
 }
 #archivedProjectView > header > ul:empty, #archivedProjectView .anchorList > ul:empty {
 	display : none;
+}
+
+#TC {
+	padding : 20px;
+	text-align : center;
+	white-space : normal;
+	line-height : 20px;
 }

@@ -126,11 +126,12 @@ this.Discussion = (function(ProjectPanel, ChatList, SmiliesStatus){
 						type : type
 					},
 					function(data){
-						if(type !== "voice")
-							return;
+						if(type === "voice"){
+							attachment.resetFrom("project");
+							attachment.resetId(data.attachmentId);
+						}
 
-						attachment.resetFrom("project");
-						attachment.resetId(data.id);
+						message.resetId(data.id);
 					}
 				);
 			},

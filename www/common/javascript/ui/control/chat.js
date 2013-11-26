@@ -365,6 +365,9 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 			
 			this.removeAttribute("praisedbyself");
 		},
+		resetId : function(id){
+			this.id = id;
+		},
 		sendCompleted : function(messageId, _attachmentId){
 			this.isSending = false;
 

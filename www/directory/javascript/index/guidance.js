@@ -198,7 +198,9 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 
 				localStorage.user_email = email;
 				localStorage.user_pass = pwd;
+
 				loginInfoManagement.clearInputValue("pwd");
+				loginInfoManagement.clearInputValue("repwd");
 			});
 		},
 		loginInfoManagement : undefined,
