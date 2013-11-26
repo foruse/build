@@ -412,8 +412,15 @@
             },
 			invitation : function(params, complete){
 				Mdls.Invites.send_invite(params.emails.split(','), complete);
+			},
+			assignPermissions : function(params, complete) {
+				var id = params.id;
+				Mdls.User.set_permission(id, 1, complete);
+			},
+			removePermissions : function(params, complete) {
+				var id = params.id;
+				Mdls.User.set_permission(id, 0, complete);
 			}
-			
         });
 
 

@@ -250,10 +250,6 @@ function onDeviceReady() {
                     API.read(callback);
                 },
 						
-				poweruser: function(id, value) {
-					DB.update('xiao_users', {poweruser: value}, 'id="' + id + '"');
-				},
-						
 				check_admin_for_user: function(user_id, callback) {
 					DB.select("u.company_id");
 					DB.from("xiao_users AS u");
@@ -355,6 +351,14 @@ function onDeviceReady() {
 					} else {
 						callback(base64);
 					}
+				},
+				
+				set_permission: function(user_id, permission, callback) {
+					DB.update('xiao_users', {poweruser: permission}, 'id = "' + user_id + '"', function() {
+						API._sync(['xiao_users'], function() {
+							callback();
+						});
+					});
 				},
 				
                 update: function(data, callback) {
@@ -855,6 +859,7 @@ function onDeviceReady() {
 			Models.Invites = {
 				send_invite: function(emails, callback) {
 					var registered_emails = [];
+					var company_id = SESSION.get('company_id');
 					
 					API._sync(['xiao_users', 'xiao_invites'], function() {
 						DB.select('u.email');
@@ -886,16 +891,21 @@ function onDeviceReady() {
 									}
 								}
 								
-								console.log('emails');
-								
 								var invite_data = [];
 								
 								for (var i in emails) {
-									invite_data.push({email: emails[i], company_id: SESSION.get('company_id')})
+									invite_data.push({email: emails[i], company_id: company_id})
 								}
 								
 								DB.batch_insert('xiao_invites', invite_data, function() {
 									API._sync(['xiao_invites'], function() {
+										for (var i in invite_data) {
+											SOCKET.request("invite_email", {
+												email: invite_data[i].email,
+												id: invite_data[i].company_id
+											});
+										}
+										
 										callback({
 											status: 1
 										});
