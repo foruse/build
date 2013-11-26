@@ -156,7 +156,7 @@ this.except = (function(forEach){
 		///	</summary>
 		///	<param name="obj" type="Object">需要排除属性的对象。</param>
 		///	<param name="properties" type="Array">需要排除的属性名称数组。</param>
-		var result = set({}, obj);
+		var result = this.set({}, obj);
 
 		forEach(properties, function(name){
 			delete result[name];
