@@ -5,7 +5,7 @@
         Models = new StaticClass(Models);
         Models.properties({
             addProject: function(params, complete) {
-				alert(jQun)
+				// alert(jQun)
 				params = jQun.set({descr: params.desc}, params);
                 delete params.desc;
                 Mdls.Project.create({
