@@ -34,15 +34,21 @@ this.Bao = (function(Bao){
 					Account : null,
 					Archive : null,
 					ArchivedProjectView : null,
+					GlobalSearch : null,
 					ProjectManagement : null,
 					QRCode : null,
+					SendTodo : null,
+					Report : null,
+					TC : null,
 					Todo : null
 				}),
 				Guidance : new Namespace({ // ../../directory/javascript/index/guidance.js
 					CreateFirstProject : null,
+					Demo : null,
 					Footer : null,
 					Login : null,
 					LoginInfoManagement : null,
+					Self : null,
 					UploadAvatar : null
 				}),
 				SPP : new Namespace({ // ../../directoy/javascript/index/home.js
@@ -56,13 +62,13 @@ this.Bao = (function(Bao){
 					AddProject : null,
 					BusinessCard : null,
 					Invitation : null,
-					SingleProject : null,
 					SystemContacts : null,
 					SystemOption : null
 				}),
 				SingleProject : new Namespace({ // ../../directoy/javascript/index/singleProject.js
 					Discussion : null,
 					Header : null,
+					ProjectPanel : null,
 					Self : null,
 					TodoList : null
 				})

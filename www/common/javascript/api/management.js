@@ -75,6 +75,9 @@ this.Loader = (function(Storage, Index, HTML){
 		qrCode : function(){
 			return new Index.Deep.QRCode("#QRCode", new HTML(jQun("#QRCode_html")));
 		},
+		report : function(){
+			return new Index.Deep.Report("#report");
+		},
 		schedule : function(){
 			this.load("spp");
 			return new Index.SPP.Schedule("#schedule", new HTML(jQun("#spp_scheduleSign_html")));

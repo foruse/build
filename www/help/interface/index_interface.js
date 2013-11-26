@@ -393,7 +393,33 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			},
 			return : null
 		*/
-		["removePermissions",	new Text("url?id={id}"),					""]
+		["removePermissions",	new Text("url?id={id}"),					""],
+
+		/*
+			params : {
+				reporter : DS_user,
+				source : "abc", // project title or todo title
+				time : 1234567, // time ticks
+				message : DS_message
+			},
+			return : null
+		*/
+		["getReportedInfo",		"",											""],
+		/*
+			params : {
+				id : 1 // report id
+			},
+			return : null
+		*/
+		["deleteReport",		new Text("url?id={id}"),											""],
+
+		/*
+			params : {
+				id : 1 // report id
+			},
+			return : null
+		*/
+		["ignoreReport",		new Text("url?id={id}"),											""]
 	]);
 }
 }(

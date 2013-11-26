@@ -1,5 +1,5 @@
-﻿(function(Deep, NonstaticClass, StaticClass, PagePanel, OverflowPanel, TitleBarColor, CallServer){
-this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forEach, config){
+﻿(function(Deep, NonstaticClass, StaticClass, PagePanel, Panel, OverflowPanel, TitleBarColor, CallServer){
+this.GlobalSearch = (function(OverflowPanel, UserAnchorList, Global, forEach, config){
 	function GlobalSearch(selector, groupHtml){
 		///	<summary>
 		///	全局搜索。
@@ -96,7 +96,6 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 	return GlobalSearch.constructor;
 }(
 	Bao.API.DOM.OverflowPanel,
-	Bao.API.DOM.Panel,
 	Bao.UI.Control.List.UserAnchorList,
 	Bao.Global,
 	jQun.forEach,
@@ -121,7 +120,7 @@ this.GlobalSearch = (function(OverflowPanel, Panel, UserAnchorList, Global, forE
 	}
 ));
 
-this.Account = (function(Panel, Global, ValidationList, SelectImage, SelectionImageArea){
+this.Account = (function(Global, ValidationList, SelectImage, SelectionImageArea){
 	function InputPanel(){};
 	InputPanel = new NonstaticClass(InputPanel, null, Panel.prototype);
 
@@ -349,7 +348,6 @@ this.Account = (function(Panel, Global, ValidationList, SelectImage, SelectionIm
 
 	return Account.constructor;
 }(
-	Bao.API.DOM.Panel,
 	Bao.Global,
 	Bao.API.DOM.ValidationList,
 	Bao.UI.Control.File.SelectImage,
@@ -380,7 +378,7 @@ this.QRCode = (function(){
 
 this.TC = (function(){
 	function TC(selector){
-	
+		new OverflowPanel(this.section);
 	};
 	TC = new NonstaticClass(TC, "Bao.Page.Index.Deep.TC", PagePanel.prototype);
 
@@ -443,7 +441,7 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 					function(data){
 						if(type === "voice"){
 							attachment.resetFrom("project");
-							attachment.resetId(data.attachmentId);
+							attachment.resetId(data.id);
 						}
 
 						message.resetId(data.id);
@@ -523,7 +521,7 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 	Bao.Global
 ));
 
-this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Alert, Global, validationHandle){
+this.SendTodo = (function(UserManagementList, Validation, Attachment, Alert, Global, validationHandle){
 	function AttamentArea(selector, attachmentHtml){
 		var all = [], ul = this.find(">ul")[0];
 
@@ -683,7 +681,6 @@ this.SendTodo = (function(UserManagementList, Validation, Panel, Attachment, Ale
 }(
 	Bao.UI.Control.List.UserManagementList,
 	Bao.API.DOM.Validation,
-	Bao.API.DOM.Panel,
 	Bao.UI.Control.File.Attachment,
 	Bao.UI.Control.Mask.Alert,
 	Bao.Global,
@@ -875,10 +872,7 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 			},
 			userclick : function(e, targetEl){
 				if(targetEl.between(">footer>button:first-child", this).length > 0){
-					new Confirm("确定将此项目归档吗？", [
-						{ action : "ok", text : "是", autoClose : true },
-						{ action : "cancle", text : "否", autoClose : true }
-					]).attach({
+					new Confirm("确定将此项目归档吗？").attach({
 						clickbutton : function(e){
 							if(e.maskButton.action !== "ok")
 								return;
@@ -900,10 +894,7 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 				}
 
 				if(targetEl.between(">footer>button:last-child", this).length > 0){
-					new Confirm("确定将此项目删除吗？", [
-						{ action : "ok", text : "是", autoClose : true },
-						{ action : "cancle", text : "否", autoClose : true }
-					]).attach({
+					new Confirm("确定将此项目删除吗？").attach({
 						clickbutton : function(e){
 							if(e.maskButton.action !== "ok")
 								return;
@@ -982,6 +973,118 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 	]
 ));
 
+this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
+	function Single(data){
+		var single = this, message = new Message(data.message);
+		
+		this.assign({
+			reportId : data.id
+		});
+
+		this.combine(reportHtml.create(data));
+
+		message.appendTo(this.find("figure")[0]);
+
+		this.footer.attach({
+			userclick : function(e, targetEl){
+				var btnEl = targetEl.between(">button", this);
+
+				if(btnEl.length > 0){
+					var isDel = btnEl.getAttribute("action") === "del",
+					
+						confirm = new Confirm("确定" + (isDel ? "删除" : "忽略") + "此条信息吗？");
+
+					confirm.attach({
+						clickbutton : function(e){
+							var buttonAction = e.maskButton.action; 
+
+							if(buttonAction !== "ok")
+								return;
+
+							CallServer.open(
+								(isDel ? "delete" : "ignore") + "Report",
+								{ id : single.id },
+								function(){
+									single.remove();
+								}
+							);
+						}
+					});
+
+					confirm.show();
+					return;
+				}
+			}
+		});
+	};
+	Single = new NonstaticClass(Single, null, Panel.prototype);
+
+	Single.properties({
+		reportId : -1
+	});
+
+
+	function Report(selector){
+		var report = this;
+
+		this.attach({
+			beforeshow : function(){
+				CallServer.open("getReportedInfo", null, function(data){
+					forEach(data, function(dt){
+						new Single.constructor(dt).appendTo(this);
+					}, report.find(">ul")[0]);
+				});
+			}
+		});
+
+		new OverflowPanel(this.find(">ul"));
+	};
+	Report = new NonstaticClass(Report, "Bao.Page.Index.Deep.Report", PagePanel.prototype);
+
+	Report.override({
+		title : "举报信息"
+	});
+
+	return Report.constructor;
+}(
+	Bao.UI.Control.Chat.ChatList,
+	Bao.UI.Control.Chat.Message,
+	Bao.UI.Control.Mask.Confirm,
+	jQun.forEach,
+	// reportHtml
+	new jQun.HTML([
+		'<li>',
+			'<dl class="largeRadius lightBdColor">',
+				'<dt class="lightBdColor onlyBorderBottom">',
+					'举报人：',
+					'<a class="normalAvatarPanel" userid="{reporter.id}">',
+						'<img src="{reporter.avatar}" />',
+					'</a>',
+					'<strong>{reporter.name}</strong>',
+					'<span class="grayFont">{reporter.position}</span>',
+				'</dt>',
+				'<dd>',
+					'<p>',
+						'被举报人：<span>{message.poster.name}</span>',
+					'</p>',
+					'<p>',
+						'被举报消息来源：<span>{source}</span>',
+					'</p>',
+					'<p>',
+						'被举报时间：<span>{time}</span>',
+					'</p>',
+					'<figure></figure>',
+				'</dd>',
+			'</dl>',
+			'<footer class="whiteFont">',
+				'<button class="smallRadius" action="del">删除</button>',
+				'<button class="smallRadius" action="ignore">忽略</button>',
+			'</footer>',
+		'</li>'
+	].join(""))
+));
+
+
 Deep.members(this);
 }.call(
 	{},
@@ -989,6 +1092,7 @@ Deep.members(this);
 	jQun.NonstaticClass,
 	jQun.StaticClass,
 	Bao.API.DOM.PagePanel,
+	Bao.API.DOM.Panel,
 	Bao.API.DOM.OverflowPanel,
 	Bao.API.DOM.TitleBarColor,
 	Bao.CallServer

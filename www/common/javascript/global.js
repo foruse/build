@@ -60,7 +60,7 @@ this.Global = (function(Fixed, Management, HTML, Browser, inputs, inputEvents){
 			},
 			login : function(e){
 				Global.loginUser = e.loginUser;
-				//Global.history.go("discussion").fill(1);
+				// Global.history.go("report");
 			}
 		});
 	};

@@ -5,7 +5,7 @@
         Models = new StaticClass(Models);
         Models.properties({
             addProject: function(params, complete) {
-                params = jQun.set({descr: params.desc}, params);
+				params = jQun.set({descr: params.desc}, params);
                 delete params.desc;
                 Mdls.Project.create({
                     project: jQun.except(params, ["users"]),
@@ -420,7 +420,7 @@
 			removePermissions : function(params, complete) {
 				var id = params.id;
 				Mdls.User.set_permission(id, 0, complete);
-			}
+			},
         });
 
 

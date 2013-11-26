@@ -398,7 +398,7 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 	new Event("clickpraise"),
 	// messageHtml
 	new HTML([
-		'<li class="chatList_message inlineBlock" action="{type}" ispostbyself="{poster.isLoginUser}">',
+		'<div class="chatList_message inlineBlock" action="{type}" ispostbyself="{poster.isLoginUser}">',
 			'<aside>',
 				'<p class="normalAvatarPanel" userid="{poster.id}">',
 					'<img src="{poster.avatar}" />',
@@ -426,7 +426,7 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 					'<span></span>',
 				'</p>',
 			'</figure>',
-		'</li>'
+		'</div>'
 	].join("")),
 	// praiseHtml
 	new HTML([
@@ -436,13 +436,16 @@ this.Message = (function(Attachment, ImageBox, ActiveVoice, EscapeSmilies, click
 	].join(""))
 ));
 
-this.MessageList = (function(List, Message){
-	function MessageList(){
+this.MessageList = (function(List, Message, itemHtml){
+	function MessageList(listContainerOl){
 		///	<summary>
 		///	信息列表。
 		///	</summary>
+		this.assign({
+			listContainerOl : listContainerOl
+		});
 	};
-	MessageList = new NonstaticClass(MessageList, "Bao.UI.Control.Chat.MessageList", List.prototype);
+	MessageList = new NonstaticClass(MessageList, "Bao.UI.Control.Chat.MessageList", Panel.prototype);
 
 	MessageList.override({
 		push : function(msg){
@@ -450,17 +453,26 @@ this.MessageList = (function(List, Message){
 			///	添加信息。
 			///	</summary>
 			/// <param name="msg" type="object">信息数据</param>
-			var message = new Message(msg);
+			var item = itemHtml.create(), message = new Message(msg);
+
+			message.appendTo(item[0]);
+			item.appendTo(this.listContainerOl);
 
 			List.prototype.push.call(this, message);
 			return message;
 		}
 	});
 
+	MessageList.properties({
+		listContainerOl : undefined
+	});
+
 	return MessageList.constructor;
 }(
 	jQun.List,
-	this.Message
+	this.Message,
+	// itemHtml
+	new HTML('<li></li>')
 ));
 
 this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumRegx, messageGroupHtml){
@@ -505,7 +517,7 @@ this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumR
 		);
 
 		this.assign({
-			messageList : new MessageList()
+			messageList : new MessageList(this.find(">dd>ol")[0])
 		});
 	};
 	MessageGroup = new NonstaticClass(MessageGroup, "Bao.UI.Control.Chat.MessageGroup", Panel.prototype);
@@ -517,8 +529,6 @@ this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumR
 			///	</summary>
 			/// <param name="message" type="object">信息数据</param>
 			var msg = this.messageList.push(message);
-
-			msg.appendTo(this.find(">dd>ol")[0]);
 
 			messageAppendedEvent.setEventAttrs({ message : msg });
 			messageAppendedEvent.trigger(this[0]);
@@ -655,17 +665,35 @@ this.Smilies = (function(Drag, SmiliesStatus, SmileNames, smiliesStatusChangedEv
 
 	Smilies.override({
 		hide : function(){
-			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : SmiliesStatus.Hide });
+			var hideStatus = SmiliesStatus.Hide;
+
+			if(this.status === hideStatus)
+				return;
+
+			this.status = hideStatus;
+
+			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : hideStatus });
 			smiliesStatusChangedEvent.trigger(this[0]);
 
 			Panel.prototype.hide.apply(this, arguments);
 		},
 		show : function(){
-			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : SmiliesStatus.Show });
+			var showStatus = SmiliesStatus.Show;
+
+			if(this.status === showStatus)
+				return;
+
+			this.status = showStatus;
+
+			smiliesStatusChangedEvent.setEventAttrs({ smiliesStatus : showStatus });
 			smiliesStatusChangedEvent.trigger(this[0]);
 
 			Panel.prototype.show.apply(this, arguments);
 		}
+	});
+
+	Smilies.properties({
+		status : SmiliesStatus.Hide
 	});
 
 	return Smilies.constructor;

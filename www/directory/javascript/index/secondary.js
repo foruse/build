@@ -387,7 +387,15 @@ this.Invitation = (function(ValidationList, OverflowPanel, Global, Mask, Validat
 								return;
 							}
 
-							Global.history.go("partner");
+							var alert = new Mask.Alert("已成功发送邀请函！");
+
+							alert.attach({
+								clickbutton : function(){
+									Global.history.go("partner");
+								}
+							});
+
+							alert.show();
 						}, true);
 					}
 				});

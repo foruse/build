@@ -69,7 +69,10 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["archiveProject",		new Text("url?porjectId={projectId}"),		""],
 		["registerUserInfo",	new Text("url?id={id}&name={name}&avatar={avatar}"),""],
 		["assignPermissions",	new Text("url?id={id}"),					""],
-		["removePermissions",	new Text("url?id={id}"),					""]
+		["removePermissions",	new Text("url?id={id}"),					""],
+		["getReportedInfo",		"",											""],
+		["deleteReport",		new Text("url?id={id}"),											""],
+		["ignoreReport",		new Text("url?id={id}"),											""]
 	], allHandlers);
 
 	return CallServer;
@@ -354,6 +357,22 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 				status : -1,
 				error : params.emails.split(",")[0] + "已存在"
 			};
+
+			return data;
+		},
+		getReportedInfo : function(data){
+			var info = [];
+
+			jQun.forEach(Bao.Test.DummyData.Generate.Number.random(5), function(){
+				info.push({
+					reporter : Index.Common.getUser(),
+					source : Bao.Test.DummyData.Generate.String.random(),
+					time : Bao.Test.DummyData.Generate.Number.random(99999),
+					message : Index.SingleProject.getMessage()
+				});
+			}, this);
+
+			data = info;
 
 			return data;
 		}

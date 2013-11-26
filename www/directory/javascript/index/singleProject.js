@@ -128,7 +128,7 @@ this.Discussion = (function(ProjectPanel, ChatList, SmiliesStatus){
 					function(data){
 						if(type === "voice"){
 							attachment.resetFrom("project");
-							attachment.resetId(data.attachmentId);
+							attachment.resetId(data.id);
 						}
 
 						message.resetId(data.id);

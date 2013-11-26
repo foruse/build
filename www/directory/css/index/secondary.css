@@ -226,6 +226,7 @@
 
 #invitation > ul {
 	padding : 10px 15px;
+	min-height : 100%;
 }
 #invitation > ul > li {
 	height : 35px;
