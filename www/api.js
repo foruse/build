@@ -1099,17 +1099,17 @@ function onDeviceReady() {
                             }
                         });
                     } else {
-						Models.AbusedMessages.remove_message('todo', 5, function() {
+						/*Models.AbusedMessages.remove_message('todo', 5, function() {
 							Models.AbusedMessages.get_abused_messages(function(messages) {
 								console.log('------------ABUSED MESSAGES');
 								console.log(messages);
 							});
-						});
+						});*/
                         // SELECT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 1 as status  FROM xiao_project_partners AS pp INNER JOIN xiao_projects AS p ON pp.project_id = p.id INNER JOIN xiao_users AS u ON u.id = pp.user_id INNER JOIN xiao_companies AS c ON u.company_id = c.id WHERE pp.user_id = "4" AND p.archived <> "1" GROUP BY p.id UNION SELECT DISTINCT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 2 as status  FROM xiao_projects AS p LEFT JOIN xiao_project_partners AS pp ON pp.project_id = p.id LEFT JOIN xiao_users AS u ON u.id = pp.user_id LEFT JOIN xiao_companies AS c ON u.company_id = c.id WHERE p.archived <> "1" GROUP BY p.id HAVING p.id NOT IN ( SELECT project_id FROM xiao_project_partners WHERE user_id = "4" ) LIMIT 10
                         var result = [], logged_user = SESSION.get("user_id");
-                            params.othersOffset = (params.othersOffset ? params.othersOffset : 0),
-                            unread_message_fix = SESSION.get("xiao_project_comments");
-
+                            params.othersOffset = (params.othersOffset ? params.othersOffset : 0);
+                        var unread_message_fix = SESSION.get("xiao_project_comments");
+						
                         params.pageIndex === 1 ? 
                         // API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments"], get_project_page) : get_project_page();
                         API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments"], get_project_page) : get_project_page();
@@ -1253,7 +1253,7 @@ function onDeviceReady() {
                                 }
                             });
                         }
-
+						
 
                     }
 
@@ -2291,8 +2291,8 @@ function onDeviceReady() {
 
                 notification_init: function(callback){
                     // SOCKET.notification(SESSION.get("company_id"), callback);
-                    SOCKET.notification(SESSION.get("company_id"), function(data){
-                        console.log("notif res");
+					SOCKET.notification(SESSION.get("company_id"), function(data){
+						console.log("notif res");
                         console.log(data);
                         callback(data);
                         // PHONE.MessageNotification.play();
@@ -2608,13 +2608,15 @@ function onDeviceReady() {
                                                     },
 
                                                     notification: function(company_id, callback){
-                                                        if(typeof(io) === "undefined")return callback(false);
+														if(typeof(io) === "undefined")return callback(false);
                                                         this.socket.emit("addnotify", {id: company_id});
                                                         // this.socket.on("addnotify_result", callback);
                                                         this.socket.on("addnotify_result", function(data){
-                                                            console.log("addnotify_result");
+															console.log("addnotify_result");
                                                             console.log(data);
-                                                            callback(data);
+															// Trying to convert data to proper format (La)
+															var new_data = {id: Object.keys(data)[0], messagesCount: data[Object.keys(data)[0]]};
+                                                            callback(new_data);
                                                         });
                                                     },
 
@@ -3578,9 +3580,10 @@ function onDeviceReady() {
                                                             
                                                     },
                                                     _sync: function(tables, callback) { // the main application method
-                                                        // used to sync local db and remote
+												        // used to sync local db and remote
                                                         // also used to sync chat messages
                                                         var sync_data = [], _this = this;
+														var cb = callback;
 //                                                        console.log("sync_____tables")
 //                                                        console.log(tables)
 //                                                        console.log("sync_____sync_data")
@@ -3596,8 +3599,8 @@ function onDeviceReady() {
 //                                                                console.log("_______sync_data")
 //                                                                console.log(sync_data)
                                                                 if (table_num == (tables.length - 1)) {
-                                                                    console.log("last");
-                                                                    callback ? _this._make_socket_request(sync_data, callback) : _this._make_socket_request(sync_data);
+																	console.log("last");
+																	callback ? _this._make_socket_request(sync_data, callback) : _this._make_socket_request(sync_data);
                                                                 }
                                                             });
                                                         });

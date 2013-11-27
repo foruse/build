@@ -62,7 +62,7 @@
             //  copy of messagesListener
 
             getMessages: function(params, complete) {
-
+				
                 console.log("_______________________getMessages");
 				console.log(params);
 				console.log('params');
@@ -70,6 +70,7 @@
                 if(params.projectId === window.Infinity){
 
                     Mdls.Notification.notification_init(complete);
+					alert('zxc1');
 
                 }else{
 					console.log('inichat');
@@ -102,14 +103,14 @@
             //  copy of messagesListener
 
             messagesListener: function(params, complete) {
-                console.log("_______________________messagesListener");
+				console.log("_______________________messagesListener");
 				// console.log(params);
 				// console.log('params');
                 // if(params.projectId === -1){
                 if(params.id === window.Infinity){
 
                     Mdls.Notification.notification_init(complete);
-                    console.log("init_notif")
+					console.log("init_notif")
                 }else{
                     switch (params.type) {
                         case "project":
