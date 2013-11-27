@@ -479,7 +479,7 @@ function onDeviceReady() {
                     DB.where('u.id ="' + SESSION.get("user_id") + '"');
 //                    API.row(callback);
                     API.row(function(data){
-                        data.avatar = (data.local_path != "" && data.local_path != null && data.local_path !== CONFIG.default_user_avatar ) ? data.local_path : data.server_path;
+						data.avatar = (data.local_path != "" && data.local_path != null && data.local_path !== CONFIG.default_user_avatar ) ? data.local_path : data.server_path;
                         callback(data);
                     });
                 },
@@ -550,31 +550,45 @@ function onDeviceReady() {
                         });
                     }else{
                         SOCKET.request("login", data, function(result) {
+							result.user['isLeader'] = 1;
                             // console.log(result);
                             if (result !== false) {
                                 if (result.user) {
-                                    // SERVER.SESSION._init_storage(1);
-                                    // SERVER.DB._init_db(1);                   
-//                                    result.user.isNewUser = 0;
-                                    SESSION.set("saved_user_data", JSON.stringify(result.user));
-                                    SESSION.set("user_id", result.user.id);
-                                    SESSION.set("user_name", result.user.name);
-									SESSION.set("user_email", result.user.email);
-                                    SESSION.set("user_pwd", result.user.pwd);
-									SESSION.set("company_id", result.user.company_id);
-                                    // result.user.isNewUser = 0;
-									
-									// ----- Flurry analytics injection -----
-									FlurryAgent.setUserId(result.user.email);
-									// ----- Flurry analytics injection -----
-									
-                                    callback(result);
-    //                                    if (result.user.isNewUser == 1){
-    //    //                                    alert("cool");
-                                           API.update("xiao_users", {isNewUser: 0}, 'id="' + result.user.id + '"');
-    //                                    }
-                                    console .log(result);
-                                    //                                callback(result);
+									API._sync(['xiao_companies'], function() {
+										DB.select("creator_id");
+										DB.from("xiao_companies");
+										DB.where("id = '" + result.user.company_id + "'");
+										DB.row(function(company) {
+											if (company && company.creator_id == result.user.id) {
+												result.user.isLeader = true;
+											} else {
+												result.user.isLeader = false;
+											}
+
+											// SERVER.SESSION._init_storage(1);
+											// SERVER.DB._init_db(1);                   
+		//                                    result.user.isNewUser = 0;
+											SESSION.set("saved_user_data", JSON.stringify(result.user));
+											SESSION.set("user_id", result.user.id);
+											SESSION.set("user_name", result.user.name);
+											SESSION.set("user_email", result.user.email);
+											SESSION.set("user_pwd", result.user.pwd);
+											SESSION.set("company_id", result.user.company_id);
+											// result.user.isNewUser = 0;
+
+											// ----- Flurry analytics injection -----
+											FlurryAgent.setUserId(result.user.email);
+											// ----- Flurry analytics injection -----
+
+											callback(result);
+			//                                    if (result.user.isNewUser == 1){
+			//    //                                    alert("cool");
+												   API.update("xiao_users", {isNewUser: 0}, 'id="' + result.user.id + '"');
+			//                                    }
+											console .log(result);
+											//                                callback(result);
+										});
+									});
                                 } else if (result.error) {
                                     console.log(result);
                                     callback(result);
@@ -1573,6 +1587,34 @@ function onDeviceReady() {
 					});
 				},
 				
+				get_abused_messages_count: function(callback) {
+					var count = 0;
+					
+					SOCKET.request('get_abused_count', {company_id: SESSION.get('company_id')}, function(result) {
+						callback(result.count);
+					});
+					
+					/*API._sync(['xiao_project_comments', 'xiao_todo_comments'], function() {
+						DB.select('COUNT(id) AS count');
+						DB.from('xiao_project_comments');
+						DB.where('abused > 0');
+						DB.row(function(abused_pc) {
+							count += abused_pc.count;
+							console.log('abused pc ' + abused_pc.count);
+							
+							DB.select('COUNT(id) AS count');
+							DB.from('xiao_todo_comments');
+							DB.where('abused > 0');
+							DB.row(function(abused_tc) {
+								count += abused_tc.count;
+								console.log('abused tc ' + abused_tc.count);
+								
+								callback(count);
+							});
+						});
+					});*/
+				},
+				
 				remove_message: function(type, id, callback) {
 					var table = '';
 					
@@ -1595,6 +1637,10 @@ function onDeviceReady() {
 				report_abuse: function(type, id, callback) {
 					var table = '';
 					
+					if (!type) {
+						type = id.split('_').splice(-2, 1)[0];
+					}
+					
 					switch(type) {
 						case 'project':
 							table = 'xiao_project_comments';
@@ -1607,7 +1653,7 @@ function onDeviceReady() {
 					//API._sync([table], function() {
 						DB.select('m.abused');
 						DB.from(table + ' AS m');
-						DB.where("m.server_id = '" + id + "'");
+						DB.where("m.id = '" + id + "'");
 						DB.row(function(row) {
 							console.log('Message to abuse');
 							console.log(row);
@@ -1616,11 +1662,15 @@ function onDeviceReady() {
 							console.log('Data to update');
 							console.log(table);
 							console.log({abused: abused + 1});
-							console.log("server_id = '" + id + "'");
+							console.log("id = '" + id + "'");
 
-							DB.update(table, {abused: abused + 1}, "server_id = '" + id + "'", function() {
+							DB.update(table, {abused: abused + 1}, "id = '" + id + "'", function() {
+								console.log('abuse updated');
 								API._sync([table], function() {
-									callback();
+									console.log('abuse table synced');
+									if (callback) {
+										callback();
+									}
 								});
 							});
 						});
@@ -3492,8 +3542,8 @@ function onDeviceReady() {
                                                                 sql = 'SELECT * FROM sync as s INNER JOIN ' + table_name + ' as t ON s.row_id = t.id WHERE s.table_name ="' + table_name + '"',
                                                                 sql_del = 'SELECT * FROM sync_delete WHERE table_name ="' + table_name + '"';
                                                         SERVER.DB._executeSQL(sql, function(data) {
-															// console.log('Data to sync in ' + table_name);
-															// console.log(data);
+															 console.log('Data to sync in ' + table_name);
+															 console.log(data);
                                                             counter = data.length;
                                                             data.length > 0 ? data.forEach(function(el, i) {
                                                                 
@@ -3566,7 +3616,6 @@ function onDeviceReady() {
                                                         function make_callback_v2(){
                                                             --counter;
                                                             if (result.deleted && result.updated && counter <= 0) {
-//                                                                console.log("make_callback");
 //                                                                console.log("___________result")
 //                                                                console.log(result)
                                                                 callback({
@@ -3583,7 +3632,6 @@ function onDeviceReady() {
 												        // used to sync local db and remote
                                                         // also used to sync chat messages
                                                         var sync_data = [], _this = this;
-														var cb = callback;
 //                                                        console.log("sync_____tables")
 //                                                        console.log(tables)
 //                                                        console.log("sync_____sync_data")
@@ -3593,10 +3641,10 @@ function onDeviceReady() {
 //                                                                 console.log("_before______sync_data")
 //                                                                console.log(sync_data)
                                                             _this._check_local_DB_and_fs(table_name, function(data) {
-                                                                sync_data.push(data);
+																sync_data.push(data);
 //                                                                console.log("_______data")
 //                                                                console.log(data)
-//                                                                console.log("_______sync_data")
+                                                                console.log("_______sync_data")
 //                                                                console.log(sync_data)
                                                                 if (table_num == (tables.length - 1)) {
 																	console.log("last");

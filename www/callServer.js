@@ -423,6 +423,14 @@
 				var id = params.id;
 				Mdls.User.set_permission(id, 0, complete);
 			},
+			getCountOfReports: function(params, complete) {
+				Mdls.AbusedMessages.get_abused_messages_count(function(count) {
+					complete({count: count});
+				});
+			},
+			reportMessage: function(params, complete) {
+				Mdls.AbusedMessages.report_abuse(null, params.messageId, complete);
+			}
         });
 
 
