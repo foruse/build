@@ -74,6 +74,7 @@ this.Bao = (function(Bao){
 				})
 			})
 		}),
+		Permission : null,
 		Test : new Namespace().members({ 
 			DummyData : new Namespace().members({ // ../../test/dummyData
 				Generate : new Namespace().members({
@@ -91,9 +92,12 @@ this.Bao = (function(Bao){
 				Chat : new Namespace().members({ // ui/control/chat.js
 					Attachment : null,
 					ChatInput : null,
+					ChatList : null,
+					ChatListPanel : null,
 					ChatListContent : null,
 					ImageBox : null,
 					Message : null,
+					MessageContentArea : null,
 					MessageGroup : null,
 					MessageList : null,
 					MessageMode : null,

@@ -1,4 +1,4 @@
-﻿(function(Secondary, NonstaticClass, StaticClass, PagePanel, CallServer, TitleBarColor){
+﻿(function(Secondary, NonstaticClass, StaticClass, Panel, PagePanel, CallServer, TitleBarColor){
 this.AddProject = (function(Global, Validation, UserManagementList){
 	function AddProject(selector){
 		///	<summary>
@@ -209,11 +209,40 @@ this.BusinessCard = (function(Global, Confirm, Switch, SwitchStatus, clickAvatar
 ));
 
 this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
+	function Header(selector){
+		var header = this;
+
+		this.attach({
+			userclick : function(e, targetEl){
+				if(targetEl.between(">button", this).length > 0){
+					Global.history.go("report");
+					return;
+				}
+			}
+		});
+
+		CallServer.open("getCountOfReports", null, function(data){
+			header.setCount(data.count);
+		});
+	};
+	Header = new NonstaticClass(Header, null, Panel.prototype);
+
+	Header.properties({
+		setCount : function(count){
+			var countEl = this.find(">button>span");
+
+			countEl.setAttribute("count", count);
+			countEl.innerHTML = count;
+		}
+	});
+
+
 	function SystemOption(selector){
 		///	<summary>
 		///	系统项。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
+		new Header.constructor(this.header);
 		new AnchorList(anchorData).appendTo(this.find(">section")[0]);
 
 		this.attach({
@@ -231,7 +260,7 @@ this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 	SystemOption = new NonstaticClass(SystemOption, "Bao.Page.Index.Secondary.SystemOption", PagePanel.prototype);
 
 	SystemOption.override({
-		title : "系统项"
+		title : "系统选项"
 	});
 
 	return SystemOption.constructor;
@@ -429,6 +458,7 @@ Secondary.members(this);
 	Bao.Page.Index.Secondary,
 	jQun.NonstaticClass,
 	jQun.StaticClass,
+	Bao.API.DOM.Panel,
 	Bao.API.DOM.PagePanel,
 	Bao.CallServer,
 	Bao.API.DOM.TitleBarColor

@@ -598,11 +598,13 @@
 	display : block;
 	text-align : center;
 	font-size : 15px;
-	color : #e22;
 }
 
 #report > ul {
 	padding : 10px;
+}
+#report > ul:empty {
+	display : none;
 }
 #report > ul > li {
 	margin-bottom : 15px;
@@ -665,4 +667,13 @@
 #report footer > button[action="del"] {
 	background-color : #cd322e;
 	margin-right : 46px;
+}
+#report > p {
+	display : none;
+	text-align : center;
+	margin-top : 20px;
+	font-size : 15px;
+}
+#report > ul:empty + p {
+	display : block;
 }

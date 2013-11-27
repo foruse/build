@@ -405,67 +405,20 @@ this.AboutBaoPiQi = (function(){
 	return AboutBaoPiQi.constructor;
 }());
 
-this.Todo = (function(ChatList, OverflowPanel, Global){
+this.Todo = (function(ChatListPanel, OverflowPanel, Global){
 	function Todo(selector, infoHtml){
-		var todo = this, chatList = new ChatList(), overflowPanel = new OverflowPanel(this.find(">section")[0]);
+		var chatListPanel, todo = this,
+		
+			overflowPanel = new OverflowPanel(this.find(">section")[0]);
+
+		chatListPanel = new ChatListPanel("todo", "addCommentForTodo", overflowPanel);
 
 		this.assign({
-			chatList : chatList,
-			infoHtml : infoHtml,
-			overflowPanel : overflowPanel
+			chatListPanel : chatListPanel,
+			infoHtml : infoHtml
 		});
 
-		chatList.appendTo(overflowPanel.find(">figure")[0]);
-
-		chatList.attach({
-			messageappended : function(e){
-				var message = e.message;
-
-				overflowPanel.bottom();
-
-				if(!message.isSending)
-					return;
-
-				var type = message.type, attachment = message.attachment;
-
-				attachment.resetFrom("todo");
-
-				CallServer.open(
-					"addCommentForTodo",
-					{
-						todoId : todo.id,
-						attachment : attachment,
-						text : message.text,
-						type : type
-					},
-					function(data){
-						if(type === "voice"){
-							attachment.resetFrom("project");
-							attachment.resetId(data.id);
-						}
-
-						message.resetId(data.id);
-					}
-				);
-			},
-			clickpraise : function(e){
-				var message = e.message, loginUser = Global.loginUser;
-
-				CallServer.open("praise", {
-					messageId : message.id,
-					userId : loginUser.id,
-					type : "todo"
-				}, function(){
-					message.addPraise(loginUser);
-				})
-			},
-			clickdo : function(e){
-				var sendTodo = Global.history.go("sendTodo");
-
-				sendTodo.selectUser(e.message.poster);
-				sendTodo.resetProjectId(todo.id);
-			}
-		});
+		chatListPanel.appendTo(overflowPanel.find(">figure")[0]);
 
 		this.find(">section>header").attach({
 			userclick : function(e, targetEl){
@@ -486,37 +439,27 @@ this.Todo = (function(ChatList, OverflowPanel, Global){
 	});
 
 	Todo.properties({
-		chatList : undefined,
+		chatListPanel : undefined,
 		fill : function(id){
-			var todo = this, chatListContent = this.chatList.chatListContent;
+			var todo = this;
 		
 			CallServer.open("getTodo", { id : id }, function(data){
 				var figureEl = todo.find(">section>figure");
 
-				todo.overflowPanel.setTop(0);
-				chatListContent.clearAllMessages();
-				// 重置颜色
-				chatListContent.resetColor(project.color);
-
 				todo.find(">section>header").innerHTML = todo.infoHtml.render(data);
 
-				CallServer.open("messagesListener", { id : id, type : "todo" }, function(messages){
-					messages.forEach(function(msg){
-						this.appendMessageToGroup(msg);
-					}, chatListContent);
-				});
+				todo.chatListPanel.reset(id, data.color);
 			});
 
 			this.id = id;
 		},
 		id : -1,
-		infoHtml : undefined,
-		overflowPanel : undefined
+		infoHtml : undefined
 	});
 
 	return Todo.constructor;
 }(
-	Bao.UI.Control.Chat.ChatList,
+	Bao.UI.Control.Chat.ChatListPanel,
 	Bao.API.DOM.OverflowPanel,
 	Bao.Global
 ));
@@ -984,6 +927,12 @@ this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
 		this.combine(reportHtml.create(data));
 
 		message.appendTo(this.find("figure")[0]);
+
+		this.attach({
+			longpress : function(e){
+				e.stopPropagation();
+			}
+		}, true);
 
 		this.footer.attach({
 			userclick : function(e, targetEl){

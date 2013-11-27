@@ -91,8 +91,8 @@ this.Confirm = (function(MaskButton, defaultButtons, bodyHtml){
 	this.MaskButton,
 	// defaultButtons
 	[
-		{ action : "ok", text : "是", autoClose : true },
-		{ action : "cancle", text : "否", autoClose : true }
+		{ action : "ok", text : "确定", autoClose : true },
+		{ action : "cancle", text : "取消", autoClose : true }
 	],
 	// bodyHtml
 	new HTML([
@@ -107,7 +107,6 @@ this.Confirm = (function(MaskButton, defaultButtons, bodyHtml){
 this.Alert = (function(Confirm, MaskButton){
 	function Alert(text){
 		this.classList.add("alert");
-		new MaskButton("ok", "确定", true).appendTo(this.find(">footer")[0]);
 	};
 	Alert = new NonstaticClass(Alert, "Bao.UI.Control.Mask.Alert", Confirm.prototype);
 

@@ -54,3 +54,7 @@
 	right : auto;
 	bottom : auto;
 }
+
+.alert > footer > button[action="cancle"] {
+	display : none;
+}

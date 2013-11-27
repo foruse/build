@@ -1,5 +1,5 @@
 ﻿(function(Guidance, NonstaticClass, Panel, PagePanel, CallServer, Event, ValidationList, Global){
-this.LoginInfoManagement = (function(loginEvent, registerEvent){
+this.LoginInfoManagement = (function(loginButtonClickedEvent, registerButtonClickedEvent){
 	function LoginInfoManagement(selector){
 		///	<summary>
 		///	登录信息管理。
@@ -45,11 +45,11 @@ this.LoginInfoManagement = (function(loginEvent, registerEvent){
 						if(!validationList[1].validate())
 							return;
 
-						loginEvent.setEventAttrs({
+						loginButtonClickedEvent.setEventAttrs({
 							email : infoManagement.find('input[desc="email"]').value,
 							password : infoManagement.find('input[desc="pwd"]').value
 						});
-						loginEvent.trigger(targetEl[0]);
+						loginButtonClickedEvent.trigger(targetEl[0]);
 						return;
 					}
 
@@ -68,11 +68,11 @@ this.LoginInfoManagement = (function(loginEvent, registerEvent){
 					if(!validationList.validate())
 						return;
 					
-					registerEvent.setEventAttrs({
+					registerButtonClickedEvent.setEventAttrs({
 						email : infoManagement.find('input[desc="email"]').value,
 						password : infoManagement.find('input[desc="pwd"]').value
 					});
-					registerEvent.trigger(targetEl[0]);
+					registerButtonClickedEvent.trigger(targetEl[0]);
 				}
 			}
 		});
@@ -116,10 +116,10 @@ this.LoginInfoManagement = (function(loginEvent, registerEvent){
 
 	return LoginInfoManagement.constructor;
 }(
-	// loginEvent
-	new Event("login"),
-	// registerEvent
-	new Event("register")
+	// loginButtonClickedEvent
+	new Event("loginbuttonclicked"),
+	// registerButtonClickedEvent
+	new Event("registerbuttonclicked")
 ));
 
 this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEvent){
@@ -145,10 +145,10 @@ this.Login = (function(OverflowPanel, LoginInfoManagement, localStorage, loginEv
 		})
 
 		loginInfoManagement.attach({
-			login : function(e){
+			loginbuttonclicked : function(e){
 				login.login(e.email, e.password);
 			},
-			register : function(e){
+			registerbuttonclicked : function(e){
 				login.register(e.email, e.password);
 			}
 		});

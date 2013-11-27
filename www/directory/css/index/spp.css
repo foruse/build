@@ -194,6 +194,9 @@
 	background : #fff url(../../../common/image/width24.png) 3px -1100px no-repeat content-box content-box;
 	margin-right : 3px;
 }
+.main[ls="0"] button[action="addProject"] {
+	display : none !important;
+}
 #titleBar button[action="set"] {
 	background : rgba(0, 0, 0, 0.2) url(../../../common/image/width24.png) 3px -372px no-repeat content-box content-box;
 }
@@ -296,6 +299,9 @@
 #titleBar button[action="addPartner"] {
 	border-color : #fff;
 	background : #fff url(../../../common/image/width24.png) 2px -1250px no-repeat;
+}
+.main[ls="0"] #titleBar button[action="addPartner"] {
+	display : none;
 }
 
 

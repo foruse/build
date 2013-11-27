@@ -149,14 +149,31 @@ this.defineProperties = (function(forEach, define){
 	this.define
 ));
 
-this.except = (function(forEach){
+this.set = (function(forEach){
+	return function(obj, properties){
+		///	<summary>
+		///	添加或修改指定对象的属性。
+		///	</summary>
+		///	<param name="obj" type="Object">需要添加或修改属性的对象。</param>
+		///	<param name="properties" type="Object">需要添加或修改的属性集合。</param>
+		forEach(properties, function(val, name){
+			obj[name] = val;
+		});
+
+		return obj;
+	};
+}(
+	this.forEach
+));
+
+this.except = (function(set, forEach){
 	return function(obj, properties){
 		///	<summary>
 		///	返回一个不包含所有指定属性名称的对象。
 		///	</summary>
 		///	<param name="obj" type="Object">需要排除属性的对象。</param>
 		///	<param name="properties" type="Array">需要排除的属性名称数组。</param>
-		var result = this.set({}, obj);
+		var result = set({}, obj);
 
 		forEach(properties, function(name){
 			delete result[name];
@@ -164,6 +181,7 @@ this.except = (function(forEach){
 		return result;
 	}
 }(
+	this.set,
 	this.forEach
 ));
 
@@ -254,23 +272,6 @@ this.merge = (function(nesting, toArray){
 }(
 	this.nesting,
 	this.toArray
-));
-
-this.set = (function(forEach){
-	return function(obj, properties){
-		///	<summary>
-		///	添加或修改指定对象的属性。
-		///	</summary>
-		///	<param name="obj" type="Object">需要添加或修改属性的对象。</param>
-		///	<param name="properties" type="Object">需要添加或修改的属性集合。</param>
-		forEach(properties, function(val, name){
-			obj[name] = val;
-		});
-
-		return obj;
-	};
-}(
-	this.forEach
 ));
 
 this.toString = (function(){

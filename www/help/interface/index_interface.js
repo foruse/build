@@ -419,7 +419,30 @@ with(window.index_dataStructure){ // from ../dataStructure/index_dataStructure.j
 			},
 			return : null
 		*/
-		["ignoreReport",		new Text("url?id={id}"),											""]
+		["ignoreReport",		new Text("url?id={id}"),											""],
+
+		/*
+			params : null,
+			return : null
+		*/
+		["getCountOfReports",	"",											""],
+
+		/*
+			params : {
+				id : 1, // project id or todo id
+				from : "project"  // "project" or "todo"
+			},
+			return : null
+		*/
+		["stopMessagesListener",new Text("url?id={id}&from={from}"),		""],
+
+		/*
+			params : {
+				messageId : 1 // message id
+			},
+			return : null
+		*/
+		["reportMessage",		new Text("url?messageId={messageId}"),		""]
 	]);
 }
 }(

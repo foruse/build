@@ -72,7 +72,10 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		["removePermissions",	new Text("url?id={id}"),					""],
 		["getReportedInfo",		"",											""],
 		["deleteReport",		new Text("url?id={id}"),											""],
-		["ignoreReport",		new Text("url?id={id}"),											""]
+		["ignoreReport",		new Text("url?id={id}"),											""],
+		["getCountOfReports",	"",											""],
+		["stopMessagesListener",new Text("url?id={id}&from={from}"),		""],
+		["reportMessage",		new Text("url?messageId={messageId}"),		""]
 	], allHandlers);
 
 	return CallServer;
@@ -257,8 +260,6 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 		login : function(data){
 			var user = Index.Common.getUser();
 
-			user.isLeader = true;
-
 			data = {
 				user : user,
 				status : 0
@@ -373,6 +374,13 @@ this.CallServer = (function(CallServer, Wait, open, allHandlers){
 			}, this);
 
 			data = info;
+
+			return data;
+		},
+		getCountOfReports : function(data){
+			data = {
+				count : Bao.Test.DummyData.Generate.Number.random(99)
+			};
 
 			return data;
 		}

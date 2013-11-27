@@ -139,7 +139,7 @@
 	background-color : #fff;
 	padding : 10px 15px;
 }
-#businessCard > footer li:not([action="authority"]) {
+#businessCard > footer li:not([action="authority"]), .main[ls="0"] #businessCard > footer li[action="authority"] {
 	display : none;
 }
 #businessCard li[action="removePartner"] {
@@ -171,6 +171,28 @@
 #systemOption {
 	padding : 10px 15px;
 }
+#systemOption > header {
+	margin-bottom : 16px;
+}
+#systemOption > header > button {
+	height : 40px;
+	background-color : #00b0d7;
+	width : 100%;
+	font-size : 15px;
+}
+#systemOption > header span {
+	display : inline-block;
+	width : 20px;
+	height : 20px;
+	border-radius : 20px;
+	line-height : 20px;
+	background-color : #cd312d;
+	vertical-align : baseline;
+	margin-left : 5px;
+}
+#systemOption > header span[count="0"] {
+	display : none;
+}
 #systemOption > footer {
 	text-align : center;
 	margin-top : 35px;
@@ -189,7 +211,9 @@
 #systemOption li[key="qrCode"]{
 	display : none;
 }
-
+.main[ls="0"] #systemOption > header {
+	display : none;
+}
 
 #systemContacts {
 	padding : 10px 0;
