@@ -150,8 +150,10 @@ function onDeviceReady() {
 			
 			var background_image = '';
 			
+			body.style.backgroundSize = 'auto';
+			
 			if (window.innerWidth == 320) {
-				background_image = 'url(\'../../common/image/W768H1004.gif\')';
+				background_image = 'url(\'../../common/image/W320H480.gif\')';
 			} else if (window.innerWidth == 640) {
 				if (window.innerHeight <= 1100) {
 					background_image = 'url(\'../../common/image/W640H960.gif\')';
@@ -160,6 +162,9 @@ function onDeviceReady() {
 				}
 			} else if (window.innerWidth == 768) {
 				background_image = 'url(\'../../common/image/W768H1004.gif\')';
+			} else {
+				background_image = 'url(\'../../common/image/W640H1136.gif\')';
+				body.style.backgroundSize = '100% auto';
 			}
 			
 			body.style.backgroundImage = background_image;
@@ -169,12 +174,12 @@ function onDeviceReady() {
 			body.style.backgroundColor = '#ffffff';
 			body.style.height = '100%';
 			
-			alert(window.innerWidth + ' - ' + window.innerHeight);
-			
 			var main = document.getElementsByClassName('main')[0];
 			main.style.opacity = 0;
 			
-			if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
+			setTimeout(function() {
+				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
+			
 			
             /* Private */
             var API = SERVER.API,  //redefine all the stuff here for more simple usage
@@ -2742,6 +2747,8 @@ function onDeviceReady() {
 			}, 2000);
 
             document.dispatchEvent(a);
+			
+			}, 700);
         }(
                 // PRIVATE
                         // PRIVATE
