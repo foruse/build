@@ -919,10 +919,6 @@ this.ProjectManagement = (function(UserManagementList, AnchorList, Global, Confi
 this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
 	function Single(data){
 		var single = this, message = new Message(data.message);
-		
-		this.assign({
-			reportId : data.id
-		});
 
 		this.combine(reportHtml.create(data));
 
@@ -952,7 +948,7 @@ this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
 
 							CallServer.open(
 								(isDel ? "delete" : "ignore") + "Report",
-								{ id : single.id },
+								{ messageId : data.message.id },
 								function(){
 									single.remove();
 								}
@@ -967,10 +963,6 @@ this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
 		});
 	};
 	Single = new NonstaticClass(Single, null, Panel.prototype);
-
-	Single.properties({
-		reportId : -1
-	});
 
 
 	function Report(selector){

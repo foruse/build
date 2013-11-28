@@ -48,7 +48,7 @@ this.Common = Common = (function(){
 				email : String.random(8) + "@BaoPiQi.com",
 				adress : String.random(30),
 				isNewUser : false,
-				permission : 2,
+				permission : 1,
 				QRCode : "../../test/image/avatar/" + Number.random(16) + ".jpg"
 			};
 		},

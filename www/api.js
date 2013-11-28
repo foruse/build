@@ -1443,6 +1443,7 @@ function onDeviceReady() {
 											message = Models.Smileys.convert_smileys(message, null, smileys);
 
 											abused_pc.push({
+												id: 5,
 												reporter: {
 													id: mess.uid,
 													name: mess.name,
@@ -1539,6 +1540,7 @@ function onDeviceReady() {
 												message = Models.Smileys.convert_smileys(message, null, smileys);
 
 												abused_tc.push({
+													id: 5,
 													reporter: {
 														id: mess.uid,
 														name: mess.name,
@@ -1554,7 +1556,7 @@ function onDeviceReady() {
 														isLoginUser: login_user == mess.uid
 													},
 													source: mess.parent_title,
-													time: new Date(websql_date_to_number(mess.time)).getTime(),
+													time: mess.time,
 													message: {
 														id: mess.id,
 														text: message,
@@ -1659,6 +1661,10 @@ function onDeviceReady() {
 				remove_message: function(type, id, callback) {
 					var table = '';
 					
+					if (!type) {
+						type = id.split('_').splice(-2, 1)[0];
+					}
+					
 					switch(type) {
 						case 'project':
 							table = 'xiao_project_comments';
@@ -1668,10 +1674,37 @@ function onDeviceReady() {
 							break;
 					}
 					
-					DB.remove(table, "server_id='" + id + "'", function() {
-						//API._sync(function() {
+					DB.remove(table, "id='" + id + "'", function() {
+						API._sync([table], function() {
 							callback();
-						//});
+						});
+					});
+				},
+						
+				reset_abuse: function(type, id, callback) {
+					var table = '';
+					
+					alert(id);
+					
+					if (!type) {
+						type = id.split('_').splice(-2, 1)[0];
+					}
+					
+					switch(type) {
+						case 'project':
+							table = 'xiao_project_comments';
+							break;
+						case 'todo':
+							table = 'xiao_todo_comments';
+							break;
+					}
+					
+					DB.update(table, {abused: 0}, "id = '" + id + "'", function() {
+						API._sync([table], function() {
+							if (callback) {
+								callback();
+							}
+						});
 					});
 				},
 						
@@ -1692,29 +1725,29 @@ function onDeviceReady() {
 					}
 					
 					//API._sync([table], function() {
-						DB.select('m.abused');
-						DB.from(table + ' AS m');
-						DB.where("m.id = '" + id + "'");
-						DB.row(function(row) {
-							console.log('Message to abuse');
-							console.log(row);
-							var abused = parseInt(row.abused);
-							
-							console.log('Data to update');
-							console.log(table);
-							console.log({abused: abused + 1});
-							console.log("id = '" + id + "'");
+					DB.select('m.abused');
+					DB.from(table + ' AS m');
+					DB.where("m.id = '" + id + "'");
+					DB.row(function(row) {
+						console.log('Message to abuse');
+						console.log(row);
+						var abused = parseInt(row.abused);
 
-							DB.update(table, {abused: abused + 1}, "id = '" + id + "'", function() {
-								console.log('abuse updated');
-								API._sync([table], function() {
-									console.log('abuse table synced');
-									if (callback) {
-										callback();
-									}
-								});
+						console.log('Data to update');
+						console.log(table);
+						console.log({abused: abused + 1});
+						console.log("id = '" + id + "'");
+
+						DB.update(table, {abused: abused + 1}, "id = '" + id + "'", function() {
+							console.log('abuse updated');
+							API._sync([table], function() {
+								console.log('abuse table synced');
+								if (callback) {
+									callback();
+								}
 							});
 						});
+					});
 					//});
 				}
 			};
