@@ -144,6 +144,20 @@ function onDeviceReady() {
         a.initEvent("appload", true, true); //init event -----------------> see the last line in the App_model--->the event is dispatched there
 
         App_model = function(SERVER) {
+			var html = document.getElementsByTagName('html')[0];
+			html.style.height = '100%';
+			var body = document.getElementsByTagName('body')[0];
+			body.style.backgroundImage = 'url(\'../../common/image/W768H1004.gif\')';
+			body.style.backgroundRepeat = 'no-repeat';
+			body.style.backgroundPosition = 'center center';
+			body.style.backgroundColor = '#ffffff';
+			body.style.height = '100%';
+			
+			var main = document.getElementsByClassName('main')[0];
+			main.style.opacity = 0;
+			
+			if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
+			
             /* Private */
             var API = SERVER.API,  //redefine all the stuff here for more simple usage
                     DB = SERVER.DB,
@@ -2702,9 +2716,14 @@ function onDeviceReady() {
             // Models 
 
 
+			setTimeout(function() {
+				body.style.background = 'transparent';
+				body.style.height = 'auto';
+				html.style.height = 'auto';
+				main.style.opacity = 1;
+			}, 2000);
+
             document.dispatchEvent(a);
-            if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
-			
         }(
                 // PRIVATE
                         // PRIVATE
