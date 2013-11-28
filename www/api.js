@@ -150,6 +150,7 @@ function onDeviceReady() {
 			body.style.backgroundImage = 'url(\'../../common/image/W768H1004.gif\')';
 			body.style.backgroundRepeat = 'no-repeat';
 			body.style.backgroundPosition = 'center center';
+			body.style.backgroundSize = 'contain';
 			body.style.backgroundColor = '#ffffff';
 			body.style.height = '100%';
 			
