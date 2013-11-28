@@ -424,7 +424,7 @@ this.Todo = (function(ChatListPanel, OverflowPanel, Global){
 			userclick : function(e, targetEl){
 				if(targetEl.between("dt>button").length > 0){
 					CallServer.open("todoCompleted", { id : todo.id }, function(data){
-						console.log(data);
+						Global.history.go("todoList");
 					}, true);
 					return;
 				}

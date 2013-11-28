@@ -209,6 +209,8 @@ this.SelectImage = (function(Confirm, ImageFile){
 	function SelectImage(_action){
 		var selectImageFile = this, imageFile = new ImageFile();
 		
+		this.footer.innerHTML = "";
+
 		this.classList.add("selectImage");
 		this.addButton("image", "添加图片", false);
 		this.addButton("camera", "相机拍照", false);

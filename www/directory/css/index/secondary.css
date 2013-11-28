@@ -139,7 +139,9 @@
 	background-color : #fff;
 	padding : 10px 15px;
 }
-#businessCard > footer li:not([action="authority"]), .main[ls="0"] #businessCard > footer li[action="authority"] {
+#businessCard > footer li:not([action="authority"]),
+#businessCard[creator] > footer li[action="authority"],
+.main[permission="0"] #businessCard > footer li[action="authority"] {
 	display : none;
 }
 #businessCard li[action="removePartner"] {
@@ -211,7 +213,7 @@
 #systemOption li[key="qrCode"]{
 	display : none;
 }
-.main[ls="0"] #systemOption > header {
+.main[permission="0"] #systemOption > header {
 	display : none;
 }
 
