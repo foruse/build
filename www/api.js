@@ -201,15 +201,18 @@ function onDeviceReady() {
                     if(!SESSION.get("saved_user_data")){
                         SESSION._init_storage(1);
                         DB._init_db(1);  
+						//alert('init on read');
                     }
 					
-					SOCKET.request("counter", {}, function(result) {
-						if (result) {
-                           callback(result);
-                        } else {
-                           callback({count: 100000, validationImage: "src"});
-                        }
-                    });
+					setTimeout(function() {
+						SOCKET.request("counter", {}, function(result) {
+							if (result) {
+							   callback(result);
+							} else {
+							   callback({count: 100000, validationImage: "src"});
+							}
+						});
+					}, 1000);
                }
 
            };
@@ -598,7 +601,7 @@ function onDeviceReady() {
 			//    //                                    alert("cool");
 												   API.update("xiao_users", {isNewUser: 0}, 'id="' + result.user.id + '"');
 			//                                    }
-											console .log(result);
+											console.log(result);
 											//                                callback(result);
 										});
 									});
