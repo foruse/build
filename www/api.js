@@ -21,6 +21,9 @@
 // Added by GBKSoft developer 13.11.13
 function b64ToUint6(e){return e>64&&e<91?e-65:e>96&&e<123?e-71:e>47&&e<58?e+4:e===43?62:e===47?63:0}function base64DecToArr(e,t){var n=e.replace(/[^A-Za-z0-9\+\/]/g,""),r=n.length,i=t?Math.ceil((r*3+1>>2)/t)*t:r*3+1>>2,s=new Uint8Array(i);for(var o,u,a=0,f=0,l=0;l<r;l++){u=l&3;a|=b64ToUint6(n.charCodeAt(l))<<18-6*u;if(u===3||r-l===1){for(o=0;o<3&&f<i;o++,f++){s[f]=a>>>(16>>>o&24)&255}a=0}}return s}function uint6ToB64(e){return e<26?e+65:e<52?e+71:e<62?e-4:e===62?43:e===63?47:65}function base64EncArr(e){var t,n="";for(var r=e.length,i=0,s=0;s<r;s++){t=s%3;if(s>0&&s*4/3%76===0){n+="\r\n"}i|=e[s]<<(16>>>t&24);if(t===2||e.length-s===1){n+=String.fromCharCode(uint6ToB64(i>>>18&63),uint6ToB64(i>>>12&63),uint6ToB64(i>>>6&63),uint6ToB64(i&63));i=0}}return n.replace(/A(?=A$|$)/g,"=")}function UTF8ArrToStr(e){var t="";for(var n,r=e.length,i=0;i<r;i++){n=e[i];t+=String.fromCharCode(n>251&&n<254&&i+5<r?(n-252)*1073741824+(e[++i]-128<<24)+(e[++i]-128<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>247&&n<252&&i+4<r?(n-248<<24)+(e[++i]-128<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>239&&n<248&&i+3<r?(n-240<<18)+(e[++i]-128<<12)+(e[++i]-128<<6)+e[++i]-128:n>223&&n<240&&i+2<r?(n-224<<12)+(e[++i]-128<<6)+e[++i]-128:n>191&&n<224&&i+1<r?(n-192<<6)+e[++i]-128:n)}return t}function strToUTF8Arr(e){var t,n,r=e.length,i=0;for(var s=0;s<r;s++){n=e.charCodeAt(s);i+=n<128?1:n<2048?2:n<65536?3:n<2097152?4:n<67108864?5:6}t=new Uint8Array(i);for(var o=0,u=0;o<i;u++){n=e.charCodeAt(u);if(n<128){t[o++]=n}else if(n<2048){t[o++]=192+(n>>>6);t[o++]=128+(n&63)}else if(n<65536){t[o++]=224+(n>>>12);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else if(n<2097152){t[o++]=240+(n>>>18);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else if(n<67108864){t[o++]=248+(n>>>24);t[o++]=128+(n>>>18&63);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}else{t[o++]=252+n/1073741824;t[o++]=128+(n>>>24&63);t[o++]=128+(n>>>18&63);t[o++]=128+(n>>>12&63);t[o++]=128+(n>>>6&63);t[o++]=128+(n&63)}}return t}
 
+// Way to merge arrays @ http://stackoverflow.com/questions/1584370/how-to-merge-two-arrays-in-javascript/7122370#7122370
+Array.prototype.merge=function(){for(var e=0;e<arguments.length;e++){var t=arguments[e];for(var n=0;n<t.length;n++){if(this.indexOf(t[n])===-1){this.push(t[n])}}}return this}
+
 // // // this file consists of:
 // 1) Models section (AppModel function and inside Models ) - have models and methods to comunicate with server and db
 // 2) server section:
@@ -1411,18 +1414,22 @@ function onDeviceReady() {
 			};
 			Models.AbusedMessages = {
 				get_abused_messages: function(callback) {
-					var abused_messages = {}, abused_pc, abused_tc;
+					var abused_messages = [], abused_pc, abused_tc;
+					
+					var login_user = SESSION.get('user_id');
+					
+					/*SOCKET.request('get_abused_pc', {company_id: SESSION.get('company_id')}, function(messages) {
+						console.log(result);
+					});
+					
+					SOCKET.request('get_abused_tc', {company_id: SESSION.get('company_id')}, function(messages) {
+						console.log(result);
+					});
+					
+					return;*/
 					
 					API._sync(["xiao_projects", "xiao_project_partners", "xiao_users", "xiao_project_comments", "xiao_companies", "xiao_todo_comments","xiao_project_comments_likes","xiao_smileys"], function() {
-						DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%d %m %Y %H:%M:%S', pc.time) as time, pc.read, pc.abused, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
-						DB.from("xiao_project_comments AS pc");
-						DB.left_join("xiao_users AS u", "u.id = pc.user_id");
-						DB.left_join("xiao_companies AS c", "u.company_id = c.id");
-						DB.left_join("xiao_project_comments_likes AS cl", "cl.comment_id = pc.id");
-						DB.left_join("xiao_users AS clu", "clu.id = cl.user_id");
-						DB.where('pc.abused > 0 AND pc.company_id = "' + SESSION.get('company_id') + '" AND pc.deleted == 0');
-						DB.order_by('pc.abused DESC');
-						DB.query(function(messages) {
+						SOCKET.request('get_abused_pc', {company_id: SESSION.get('company_id')}, function(messages) {
 							Models.Smileys.get_smileys(function(smileys) {
 								abused_pc = []
 								var unread = 0, indexes = [];
@@ -1436,10 +1443,7 @@ function onDeviceReady() {
 											message = Models.Smileys.convert_smileys(message, null, smileys);
 
 											abused_pc.push({
-												id: mess.id,
-												text: message,
-												abused: mess.abused,
-												poster: {
+												reporter: {
 													id: mess.uid,
 													name: mess.name,
 													pinyin: mess.pinyin,
@@ -1450,75 +1454,12 @@ function onDeviceReady() {
 													phoneNum: mess.phoneNum,
 													email: mess.email,
 													adress: mess.adress,
-													isNewUser: mess.isNewUser
+													isNewUser: mess.isNewUser,
+													isLoginUser: login_user == mess.uid
 												},
-												attachment: {
-													id: mess.id,
-													type: mess.type,
-													src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
-	//                                                src: mess.server_path,
-													from: "project"
-												},
-												praise: [],
-												time: new Date(websql_date_to_number(mess.time)).getTime(),
-												type: mess.type
-											});
-
-											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
-												abused_pc[abused_pc.length-1].praise.push({
-													id: mess.cl_uid,
-													name: mess.cl_name,
-													pinyin: mess.cl_pinyin,
-	//                                                avatar: mess.cl_avatar,
-													avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-													company: mess.cl_company,
-													companyAdress: mess.cl_companyAdress,
-													position: mess.cl_position,
-													phoneNum: mess.cl_phoneNum,
-													email: mess.cl_email,
-													adress: mess.cl_adress,
-													isNewUser: mess.cl_isNewUser
-												});
-										}else{
-											abused_pc[abused_pc.length-1].praise.push({
-												id: mess.cl_uid,
-												name: mess.cl_name,
-												pinyin: mess.cl_pinyin,
-												avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
-												company: mess.cl_company,
-												companyAdress: mess.cl_companyAdress,
-												position: mess.cl_position,
-												phoneNum: mess.cl_phoneNum,
-												email: mess.cl_email,
-												adress: mess.cl_adress,
-												isNewUser: mess.cl_isNewUser
-											});
-										}
-									});
-								}
-
-								abused_messages.abused_pc = abused_pc;
-
-								DB.select("tc.id, tc.content, tc.type, tc.server_path, tc.local_path, tc.todo_id, tc.user_id, strftime('%d %m %Y %H:%M:%S', tc.time) as time, tc.read, tc.abused, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
-								DB.from("xiao_todo_comments AS tc");
-								DB.left_join("xiao_users AS u", "u.id = tc.user_id");
-								DB.left_join("xiao_companies AS c", "u.company_id = c.id");
-								DB.left_join("xiao_todo_comments_likes AS cl", "cl.comment_id = tc.id");
-								DB.left_join("xiao_users AS clu", "clu.id = cl.user_id");
-								DB.where('tc.abused > 0 AND tc.company_id = "' + SESSION.get('company_id') + '" AND tc.deleted == 0');
-								DB.order_by('tc.time, tc.id');
-								DB.query(function(messages) {
-									abused_tc = []
-									var unread = 0, indexes = [];
-									if (messages.length > 0) {
-										messages.forEach(function(mess) {
-											if(indexes.lastIndexOf(mess.id) === -1){
-												indexes.push(mess.id);
-
-												var message = mess.content;
-												message = Models.Smileys.convert_smileys(message, null, smileys);
-
-												abused_tc.push({
+												source: mess.parent_title,
+												time: mess.time,
+												message: {
 													id: mess.id,
 													text: message,
 													abused: mess.abused,
@@ -1534,16 +1475,114 @@ function onDeviceReady() {
 														email: mess.email,
 														adress: mess.adress,
 														isNewUser: mess.isNewUser,
+														isLoginUser: login_user == mess.uid
 													},
 													attachment: {
 														id: mess.id,
 														type: mess.type,
 														src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
-														from: "todo"
+		//                                                src: mess.server_path,
+														from: "project"
 													},
-													praise: [],
+													//praise: [],
 													time: new Date(websql_date_to_number(mess.time)).getTime(),
 													type: mess.type
+												}
+											});
+
+											if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
+												abused_pc[abused_pc.length-1].praise.push({
+													id: mess.cl_uid,
+													name: mess.cl_name,
+													pinyin: mess.cl_pinyin,
+	//                                                avatar: mess.cl_avatar,
+													avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+													company: mess.cl_company,
+													companyAdress: mess.cl_companyAdress,
+													position: mess.cl_position,
+													phoneNum: mess.cl_phoneNum,
+													email: mess.cl_email,
+													adress: mess.cl_adress,
+													isNewUser: mess.cl_isNewUser,
+													isLoginUser: login_user == mess.uid
+												});
+										}else{
+											abused_pc[abused_pc.length-1].praise.push({
+												id: mess.cl_uid,
+												name: mess.cl_name,
+												pinyin: mess.cl_pinyin,
+												avatar: (mess.cl_local_path != "" && mess.cl_local_path != CONFIG.default_user_avatar) ? mess.cl_local_path : mess.cl_server_path,
+												company: mess.cl_company,
+												companyAdress: mess.cl_companyAdress,
+												position: mess.cl_position,
+												phoneNum: mess.cl_phoneNum,
+												email: mess.cl_email,
+												adress: mess.cl_adress,
+												isNewUser: mess.cl_isNewUser,
+												isLoginUser: login_user == mess.uid
+											});
+										}
+									});
+								}
+
+								abused_messages = abused_messages.merge(abused_pc);
+
+								SOCKET.request('get_abused_tc', {company_id: SESSION.get('company_id')}, function(messages) {
+									abused_tc = []
+									var unread = 0, indexes = [];
+									if (messages.length > 0) {
+										messages.forEach(function(mess) {
+											if(indexes.lastIndexOf(mess.id) === -1){
+												indexes.push(mess.id);
+
+												var message = mess.content;
+												message = Models.Smileys.convert_smileys(message, null, smileys);
+
+												abused_tc.push({
+													reporter: {
+														id: mess.uid,
+														name: mess.name,
+														pinyin: mess.pinyin,
+														avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
+														company: mess.company,
+														companyAdress: mess.companyAdress,
+														position: mess.position,
+														phoneNum: mess.phoneNum,
+														email: mess.email,
+														adress: mess.adress,
+														isNewUser: mess.isNewUser,
+														isLoginUser: login_user == mess.uid
+													},
+													source: mess.parent_title,
+													time: new Date(websql_date_to_number(mess.time)).getTime(),
+													message: {
+														id: mess.id,
+														text: message,
+														abused: mess.abused,
+														poster: {
+															id: mess.uid,
+															name: mess.name,
+															pinyin: mess.pinyin,
+															avatar: (mess.av_local_path != "" && mess.av_local_path != null && mess.av_local_path != "null" && mess.av_local_path != CONFIG.default_user_avatar) ? mess.av_local_path : mess.av_server_path,
+															company: mess.company,
+															companyAdress: mess.companyAdress,
+															position: mess.position,
+															phoneNum: mess.phoneNum,
+															email: mess.email,
+															adress: mess.adress,
+															isNewUser: mess.isNewUser,
+															isLoginUser: login_user == mess.uid
+														},
+														attachment: {
+															id: mess.id,
+															type: mess.type,
+															src: (mess.local_path != "" && mess.local_path != null) ? mess.local_path : mess.server_path,
+															from: "todo"
+														},
+														praise: [],
+														time: new Date(websql_date_to_number(mess.time)).getTime(),
+														type: mess.type
+													}
 												});
 												if(mess.cl_uid != null && typeof(mess.cl_uid) !== "undefined")
 													abused_tc[abused_tc.length-1].praise.push({
@@ -1557,7 +1596,8 @@ function onDeviceReady() {
 														phoneNum: mess.cl_phoneNum,
 														email: mess.cl_email,
 														adress: mess.cl_adress,
-														isNewUser: mess.cl_isNewUser
+														isNewUser: mess.cl_isNewUser,
+														isLoginUser: login_user == mess.uid
 													});
 											}else{
 												abused_tc[abused_tc.length-1].praise.push({
@@ -1572,13 +1612,14 @@ function onDeviceReady() {
 													phoneNum: mess.cl_phoneNum,
 													email: mess.cl_email,
 													adress: mess.cl_adress,
-													isNewUser: mess.cl_isNewUser
+													isNewUser: mess.cl_isNewUser,
+													isLoginUser: login_user == mess.uid
 												});
 											}
 										});
 									}
 									
-									abused_messages.abused_tc = abused_tc;
+									abused_messages = abused_messages.merge(abused_tc);
 
 									callback(abused_messages);
 								});

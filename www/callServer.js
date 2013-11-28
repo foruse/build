@@ -430,6 +430,20 @@
 			},
 			reportMessage: function(params, complete) {
 				Mdls.AbusedMessages.report_abuse(null, params.messageId, complete);
+			},
+			getReportedInfo: function(params, complete) {
+				var data = [];
+				
+				Mdls.AbusedMessages.get_abused_messages(function(messages) {
+					console.log(messages);
+					complete(messages);
+				});
+			},
+			deleteReport: function(params, complete) {
+				alert(JSON.stringify(params));
+			},
+			ignoreReport: function(params, complete) {
+				alert(JSON.stringify(params));
 			}
         });
 
