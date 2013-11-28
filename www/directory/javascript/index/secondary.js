@@ -216,8 +216,6 @@ this.BusinessCard = (function(Global, Permission, Confirm, Switch, SwitchStatus,
 
 this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 	function Header(selector){
-		var header = this;
-
 		this.attach({
 			userclick : function(e, targetEl){
 				if(targetEl.between(">button", this).length > 0){
@@ -226,14 +224,17 @@ this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 				}
 			}
 		});
-
-		CallServer.open("getCountOfReports", null, function(data){
-			header.setCount(data.count);
-		});
 	};
 	Header = new NonstaticClass(Header, null, Panel.prototype);
 
 	Header.properties({
+		recall : function(){
+			var header = this;
+
+			CallServer.open("getCountOfReports", null, function(data){
+				header.setCount(data.count);
+			});
+		},
 		setCount : function(count){
 			var countEl = this.find(">button>span");
 
@@ -248,7 +249,8 @@ this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 		///	系统项。
 		///	</summary>
 		/// <param name="selector" type="string">对应的元素选择器</param>
-		new Header.constructor(this.header);
+		var header = new Header.constructor(this.header);
+
 		new AnchorList(anchorData).appendTo(this.find(">section")[0]);
 
 		this.attach({
@@ -260,6 +262,9 @@ this.SystemOption = (function(AnchorList, Global, localStorage, anchorData){
 					});
 					return;
 				}
+			},
+			beforeshow : function(){
+				header.recall();
 			}
 		});
 	};

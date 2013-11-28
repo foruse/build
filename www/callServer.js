@@ -443,7 +443,6 @@
 				Mdls.AbusedMessages.remove_message(null, params.messageId, complete);
 			},
 			ignoreReport: function(params, complete) {
-				alert(JSON.stringify(params));
 				Mdls.AbusedMessages.reset_abuse(null, params.messageId, complete);
 			}
         });

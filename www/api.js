@@ -562,11 +562,21 @@ function onDeviceReady() {
 										DB.from("xiao_companies");
 										DB.where("id = '" + result.user.company_id + "'");
 										DB.row(function(company) {
-											if (company && company.creator_id == result.user.id) {
-												result.user.isLeader = true;
+											if (company) {
+												if (company.creator_id == result.user.id) {
+													result.user.permission = 2;
+												} else {
+													if (result.user.poweruser == 1) {
+														result.user.permission = 1;
+													} else {
+														result.user.permission = 0;
+													}
+												}
 											} else {
-												result.user.isLeader = false;
+												result.user.permission = 0;
 											}
+											
+//											console.log(JSON.stringify(result.user));
 
 											// SERVER.SESSION._init_storage(1);
 											// SERVER.DB._init_db(1);                   
@@ -1674,17 +1684,24 @@ function onDeviceReady() {
 							break;
 					}
 					
-					DB.remove(table, "id='" + id + "'", function() {
+					SOCKET.request("remove_message", {
+						type: type,
+						id: id
+					}, function() {
 						API._sync([table], function() {
 							callback();
 						});
 					});
+					
+					/*DB.remove(table, "id='" + id + "'", function() {
+						API._sync([table], function() {
+							callback();
+						});
+					});*/
 				},
 						
 				reset_abuse: function(type, id, callback) {
 					var table = '';
-					
-					alert(id);
 					
 					if (!type) {
 						type = id.split('_').splice(-2, 1)[0];
@@ -1699,13 +1716,28 @@ function onDeviceReady() {
 							break;
 					}
 					
-					DB.update(table, {abused: 0}, "id = '" + id + "'", function() {
+					console.log(table)
+					console.log({abused: 0});
+					console.log("id = '" + id + "'");
+					
+					SOCKET.request("reset_abuse", {
+						type: type,
+						id: id
+					}, function() {
 						API._sync([table], function() {
 							if (callback) {
 								callback();
 							}
 						});
 					});
+					
+					/*DB.update(table, {abused: 0}, "id = '" + id + "'", function() {
+						API._sync([table], function() {
+							if (callback) {
+								callback();
+							}
+						});
+					});*/
 				},
 						
 				report_abuse: function(type, id, callback) {
