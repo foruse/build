@@ -201,18 +201,15 @@ function onDeviceReady() {
                     if(!SESSION.get("saved_user_data")){
                         SESSION._init_storage(1);
                         DB._init_db(1);  
-						//alert('init on read');
                     }
 					
-					setTimeout(function() {
-						SOCKET.request("counter", {}, function(result) {
-							if (result) {
-							   callback(result);
-							} else {
-							   callback({count: 100000, validationImage: "src"});
-							}
-						});
-					}, 1000);
+					SOCKET.request("counter", {}, function(result) {
+						if (result) {
+						   callback(result);
+						} else {
+						   callback({count: 100000, validationImage: "src"});
+						}
+					});
                }
 
            };
@@ -581,8 +578,8 @@ function onDeviceReady() {
 											
 //											console.log(JSON.stringify(result.user));
 
-											// SERVER.SESSION._init_storage(1);
-											// SERVER.DB._init_db(1);                   
+//											SERVER.SESSION._init_storage(1);
+//											SERVER.DB._init_db(1);                   
 		//                                    result.user.isNewUser = 0;
 											SESSION.set("saved_user_data", JSON.stringify(result.user));
 											SESSION.set("user_id", result.user.id);
@@ -1129,12 +1126,6 @@ function onDeviceReady() {
                             }
                         });
                     } else {
-						/*Models.AbusedMessages.remove_message('todo', 5, function() {
-							Models.AbusedMessages.get_abused_messages(function(messages) {
-								console.log('------------ABUSED MESSAGES');
-								console.log(messages);
-							});
-						});*/
                         // SELECT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 1 as status  FROM xiao_project_partners AS pp INNER JOIN xiao_projects AS p ON pp.project_id = p.id INNER JOIN xiao_users AS u ON u.id = pp.user_id INNER JOIN xiao_companies AS c ON u.company_id = c.id WHERE pp.user_id = "4" AND p.archived <> "1" GROUP BY p.id UNION SELECT DISTINCT p.id, p.level, p.title, p.color, p.creator_id, p.creationTime, p.completeDate, p.descr, u.id as uid, u.name, u.pinyin, u.local_path, u.server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, 2 as status  FROM xiao_projects AS p LEFT JOIN xiao_project_partners AS pp ON pp.project_id = p.id LEFT JOIN xiao_users AS u ON u.id = pp.user_id LEFT JOIN xiao_companies AS c ON u.company_id = c.id WHERE p.archived <> "1" GROUP BY p.id HAVING p.id NOT IN ( SELECT project_id FROM xiao_project_partners WHERE user_id = "4" ) LIMIT 10
                         var result = [], logged_user = SESSION.get("user_id");
                             params.othersOffset = (params.othersOffset ? params.othersOffset : 0);
@@ -1167,7 +1158,7 @@ function onDeviceReady() {
                                             HAVING p.id NOT IN (\n\
                                                 SELECT project_id \n\
                                                 FROM xiao_project_partners \n\
-                                                WHERE user_id = "4" \n\
+                                                WHERE user_id = "' + logged_user + '" \n\
                                             ) ) ORDER BY status',
                                             // ) ) ORDER BY status) LIMIT 10 OFFSET '+ ( (params.pageIndex - 1) * params.pageSize ) + '' ,
                             function(projects){
@@ -3281,7 +3272,7 @@ function onDeviceReady() {
                                                             console.log("start init");
                                                             db.transaction(createDB, error_create_DB);
                                                             function createDB(tx) {
-                                                                // DON't FORGET TO ADD TABLE TO init_tables     for test
+																// DON't FORGET TO ADD TABLE TO init_tables     for test
                                                                 if (clear) {
                                                                     _this._init_tables.forEach(function(drop_table) {
                                                                         tx.executeSql('DROP TABLE IF EXISTS ' + drop_table);
@@ -3289,6 +3280,8 @@ function onDeviceReady() {
 
                                                                     tx.executeSql('DROP TABLE IF EXISTS sync');
                                                                     tx.executeSql('DROP TABLE IF EXISTS sync_delete');
+																	
+																	window.localStorage.clear();
                                                                 }
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_partners(\n\
                                                                     server_id VARCHAR(255) NULL,\n\
@@ -3508,7 +3501,7 @@ function onDeviceReady() {
                                                                     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n\
                                                                     row_id varchar(255) NOT NULL)'
                                                                         );
-                                                                if (clear) {
+																if (clear) {
                                                                     _this._init_tables.forEach(function(cur) { // triggers are used to paste data to sync table
 //                                                                        if(cur !== "xiao_todo_comments" && cur !== "xiao_project_comments"){
                                                                             var sql = 'CREATE TRIGGER update_' + cur + ' AFTER UPDATE ON ' + cur + ' FOR EACH ROW BEGIN INSERT INTO sync(table_name, row_id) VALUES("' + cur + '", NEW.id); END; ';

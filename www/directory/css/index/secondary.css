@@ -175,6 +175,7 @@
 }
 #systemOption > header {
 	margin-bottom : 16px;
+	display : none;
 }
 #systemOption > header > button {
 	height : 40px;
@@ -213,8 +214,8 @@
 #systemOption li[key="qrCode"]{
 	display : none;
 }
-.main[permission="0"] #systemOption > header {
-	display : none;
+.main[permission="2"] #systemOption > header {
+	display : block;
 }
 
 #systemContacts {

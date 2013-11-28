@@ -966,19 +966,20 @@ this.Report = (function(ChatList, Message, Confirm, forEach, reportHtml){
 
 
 	function Report(selector){
-		var report = this;
+		var report = this, overflowEl = new OverflowPanel(report.find(">ul"));
 
 		this.attach({
 			beforeshow : function(){
+				overflowEl.innerHTML = "";
+				overflowEl.setTop(0);
+
 				CallServer.open("getReportedInfo", null, function(data){
 					forEach(data, function(dt){
-						new Single.constructor(dt).appendTo(this);
-					}, report.find(">ul")[0]);
+						new Single.constructor(dt).appendTo(overflowEl[0]);
+					});
 				});
 			}
 		});
-
-		new OverflowPanel(this.find(">ul"));
 	};
 	Report = new NonstaticClass(Report, "Bao.Page.Index.Deep.Report", PagePanel.prototype);
 
