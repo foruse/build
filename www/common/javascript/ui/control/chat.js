@@ -559,6 +559,7 @@ this.MessageGroup = (function(MessageList, Date,messageAppendedEvent, singleNumR
 		var dt = new Date(time),
 
 			desc = "今天", t = new Date().setHours(0, 0, 0, 0) - time, hours = dt.getHours();
+	console.log(dt);
 				
 		switch(true){
 			case t < 0 :

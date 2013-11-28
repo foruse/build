@@ -553,7 +553,7 @@ function onDeviceReady() {
                         });
                     }else{
                         SOCKET.request("login", data, function(result) {
-							result.user['isLeader'] = 1;
+							//result.user['isLeader'] = 1;
                             // console.log(result);
                             if (result !== false) {
                                 if (result.user) {
@@ -576,7 +576,7 @@ function onDeviceReady() {
 												result.user.permission = 0;
 											}
 											
-//											console.log(JSON.stringify(result.user));
+//											alert(JSON.stringify(result.user));
 
 //											SERVER.SESSION._init_storage(1);
 //											SERVER.DB._init_db(1);                   
@@ -924,6 +924,8 @@ function onDeviceReady() {
 									invite_data.push({email: emails[i], company_id: company_id})
 								}
 								
+								console.log(invite_data);
+								
 								DB.batch_insert('xiao_invites', invite_data, function() {
 									API._sync(['xiao_invites'], function() {
 										for (var i in invite_data) {
@@ -1162,7 +1164,7 @@ function onDeviceReady() {
                                             ) ) ORDER BY status',
                                             // ) ) ORDER BY status) LIMIT 10 OFFSET '+ ( (params.pageIndex - 1) * params.pageSize ) + '' ,
                             function(projects){
-
+								console.log(projects);
                                 if (projects.length > 0) {
                                     projects = projects.splice( ((params.pageIndex - 1) * params.pageSize), ( (params.pageIndex - 1) * params.pageSize )+10 );
                                     projects.forEach(function(pr) {
@@ -1790,7 +1792,7 @@ function onDeviceReady() {
                     API._sync(["xiao_project_comments", "xiao_users", "xiao_companies", "xiao_project_comments_likes", "xiao_smileys"], function() {
                         
 //                        DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, pc.time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
-                        DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%d %m %Y %H:%M:%S', pc.time) as time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
+                        DB.select("pc.id, pc.content, pc.type, pc.server_path, pc.local_path, pc.project_id, pc.user_id, strftime('%s', pc.time) as time, pc.read, u.id as uid, u.name, u.pinyin, u.local_path as av_local_path, u.server_path as av_server_path, u.company_id, u.position, u.phoneNum, u.email, u.adress, u.isNewUser, u.QRCode, c.title as company, c.companyAdress, c.creator_id as company_creator_id, clu.id as cl_uid, clu.name as cl_name, clu.pinyin as cl_pinyin, clu.local_path as cl_local_path, clu.server_path as cl_server_path, clu.position as cl_position, clu.phoneNum as cl_phoneNum, clu.email as cl_email, clu.adress as cl_adress, clu.isNewUser as cl_isNewUser, clu.QRCode as cl_QRCode");
                         DB.from("xiao_project_comments AS pc");
                         DB.left_join("xiao_users AS u", "u.id = pc.user_id");
                         DB.left_join("xiao_companies AS c", "u.company_id = c.id");
@@ -1804,6 +1806,7 @@ function onDeviceReady() {
                         DB.order_by(' pc.time, pc.id');
     //                    API.read(function(messages) {
                         DB.query(function(messages) {
+							console.log(messages);
 							Models.Smileys.get_smileys(function(smileys) {
 								console.log("__________messages");
 								var mess_result = [], unread = 0, indexes = [];
@@ -1843,7 +1846,7 @@ function onDeviceReady() {
 													from: "project"
 												},
 												praise: [],
-												time: new Date(websql_date_to_number(mess.time)).getTime(),
+												time: parseInt(mess.time) * 1000,
 												type: mess.type
 											});
 
@@ -3280,8 +3283,6 @@ function onDeviceReady() {
 
                                                                     tx.executeSql('DROP TABLE IF EXISTS sync');
                                                                     tx.executeSql('DROP TABLE IF EXISTS sync_delete');
-																	
-																	window.localStorage.clear();
                                                                 }
                                                                 tx.executeSql('CREATE TABLE IF NOT EXISTS xiao_project_partners(\n\
                                                                     server_id VARCHAR(255) NULL,\n\
@@ -3644,8 +3645,8 @@ function onDeviceReady() {
                                                                 sql = 'SELECT * FROM sync as s INNER JOIN ' + table_name + ' as t ON s.row_id = t.id WHERE s.table_name ="' + table_name + '"',
                                                                 sql_del = 'SELECT * FROM sync_delete WHERE table_name ="' + table_name + '"';
                                                         SERVER.DB._executeSQL(sql, function(data) {
-															 console.log('Data to sync in ' + table_name);
-															 console.log(data);
+//															 console.log('Data to sync in ' + table_name);
+//															 console.log(data);
                                                             counter = data.length;
                                                             data.length > 0 ? data.forEach(function(el, i) {
                                                                 
@@ -3746,7 +3747,7 @@ function onDeviceReady() {
 																sync_data.push(data);
 //                                                                console.log("_______data")
 //                                                                console.log(data)
-                                                                console.log("_______sync_data")
+//                                                                console.log("_______sync_data")
 //                                                                console.log(sync_data)
                                                                 if (table_num == (tables.length - 1)) {
 																	console.log("last");
