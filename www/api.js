@@ -144,7 +144,7 @@ function onDeviceReady() {
         a.initEvent("appload", true, true); //init event -----------------> see the last line in the App_model--->the event is dispatched there
 
         App_model = function(SERVER) {
-			var html = document.getElementsByTagName('html')[0];
+			/*var html = document.getElementsByTagName('html')[0];
 			html.style.height = '100%';
 			var body = document.getElementsByTagName('body')[0];
 			
@@ -171,11 +171,11 @@ function onDeviceReady() {
 			body.style.backgroundRepeat = 'no-repeat';
 			body.style.backgroundPosition = 'center center';
 			//body.style.backgroundSize = 'contain';
-			body.style.backgroundColor = '#ffffff';
+			//body.style.backgroundColor = '#ffffff';
 			body.style.height = '100%';
 			
 			var main = document.getElementsByClassName('main')[0];
-			main.style.opacity = 0;
+			main.style.opacity = 0;*/
 			
 			setTimeout(function() {
 				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
@@ -2740,10 +2740,10 @@ function onDeviceReady() {
 
 
 			setTimeout(function() {
-				body.style.background = 'transparent';
+				/*body.style.background = 'transparent';
 				body.style.height = 'auto';
 				html.style.height = 'auto';
-				main.style.opacity = 1;
+				main.style.opacity = 1;*/
 			}, 2000);
 
             document.dispatchEvent(a);
