@@ -1122,7 +1122,6 @@ this.ChatListPanel = (function(ChatList, Global, SmiliesStatus){
 
 			if(oldFromId !== -1){
 				CallServer.open("stopMessagesListener", { id : oldFromId, type : from });
-				//return;
 			}
 
 			this.fromId = fromId;
