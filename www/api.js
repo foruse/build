@@ -113,11 +113,13 @@ function onDeviceReady() {
     // APPLICATION CONFIGS
     // APPLICATION CONFIGS
     // APPLICATION CONFIGS
-    var CONFIG = {
+    // var CONFIG = {
+    CONFIG = {
         routes: {
             sync: "sync",
             sync_chat: "syncchat",
             file_upload_url: "upload",
+            file_download_url: "uploads",
             sockets: ""
         },
 //      server_url: "http://115.28.131.52:3000",
@@ -128,7 +130,7 @@ function onDeviceReady() {
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
         default_user_avatar: "../../common/image/avatar_default.jpg",
-        new_message_sound: "./sounds/top_choice.mp3"
+        new_message_sound: "topchoice.mp3" // no slash at the start and do it from root www /
     };
 	
 	FlurryAgent.logEvent('Application started');
@@ -187,7 +189,15 @@ function onDeviceReady() {
                     SESSION = SERVER.SESSION,
                     PHONE = SERVER.PHONE,
                     SOCKET = SERVER.SOCKET;
-			
+
+            if(SESSION.get("sound_file")){
+                CONFIG.notig_audio_path = SESSION.get("sound_file");
+            }else{
+    			PHONE.download(ROUTE('file_upload_url')+"/"+CONFIG.new_message_sound, function(local_path){
+                    CONFIG.notig_audio_path = local_path;
+                    SESSION.set("sound_file",local_path);
+                });
+            }
 			
 			/* Private */
 			
@@ -4103,11 +4113,16 @@ function onDeviceReady() {
                                                             var _this = this, new_file_name = _random(5, file_obj.name);
 //                                                            new_file_name += (/\.[A-Za-z0-9]+$/.test(after) ? "" : "." + CONFIG.audio_format);
                                                             new_file_name = (function(){
-                                                                if((!"format" in file_obj) || file_obj.format === ""){
-                                                                    return new_file_name;
-                                                                }else{
+                                                                if(file_obj.format && ("format" in file_obj) && file_obj.format !== ""){
                                                                     return new_file_name+"."+file_obj.format;
+                                                                }else{
+                                                                    return new_file_name;
                                                                 }
+                                                                // if((!"format" in file_obj) || file_obj.format === ""){
+                                                                //     return new_file_name;
+                                                                // }else{
+                                                                //     return new_file_name+"."+file_obj.format;
+                                                                // }
                                                             }());
                                                             
                                                             if(this.fs === null){
@@ -4591,18 +4606,94 @@ function onDeviceReady() {
 
 
                                                     function MessageNotification(){
-                                                        MessageNotification.superclass.constructor.call(this);
+                                                        // MessageNotification.superclass.constructor.call(this);
 
-                                                        this.audio = null;
+                                                        // this.audio_file = null;
+                                                        // this._audio_path = "/var/mobile/Applications/C642FE6E-19FD-4905-B181-65028294B969/Documents/BAO/20131202232126l7190topchoice.mp3";
+                                                        // this._audio_path = null;
+
+                                                        // var _this = this;
+                                                        // if(SERVER.SESSION.get("sound_file") != "1"){
+                                                            // var get_audio_file = (function(){
+
+                                                            //     _this.download(ROUTE('file_upload_url')+"/"+CONFIG.new_message_sound, function(local_path){
+                                                            //         _this._audio_path = local_path;
+                                                            //         // SERVER.SESSION.set("sound_file","1");
+                                                            //     });
+                                                            // }())
+                                                        // }
+
 
                                                         this.play = function(){
-                                                            if(this.audio === null) this.audio = new Media(CONFIG.new_message_sound, this.log_success, this.log_error);
-                                                            this.audio.play();
+                                                            // if(SERVER.SESSION.get("sound_file")){
+                                                                // if(_this.audio_file === null) _this.audio_file = new Media(_this._audio_path, _this.log_success, _this.log_error);
+                                                                // _this.audio_file.play();
+                                                            // }else{
+                                                                // _this.download(ROUTE('file_download_url')+"/"+CONFIG.new_message_sound, function(local_path){
+                                                                    // console.log(local_path);
+                                                                    // _this._audio_path = local_path;
+                                                                    // SERVER.SESSION.set("sound_file","1");
+                                                                    // if(_this.audio_file === null) _this.audio_file = new Media(_this._audio_path, _this.log_success, _this.log_error);
+                                                                    var audio_file = new Media(CONFIG.notig_audio_path);
+                                                                    audio_file.play();
+                                                                // });
+                                                            // }
+                                                        }
+
+                                                            // var _this = this;
+                                                            // if(_this._audio_path === null){
+                                                            //     // alert("sss")
+                                                            //     window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs) {
+                                                            //         fs.root.getDirectory(CONFIG.root_dir, {create: true, exclusive: false}, function(dir) {
+                                                            //             // _this.fs = dir;
+                                                            //             // console.log(dir);
+                                                            //             // alert("ss");
+                                                            //             // dir.getFile(CONFIG.new_message_sound, {create: false, exclusive: true}, function(fileEntry) {
+                                                            //                 console.log(dir);
+                                                            //                 _this._audio_path = dir.fullPath+"/"+CONFIG.new_message_sound;
+                                                            //                 alert(_this._audio_path);
+                                                            //                 console.log(_this._audio_path);
+                                                            //                 // _this._audio_path = fileEntry.fullPath;
+                                                            //                 play_function(_this._audio_path);
+                                                            //             // }, _this.log_error);
+
+                                                            //         }, function(err1) {
+                                                            //             console.log(err1);
+                                                            //         });
+                                                            //     }, function(err1) {
+                                                            //         console.log(err1);
+                                                            //     });
+                                                                
+                                                            // }else{
+                                                            //     play_function(_this._audio_path);
+                                                            // }
+                                                            // function getPhoneGapPath() {
+
+                                                                // var path = window.location.pathname;
+                                                                // path = path.substr( path, path.length - 10 );
+                                                                // // return 'file://' + path;
+                                                                // path = 'file://' + path;
+                                                                // console.log(path);
+
+                                                            // };
+
+                                                            // var snd = new Media( getPhoneGapPath() + 'test.wav' );
+
+                                                            // function play_function(file_to_play){
+                                                            //     if(_this.audio_file === null) _this.audio_file = new Media(file_to_play, _this.log_success, _this.log_error);
+                                                            //     _this.audio.play();
+                                                            // }
+
+                                                            // var sound_path = window.location.pathname.replace("directory/page/main.html","");
+                                                            // sound_path = this.fs+CONFIG.new_message_sound;
+                                                            // console.log(sound_path);
+                                                            // if(this.audio === null) this.audio = new Media(sound_path, this.log_success, this.log_error);
+                                                            // this.audio.play();
                                                             // console.log(this);
                                                             // alert("hi")
-                                                        }
+                                                        // }
                                                     }
-                                                    extend(MessageNotification, Phone);
+                                                    // extend(MessageNotification, Files);
 
                                                     return {
                                                         VoiceMessage: new VoiceMessage(),
