@@ -2818,9 +2818,8 @@ function onDeviceReady() {
 				main.style.opacity = 1;
 			}, 2000);
 
-            document.dispatchEvent(a);
-			
 			}, 700);
+			document.dispatchEvent(a);
         }(
                 // PRIVATE
                         // PRIVATE
