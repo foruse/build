@@ -146,40 +146,40 @@ function onDeviceReady() {
         a.initEvent("appload", true, true); //init event -----------------> see the last line in the App_model--->the event is dispatched there
 
         App_model = function(SERVER) {
-//			var html = document.getElementsByTagName('html')[0];
-//			html.style.height = '100%';
-//			var body = document.getElementsByTagName('body')[0];
-//			
-//			var background_image = '';
-//			
-//			body.style.backgroundSize = 'auto';
-//			
-//			if (window.innerWidth == 320) {
-//				background_image = 'url(\'../../common/image/W320H480.gif\')';
-//			} else if (window.innerWidth == 640) {
-//				if (window.innerHeight <= 1100) {
-//					background_image = 'url(\'../../common/image/W640H960.gif\')';
-//				} else if (window.innerHeight > 1100) {
-//					background_image = 'url(\'../../common/image/W640H1136.gif\')';
-//				}
-//			} else if (window.innerWidth == 768) {
-//				background_image = 'url(\'../../common/image/W768H1004.gif\')';
-//			} else {
-//				background_image = 'url(\'../../common/image/W640H1136.gif\')';
-//				body.style.backgroundSize = '100% auto';
-//			}
-//			
-//			body.style.backgroundImage = background_image;
-//			body.style.backgroundRepeat = 'no-repeat';
-//			body.style.backgroundPosition = 'center center';
-//			//body.style.backgroundSize = 'contain';
-//			body.style.backgroundColor = '#ffffff';
-//			body.style.height = '100%';
-//			
-//			var main = document.getElementsByClassName('main')[0];
-//			main.style.opacity = 0;
+			var html = document.getElementsByTagName('html')[0];
+			html.style.height = '100%';
+			var body = document.getElementsByTagName('body')[0];
 			
-			//setTimeout(function() {
+			var background_image = '';
+			
+			body.style.backgroundSize = 'auto';
+			
+			if (window.innerWidth == 320) {
+				background_image = 'url(\'../../common/image/W320H480.gif\')';
+			} else if (window.innerWidth == 640) {
+				if (window.innerHeight <= 1100) {
+					background_image = 'url(\'../../common/image/W640H960.gif\')';
+				} else if (window.innerHeight > 1100) {
+					background_image = 'url(\'../../common/image/W640H1136.gif\')';
+				}
+			} else if (window.innerWidth == 768) {
+				background_image = 'url(\'../../common/image/W768H1004.gif\')';
+			} else {
+				background_image = 'url(\'../../common/image/W640H1136.gif\')';
+				body.style.backgroundSize = '100% auto';
+			}
+			
+			body.style.backgroundImage = background_image;
+			body.style.backgroundRepeat = 'no-repeat';
+			body.style.backgroundPosition = 'center center';
+			//body.style.backgroundSize = 'contain';
+			body.style.backgroundColor = '#ffffff';
+			body.style.height = '100%';
+			
+			var main = document.getElementsByClassName('main')[0];
+			main.style.opacity = 0;
+			
+			setTimeout(function() {
 				if(!BROWSER_TEST_VERSION) navigator.splashscreen.hide();
 			
 			
@@ -194,7 +194,7 @@ function onDeviceReady() {
 				if (SESSION.get("sound_file")) {
 					CONFIG.notig_audio_path = SESSION.get("sound_file");
 				} else {
-					SERVER.PHONE.Files.download(ROUTE('file_upload_url') + "/" + CONFIG.new_message_sound, function(local_path) {
+					PHONE.Files.download(ROUTE('file_download_url') + "/" + CONFIG.new_message_sound, function(local_path) {
 						CONFIG.notig_audio_path = local_path;
 						SESSION.set("sound_file", local_path);
 					});
@@ -809,7 +809,11 @@ function onDeviceReady() {
 											console.log(result.error.message);
 											callback({
 												status: -1,
-												error: result.error
+												error : {
+													code: result.error.code,
+													type: "email", // string : "pwd", "email"
+													desc: "此邮箱已经存在！" // string : description of the error
+												}
 											});
 										} else {
 											console.log(result.error.message);
@@ -2080,7 +2084,7 @@ function onDeviceReady() {
 										}
 									});
 									callback(mess_result);
-                                    // PHONE.MessageNotification.play();
+                                    PHONE.MessageNotification.play();
 								});
                             });
 
@@ -2496,7 +2500,7 @@ function onDeviceReady() {
                                     }
                                 });
                                 callback(mess_result);
-                                // PHONE.MessageNotification.play();
+                                PHONE.MessageNotification.play();
                             });
 
                         });
@@ -2529,7 +2533,7 @@ function onDeviceReady() {
 						console.log("notif res");
                         console.log(data);
                         callback(data);
-                        // PHONE.MessageNotification.play();
+                        PHONE.MessageNotification.play();
                     });
                 },
 						
@@ -2807,16 +2811,16 @@ function onDeviceReady() {
             // Models 
 
 
-//			setTimeout(function() {
-//				body.style.background = 'transparent';
-//				body.style.height = 'auto';
-//				html.style.height = 'auto';
-//				main.style.opacity = 1;
-//			}, 2000);
+			setTimeout(function() {
+				body.style.background = 'transparent';
+				body.style.height = 'auto';
+				html.style.height = 'auto';
+				main.style.opacity = 1;
+			}, 2000);
 
-            //document.dispatchEvent(a);
+            document.dispatchEvent(a);
 			
-			//}, 700);
+			}, 700);
         }(
                 // PRIVATE
                         // PRIVATE
@@ -4158,8 +4162,6 @@ function onDeviceReady() {
                                                         };
 
                                                         this.download = function(server_path, callback) {
-															alert(FileTransfer);
-
                                                             var fileTransfer = new FileTransfer(),
                                                                     uri = encodeURI(server_path),
                                                                     new_file_name = server_path.substring(server_path.lastIndexOf('/') + 1);
@@ -4177,6 +4179,7 @@ function onDeviceReady() {
                                                                             callback(download_entry.fullPath);
                                                                         },
                                                                         function(error) {
+																			alert(JSON.stringify(error));
                                                                             console.log("download error source " + error.source);
                                                                             console.log("download error target " + error.target);
                                                                             console.log("upload error code" + error.code);
@@ -4628,19 +4631,19 @@ function onDeviceReady() {
 
 
                                                         this.play = function(){
-                                                            // if(SERVER.SESSION.get("sound_file")){
-                                                                // if(_this.audio_file === null) _this.audio_file = new Media(_this._audio_path, _this.log_success, _this.log_error);
-                                                                // _this.audio_file.play();
-                                                            // }else{
-                                                                // _this.download(ROUTE('file_download_url')+"/"+CONFIG.new_message_sound, function(local_path){
-                                                                    // console.log(local_path);
-                                                                    // _this._audio_path = local_path;
-                                                                    // SERVER.SESSION.set("sound_file","1");
-                                                                    // if(_this.audio_file === null) _this.audio_file = new Media(_this._audio_path, _this.log_success, _this.log_error);
+//                                                            if(SESSION.get("sound_file")){
+//                                                                if(_this.audio_file === null) _this.audio_file = new Media(_this._audio_path, _this.log_success, _this.log_error);
+//                                                                _this.audio_file.play();
+//                                                            }else{
+//                                                                _this.download(ROUTE('file_download_url')+"/"+CONFIG.new_message_sound, function(local_path){
+//                                                                    console.log(local_path);
+//                                                                    _this._audio_path = local_path;
+//                                                                    SERVER.SESSION.set("sound_file","1");
+//                                                                    if(_this.audio_file === null) _this.audio_file = new Media(_this._audio_path, _this.log_success, _this.log_error);
                                                                     var audio_file = new Media(CONFIG.notig_audio_path);
                                                                     audio_file.play();
-                                                                // });
-                                                            // }
+//                                                                });
+//                                                            }
                                                         }
 
                                                             // var _this = this;
