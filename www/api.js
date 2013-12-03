@@ -124,8 +124,8 @@ function onDeviceReady() {
         },
 //      server_url: "http://115.28.131.52:3000",
 //      server_url: "http://212.8.40.254:5959",
-		 // server_url: "http://gbksoft.com:5959",
-		server_url: "http://192.168.0.103:3000",
+		  server_url: "http://gbksoft.com:5959",
+//		server_url: "http://192.168.0.103:3000",
 //        audio_format: "wav",
         audio_format: CURRENT_DEVICE === "ios" ? "wav" : "amr",
         root_dir: "BAO",
@@ -190,14 +190,16 @@ function onDeviceReady() {
                     PHONE = SERVER.PHONE,
                     SOCKET = SERVER.SOCKET;
 
-            if(SESSION.get("sound_file")){
-                CONFIG.notig_audio_path = SESSION.get("sound_file");
-            }else{
-    			PHONE.download(ROUTE('file_upload_url')+"/"+CONFIG.new_message_sound, function(local_path){
-                    CONFIG.notig_audio_path = local_path;
-                    SESSION.set("sound_file",local_path);
-                });
-            }
+			if (!BROWSER_TEST_VERSION) {
+				if (SESSION.get("sound_file")) {
+					CONFIG.notig_audio_path = SESSION.get("sound_file");
+				} else {
+					SERVER.PHONE.Files.download(ROUTE('file_upload_url') + "/" + CONFIG.new_message_sound, function(local_path) {
+						CONFIG.notig_audio_path = local_path;
+						SESSION.set("sound_file", local_path);
+					});
+				}
+			}
 			
 			/* Private */
 			
@@ -4156,6 +4158,7 @@ function onDeviceReady() {
                                                         };
 
                                                         this.download = function(server_path, callback) {
+															alert(FileTransfer);
 
                                                             var fileTransfer = new FileTransfer(),
                                                                     uri = encodeURI(server_path),
