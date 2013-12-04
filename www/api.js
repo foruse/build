@@ -145,6 +145,8 @@ function onDeviceReady() {
         var a = document.createEvent("HTMLEvents"); //fire up frontend part Event ---> event created
         a.initEvent("appload", true, true); //init event -----------------> see the last line in the App_model--->the event is dispatched there
 
+		alert('zxc-1');
+
         App_model = function(SERVER) {
 			/* Private */
             var API = SERVER.API,  //redefine all the stuff here for more simple usage
@@ -152,16 +154,18 @@ function onDeviceReady() {
                     SESSION = SERVER.SESSION,
                     PHONE = SERVER.PHONE,
                     SOCKET = SERVER.SOCKET;
-
 			if (!BROWSER_TEST_VERSION) {
 				if (SESSION.get("sound_file")) {
 					CONFIG.notig_audio_path = SESSION.get("sound_file");
 				} else {
+					alert('zxc0');
 					PHONE.Files.download(ROUTE('file_download_url') + "/" + CONFIG.new_message_sound, function(local_path) {
+						alert('zxc1');
 						CONFIG.notig_audio_path = local_path;
 						SESSION.set("sound_file", local_path);
 					});
 				}
+				alert('zxc2');
 			}
 			
 			/* Private */
