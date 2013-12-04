@@ -102,6 +102,7 @@
             //  copy of messagesListener
 
             messagesListener: function(params, complete) {
+				alert('Start ML ' + params.id);
 				console.log("_______________________messagesListener");
 				// console.log(params);
 				// console.log('params');
@@ -132,6 +133,7 @@
             },
 					
 			stopMessagesListener: function(params, complete) {
+				alert('Stop ML ' + params.id);
 				var id = params.id;
 				var type = params.type;
 				//alert('sml');
